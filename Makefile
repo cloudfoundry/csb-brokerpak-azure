@@ -1,16 +1,17 @@
 
 IAAS=azure
-DOCKER_OPTS=--rm -v $(PWD):/brokerpak -w /brokerpak #--network=host
+DOCKER_OPTS=--rm -v $(PWD):/brokerpak -w /brokerpak --network=host
 CSB=cfplatformeng/csb
 
 .PHONY: build
 build: $(IAAS)-services-*.brokerpak 
 
-$(IAAS)-services-*.brokerpak: *.yml terraform/*/*.tf ./build/psqlcmd_*.zip ./build/sqlfailover_*.zip
+$(IAAS)-services-*.brokerpak: *.yml terraform/*/*.tf ./tools/build/psqlcmd_*.zip ./tools/build/sqlfailover_*.zip
 	docker run $(DOCKER_OPTS) $(CSB) pak build
 
 SECURITY_USER_NAME := $(or $(SECURITY_USER_NAME), aws-broker)
 SECURITY_USER_PASSWORD := $(or $(SECURITY_USER_PASSWORD), aws-broker-pw)
+PARALLEL_JOB_COUNT := $(or $(PARALLEL_JOB_COUNT), 2)
 
 .PHONY: run
 run: build  arm-subscription-id arm-tenant-id arm-client-id arm-client-secret
@@ -39,9 +40,8 @@ run-examples: build
 	docker run $(DOCKER_OPTS) \
 	-e SECURITY_USER_NAME \
 	-e SECURITY_USER_PASSWORD \
-	-e "GSB_API_HOSTNAME=host.docker.internal" \
 	-e USER \
-	$(CSB) pak run-examples /brokerpak/$(shell ls *.brokerpak)
+	$(CSB) client run-examples -j $(PARALLEL_JOB_COUNT)
 
 .PHONY: info
 info: build
@@ -71,12 +71,17 @@ clean:
 	- rm $(IAAS)-services-*.brokerpak
 	- rm ./cloud-service-broker
 	- rm ./brokerpak-user-docs.md
+	- cd tools/psqlcmd; $(MAKE) clean
+	- cd tools/sqlfailover; $(MAKE) clean
 
-./build/psqlcmd_*.zip: ../tools/psqlcmd/*.go
-	cd ../tools/psqlcmd; USE_GO_CONTAINERS=1 $(MAKE) build
+.PHONY: rebuild
+rebuild: clean build
 
-./build/sqlfailover_*.zip: ../tools/sqlfailover/*.go
-	cd ../tools/sqlfailover; USE_GO_CONTAINERS=1 $(MAKE) build
+tools/build/psqlcmd_*.zip: tools/psqlcmd/*.go
+	cd tools/psqlcmd; USE_GO_CONTAINERS=1 $(MAKE) build
+
+tools/build/sqlfailover_*.zip: tools/sqlfailover/*.go
+	cd tools/sqlfailover; USE_GO_CONTAINERS=1 $(MAKE) build
 
 .PHONY: arm-subscription-id
 arm-subscription-id:

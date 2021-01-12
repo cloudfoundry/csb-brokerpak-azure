@@ -1,0 +1,3 @@
+*.brokerpak
+tools/build
+tools/build/*
