@@ -14,7 +14,7 @@ SECURITY_USER_PASSWORD := $(or $(SECURITY_USER_PASSWORD), aws-broker-pw)
 PARALLEL_JOB_COUNT := $(or $(PARALLEL_JOB_COUNT), 2)
 
 .PHONY: run
-run: build  arm-subscription-id arm-tenant-id arm-client-id arm-client-secret
+run: build arm-subscription-id arm-tenant-id arm-client-id arm-client-secret
 	docker run $(DOCKER_OPTS) \
 	-p 8080:8080 \
 	-e SECURITY_USER_NAME \
@@ -55,16 +55,18 @@ validate: build
 
 # fetching bits for cf push broker
 cloud-service-broker:
-	wget $(shell curl -sL https://api.github.com/repos/pivotal/cloud-service-broker/releases/latest | jq -r '.assets[] | select(.name == "cloud-service-broker") | .browser_download_url')
+	wget $(shell curl -sL https://api.github.com/repos/cloudfoundry-incubator/cloud-service-broker/releases/latest | jq -r '.assets[] | select(.name == "cloud-service-broker.linux") | .browser_download_url')
+	mv ./cloud-service-broker.linux ./cloud-service-broker
 	chmod +x ./cloud-service-broker
+	./cloud-service-broker version
 
 APP_NAME := $(or $(APP_NAME), cloud-service-broker-azure)
 DB_TLS := $(or $(DB_TLS), skip-verify)
-GSB_PROVISION_DEFAULTS := $(or $(GSB_PROVISION_DEFAULTS), '{"resource_group": "broker-cf-test"}')
+GSB_PROVISION_DEFAULTS := $(or $(GSB_PROVISION_DEFAULTS), {"resource_group": "broker-cf-test"})
 
 .PHONY: push-broker
 push-broker: cloud-service-broker build arm-subscription-id arm-tenant-id arm-client-id arm-client-secret
-	MANIFEST=cf-manifest.yml APP_NAME=$(APP_NAME) DB_TLS=$(DB_TLS) GSB_PROVISION_DEFAULTS='$(GSB_PROVISION_DEFAULTS)' ../scripts/push-broker.sh
+	MANIFEST=cf-manifest.yml APP_NAME=$(APP_NAME) DB_TLS=$(DB_TLS) GSB_PROVISION_DEFAULTS='$(GSB_PROVISION_DEFAULTS)' ./scripts/push-broker.sh
 
 .PHONY: clean
 clean:
