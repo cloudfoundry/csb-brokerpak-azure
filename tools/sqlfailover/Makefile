@@ -9,7 +9,7 @@ GO=go
 GOIMPORTS=goimports
 else
 UID:=$(shell id -u)
-DOCKER_OPTS=--rm -u $(UID) -v $(HOME):$(HOME) -e HOME -e USER=$(USER) -e USERNAME=$(USER) -w $(PWD)
+DOCKER_OPTS=--rm -v $(PWD):/src -w /src
 GO=docker run $(DOCKER_OPTS) -e GOARCH -e GOOS golang:$(GO-VERSION) go
 GOTOOLS=docker run $(DOCKER_OPTS) jare/go-tools
 GOIMPORTS=$(GOTOOLS) goimports
@@ -34,21 +34,18 @@ ifndef HAS_GO_IMPORTS
 endif
 
 .PHONY: build
-build: ../build ../build/$(EXE_NAME)_$(VERSION)_linux_amd64.zip ../build/$(EXE_NAME)_$(VERSION)_darwin_amd64.zip
+build: ./build/$(EXE_NAME)_$(VERSION)_linux_amd64.zip ./build/$(EXE_NAME)_$(VERSION)_darwin_amd64.zip
 
-../build:
-	mkdir -p ../build
-
-../build/$(EXE_NAME)_$(VERSION)_linux_amd64.zip: build/linux/$(EXE_NAME)
+./build/$(EXE_NAME)_$(VERSION)_linux_amd64.zip: build/linux/$(EXE_NAME)
 	zip -j -r $@ $<
 
-../build/$(EXE_NAME)_$(VERSION)_darwin_amd64.zip: build/darwin/$(EXE_NAME)
+./build/$(EXE_NAME)_$(VERSION)_darwin_amd64.zip: build/darwin/$(EXE_NAME)
 	zip -j -r $@ $<
 
-build/linux/$(EXE_NAME): $(SRC)
+./build/linux/$(EXE_NAME): $(SRC)
 	CGO_ENABLED=0 GOARCH=amd64 GOOS=linux $(GO) build -o $@
 
-build/darwin/$(EXE_NAME): $(SRC)
+./build/darwin/$(EXE_NAME): $(SRC)
 	GOARCH=amd64 GOOS=darwin $(GO) build -o $@
 
 .PHONY: lint
@@ -60,7 +57,7 @@ test: lint
 
 .PHONY: clean
 clean:
-	rm -rf ../build
+	rm -rf ./build
 
 .PHONY: rebuild
 rebuild: clean build

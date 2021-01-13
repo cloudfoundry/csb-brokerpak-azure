@@ -6,7 +6,7 @@ CSB=cfplatformeng/csb
 .PHONY: build
 build: $(IAAS)-services-*.brokerpak 
 
-$(IAAS)-services-*.brokerpak: *.yml terraform/*/*.tf ./tools/build/psqlcmd_*.zip ./tools/build/sqlfailover_*.zip
+$(IAAS)-services-*.brokerpak: *.yml terraform/*/*.tf ./tools/psqlcmd/build/psqlcmd_*.zip ./tools/sqlfailover/build/sqlfailover_*.zip
 	docker run $(DOCKER_OPTS) $(CSB) pak build
 
 SECURITY_USER_NAME := $(or $(SECURITY_USER_NAME), aws-broker)
@@ -79,10 +79,10 @@ clean:
 .PHONY: rebuild
 rebuild: clean build
 
-tools/build/psqlcmd_*.zip: tools/psqlcmd/*.go
+tools/psqlcmd/build/psqlcmd_*.zip: tools/psqlcmd/*.go
 	cd tools/psqlcmd; USE_GO_CONTAINERS=1 $(MAKE) build
 
-tools/build/sqlfailover_*.zip: tools/sqlfailover/*.go
+tools/sqlfailover/build/sqlfailover_*.zip: tools/sqlfailover/*.go
 	cd tools/sqlfailover; USE_GO_CONTAINERS=1 $(MAKE) build
 
 .PHONY: arm-subscription-id
