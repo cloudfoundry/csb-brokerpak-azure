@@ -79,10 +79,10 @@ clean:
 .PHONY: rebuild
 rebuild: clean build
 
-tools/psqlcmd/build/psqlcmd_*.zip: tools/psqlcmd/*.go
+./tools/psqlcmd/build/psqlcmd_*.zip: tools/psqlcmd/*.go
 	cd tools/psqlcmd; USE_GO_CONTAINERS=1 $(MAKE) build
 
-tools/sqlfailover/build/sqlfailover_*.zip: tools/sqlfailover/*.go
+./tools/sqlfailover/build/sqlfailover_*.zip: tools/sqlfailover/*.go
 	cd tools/sqlfailover; USE_GO_CONTAINERS=1 $(MAKE) build
 
 .PHONY: arm-subscription-id
