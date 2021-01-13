@@ -41,11 +41,11 @@ terraform_binaries:
 - name: psqlcmd
   version: 0.1.0
   source: https://packages.microsoft.com/config/rhel/7/packages-microsoft-prod.rpm
-  url_template: ./tools/build/${name}_${version}_${os}_${arch}.zip
+  url_template: ./tools/${name}/build/${name}_${version}_${os}_${arch}.zip
 - name: sqlfailover
   version: 0.1.0
   source: https://packages.microsoft.com/config/rhel/7/packages-microsoft-prod.rpm
-  url_template: ./tools/build/${name}_${version}_${os}_${arch}.zip  
+  url_template: ./tools/${name}/build/${name}_${version}_${os}_${arch}.zip  
 - name: terraform-provider-postgresql
   version: 1.5.0
   source: https://github.com/terraform-providers/terraform-provider-postgresql/archive/v1.5.0.zip
