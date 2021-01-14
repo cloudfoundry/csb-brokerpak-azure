@@ -58,7 +58,6 @@ cloud-service-broker:
 	wget $(shell curl -sL https://api.github.com/repos/cloudfoundry-incubator/cloud-service-broker/releases/latest | jq -r '.assets[] | select(.name == "cloud-service-broker.linux") | .browser_download_url')
 	mv ./cloud-service-broker.linux ./cloud-service-broker
 	chmod +x ./cloud-service-broker
-	./cloud-service-broker version
 
 APP_NAME := $(or $(APP_NAME), cloud-service-broker-azure)
 DB_TLS := $(or $(DB_TLS), skip-verify)

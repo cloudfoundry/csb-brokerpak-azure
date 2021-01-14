@@ -16,7 +16,7 @@
 
 ---
 applications:
-- name: cloud-service-broker-azure
+- name: ((app))
   command: ./cloud-service-broker serve
   memory: 1G
   buildpacks: 
