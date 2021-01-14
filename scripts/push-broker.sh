@@ -8,11 +8,11 @@ if [[ -z ${MANIFEST} ]]; then
   MANIFEST=manifest.yml
 fi
 
-cf push --no-start -f "${MANIFEST}"
-
 if [[ -z ${APP_NAME} ]]; then
   APP_NAME=cloud-service-broker
 fi
+
+cf push --no-start -f "${MANIFEST}" --var app=${APP_NAME}
 
 if [[ -z ${SECURITY_USER_NAME} ]]; then
   echo "Missing SECURITY_USER_NAME variable"
