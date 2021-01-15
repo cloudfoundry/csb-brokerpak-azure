@@ -63,6 +63,26 @@ if [[ ${DB_TLS} ]]; then
   cf set-env "${APP_NAME}" DB_TLS "${DB_TLS}"
 fi
 
+if [[ ${CH_CRED_HUB_URL} ]]; then
+  cf set-env "${APP_NAME}" CH_CRED_HUB_URL "${CH_CRED_HUB_URL}"
+fi
+
+if [[ ${CH_UAA_URL} ]]; then
+  cf set-env "${APP_NAME}" CH_UAA_URL "${CH_UAA_URL}"
+fi
+
+if [[ ${CH_UAA_CLIENT_NAME} ]]; then
+  cf set-env "${APP_NAME}" CH_UAA_CLIENT_NAME "${CH_UAA_CLIENT_NAME}"
+fi
+
+if [[ ${CH_UAA_CLIENT_SECRET} ]]; then
+  cf set-env "${APP_NAME}" CH_UAA_CLIENT_SECRET "${CH_UAA_CLIENT_SECRET}"
+fi
+
+if [[ ${CH_SKIP_SSL_VALIDATION} ]]; then
+  cf set-env "${APP_NAME}" CH_SKIP_SSL_VALIDATION "${CH_SKIP_SSL_VALIDATION}"
+fi
+
 if [[ -z ${MSYQL_INSTANCE} ]]; then
   MSYQL_INSTANCE=csb-sql
 fi
