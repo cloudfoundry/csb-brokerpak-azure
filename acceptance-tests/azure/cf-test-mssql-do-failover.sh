@@ -27,7 +27,7 @@ if create_service csb-azure-resource-group standard "${SERVER_RG}" "{\"instance_
                         cf service "${NAME}"
                         echo "Should not have been able to delete failover group in swapped state!"
                     else                    
-                        RESULT=$?
+                        RESULT=0
                     fi
                 else
                     cf unbind-service spring-music "${NAME}"
