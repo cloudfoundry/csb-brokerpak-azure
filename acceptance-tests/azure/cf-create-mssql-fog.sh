@@ -30,28 +30,38 @@ PRIMARY_PID=$!
 SECONDARY_PID=$!
 
 if wait ${PRIMARY_PID} && wait ${SECONDARY_PID}; then
-  CONFIG="{
-    \"instance_name\":\"${NAME}\", \
-    \"db_name\":\"${DB_NAME}\", \
-    \"server_pair\":\"test\", \
-    \"server_credential_pairs\":{ \
-      \"test\":{ \
-        \"admin_username\":\"${USERNAME}\", \
-        \"admin_password\":\"${PASSWORD}\", \
-        \"primary\":{ \
-          \"server_name\":\"${PRIMARY_SERVER_NAME}\", \
-          \"resource_group\":\"${RG}\" \
-        }, \
-        \"secondary\":{ \
-          \"server_name\":\"${SECONDARY_SERVER_NAME}\", \
-          \"resource_group\":\"${RG}\" \
+    # FOG_NAME=mssql-server-fog-$$
+    CONFIG="{
+        \"instance_name\":\"${NAME}\", \
+        \"db_name\":\"${DB_NAME}\", \
+        \"server_pair\":\"test\" \
+    }"
+
+    MSSQL_DB_FOG_SERVER_PAIR_CREDS="{ \
+        \"test\":{ \
+            \"admin_username\":\"${USERNAME}\", \
+            \"admin_password\":\"${PASSWORD}\", \
+            \"primary\":{ \
+              \"server_name\":\"${PRIMARY_SERVER_NAME}\", \
+              \"resource_group\":\"${RG}\" \
+            }, \
+            \"secondary\":{ \
+              \"server_name\":\"${SECONDARY_SERVER_NAME}\", \
+              \"resource_group\":\"${RG}\" \
+            } \
         } \
-      } \
-    } \
-  }"
-  if create_service csb-azure-mssql-db-failover-group medium "${NAME}" "${CONFIG}"; then
-    echo "Successfully created failover group ${NAME}"
-  fi
+    }" 
+
+    GSB_SERVICE_CSB_AZURE_MSSQL_DB_FAILOVER_GROUP_PROVISION_DEFAULTS="{ \
+        \"server_credential_pairs\":${MSSQL_DB_FOG_SERVER_PAIR_CREDS} \
+    }"
+
+    cf set-env cloud-service-broker GSB_SERVICE_CSB_AZURE_MSSQL_DB_FAILOVER_GROUP_PROVISION_DEFAULTS "${GSB_SERVICE_CSB_AZURE_MSSQL_DB_FAILOVER_GROUP_PROVISION_DEFAULTS}"
+    cf set-env cloud-service-broker MSSQL_DB_FOG_SERVER_PAIR_CREDS "${MSSQL_DB_FOG_SERVER_PAIR_CREDS}"
+    cf restart cloud-service-broker
+    if create_service csb-azure-mssql-db-failover-group medium "${NAME}" "${CONFIG}"; then
+        echo "Successfully created failover group ${NAME}"
+    fi
 fi
 
 exit $?

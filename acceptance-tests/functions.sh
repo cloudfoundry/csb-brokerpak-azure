@@ -130,27 +130,36 @@ in_list() {
     return 1
 }
 
-bind_service_test() {
+restart_app() {
     APP=$1
-    SERVICE_INSTANCE_NAME=$2
-    LOCAL_RESULT=0
-    if cf bind-service "${APP}" "${SERVICE_INSTANCE_NAME}"; then
-        if cf restart "${APP}"; then
-            sleep 10
-            if cf app "${APP}" | grep running; then
-                echo "successfully bound and restarted ${APP}"
-            else
-                LOCAL_RESULT=$?
-                echo "Failed to restart ${APP}: ${LOCAL_RESULT}"
-                cf env "${APP}"
-                cf logs "${APP}" --recent
-            fi
+    local LOCAL_RESULT=0
+    if cf restart "${APP}"; then
+        sleep 10
+        if cf app "${APP}" | grep running; then
+            echo "successfully bound and restarted ${APP}"
         else
             LOCAL_RESULT=$?
             echo "Failed to restart ${APP}: ${LOCAL_RESULT}"
             cf env "${APP}"
             cf logs "${APP}" --recent
         fi
+    else
+        LOCAL_RESULT=$?
+        echo "Failed to restart ${APP}: ${LOCAL_RESULT}"
+        cf env "${APP}"
+        cf logs "${APP}" --recent
+    fi 
+
+    return ${LOCAL_RESULT}
+}
+
+bind_service_test() {
+    APP=$1
+    SERVICE_INSTANCE_NAME=$2
+    local LOCAL_RESULT=0
+    if cf bind-service "${APP}" "${SERVICE_INSTANCE_NAME}"; then
+        restart_app "${APP}"
+        LOCAL_RESULT=$?
     else
         LOCAL_RESULT=$?
         echo "Failed to bind-service ${APP} to ${SERVICE_INSTANCE_NAME}: ${LOCAL_RESULT}"
