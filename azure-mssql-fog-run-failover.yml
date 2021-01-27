@@ -26,6 +26,7 @@ plans:
   id: 7ddab73f-3856-414b-923e-4f07a11dc3dc
   description: Failover primary to secondary on targeted failover group database, deleting service instance will 'fail back' to primary server.
   display_name: "standard"
+  free: true
 provision:
   user_inputs:
   - field_name: fog_instance_name
