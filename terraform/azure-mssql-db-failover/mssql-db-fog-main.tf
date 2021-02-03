@@ -48,5 +48,8 @@ resource "azurerm_sql_failover_group" "failover_group" {
     mode          = var.read_write_endpoint_failover_policy
     grace_minutes = var.failover_grace_minutes
   }
+
+  depends_on = [azurerm_mssql_database.secondary_db]
+
   count = var.existing ? 0 : 1
 }
