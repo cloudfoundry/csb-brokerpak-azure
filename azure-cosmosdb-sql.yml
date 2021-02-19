@@ -21,6 +21,7 @@ image_url: https://azurecomcdn.azureedge.net/cvt-e38d7e7665389e39a7df3f96fc03f8b
 documentation_url: https://docs.microsoft.com/en-us/azure/cosmos-db/
 support_url: https://docs.microsoft.com/en-us/azure/cosmos-db/faq
 tags: [azure, cosmos, cosmosdb, cosmos-sql, cosmosdb-sql, preview]
+plan_updateable: true
 plans:
 - name: small
   id: ca38881c-2d6b-4db4-988c-d8e49f3293da
