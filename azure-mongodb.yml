@@ -21,6 +21,7 @@ image_url: https://azurecomcdn.azureedge.net/cvt-d09489c6661f16b0396f43f6be09db6
 documentation_url: https://docs.microsoft.com/en-us/azure/cosmos-db/mongodb-introduction
 support_url: https://docs.microsoft.com/en-us/azure/cosmos-db/faq
 tags: [azure, mongodb, preview, cosmosdb-mongo, cosmosdb-mongodb]
+plan_updateable: true
 plans:
 - name: small
   id: 4ba45322-534c-11ea-b346-00155da9789e
