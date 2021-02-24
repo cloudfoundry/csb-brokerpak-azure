@@ -90,8 +90,8 @@ resource "azurerm_cosmosdb_account" "mongo-account" {
 
 	dynamic "virtual_network_rule"  {
 		for_each = var.virtual_network_id == "" ? [] : (var.virtual_network_id == "" ? [] : [1])
-    	content {
-			id = var.virtual_network_id
+		content {
+				id = var.virtual_network_id
 		}
 	}
 
