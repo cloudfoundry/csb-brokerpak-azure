@@ -30,6 +30,7 @@ variable max_interval_in_seconds { type = number }
 variable max_staleness_prefix {	type= number }
 variable labels { type = map }
 variable skip_provider_registration { type = bool }
+variable virtual_network_id { type = string }
 
 provider "azurerm" {
   version = "~> 2.33.0"
@@ -45,6 +46,8 @@ provider "azurerm" {
 
 locals {
 	resource_group = length(var.resource_group) == 0 ? format("rg-%s", var.instance_name) : var.resource_group
+
+    enable_virtual_network_filter = (var.virtual_network_id != "")
 }
 
 resource "azurerm_resource_group" "rg" {
@@ -76,10 +79,19 @@ resource "azurerm_cosmosdb_account" "cosmosdb-account" {
 		}
 	}
 
-	enable_automatic_failover       = var.enable_automatic_failover
-	enable_multiple_write_locations = var.enable_multiple_write_locations
-	ip_range_filter                 = var.ip_range_filter
-	tags                            = var.labels	
+	enable_automatic_failover          = var.enable_automatic_failover
+	enable_multiple_write_locations    = var.enable_multiple_write_locations
+	is_virtual_network_filter_enabled  = local.enable_virtual_network_filter
+	ip_range_filter                    = var.ip_range_filter
+	tags                               = var.labels	
+
+	dynamic "virtual_network_rule"  {
+		for_each = var.virtual_network_id == "" ? [] : (var.virtual_network_id == "" ? [] : [1])
+    	content {
+			id = var.virtual_network_id
+		}
+	}
+
 }
 
 resource "azurerm_cosmosdb_sql_database" "db" {
