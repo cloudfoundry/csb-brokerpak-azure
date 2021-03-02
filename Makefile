@@ -9,8 +9,8 @@ build: $(IAAS)-services-*.brokerpak
 $(IAAS)-services-*.brokerpak: *.yml terraform/*/*.tf ./tools/psqlcmd/build/psqlcmd_*.zip ./tools/sqlfailover/build/sqlfailover_*.zip
 	docker run $(DOCKER_OPTS) $(CSB) pak build
 
-SECURITY_USER_NAME := $(or $(SECURITY_USER_NAME), aws-broker)
-SECURITY_USER_PASSWORD := $(or $(SECURITY_USER_PASSWORD), aws-broker-pw)
+SECURITY_USER_NAME := $(or $(SECURITY_USER_NAME), $(IAAS)-broker)
+SECURITY_USER_PASSWORD := $(or $(SECURITY_USER_PASSWORD), $(IAAS)-broker-pw)
 PARALLEL_JOB_COUNT := $(or $(PARALLEL_JOB_COUNT), 2)
 
 .PHONY: run
@@ -27,6 +27,14 @@ run: build arm-subscription-id arm-tenant-id arm-client-id arm-client-secret
 	-e "DB_PATH=/tmp/csb-db" \
 	-e GSB_PROVISION_DEFAULTS \
 	$(CSB) serve
+
+.PHONY: catalog
+catalog: build
+	docker run $(DOCKER_OPTS) \	
+		-e SECURITY_USER_NAME \
+		-e SECURITY_USER_PASSWORD \
+		-e USER \
+		$(CSB) client catalog
 
 .PHONY: docs
 docs: build brokerpak-user-docs.md
@@ -59,7 +67,7 @@ cloud-service-broker:
 	mv ./cloud-service-broker.linux ./cloud-service-broker
 	chmod +x ./cloud-service-broker
 
-APP_NAME := $(or $(APP_NAME), cloud-service-broker-azure)
+APP_NAME := $(or $(APP_NAME), cloud-service-broker)
 DB_TLS := $(or $(DB_TLS), skip-verify)
 GSB_PROVISION_DEFAULTS := $(or $(GSB_PROVISION_DEFAULTS), {"resource_group": "broker-cf-test"})
 
