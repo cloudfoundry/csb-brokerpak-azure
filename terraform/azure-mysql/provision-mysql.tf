@@ -26,6 +26,7 @@ variable cores {type = string }
 variable sku_name { type = string }
 variable storage_gb {type = string }
 variable authorized_network {type = string}
+variable authorized_networks {type = list(string) }
 variable use_tls { type = bool }
 variable tls_min_version { type = string }
 variable skip_provider_registration { type = bool }
@@ -129,6 +130,14 @@ resource "azurerm_mysql_virtual_network_rule" "allow_subnet_id" {
   server_name         = azurerm_mysql_server.instance.name
   subnet_id           = var.authorized_network
   count = var.authorized_network != "default" ? 1 : 0
+}
+
+resource "azurerm_mysql_virtual_network_rule" "allow_subnet_ids" {
+  name                = format("subnetrule-%s-%s", lower(random_string.servername.result), count.index)
+  resource_group_name = local.resource_group
+  server_name         = azurerm_mysql_server.instance.name
+  subnet_id           = var.authorized_networks[count.index]
+  count = length(var.authorized_networks)
 }
 
 resource "azurerm_mysql_firewall_rule" "allow_azure" {
