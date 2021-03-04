@@ -132,7 +132,7 @@ provision:
     - field_name: authorized_networks
       type: array
       details: The subnet ID of the Azure VNET to which the instance is locked down to.
-      default: default
+      default: []
     - field_name: location
       type: string
       details: The location of the mysql instance.
