@@ -16,10 +16,13 @@ SERVER_NAME=$1
 SERVER_RESOURCE_GROUP=$2
 SERVER_ADMIN_USER_NAME=$3
 SERVER_ADMIN_PASSWORD=$4
-DB_NAME=sdb-$$
+
+MASB_ID=$(date +%s)
+
+DB_NAME=subsume-db-${MASB_ID}
 SUBSUMED_INSTANCE_NAME=masb-sql-db-$$
 
-MASB_SQLDB_INSTANCE_NAME=mssql-db-$$
+MASB_SQLDB_INSTANCE_NAME=mssql-db-${MASB_ID}
 MASB_DB_CONFIG="{ \
   \"sqlServerName\": \"${SERVER_NAME}\", \
   \"sqldbName\": \"${DB_NAME}\", \
