@@ -33,7 +33,7 @@ variable max_interval_in_seconds { type = number }
 variable max_staleness_prefix {	type= number }
 variable labels { type = map }
 variable skip_provider_registration { type = bool }
-variable virtual_network_id { type = string }
+variable authorized_network { type = string }
 
 provider "azurerm" {
   version = "~> 2.33.0"
@@ -50,7 +50,7 @@ provider "azurerm" {
 locals {
 	resource_group = length(var.resource_group) == 0 ? format("rg-%s", var.instance_name) : var.resource_group
 
-	enable_virtual_network_filter = (var.virtual_network_id != "")
+	enable_virtual_network_filter = (var.authorized_network != "")
 }
 
 resource "azurerm_resource_group" "rg" {
@@ -89,9 +89,9 @@ resource "azurerm_cosmosdb_account" "mongo-account" {
 	tags                               = var.labels	
 
 	dynamic "virtual_network_rule"  {
-		for_each = var.virtual_network_id == "" ? [] : (var.virtual_network_id == "" ? [] : [1])
+		for_each = var.authorized_network == "" ? [] : (var.authorized_network == "" ? [] : [1])
 		content {
-				id = var.virtual_network_id
+				id = var.authorized_network
 		}
 	}
 
