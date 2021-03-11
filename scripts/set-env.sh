@@ -9,12 +9,9 @@ export ARM_TENANT_ID=$(lpass show --notes "Shared-CF Platform Engineering/pe-clo
 export ARM_CLIENT_ID=$(lpass show --notes "Shared-CF Platform Engineering/pe-cloud-service-broker/Azure Service Account Key" | jq -r .client_id)
 export ARM_CLIENT_SECRET=$(lpass show --notes "Shared-CF Platform Engineering/pe-cloud-service-broker/Azure Service Account Key" | jq -r .client_secret)
 
-export GCP_SERVICE_ACCOUNT_JSON=$(lpass show --notes "Shared-CF Platform Engineering/pks cluster management gcp service account")
-export ROOT_SERVICE_ACCOUNT_JSON="${GCP_SERVICE_ACCOUNT_JSON}"
-export GOOGLE_CREDENTIALS="${GCP_SERVICE_ACCOUNT_JSON}"
-export GOOGLE_PROJECT=$(echo ${GOOGLE_CREDENTIALS} | jq -r .project_id)
-
-export GCP_PAS_NETWORK=$(lpass show "Shared-CF Platform Engineering/pe-cloud-service-broker/cloud service broker pipeline secrets.yml" | grep gcp-network | cut -d ' ' -f 2)
+export AZURE_AUTHORIZED_NETWORK_ID=$(lpass show "Shared-CF Platform Engineering/pe-cloud-service-broker/cloud service broker pipeline secrets.yml" | grep azure-subnet-id | cut -d ' ' -f 2)
+export AZURE_LOCATION=$(lpass show "Shared-CF Platform Engineering/pe-cloud-service-broker/cloud service broker pipeline secrets.yml" | grep azure-location | cut -d ' ' -f 2)
+export GSB_PROVISION_DEFAULTS="{\"resource_group\": \"broker-cf-test\", \"authorized_network\":\"${AZURE_AUTHORIZED_NETWORK_ID}\", \"location\":\"${AZURE_LOCATION}\"}"
 
 export SECURITY_USER_NAME=brokeruser
 export SECURITY_USER_PASSWORD=brokeruserpassword
