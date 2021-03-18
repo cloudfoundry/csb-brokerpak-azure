@@ -21,6 +21,7 @@ image_url: https://azurecomcdn.azureedge.net/cvt-d09489c6661f16b0396f43f6be09db6
 documentation_url: https://docs.microsoft.com/en-us/azure/cosmos-db/mongodb-introduction
 support_url: https://docs.microsoft.com/en-us/azure/cosmos-db/faq
 tags: [azure, mongodb, preview, cosmosdb-mongo, cosmosdb-mongodb]
+plan_updateable: true
 plans:
 - name: small
   id: 4ba45322-534c-11ea-b346-00155da9789e
@@ -198,6 +199,10 @@ provision:
     type: boolean
     details: Skip automatic Azure provider registration, set to true if service principal being used does not have rights to register providers
     default: false        
+  - field_name: authorized_network
+    type: string
+    default: ""
+    details: The subnet ID of the Azure VNET to which the instance is locked down to. If left unspecified, it will be public.
   computed_inputs:
   - name: labels
     default: ${json.marshal(request.default_labels)}
