@@ -1,0 +1,14 @@
+version: 2
+updates:
+- package-ecosystem: npm
+  directory: "/acceptance-tests/azure/cosmosdb-test-app"
+  schedule:
+    interval: daily
+- package-ecosystem: npm
+  directory: "/acceptance-tests/azure/blob-storage-test-app"
+  schedule:
+    interval: daily
+- package-ecosystem: npm
+  directory: "/acceptance-tests/spring-music-validator"
+  schedule:
+    interval: daily
