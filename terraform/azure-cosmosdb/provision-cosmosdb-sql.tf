@@ -31,6 +31,14 @@ variable max_staleness_prefix {	type= number }
 variable labels { type = map }
 variable skip_provider_registration { type = bool }
 variable authorized_network { type = string }
+variable additional_capability {
+    description = "Enable a single additional API capability (EnableTable, EnableGremlin, EnableCassandra, EnableMongo) for this cosmosdb account."
+    type = string
+    validation {
+        condition       = var.additional_capability == "" || can(regex("EnableTable|EnableGremlin|EnableCassandra|EnableMongo", var.additional_capability))
+        error_message   = "Validation Error: Only one capability value is acceptable and must match EnableTable, EnableGremlin, EnableCassandra or EnableMongo."
+    }
+}
 
 provider "azurerm" {
   features {}
@@ -46,7 +54,7 @@ provider "azurerm" {
 locals {
 	resource_group = length(var.resource_group) == 0 ? format("rg-%s", var.instance_name) : var.resource_group
 
-    enable_virtual_network_filter = (var.authorized_network != "")
+	enable_virtual_network_filter = (var.authorized_network != "")
 }
 
 resource "azurerm_resource_group" "rg" {
@@ -62,12 +70,19 @@ resource "azurerm_cosmosdb_account" "cosmosdb-account" {
 	location            = var.location
 	resource_group_name = local.resource_group
 	offer_type          = "Standard"
-	kind                = "GlobalDocumentDB"
+	kind                = var.additional_capability == "EnableMongo" ? "MongoDB" : "GlobalDocumentDB"
 
 	consistency_policy {
 		consistency_level       = var.consistency_level
 		max_interval_in_seconds = var.max_interval_in_seconds
 		max_staleness_prefix    = var.max_staleness_prefix
+	}
+
+	dynamic "capabilities" {
+		for_each = var.additional_capability == "" ? [] : (var.additional_capability == "" ? [] : [1])
+		content {
+				name = var.additional_capability
+		}
 	}
 
 	dynamic "geo_location" {
@@ -98,12 +113,45 @@ resource "azurerm_cosmosdb_sql_database" "db" {
   resource_group_name = azurerm_cosmosdb_account.cosmosdb-account.resource_group_name
   account_name        = azurerm_cosmosdb_account.cosmosdb-account.name
   throughput          = var.request_units
+  count               = var.additional_capability == "" ? 1 : 0
+}
+
+resource "azurerm_cosmosdb_gremlin_database" "db_gremlin" {
+  name                = var.db_name
+  resource_group_name = azurerm_cosmosdb_account.cosmosdb-account.resource_group_name
+  account_name        = azurerm_cosmosdb_account.cosmosdb-account.name
+  throughput          = var.request_units
+  count               = var.additional_capability == "EnableGremlin" ? 1 : 0
+}
+
+resource "azurerm_cosmosdb_cassandra_keyspace" "db_cassandra" {
+  name                = var.db_name
+  resource_group_name = azurerm_cosmosdb_account.cosmosdb-account.resource_group_name
+  account_name        = azurerm_cosmosdb_account.cosmosdb-account.name
+  throughput          = var.request_units
+  count               = var.additional_capability == "EnableCassandra" ? 1 : 0
+}
+
+resource "azurerm_cosmosdb_mongo_database" "db_mongo" {
+  name                = var.db_name
+  resource_group_name = azurerm_cosmosdb_account.cosmosdb-account.resource_group_name
+  account_name        = azurerm_cosmosdb_account.cosmosdb-account.name
+  throughput          = var.request_units
+  count               = var.additional_capability == "EnableMongo" ? 1 : 0
+}
+
+resource "azurerm_cosmosdb_table" "db_table" {
+  name                = var.db_name
+  resource_group_name = azurerm_cosmosdb_account.cosmosdb-account.resource_group_name
+  account_name        = azurerm_cosmosdb_account.cosmosdb-account.name
+  throughput          = var.request_units
+  count               = var.additional_capability == "EnableTable" ? 1 : 0
 }
 
 output cosmosdb_host_endpoint {value = azurerm_cosmosdb_account.cosmosdb-account.endpoint }
 output cosmosdb_master_key {value = azurerm_cosmosdb_account.cosmosdb-account.primary_master_key }
 output cosmosdb_readonly_master_key {value = azurerm_cosmosdb_account.cosmosdb-account.primary_readonly_master_key }
-output cosmosdb_database_id { value = azurerm_cosmosdb_sql_database.db.name }
+output cosmosdb_database_id { value = var.db_name }
 output status { value = format("created account %s (id: %s) URL: https://portal.azure.com/#@%s/resource%s",
                                azurerm_cosmosdb_account.cosmosdb-account.name,
                                azurerm_cosmosdb_account.cosmosdb-account.id,

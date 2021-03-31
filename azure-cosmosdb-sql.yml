@@ -182,6 +182,15 @@ provision:
     type: string
     default: ""
     details: The subnet ID of the Azure VNET to which the instance is locked down to. If left unspecified, it will be public.
+  - field_name: additional_capability
+    type: string
+    details: (Optional) additional capability which should be enabled for this CosmosDB account. Azure CosmosDB defaults to SQL API.
+    default: ""
+    enum:
+      EnableTable: EnableTable
+      EnableGremlin: EnableGremlin
+      EnableCassandra: EnableCassandra
+      EnableMongo: EnableMongo
   computed_inputs:
   - name: labels
     default: ${json.marshal(request.default_labels)}
