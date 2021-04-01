@@ -37,7 +37,7 @@ variable email_account_admins { type = bool }
 variable firewall_rules { type = list(list(string)) }
 
 provider "azurerm" {
-  version = "~> 2.33.0"
+  version = ">= 2.33.0"
   features {}
 
   subscription_id = var.azure_subscription_id
@@ -130,6 +130,7 @@ resource "azurerm_mysql_virtual_network_rule" "allow_subnet_id" {
   server_name         = azurerm_mysql_server.instance.name
   subnet_id           = var.authorized_network
   count = var.authorized_network != "default" ? 1 : 0
+  depends_on = [azurerm_mysql_database.instance-db]
 }
 
 resource "azurerm_mysql_virtual_network_rule" "allow_subnet_ids" {
@@ -138,6 +139,7 @@ resource "azurerm_mysql_virtual_network_rule" "allow_subnet_ids" {
   server_name         = azurerm_mysql_server.instance.name
   subnet_id           = var.authorized_networks[count.index]
   count = length(var.authorized_networks)
+  depends_on = [azurerm_mysql_database.instance-db]
 }
 
 resource "azurerm_mysql_firewall_rule" "allow_azure" {
@@ -147,6 +149,7 @@ resource "azurerm_mysql_firewall_rule" "allow_azure" {
   start_ip_address    = "0.0.0.0"
   end_ip_address      = "0.0.0.0"
   count = var.authorized_network == "default" ? 1 : 0
+  depends_on = [azurerm_mysql_database.instance-db]
 }    
 
 resource "azurerm_mysql_firewall_rule" "allow_firewall" {
@@ -156,6 +159,7 @@ resource "azurerm_mysql_firewall_rule" "allow_firewall" {
   start_ip_address    = var.firewall_rules[count.index][0]
   end_ip_address      = var.firewall_rules[count.index][1]
   count = length(var.firewall_rules)
+  depends_on = [azurerm_mysql_database.instance-db]
 }    
 
 output name { value = azurerm_mysql_database.instance-db.name }

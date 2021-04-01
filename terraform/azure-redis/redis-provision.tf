@@ -30,7 +30,7 @@ variable firewall_rules { type = list(list(string)) }
 variable subnet_id { type = string }
 
 provider "azurerm" {
-  version = "~> 2.33.0"
+  version = ">= 2.33.0"
   features {}
 
   subscription_id = var.azure_subscription_id
