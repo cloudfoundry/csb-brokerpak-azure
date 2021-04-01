@@ -41,6 +41,7 @@ variable additional_capability {
 }
 
 provider "azurerm" {
+  version = ">= 2.33.0"
   features {}
 
   subscription_id = var.azure_subscription_id
