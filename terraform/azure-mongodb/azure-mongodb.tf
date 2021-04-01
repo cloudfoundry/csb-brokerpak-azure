@@ -36,7 +36,7 @@ variable skip_provider_registration { type = bool }
 variable authorized_network { type = string }
 
 provider "azurerm" {
-  version = "~> 2.33.0"
+  version = ">= 2.33.0"
   features {}
 
   subscription_id = var.azure_subscription_id

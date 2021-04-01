@@ -37,7 +37,7 @@ variable email_account_admins { type = bool }
 variable firewall_rules { type = list(list(string)) }
 
 provider "azurerm" {
-  version = "~> 2.33.0"
+  version = ">= 2.33.0"
   features {}
 
   subscription_id = var.azure_subscription_id
