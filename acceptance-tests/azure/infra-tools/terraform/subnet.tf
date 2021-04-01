@@ -18,7 +18,7 @@ variable virtual_network_name { type = string }
 variable subnet_cidr { type = string }
 
 provider "azurerm" {
-  version = "~> 2.33.0"
+  version = ">= 2.33.0"
   features {}
 }
 

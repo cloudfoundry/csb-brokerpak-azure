@@ -32,7 +32,7 @@ if bind_service_test spring-music "${SERVICE_INSTANCE_NAME}"; then
         RESULT=$?
     fi
 
-    cf delete -f spring-music-validator
+    cf delete -f -r spring-music-validator
 fi
 
 if [ ${RESULT} -eq 0 ]; then

@@ -24,7 +24,7 @@ if create_service ${SERVICE} ${PLAN} ${SERVICE_NAME}; then
             echo "${APP_NAME} failed"
             cf logs ${APP_NAME} --recent
         fi
-        cf delete -f ${APP_NAME}
+        cf delete -f -r ${APP_NAME}
     fi
     delete_service ${SERVICE_NAME}
 fi
