@@ -28,6 +28,8 @@ variable tls_min_version { type = string }
 variable maxmemory_policy { type = string }
 variable firewall_rules { type = list(list(string)) }
 variable subnet_id { type = string }
+variable private_endpoint_subnet_id { type = string }
+variable private_dns_zone_ids { type = list(string) }
 
 provider "azurerm" {
   version = ">= 2.33.0"
@@ -41,8 +43,15 @@ provider "azurerm" {
   skip_provider_registration = var.skip_provider_registration
 }
 
+resource "random_string" "random" {
+  length = 8
+  special = false
+  upper = false
+}
+
 locals {
   resource_group = length(var.resource_group) == 0 ? format("rg-%s", var.instance_name) : var.resource_group
+  private_endpoint_enabled = length(var.private_endpoint_subnet_id) > 0 ? true : false
 }
 
 resource "azurerm_resource_group" "azure-redis" {
@@ -53,7 +62,7 @@ resource "azurerm_resource_group" "azure-redis" {
 }
 
 resource "azurerm_redis_cache" "redis" {
-  depends_on = [ azurerm_resource_group.azure-redis ]  
+  depends_on  = [ azurerm_resource_group.azure-redis ]  
   name                = var.instance_name
   sku_name            = var.sku_name
   family              = var.family
@@ -77,6 +86,29 @@ resource "azurerm_redis_firewall_rule" "allow_azure" {
 
   count = length(var.firewall_rules)
 }    
+
+resource "azurerm_private_endpoint" "private_endpoint" {
+  name                = "${random_string.random.result}-privateendpoint"
+  location            = var.location
+  resource_group_name = var.resource_group
+  subnet_id           = var.private_endpoint_subnet_id
+  count = local.private_endpoint_enabled ? 1 : 0
+
+  private_service_connection {
+    name                           = "${random_string.random.result}-privateserviceconnection"
+    private_connection_resource_id = azurerm_redis_cache.redis.id
+    subresource_names              = [ "redisCache" ]
+    is_manual_connection           = false
+  }
+
+  dynamic "private_dns_zone_group" {
+    for_each = length(var.private_dns_zone_ids) == 0 ? [] : [1]
+    content {
+      name = "${random_string.random.result}-privatednszonegroup"
+      private_dns_zone_ids = var.private_dns_zone_ids
+    }
+  }
+}
 
 output name { value = azurerm_redis_cache.redis.name }
 output host { value = azurerm_redis_cache.redis.hostname }
