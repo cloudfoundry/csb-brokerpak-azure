@@ -35,6 +35,9 @@ variable enable_threat_detection_policy { type = bool }
 variable threat_detection_policy_emails { type = list(string) }
 variable email_account_admins { type = bool }
 variable firewall_rules { type = list(list(string)) }
+variable private_endpoint_subnet_id { type = string }
+variable private_dns_zone_ids { type = list(string) }
+
 
 provider "azurerm" {
   version = ">= 2.33.0"
@@ -61,6 +64,7 @@ locals {
   sku_name = length(var.sku_name) == 0 ? local.instance_types[var.cores] : var.sku_name    
   resource_group = length(var.resource_group) == 0 ? format("rg-%s", var.instance_name) : var.resource_group
   tls_version = var.use_tls == true ? var.tls_min_version : "TLSEnforcementDisabled"
+  private_endpoint_enabled = length(var.private_endpoint_subnet_id) > 0 ? true : false
 }
 
 resource "azurerm_resource_group" "azure-msyql" {
@@ -87,6 +91,12 @@ resource "random_password" "password" {
   min_upper = 2
   min_lower = 2
   min_special = 2
+}
+
+resource "random_string" "random" {
+  length = 8
+  special = false
+  upper = false
 }
 
 resource "azurerm_mysql_server" "instance" {
@@ -161,6 +171,29 @@ resource "azurerm_mysql_firewall_rule" "allow_firewall" {
   count = length(var.firewall_rules)
   depends_on = [azurerm_mysql_database.instance-db]
 }    
+
+resource "azurerm_private_endpoint" "private_endpoint" {
+  name                = "${random_string.random.result}-privateendpoint"
+  location            = var.location
+  resource_group_name = var.resource_group
+  subnet_id           = var.private_endpoint_subnet_id
+  count = local.private_endpoint_enabled ? 1 : 0
+
+  private_service_connection {
+    name                           = "${random_string.random.result}-privateserviceconnection"
+    private_connection_resource_id = azurerm_mysql_server.instance.id
+    subresource_names              = [ "mysqlServer" ]
+    is_manual_connection           = false
+  }
+
+  dynamic "private_dns_zone_group" {
+    for_each = length(var.private_dns_zone_ids) == 0 ? [] : [1]
+    content {
+      name = "${random_string.random.result}-privatednszonegroup"
+      private_dns_zone_ids = var.private_dns_zone_ids
+    }
+  }
+}
 
 output name { value = azurerm_mysql_database.instance-db.name }
 output hostname { value = azurerm_mysql_server.instance.fqdn }
