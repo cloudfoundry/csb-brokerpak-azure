@@ -21,7 +21,12 @@ done
 
 UPDATE_SERVICES=("csb-azure-mysql" "csb-azure-mssql" "csb-azure-mssql-failover-group" "csb-azure-postgresql")
 for s in "${UPDATE_SERVICES[@]}"; do
-    create_service "${s}" small "${s}-$$" &
+    if [ "${s}" -eq "csb-azure-mssql-failover-group" ]; then
+        plan="small-v2"
+    else
+        plan="small"
+    fi
+    create_service "${s}" "$plan" "${s}-$$" &
     INSTANCES+=("${s}-$$")
     UPDATE_INSTANCES+=("${s}-$$")
 done
