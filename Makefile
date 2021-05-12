@@ -1,7 +1,7 @@
 
 IAAS=azure
 DOCKER_OPTS=--rm -v $(PWD):/brokerpak -w /brokerpak --network=host
-CSB=cfplatformeng/csb
+CSB := $(or $(CSB), cfplatformeng/csb)
 
 .PHONY: build
 build: $(IAAS)-services-*.brokerpak 

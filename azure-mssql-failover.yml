@@ -23,8 +23,8 @@ support_url: https://docs.microsoft.com/en-us/azure/sql-database/sql-database-au
 tags: [azure, mssql, sqlserver, dr, failover, preview]
 plan_updateable: true
 plans:
-- name: small
-  id: a556d1b4-5825-11ea-adb8-00155d4dfe6c
+- name: small-v2
+  id: eb9856fa-b285-11eb-ae46-536679aeffe8
   description: 'SQL Server latest version. Instance properties: General Purpose - Serverless ; 0.5 - 2 cores ; Max Memory: 6gb ; 50 GB storage ; auto-pause enabled after 1 hour of inactivity'
   display_name: "Small"
   properties:
@@ -285,7 +285,7 @@ bind:
 examples:
 - name: failover-group-azuresql-db-small-configuration
   description: Create a small Azure SQL Database failover group 
-  plan_id: a556d1b4-5825-11ea-adb8-00155d4dfe6c
+  plan_id: eb9856fa-b285-11eb-ae46-536679aeffe8
   provision_params: {}
   bind_params: {}
   bind_can_fail: true  
