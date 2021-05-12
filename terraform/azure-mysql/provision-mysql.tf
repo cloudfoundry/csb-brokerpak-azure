@@ -113,6 +113,7 @@ resource "azurerm_mysql_server" "instance" {
   ssl_minimal_tls_version_enforced = local.tls_version
   backup_retention_days            = var.backup_retention_days
   auto_grow_enabled = true
+  public_network_access_enabled = local.private_endpoint_enabled ? false : true
 
   dynamic "threat_detection_policy" {
     for_each = var.enable_threat_detection_policy == null ? [] : (var.enable_threat_detection_policy ? [1] : [])
