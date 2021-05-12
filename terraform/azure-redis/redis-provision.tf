@@ -70,6 +70,7 @@ resource "azurerm_redis_cache" "redis" {
   location            = var.location
   resource_group_name = local.resource_group
   minimum_tls_version = length(var.tls_min_version) == 0 ? "1.2" : var.tls_min_version
+  public_network_access_enabled = local.private_endpoint_enabled ? false : true
   tags                = var.labels
   redis_configuration {
     maxmemory_policy   = length(var.maxmemory_policy) == 0 ? "allkeys-lru" : var.maxmemory_policy
