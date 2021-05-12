@@ -159,7 +159,7 @@ resource "azurerm_mysql_firewall_rule" "allow_azure" {
   server_name         = azurerm_mysql_server.instance.name
   start_ip_address    = "0.0.0.0"
   end_ip_address      = "0.0.0.0"
-  count = var.authorized_network == "default" ? 1 : 0
+  count = var.authorized_network == "default" && local.private_endpoint_enabled == false ? 1 : 0
   depends_on = [azurerm_mysql_database.instance-db]
 }    
 
