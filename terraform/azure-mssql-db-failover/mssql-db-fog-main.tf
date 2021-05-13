@@ -28,7 +28,6 @@ resource "azurerm_mssql_database" "secondary_db" {
   name                = var.db_name
   server_id           = data.azurerm_sql_server.secondary_sql_db_server.id
   sku_name            = local.sku_name
-  max_size_gb         = var.max_storage_gb
   tags                = var.labels  
   create_mode         = "Secondary"
   creation_source_database_id = azurerm_mssql_database.primary_db[0].id

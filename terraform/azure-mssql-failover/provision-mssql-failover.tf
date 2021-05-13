@@ -155,7 +155,6 @@ resource "azurerm_mssql_database" "secondary_azure_sql_db" {
   sku_name            = local.sku_name
   tags                = var.labels
   create_mode         = "Secondary"
-  max_size_gb         = var.max_storage_gb
   creation_source_database_id  = azurerm_mssql_database.azure_sql_db.id
 }
 
