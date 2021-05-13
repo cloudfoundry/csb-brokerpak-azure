@@ -115,6 +115,11 @@ resource "azurerm_cosmosdb_mongo_collection" "mongo-collection" {
 
 	default_ttl_seconds = "777"
 	shard_key           = var.shard_key
+
+	index {
+		keys = [var.shard_key]
+		unique = true
+	}
 }
 
 output uri { value = replace(azurerm_cosmosdb_account.mongo-account.connection_strings[0], "/?", "/${azurerm_cosmosdb_mongo_database.mongo-db.name}?")  }
