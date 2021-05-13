@@ -1,3 +1,12 @@
+###### Help ###################################################################
+
+.DEFAULT_GOAL = help
+
+.PHONY: help
+help: ## list Makefile targets
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+
+###### Targets ################################################################
 
 IAAS=azure
 DOCKER_OPTS=--rm -v $(PWD):/brokerpak -w /brokerpak --network=host
@@ -14,13 +23,13 @@ SECURITY_USER_PASSWORD := $(or $(SECURITY_USER_PASSWORD), $(IAAS)-broker-pw)
 PARALLEL_JOB_COUNT := $(or $(PARALLEL_JOB_COUNT), 2)
 
 .PHONY: run
-run: build arm-subscription-id arm-tenant-id arm-client-id arm-client-secret
+run: build arm-subscription-id arm-tenant-id arm-client-id arm-client-secret ## start CSB in a docker container
 	docker run $(DOCKER_OPTS) \
 	-p 8080:8080 \
 	-e SECURITY_USER_NAME \
 	-e SECURITY_USER_PASSWORD \
 	-e ARM_SUBSCRIPTION_ID \
-    -e ARM_TENANT_ID \
+	-e ARM_TENANT_ID \
 	-e ARM_CLIENT_ID \
 	-e ARM_CLIENT_SECRET \
 	-e "DB_TYPE=sqlite3" \
@@ -43,13 +52,21 @@ brokerpak-user-docs.md: *.yml
 	docker run $(DOCKER_OPTS) \
 	$(CSB) pak docs /brokerpak/$(shell ls *.brokerpak) > $@
 
-.PHONY: run-examples
-run-examples: build
+.PHONY: examples
+examples: build ## display available examples
 	docker run $(DOCKER_OPTS) \
 	-e SECURITY_USER_NAME \
 	-e SECURITY_USER_PASSWORD \
 	-e USER \
-	$(CSB) client run-examples -j $(PARALLEL_JOB_COUNT)
+	$(CSB) client examples
+
+.PHONY: run-examples
+run-examples: build ## run examples against CSB on localhost (run "make run" to start it), set service_name and example_name to run specific example
+	docker run $(DOCKER_OPTS) \
+	-e SECURITY_USER_NAME \
+	-e SECURITY_USER_PASSWORD \
+	-e USER \
+	$(CSB) client run-examples --service-name="$(service_name)" --example-name="$(example_name)" -j $(PARALLEL_JOB_COUNT)
 
 .PHONY: info
 info: build
