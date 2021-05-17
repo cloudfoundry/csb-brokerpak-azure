@@ -4,7 +4,7 @@ set -e
 set -o nounset
 set -o pipefail
 
-echo "********** Starting test masb-sql-fog-db **********"
+print_log_message "Starting test masb-sql-fog-db"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 
 . "${SCRIPT_DIR}/../functions.sh"
@@ -39,7 +39,7 @@ MASB_DB_CONFIG="{ \
 }"
 
 RESULT=1
-echo "********** Given there is a masb db server **********"
+print_log_message "Given there is a masb db server"
 if create_service azure-sqldb StandardS0 "${MASB_SQLDB_INSTANCE_NAME}" "${MASB_DB_CONFIG}"; then
     MASB_FOG_INSTANCE_NAME=masb-fog-db-${MASB_ID}
 
@@ -53,10 +53,10 @@ if create_service azure-sqldb StandardS0 "${MASB_SQLDB_INSTANCE_NAME}" "${MASB_D
         \"failoverWithDataLossGracePeriodMinutes\": 60 \
       } \
     }"
-    echo "********** Given there is a masb failover group in that server **********"
+    print_log_message "Given there is a masb failover group in that server"
     if create_service azure-sqldb-failover-group SecondaryDatabaseWithFailoverGroup "${MASB_FOG_INSTANCE_NAME}" "${MASB_FOG_CONFIG}"; then
 
-        echo "********** Given the fog db can be bound and works **********"
+        print_log_message "Given the fog db can be bound and works"
         if bind_service_test spring-music "${MASB_FOG_INSTANCE_NAME}"; then
 
             SUBSUME_CONFIG="{ \
@@ -93,45 +93,47 @@ if create_service azure-sqldb StandardS0 "${MASB_SQLDB_INSTANCE_NAME}" "${MASB_D
             cf restart cloud-service-broker
 
             SUBSUMED_INSTANCE_NAME=masb-sql-db-subsume-test-$$
-            echo "********** When CSB subsumes the failover group **********"
+            print_log_message "When CSB subsumes the failover group"
             if create_service csb-azure-mssql-db-failover-group subsume "${SUBSUMED_INSTANCE_NAME}" "${SUBSUME_CONFIG}"; then
 
-                    echo "********** The db can be bound and works **********"
-                    if "${SCRIPT_DIR}/../cf-run-spring-music-test.sh" "${SUBSUMED_INSTANCE_NAME}"; then
-                    echo "subsumed masb fog instance test successful"
+                print_log_message "The db can be bound and works"
+                if "${SCRIPT_DIR}/../cf-run-spring-music-test.sh" "${SUBSUMED_INSTANCE_NAME}"; then
+                  print_log_message "subsumed masb fog instance test successful"
 
-                    if "${SCRIPT_DIR}/../cf-run-spring-music-test.sh" "${SUBSUMED_INSTANCE_NAME}" medium; then
-                        echo "********** AND The subsume plan cannot be updated **********"
-                        if update_service_plan "${SUBSUMED_INSTANCE_NAME}" subsume; then
-                            cf service "${SUBSUMED_INSTANCE_NAME}"
-                            echo "should not have been able to update to subsume plan"
-                        else
-                            echo "subsumed masb fog instance update test successful"
-                            RESULT=0
-                        fi
-                    else
-                        echo "updated subsumed masb fog instance test failed"
-                    fi
+                  print_log_message "AND Plan updates work fine"
+                  if "${SCRIPT_DIR}/../cf-run-spring-music-test.sh" "${SUBSUMED_INSTANCE_NAME}" medium; then
+                      print_log_message "AND cannot update to the subsume plan"
+                      if update_service_plan "${SUBSUMED_INSTANCE_NAME}" subsume; then
+                          cf service "${SUBSUMED_INSTANCE_NAME}"
+                          print_log_message "failed: should not have been able to update to subsume plan"
+                      else
+                          print_log_message "success: plan update rejected as expected"
+                          print_log_message "setting return code to 0..."
+                          RESULT=0
+                      fi
+                  else
+                      print_log_message "failed: updating plan for subsumed instance to medium failed spring music test "${SUBSUMED_INSTANCE_NAME}""
+                  fi
                 else
-                    echo "subsumed masb fog instance test failed"
+                    print_log_message "failed: spring music test on subsumed masb fog instance "${SUBSUMED_INSTANCE_NAME}" test failed"
                 fi
-                echo "********** Teardown **********"
+                print_log_message "Teardown"
                 delete_service "${SUBSUMED_INSTANCE_NAME}" || cf purge-service-instance -f "${SUBSUMED_INSTANCE_NAME}"
             fi
-            echo "********** Teardown **********"
+            print_log_message "Teardown"
             cf unset-env cloud-service-broker GSB_SERVICE_CSB_AZURE_MSSQL_DB_FAILOVER_GROUP_PROVISION_DEFAULTS
             cf unset-env cloud-service-broker MSSQL_DB_FOG_SERVER_PAIR_CREDS
             cf restart cloud-service-broker
         else
-            echo "spring music test failed on masb fog"
+            print_log_message "failed: failed to bind service"
         fi
-        echo "********** Teardown **********"
+        print_log_message "Teardown"
         delete_service "${MASB_FOG_INSTANCE_NAME}" || cf purge-service-instance -f "${MASB_FOG_INSTANCE_NAME}"
         delete_service "${MASB_SQLDB_INSTANCE_NAME}" || cf purge-service-instance -f "${MASB_SQLDB_INSTANCE_NAME}"
     else
-      echo "********** Teardown **********"
-        delete_service "${MASB_SQLDB_INSTANCE_NAME}"
+      print_log_message "Teardown"
+      delete_service "${MASB_SQLDB_INSTANCE_NAME}"
     fi
 fi
-echo "********** Starting test masb-sql-fog-db with code: ${RESULT} **********"
+print_log_message "Finished test masb-sql-fog-db with code: ${RESULT}"
 exit ${RESULT}

@@ -180,3 +180,8 @@ bind_service_test() {
 
     return ${LOCAL_RESULT}
 }
+
+print_log_message() {
+  MSG=$1
+  echo "********** $MSG **********"
+}
