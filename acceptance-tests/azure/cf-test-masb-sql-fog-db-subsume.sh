@@ -4,7 +4,6 @@ set -e
 set -o nounset
 set -o pipefail
 
-print_log_message "Starting test masb-sql-fog-db"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 
 . "${SCRIPT_DIR}/../functions.sh"
@@ -13,6 +12,8 @@ if [ $# -lt 5 ]; then
     echo "usage: $0 <resource group> <primary server name> <secondary server name> <admin username> <admin password>"
     exit 1
 fi
+
+print_log_message "Starting test masb-sql-fog-db"
 
 SERVER_RESOURCE_GROUP=$1
 shift
