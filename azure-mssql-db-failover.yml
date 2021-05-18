@@ -90,6 +90,7 @@ provision:
                                  "azurerm_mssql_database.secondary_db.extended_auditing_policy",
                                  "azurerm_mssql_database.secondary_db.short_term_retention_policy",
                                  "azurerm_mssql_database.secondary_db.id", 
+                                 "azurerm_mssql_database.secondary_db.max_size_gb",
                                  "azurerm_mssql_database.secondary_db.threat_detection_policy",
                                  "azurerm_sql_failover_group.failover_group.id",
                                  "azurerm_sql_failover_group.failover_group.location",
