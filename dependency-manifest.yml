@@ -1,0 +1,35 @@
+# Copyright 2020 Pivotal Software, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http:#www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+dependencies:
+- name: terraform
+  version: 0.12.30
+  source: https://github.com/hashicorp/terraform/archive/v0.12.30.zip
+  source_sha256: d93afe75708f706f416a7968f65af8302ac9c492a21aa958ffb2202bd9390e4d
+- name: terraform-provider-azurerm
+  version: 2.33.0
+  source: https://github.com/terraform-providers/terraform-provider-azurerm/archive/v2.33.0.zip
+  souce_sha256: 35c0a627bda77f40c34b69def0e83b2fcd67a82716a787dd42a714101ce61795
+- name: terraform-provider-azurerm
+  version: 2.59.0
+  source: https://github.com/terraform-providers/terraform-provider-azurerm/archive/v2.59.0.zip
+  source_sha256: 2ae0c7f88388d3c85312697c33316a6169764da7b65067a96658aea67f348c9a
+- name: terraform-provider-random
+  version: 2.2.1
+  source: https://releases.hashicorp.com/terraform-provider-random/2.2.1/terraform-provider-random_2.2.1_linux_amd64.zip
+  source_sha256: 7fa7737661380d18cba3cdc71c4ec6f2fd281b9d61112f6b48d06ca8bbf97771
+- name: terraform-provider-postgresql
+  version: 1.5.0
+  source: https://github.com/terraform-providers/terraform-provider-postgresql/archive/v1.5.0.zip
+  source_sha256: 55fab82ee9c67b2880534cd09bb255b0ae70c82eccb474a4a674b60a41a0e108  
