@@ -51,7 +51,7 @@ resource "random_string" "random" {
 
 locals {
   resource_group = length(var.resource_group) == 0 ? format("rg-%s", var.instance_name) : var.resource_group
-  private_endpoint_enabled = length(var.private_endpoint_subnet_id) > 0 ? true : false
+  private_endpoint_enabled = var.private_endpoint_subnet_id == null || length(var.private_endpoint_subnet_id) > 0 ? true : false
 }
 
 resource "azurerm_resource_group" "azure-redis" {
