@@ -28,7 +28,10 @@ variable tls_min_version { type = string }
 variable maxmemory_policy { type = string }
 variable firewall_rules { type = list(list(string)) }
 variable subnet_id { type = string }
-variable private_endpoint_subnet_id { type = string }
+variable private_endpoint_subnet_id { 
+  type = string 
+  default = ""
+}
 variable private_dns_zone_ids { type = list(string) }
 
 provider "azurerm" {
@@ -51,7 +54,7 @@ resource "random_string" "random" {
 
 locals {
   resource_group = length(var.resource_group) == 0 ? format("rg-%s", var.instance_name) : var.resource_group
-  private_endpoint_enabled = var.private_endpoint_subnet_id == null || length(var.private_endpoint_subnet_id) > 0 ? true : false
+  private_endpoint_enabled = length(var.private_endpoint_subnet_id) > 0 ? true : false
 }
 
 resource "azurerm_resource_group" "azure-redis" {
