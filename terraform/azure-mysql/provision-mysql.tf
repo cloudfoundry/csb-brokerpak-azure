@@ -35,10 +35,7 @@ variable enable_threat_detection_policy { type = bool }
 variable threat_detection_policy_emails { type = list(string) }
 variable email_account_admins { type = bool }
 variable firewall_rules { type = list(list(string)) }
-variable private_endpoint_subnet_id { 
-  type = string 
-  default = ""
-}
+variable private_endpoint_subnet_id { type = string }
 variable private_dns_zone_ids { type = list(string) }
 
 
@@ -67,7 +64,7 @@ locals {
   sku_name = length(var.sku_name) == 0 ? local.instance_types[var.cores] : var.sku_name    
   resource_group = length(var.resource_group) == 0 ? format("rg-%s", var.instance_name) : var.resource_group
   tls_version = var.use_tls == true ? var.tls_min_version : "TLSEnforcementDisabled"
-  private_endpoint_enabled = length(var.private_endpoint_subnet_id) > 0 ? true : false
+  private_endpoint_enabled = var.private_endpoint_subnet_id == null ? false : length(var.private_endpoint_subnet_id) > 0 ? true : false
 }
 
 resource "azurerm_resource_group" "azure-msyql" {
