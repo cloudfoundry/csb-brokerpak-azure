@@ -43,11 +43,9 @@ terraform_binaries:
   source: https://releases.hashicorp.com/terraform-provider-null/2.1.2/terraform-provider-null_2.1.2_linux_amd64.zip
 - name: psqlcmd
   version: 0.1.0
-  source: https://packages.microsoft.com/config/rhel/7/packages-microsoft-prod.rpm
   url_template: ./tools/${name}/build/${name}_${version}_${os}_${arch}.zip
 - name: sqlfailover
   version: 0.1.0
-  source: https://packages.microsoft.com/config/rhel/7/packages-microsoft-prod.rpm
   url_template: ./tools/${name}/build/${name}_${version}_${os}_${arch}.zip  
 - name: terraform-provider-postgresql
   version: 1.5.0
