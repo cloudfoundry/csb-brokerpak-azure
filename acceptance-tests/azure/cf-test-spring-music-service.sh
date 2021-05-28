@@ -24,6 +24,8 @@ UPDATE_SERVICES=("csb-azure-mysql" "csb-azure-mssql" "csb-azure-mssql-failover-g
 for s in "${UPDATE_SERVICES[@]}"; do
     if [ "${s}" == "csb-azure-mssql-failover-group" ]; then
         plan="small-v2"
+    elif [ "${s}" == "csb-azure-mssql" ]; then
+        plan="small-v2"
     else
         plan="small"
     fi
