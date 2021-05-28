@@ -23,8 +23,8 @@ support_url: https://docs.microsoft.com/en-us/azure/sql-database/
 tags: [azure, mssql, sqlserver, preview]
 plan_updateable: true
 plans:
-- name: small
-  id: a556d1b4-5825-11ea-adb8-00155d4dfe6c
+- name: small-v2
+  id: 99ed044a-bf9b-11eb-a49a-e347783607d6
   description: 'SQL Server latest version. Instance properties: General Purpose - Serverless ; 0.5 - 2 cores ; Max Memory: 6gb ; 50 GB storage ; auto-pause enabled after 1 hour of inactivity'
   display_name: "Small"
   properties:
@@ -238,7 +238,7 @@ bind:
 examples:
 - name: azuresql-db-small-configuration
   description: Create a small Azure SQL Database in westcentralus location
-  plan_id: a556d1b4-5825-11ea-adb8-00155d4dfe6c
+  plan_id: 99ed044a-bf9b-11eb-a49a-e347783607d6
   provision_params: {"location": "eastus"}
   bind_params: {}
   bind_can_fail: true  
