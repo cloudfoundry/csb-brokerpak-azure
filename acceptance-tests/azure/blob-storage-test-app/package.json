@@ -14,7 +14,7 @@
   "author": "Ernie Billing",
   "license": "Apache-2.0",
   "dependencies": {
-    "@azure/storage-blob": "^12.5.0",
+    "@azure/storage-blob": "^12.6.0",
     "restify": "^8.5.1",
     "vcap_services": "^0.7.1"
   }
