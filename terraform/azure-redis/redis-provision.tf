@@ -93,6 +93,7 @@ resource "azurerm_private_endpoint" "private_endpoint" {
   location            = var.location
   resource_group_name = var.resource_group
   subnet_id           = var.private_endpoint_subnet_id
+  tags                = var.labels
   count = local.private_endpoint_enabled ? 1 : 0
 
   private_service_connection {
