@@ -84,12 +84,20 @@ cloud-service-broker:
 	mv ./cloud-service-broker.linux ./cloud-service-broker
 	chmod +x ./cloud-service-broker
 
+local-cloud-service-broker:
+	cp ../cloud-service-broker/build/cloud-service-broker.linux ./cloud-service-broker
+	chmod +x cloud-service-broker
+
 APP_NAME := $(or $(APP_NAME), cloud-service-broker)
 DB_TLS := $(or $(DB_TLS), skip-verify)
 GSB_PROVISION_DEFAULTS := $(or $(GSB_PROVISION_DEFAULTS), {"resource_group": "broker-cf-test"})
 
 .PHONY: push-broker
 push-broker: cloud-service-broker build arm-subscription-id arm-tenant-id arm-client-id arm-client-secret
+	MANIFEST=cf-manifest.yml APP_NAME=$(APP_NAME) DB_TLS=$(DB_TLS) GSB_PROVISION_DEFAULTS='$(GSB_PROVISION_DEFAULTS)' ./scripts/push-broker.sh
+
+.PHONY: push-local-broker
+push-local-broker: local-cloud-service-broker build arm-subscription-id arm-tenant-id arm-client-id arm-client-secret ## push the broker with this brokerpak
 	MANIFEST=cf-manifest.yml APP_NAME=$(APP_NAME) DB_TLS=$(DB_TLS) GSB_PROVISION_DEFAULTS='$(GSB_PROVISION_DEFAULTS)' ./scripts/push-broker.sh
 
 .PHONY: clean
