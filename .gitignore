@@ -2,3 +2,4 @@
 tools/sqlfailover/build/
 tools/psqlcmd/build/
 cloud-service-broker
+.idea
