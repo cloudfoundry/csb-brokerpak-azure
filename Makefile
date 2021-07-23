@@ -93,7 +93,7 @@ DB_TLS := $(or $(DB_TLS), skip-verify)
 GSB_PROVISION_DEFAULTS := $(or $(GSB_PROVISION_DEFAULTS), {"resource_group": "broker-cf-test"})
 
 .PHONY: push-broker
-push-broker: cloud-service-broker build arm-subscription-id arm-tenant-id arm-client-id arm-client-secret
+push-broker: cloud-service-broker build arm-subscription-id arm-tenant-id arm-client-id arm-client-secret ## push the broker to targetted Cloud Foundry
 	MANIFEST=cf-manifest.yml APP_NAME=$(APP_NAME) DB_TLS=$(DB_TLS) GSB_PROVISION_DEFAULTS='$(GSB_PROVISION_DEFAULTS)' ./scripts/push-broker.sh
 
 .PHONY: push-local-broker
@@ -101,7 +101,7 @@ push-local-broker: local-cloud-service-broker build arm-subscription-id arm-tena
 	MANIFEST=cf-manifest.yml APP_NAME=$(APP_NAME) DB_TLS=$(DB_TLS) GSB_PROVISION_DEFAULTS='$(GSB_PROVISION_DEFAULTS)' ./scripts/push-broker.sh
 
 .PHONY: clean
-clean:
+clean: ## clean up build artifacts
 	- rm $(IAAS)-services-*.brokerpak
 	- rm ./cloud-service-broker
 	- rm ./brokerpak-user-docs.md
