@@ -14,7 +14,7 @@ RESULT=1
 INSTANCES=()
 UPDATE_INSTANCES=()
 
-SERVICES=("csb-azure-redis")
+SERVICES=()
 for s in "${SERVICES[@]}"; do
     create_service "${s}" small "${s}-$$" &
     INSTANCES+=("${s}-$$")
