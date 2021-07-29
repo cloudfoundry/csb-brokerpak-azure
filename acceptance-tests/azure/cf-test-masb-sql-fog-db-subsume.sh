@@ -32,7 +32,7 @@ DB_NAME=subsume-db-${MASB_ID}
 
 RESULT=1
 
-MASB_SQLDB_INSTANCE_NAME=mssql-db-${MASB_ID}
+MASB_SQLDB_INSTANCE_NAME=mssql-fog-db-${MASB_ID}
 MASB_DB_CONFIG="{ \
   \"sqlServerName\": \"${PRIMARY_SERVER_NAME}\", \
   \"sqldbName\": \"${DB_NAME}\", \
