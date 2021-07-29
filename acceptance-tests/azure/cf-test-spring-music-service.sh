@@ -34,9 +34,7 @@ for s in "${UPDATE_SERVICES[@]}"; do
     UPDATE_INSTANCES+=("${s}-$$")
 done
 
-create_service csb-azure-mongodb small csb-azure-mongodb-$$ "{ \"db_name\": \"musicdb\", \"collection_name\": \"album\", \"shard_key\": \"_id\"}" &
-
-INSTANCES+=("csb-azure-mongodb-$$")
+INSTANCES+=()
 
 NO_TLS_SERVICES=("csb-azure-mysql" "csb-azure-postgresql")
 
