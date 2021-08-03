@@ -2,38 +2,32 @@ package credentials
 
 import (
 	"fmt"
-	"os"
 
-	"code.cloudfoundry.org/jsonry"
+	"github.com/cloudfoundry-community/go-cfenv"
+	"github.com/mitchellh/mapstructure"
 )
 
 func Read() (string, error) {
-	const variable = "VCAP_SERVICES"
-
-	type MongoDBService struct {
-		URI string `jsonry:"credentials.uri"`
+	app, err := cfenv.Current()
+	if err != nil {
+		return "", fmt.Errorf("error reading app env: %w", err)
+	}
+	svs, err := app.Services.WithTag("mongodb")
+	if err != nil {
+		return "", fmt.Errorf("error reading MongoDB service details")
 	}
 
-	var services struct {
-		MongoDBServices []MongoDBService `jsonry:"csb-azure-mongodb"`
+	var m struct {
+		URI string `mapstructure:"uri"`
 	}
 
-	if err := jsonry.Unmarshal([]byte(os.Getenv(variable)), &services); err != nil {
-		return "", fmt.Errorf("failed to parse %q: %w", variable, err)
+	if err := mapstructure.Decode(svs[0].Credentials, &m); err != nil {
+		return "", fmt.Errorf("failed to decode credentials: %w", err)
 	}
 
-	switch len(services.MongoDBServices) {
-	case 1: // ok
-	case 0:
-		return "", fmt.Errorf("unable to find `csb-azure-mongodb` in %q", variable)
-	default:
-		return "", fmt.Errorf("more than one entry for `csb-azure-mongodb` in %q", variable)
+	if m.URI == "" {
+		return "", fmt.Errorf("parsed credentials are not valid")
 	}
 
-	uri := services.MongoDBServices[0].URI
-	if uri == "" {
-		return "", fmt.Errorf("parsed credentials are not valid: %s", os.Getenv(variable))
-	}
-
-	return uri, nil
+	return m.URI, nil
 }
