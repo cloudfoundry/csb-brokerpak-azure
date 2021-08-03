@@ -2,6 +2,7 @@ package helpers
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -30,7 +31,17 @@ func HTTPPost(url, data string) {
 	fmt.Fprintf(GinkgoWriter, "Sending data: %s\n", data)
 	response, err := http.Post(url, "text/html", strings.NewReader(data))
 	Expect(err).NotTo(HaveOccurred())
-	Expect(response).To(HaveHTTPStatus(http.StatusCreated))
+	Expect(response).To(SatisfyAny(HaveHTTPStatus(http.StatusCreated), HaveHTTPStatus(http.StatusOK)))
+}
+
+func HTTPPostJSON(url string, data interface{}) {
+	payload, err := json.Marshal(data)
+	Expect(err).NotTo(HaveOccurred())
+	fmt.Fprintf(GinkgoWriter, "HTTP POST: %s\n", url)
+	fmt.Fprintf(GinkgoWriter, "Sending JSON data: %s\n", string(payload))
+	response, err := http.Post(url, "application/json", bytes.NewReader(payload))
+	Expect(err).NotTo(HaveOccurred())
+	Expect(response).To(SatisfyAny(HaveHTTPStatus(http.StatusCreated), HaveHTTPStatus(http.StatusOK)))
 }
 
 func HTTPPostFile(url string, fileContent []byte) {
