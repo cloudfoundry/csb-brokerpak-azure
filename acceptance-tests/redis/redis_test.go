@@ -27,8 +27,8 @@ var _ = Describe("Redis", func() {
 		defer os.RemoveAll(appDir)
 
 		By("pushing the unstarted app twice")
-		appOne := helpers.AppPushUnstarted("redis", appDir)
-		appTwo := helpers.AppPushUnstarted("redis", appDir)
+		appOne := helpers.AppPushUnstartedBinaryBuildpack("redis", appDir)
+		appTwo := helpers.AppPushUnstartedBinaryBuildpack("redis", appDir)
 		defer helpers.AppDelete(appOne, appTwo)
 
 		By("binding the apps to the Redis service instance")
