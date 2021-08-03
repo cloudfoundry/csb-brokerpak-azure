@@ -1,46 +1,41 @@
 package credentials
 
 import (
-	"code.cloudfoundry.org/jsonry"
 	"crypto/tls"
 	"fmt"
+
+	"github.com/cloudfoundry-community/go-cfenv"
 	"github.com/go-redis/redis/v8"
-	"os"
+	"github.com/mitchellh/mapstructure"
 )
 
 func Read() (*redis.Options, error) {
-	const variable = "VCAP_SERVICES"
-
-	type RedisService struct {
-		Host     string `jsonry:"credentials.host"`
-		Password string `jsonry:"credentials.password"`
-		TLSPort  int    `jsonry:"credentials.tls_port"`
+	app, err := cfenv.Current()
+	if err != nil {
+		return nil, fmt.Errorf("error reading app env: %w", err)
+	}
+	svs, err := app.Services.WithTag("redis")
+	if err != nil {
+		return nil, fmt.Errorf("error reading Redis service details")
 	}
 
-	var services struct {
-		RedisServices []RedisService `jsonry:"csb-azure-redis"`
+	var r struct {
+		Host     string `mapstructure:"host"`
+		Password string `mapstructure:"password"`
+		TLSPort  int    `mapstructure:"tls_port"`
 	}
 
-	if err := jsonry.Unmarshal([]byte(os.Getenv(variable)), &services); err != nil {
-		return nil, fmt.Errorf("failed to parse %q: %w", variable, err)
+	if err := mapstructure.Decode(svs[0].Credentials, &r); err != nil {
+		return nil, fmt.Errorf("failed to decode credentials: %w", err)
 	}
 
-	switch len(services.RedisServices) {
-	case 1: // ok
-	case 0:
-		return nil, fmt.Errorf("unable to find `csb-azure-redis` in %q", variable)
-	default:
-		return nil, fmt.Errorf("more than one entry for `csb-azure-redis` in %q", variable)
-	}
-
-	r := services.RedisServices[0]
 	if r.Host == "" || r.Password == "" || r.TLSPort == 0 {
-		return nil, fmt.Errorf("parsed credentials are not valid: %s", os.Getenv(variable))
+		return nil, fmt.Errorf("parsed credentials are not valid")
 	}
 
 	return &redis.Options{
-		Addr:      fmt.Sprintf("%s:%d", services.RedisServices[0].Host, services.RedisServices[0].TLSPort),
-		Password:  services.RedisServices[0].Password,
+		Addr:      fmt.Sprintf("%s:%d", r.Host, r.TLSPort),
+		Password:  r.Password,
 		DB:        0,
 		TLSConfig: &tls.Config{},
 	}, nil
