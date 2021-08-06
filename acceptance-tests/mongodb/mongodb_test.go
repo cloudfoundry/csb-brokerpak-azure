@@ -67,7 +67,7 @@ var _ = Describe("MongoDB", func() {
 		By("creating a document using the first app")
 		documentName := helpers.RandomString()
 		documentData := helpers.RandomString()
-		helpers.HTTPPost(fmt.Sprintf("%s/%s/%s/%s", appOneURL, databaseName, collectionName, documentName), documentData)
+		helpers.HTTPPut(fmt.Sprintf("%s/%s/%s/%s", appOneURL, databaseName, collectionName, documentName), documentData)
 
 		By("getting the document using the second app")
 		got := helpers.HTTPGet(fmt.Sprintf("http://%s.%s/%s/%s/%s", appTwo, helpers.DefaultSharedDomain(), databaseName, collectionName, documentName))

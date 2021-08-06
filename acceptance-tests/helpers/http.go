@@ -53,6 +53,16 @@ func HTTPPostFile(url string, fileContent []byte) {
 	Expect(response).To(HaveHTTPStatus(http.StatusCreated))
 }
 
+func HTTPPut(url, data string) {
+	fmt.Fprintf(GinkgoWriter, "HTTP PUT: %s\n", url)
+	fmt.Fprintf(GinkgoWriter, "Sending data: %s\n", data)
+	request, err := http.NewRequest(http.MethodPut, url, strings.NewReader(data))
+	request.Header.Set("Content-Type", "text/html")
+	response, err := http.DefaultClient.Do(request)
+	Expect(err).NotTo(HaveOccurred())
+	Expect(response).To(SatisfyAny(HaveHTTPStatus(http.StatusCreated), HaveHTTPStatus(http.StatusOK)))
+}
+
 func HTTPDelete(url string) {
 	fmt.Fprintf(GinkgoWriter, "HTTP DELETE: %s\n", url)
 	request, err := http.NewRequest(http.MethodDelete, url, nil)
