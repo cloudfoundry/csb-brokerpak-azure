@@ -20,7 +20,7 @@ for s in "${SERVICES[@]}"; do
     INSTANCES+=("${s}-$$")
 done
 
-UPDATE_SERVICES=("csb-azure-mssql" "csb-azure-mssql-failover-group" "csb-azure-postgresql")
+UPDATE_SERVICES=("csb-azure-mssql" "csb-azure-mssql-failover-group")
 for s in "${UPDATE_SERVICES[@]}"; do
     if [ "${s}" == "csb-azure-mssql-failover-group" ]; then
         plan="small-v2"
@@ -36,7 +36,7 @@ done
 
 INSTANCES+=()
 
-NO_TLS_SERVICES=("csb-azure-postgresql")
+NO_TLS_SERVICES=()
 
 for s in "${NO_TLS_SERVICES[@]}"; do
     create_service "${s}" small "${s}-no-tls-$$" "{\"use_tls\":false}" &
