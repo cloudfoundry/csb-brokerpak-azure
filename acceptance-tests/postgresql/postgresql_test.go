@@ -10,15 +10,14 @@ import (
 )
 
 var _ = Describe("PostgreSQL", func() {
-	var serviceInstanceName string
+	var serviceInstance helpers.ServiceInstance
 
 	BeforeEach(func() {
-		serviceInstanceName = helpers.RandomName("postgresql")
-		helpers.CreateService("csb-azure-postgresql", "small", serviceInstanceName)
+		serviceInstance = helpers.CreateService("csb-azure-postgresql", "small")
 	})
 
 	AfterEach(func() {
-		helpers.DeleteService(serviceInstanceName)
+		serviceInstance.Delete()
 	})
 
 	It("can be accessed by an app", func() {
@@ -32,15 +31,14 @@ var _ = Describe("PostgreSQL", func() {
 		defer helpers.AppDelete(appOne, appTwo)
 
 		By("binding the apps to the service instance")
-		bindingName := helpers.Bind(appOne, serviceInstanceName)
-		helpers.Bind(appTwo, serviceInstanceName)
+		binding := serviceInstance.Bind(appOne)
+		serviceInstance.Bind(appTwo)
 
 		By("starting the apps")
 		helpers.AppStart(appOne, appTwo)
 
 		By("checking that the app environment has a credhub reference for credentials")
-		creds := helpers.GetBindingCredential(appOne, "csb-azure-postgresql", bindingName)
-		Expect(creds).To(HaveKey("credhub-ref"))
+		Expect(binding.Credential()).To(helpers.HaveCredHubRef)
 
 		By("setting a key-value using the first app")
 		key := helpers.RandomString()

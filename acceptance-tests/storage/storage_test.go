@@ -10,18 +10,17 @@ import (
 
 var _ = Describe("Storage", func() {
 	var (
-		serviceInstanceName string
-		collectionName      string
+		serviceInstance helpers.ServiceInstance
+		collectionName  string
 	)
 
 	BeforeEach(func() {
-		serviceInstanceName = helpers.RandomName("storage")
 		collectionName = helpers.RandomName("collection")
-		helpers.CreateService("csb-azure-storage-account", "standard", serviceInstanceName)
+		serviceInstance = helpers.CreateService("csb-azure-storage-account", "standard")
 	})
 
 	AfterEach(func() {
-		helpers.DeleteService(serviceInstanceName)
+		serviceInstance.Delete()
 	})
 
 	It("can be accessed by an app", func() {
@@ -31,15 +30,14 @@ var _ = Describe("Storage", func() {
 		defer helpers.AppDelete(appOne, appTwo)
 
 		By("binding the apps to the storage service instance")
-		bindingName := helpers.Bind(appOne, serviceInstanceName)
-		helpers.Bind(appTwo, serviceInstanceName)
+		binding := serviceInstance.Bind(appOne)
+		serviceInstance.Bind(appTwo)
 
 		By("starting the apps")
 		helpers.AppStart(appOne, appTwo)
 
 		By("checking that the app environment has a credhub reference for credentials")
-		creds := helpers.GetBindingCredential(appOne, "csb-azure-storage-account", bindingName)
-		Expect(creds).To(HaveKey("credhub-ref"))
+		Expect(binding.Credential()).To(helpers.HaveCredHubRef)
 
 		appOneURL := fmt.Sprintf("http://%s.%s", appOne, helpers.DefaultSharedDomain())
 		By("creating a collection")
