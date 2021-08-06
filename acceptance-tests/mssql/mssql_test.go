@@ -14,7 +14,7 @@ var _ = Describe("MSSQL", func() {
 
 	BeforeEach(func() {
 		serviceInstanceName = helpers.RandomName("mssql")
-		helpers.CreateService("csb-azure-mssql", "small", serviceInstanceName)
+		helpers.CreateService("csb-azure-mssql", "small-v2", serviceInstanceName)
 	})
 
 	AfterEach(func() {
