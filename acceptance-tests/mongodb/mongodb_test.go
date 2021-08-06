@@ -2,7 +2,6 @@ package mongodb_test
 
 import (
 	"acceptancetests/helpers"
-	"encoding/json"
 	"fmt"
 	"os"
 
@@ -12,26 +11,23 @@ import (
 
 var _ = Describe("MongoDB", func() {
 	var (
-		serviceInstanceName string
-		databaseName        string
-		collectionName      string
+		serviceInstance helpers.ServiceInstance
+		databaseName    string
+		collectionName  string
 	)
 
 	BeforeEach(func() {
-		serviceInstanceName = helpers.RandomName("mongodb")
 		databaseName = helpers.RandomName("database")
 		collectionName = helpers.RandomName("collection")
-		params, err := json.Marshal(map[string]interface{}{
+		serviceInstance = helpers.CreateService("csb-azure-mongodb", "small", map[string]interface{}{
 			"db_name":         databaseName,
 			"collection_name": collectionName,
 			"shard_key":       "_id",
 		})
-		Expect(err).NotTo(HaveOccurred())
-		helpers.CreateService("csb-azure-mongodb", "small", serviceInstanceName, string(params))
 	})
 
 	AfterEach(func() {
-		helpers.DeleteService(serviceInstanceName)
+		serviceInstance.Delete()
 	})
 
 	It("can be accessed by an app", func() {
@@ -45,15 +41,14 @@ var _ = Describe("MongoDB", func() {
 		defer helpers.AppDelete(appOne, appTwo)
 
 		By("binding the apps to the MongoDB service instance")
-		bindingName := helpers.Bind(appOne, serviceInstanceName)
-		helpers.Bind(appTwo, serviceInstanceName)
+		binding := serviceInstance.Bind(appOne)
+		serviceInstance.Bind(appTwo)
 
 		By("starting the apps")
 		helpers.AppStart(appOne, appTwo)
 
 		By("checking that the app environment has a credhub reference for credentials")
-		creds := helpers.GetBindingCredential(appOne, "csb-azure-mongodb", bindingName)
-		Expect(creds).To(HaveKey("credhub-ref"))
+		Expect(binding.Credential()).To(helpers.HaveCredHubRef)
 
 		appOneURL := fmt.Sprintf("http://%s.%s", appOne, helpers.DefaultSharedDomain())
 		By("checking that the specified database has been created")

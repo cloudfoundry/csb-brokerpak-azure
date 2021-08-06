@@ -2,7 +2,6 @@ package cosmosdb_test
 
 import (
 	"acceptancetests/helpers"
-	"encoding/json"
 	"fmt"
 
 	. "github.com/onsi/ginkgo"
@@ -11,24 +10,21 @@ import (
 
 var _ = Describe("CosmosDB", func() {
 	var (
-		serviceInstanceName string
-		databaseName        string
-		collectionName      string
+		serviceInstance helpers.ServiceInstance
+		databaseName    string
+		collectionName  string
 	)
 
 	BeforeEach(func() {
-		serviceInstanceName = helpers.RandomName("cosmosdb")
 		databaseName = helpers.RandomName("database")
 		collectionName = helpers.RandomName("collection")
-		params, err := json.Marshal(map[string]interface{}{
+		serviceInstance = helpers.CreateService("csb-azure-cosmosdb-sql", "small", map[string]interface{}{
 			"db_name": databaseName,
 		})
-		Expect(err).NotTo(HaveOccurred())
-		helpers.CreateService("csb-azure-cosmosdb-sql", "small", serviceInstanceName, string(params))
 	})
 
 	AfterEach(func() {
-		helpers.DeleteService(serviceInstanceName)
+		serviceInstance.Delete()
 	})
 
 	It("can be accessed by an app", func() {
@@ -38,15 +34,14 @@ var _ = Describe("CosmosDB", func() {
 		defer helpers.AppDelete(appOne, appTwo)
 
 		By("binding the apps to the CosmosDB service instance")
-		bindingName := helpers.Bind(appOne, serviceInstanceName)
-		helpers.Bind(appTwo, serviceInstanceName)
+		binding := serviceInstance.Bind(appOne)
+		serviceInstance.Bind(appTwo)
 
 		By("starting the apps")
 		helpers.AppStart(appOne, appTwo)
 
 		By("checking that the app environment has a credhub reference for credentials")
-		creds := helpers.GetBindingCredential(appOne, "csb-azure-cosmosdb-sql", bindingName)
-		Expect(creds).To(HaveKey("credhub-ref"))
+		Expect(binding.Credential()).To(helpers.HaveCredHubRef)
 
 		appOneURL := fmt.Sprintf("http://%s.%s", appOne, helpers.DefaultSharedDomain())
 		By("checking that the specified database has been created")
