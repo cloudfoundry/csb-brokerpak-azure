@@ -13,6 +13,10 @@ func RandomName(prefixes ...string) string {
 	return strings.Join(append(prefixes, randomdata.Adjective(), randomdata.Noun()), "-")
 }
 
+func RandomShortName(prefixes ...string) string {
+	return randomdata.Noun()
+}
+
 func RandomString() string {
 	const length = 10
 	buf := make([]byte, length)
