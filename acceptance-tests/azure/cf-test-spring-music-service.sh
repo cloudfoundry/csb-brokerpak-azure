@@ -20,7 +20,7 @@ for s in "${SERVICES[@]}"; do
     INSTANCES+=("${s}-$$")
 done
 
-UPDATE_SERVICES=("csb-azure-mssql" "csb-azure-mssql-failover-group")
+UPDATE_SERVICES=("csb-azure-mssql-failover-group")
 for s in "${UPDATE_SERVICES[@]}"; do
     if [ "${s}" == "csb-azure-mssql-failover-group" ]; then
         plan="small-v2"

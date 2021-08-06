@@ -70,5 +70,5 @@ func HTTPDelete(url string) {
 
 	response, err := http.DefaultClient.Do(request)
 	Expect(err).NotTo(HaveOccurred())
-	Expect(response).To(HaveHTTPStatus(http.StatusGone))
+	Expect(response).To(SatisfyAny(HaveHTTPStatus(http.StatusGone), HaveHTTPStatus(http.StatusNoContent)))
 }
