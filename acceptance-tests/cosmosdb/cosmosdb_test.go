@@ -54,18 +54,12 @@ var _ = Describe("CosmosDB", func() {
 		Expect(databases).To(MatchJSON(fmt.Sprintf(`["%s"]`, databaseName)))
 
 		By("creating a collection")
-		helpers.HTTPPostJSON(
-			fmt.Sprintf("%s/%s", appOneURL, databaseName),
-			map[string]interface{}{"id": collectionName},
-		)
+		helpers.HTTPPut(fmt.Sprintf("%s/%s/%s", appOneURL, databaseName, collectionName), "")
 
 		By("creating a document using the first app")
 		documentName := helpers.RandomString()
 		documentData := helpers.RandomString()
-		helpers.HTTPPostJSON(
-			fmt.Sprintf("%s/%s/%s", appOneURL, databaseName, collectionName),
-			map[string]interface{}{"name": documentName, "data": documentData},
-		)
+		helpers.HTTPPut(fmt.Sprintf("%s/%s/%s/%s", appOneURL, databaseName, collectionName, documentName), documentData)
 
 		By("getting the document using the second app")
 		got := helpers.HTTPGet(fmt.Sprintf("http://%s.%s/%s/%s/%s", appTwo, helpers.DefaultSharedDomain(), databaseName, collectionName, documentName))

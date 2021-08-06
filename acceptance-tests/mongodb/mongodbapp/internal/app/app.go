@@ -24,7 +24,7 @@ func App(uri string) *mux.Router {
 	r.HandleFunc("/", handleListDatabases(client)).Methods("GET")
 	r.HandleFunc("/{database}", handleListCollections(client)).Methods("GET")
 	r.HandleFunc("/{database}/{collection}/{document}", handleFetchDocument(client)).Methods("GET")
-	r.HandleFunc("/{database}/{collection}/{document}", handleStoreDocument(client)).Methods("POST")
+	r.HandleFunc("/{database}/{collection}/{document}", handleStoreDocument(client)).Methods("PUT")
 
 	return r
 }

@@ -45,7 +45,7 @@ var _ = Describe("PostgreSQL", func() {
 		By("setting a key-value using the first app")
 		key := helpers.RandomString()
 		value := helpers.RandomString()
-		helpers.HTTPPost(fmt.Sprintf("http://%s.%s/%s", appOne, helpers.DefaultSharedDomain(), key), value)
+		helpers.HTTPPut(fmt.Sprintf("http://%s.%s/%s", appOne, helpers.DefaultSharedDomain(), key), value)
 
 		By("getting the value using the first app")
 		got := helpers.HTTPGet(fmt.Sprintf("http://%s.%s/%s", appOne, helpers.DefaultSharedDomain(), key))

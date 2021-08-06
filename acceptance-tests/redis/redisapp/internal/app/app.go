@@ -13,7 +13,7 @@ func App(options *redis.Options) *mux.Router {
 	r := mux.NewRouter()
 
 	r.HandleFunc("/", aliveness).Methods("HEAD", "GET")
-	r.HandleFunc("/{key}", handleSet(client)).Methods("POST")
+	r.HandleFunc("/{key}", handleSet(client)).Methods("PUT")
 	r.HandleFunc("/{key}", handleGet(client)).Methods("GET")
 
 	return r
