@@ -9,7 +9,8 @@ import (
 )
 
 type ServiceInstance struct {
-	name string
+	offering string
+	name     string
 }
 
 func CreateService(offering, plan string, parameters ...interface{}) ServiceInstance {
@@ -24,7 +25,10 @@ func CreateService(offering, plan string, parameters ...interface{}) ServiceInst
 		return out
 	}, 30*time.Minute, 30*time.Second).Should(MatchRegexp(`status:\s+create succeeded`))
 
-	return ServiceInstance{name: name}
+	return ServiceInstance{
+		name:     name,
+		offering: offering,
+	}
 }
 
 func (s ServiceInstance) Delete() {
