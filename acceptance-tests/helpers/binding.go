@@ -28,8 +28,8 @@ func (b Binding) Credential() interface{} {
 	Expect(err).NotTo(HaveOccurred())
 
 	Expect(receiver.Services).NotTo(BeEmpty())
-	Expect(receiver.Services).To(HaveKey(b.serviceInstance.name))
-	bindings := receiver.Services[b.serviceInstance.name]
+	Expect(receiver.Services).To(HaveKey(b.serviceInstance.offering))
+	bindings := receiver.Services[b.serviceInstance.offering]
 	Expect(bindings).To(BeAssignableToTypeOf([]interface{}{}))
 	Expect(bindings).NotTo(BeEmpty())
 
