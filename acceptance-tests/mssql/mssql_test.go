@@ -1,32 +1,22 @@
 package mssql_test
 
 import (
+	"acceptancetests/apps"
 	"acceptancetests/helpers"
-	"os"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
 
 var _ = Describe("MSSQL", func() {
-	var serviceInstance helpers.ServiceInstance
-
-	BeforeEach(func() {
-		serviceInstance = helpers.CreateService("csb-azure-mssql", "small-v2")
-	})
-
-	AfterEach(func() {
-		serviceInstance.Delete()
-	})
-
 	It("can be accessed by an app", func() {
-		By("building the app")
-		appDir := helpers.AppBuild("./mssqlapp")
-		defer os.RemoveAll(appDir)
+		By("creating a service instance")
+		serviceInstance := helpers.CreateService("csb-azure-mssql", "small-v2")
+		defer serviceInstance.Delete()
 
 		By("pushing the unstarted app twice")
-		appOne := helpers.AppPushUnstartedBinaryBuildpack("mssql", appDir)
-		appTwo := helpers.AppPushUnstartedBinaryBuildpack("mssql", appDir)
+		appOne := helpers.AppPushUnstarted(apps.MSSQL)
+		appTwo := helpers.AppPushUnstarted(apps.MSSQL)
 		defer helpers.AppDelete(appOne, appTwo)
 
 		By("binding the apps to the service instance")

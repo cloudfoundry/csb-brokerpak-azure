@@ -1,43 +1,29 @@
 package mongodb_test
 
 import (
+	"acceptancetests/apps"
 	"acceptancetests/helpers"
 	"fmt"
-	"os"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
 
 var _ = Describe("MongoDB", func() {
-	var (
-		serviceInstance helpers.ServiceInstance
-		databaseName    string
-		collectionName  string
-	)
-
-	BeforeEach(func() {
-		databaseName = helpers.RandomName("database")
-		collectionName = helpers.RandomName("collection")
-		serviceInstance = helpers.CreateService("csb-azure-mongodb", "small", map[string]interface{}{
+	It("can be accessed by an app", func() {
+		By("creating a service instance")
+		databaseName := helpers.RandomName("database")
+		collectionName := helpers.RandomName("collection")
+		serviceInstance := helpers.CreateService("csb-azure-mongodb", "small", map[string]interface{}{
 			"db_name":         databaseName,
 			"collection_name": collectionName,
 			"shard_key":       "_id",
 		})
-	})
-
-	AfterEach(func() {
-		serviceInstance.Delete()
-	})
-
-	It("can be accessed by an app", func() {
-		By("building the app")
-		appDir := helpers.AppBuild("./mongodbapp")
-		defer os.RemoveAll(appDir)
+		defer serviceInstance.Delete()
 
 		By("pushing the unstarted app twice")
-		appOne := helpers.AppPushUnstartedBinaryBuildpack("mongodb", appDir)
-		appTwo := helpers.AppPushUnstartedBinaryBuildpack("mongodb", appDir)
+		appOne := helpers.AppPushUnstarted(apps.MongoDB)
+		appTwo := helpers.AppPushUnstarted(apps.MongoDB)
 		defer helpers.AppDelete(appOne, appTwo)
 
 		By("binding the apps to the MongoDB service instance")
