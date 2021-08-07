@@ -10,7 +10,7 @@ const (
 	MongoDB   AppCode = "mongodbapp"
 	MySQL     AppCode = "mysqlapp"
 	MSSQL     AppCode = "mssqlapp"
-	PostgeSQL AppCode = "postgresql"
+	PostgeSQL AppCode = "postgresqlapp"
 	Redis     AppCode = "redisapp"
 )
 
