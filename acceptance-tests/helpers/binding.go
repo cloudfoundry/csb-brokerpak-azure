@@ -12,11 +12,11 @@ import (
 type Binding struct {
 	serviceInstance ServiceInstance
 	bindingName     string
-	appName         string
+	appInstance     AppInstance
 }
 
 func (b Binding) Credential() interface{} {
-	out, _ := CF("app", "--guid", b.appName)
+	out, _ := CF("app", "--guid", b.appInstance.name)
 	guid := strings.TrimSpace(string(out))
 
 	env, _ := CF("curl", fmt.Sprintf("/v3/apps/%s/env", guid))

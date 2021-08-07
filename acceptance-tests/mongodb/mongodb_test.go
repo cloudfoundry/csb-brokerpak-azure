@@ -50,22 +50,21 @@ var _ = Describe("MongoDB", func() {
 		By("checking that the app environment has a credhub reference for credentials")
 		Expect(binding.Credential()).To(helpers.HaveCredHubRef)
 
-		appOneURL := fmt.Sprintf("http://%s.%s", appOne, helpers.DefaultSharedDomain())
 		By("checking that the specified database has been created")
-		databases := helpers.HTTPGet(appOneURL)
+		databases := appOne.GET("")
 		Expect(databases).To(MatchJSON(fmt.Sprintf(`["%s"]`, databaseName)))
 
 		By("checking that the specified collection has been created")
-		collections := helpers.HTTPGet(fmt.Sprintf("%s/%s", appOneURL, databaseName))
+		collections := appOne.GET(databaseName)
 		Expect(collections).To(MatchJSON(fmt.Sprintf(`["%s"]`, collectionName)))
 
 		By("creating a document using the first app")
 		documentName := helpers.RandomString()
 		documentData := helpers.RandomString()
-		helpers.HTTPPut(fmt.Sprintf("%s/%s/%s/%s", appOneURL, databaseName, collectionName, documentName), documentData)
+		appOne.PUT(documentData, "%s/%s/%s", databaseName, collectionName, documentName)
 
 		By("getting the document using the second app")
-		got := helpers.HTTPGet(fmt.Sprintf("http://%s.%s/%s/%s/%s", appTwo, helpers.DefaultSharedDomain(), databaseName, collectionName, documentName))
+		got := appTwo.GET("%s/%s/%s", databaseName, collectionName, documentName)
 		Expect(got).To(Equal(documentData))
 	})
 })

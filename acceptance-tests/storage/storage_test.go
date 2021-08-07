@@ -2,7 +2,6 @@ package storage_test
 
 import (
 	"acceptancetests/helpers"
-	"fmt"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -39,17 +38,16 @@ var _ = Describe("Storage", func() {
 		By("checking that the app environment has a credhub reference for credentials")
 		Expect(binding.Credential()).To(helpers.HaveCredHubRef)
 
-		appOneURL := fmt.Sprintf("http://%s.%s", appOne, helpers.DefaultSharedDomain())
 		By("creating a collection")
-		helpers.HTTPPut(fmt.Sprintf("%s/%s", appOneURL, collectionName), "")
+		appOne.PUT("", collectionName)
 
 		By("uploading a blob using the first app")
 		blobName := helpers.RandomString()
 		blobData := helpers.RandomString()
-		helpers.HTTPPut(fmt.Sprintf("%s/%s/%s", appOneURL, collectionName, blobName), blobData)
+		appOne.PUT(blobData, "%s/%s", collectionName, blobName)
 
 		By("downloading the blob using the second app")
-		got := helpers.HTTPGet(fmt.Sprintf("http://%s.%s/%s/%s", appTwo, helpers.DefaultSharedDomain(), collectionName, blobName))
+		got := appTwo.GET("%s/%s", collectionName, blobName)
 		Expect(got).To(Equal(blobData))
 	})
 })
