@@ -2,7 +2,6 @@ package postgresql_test
 
 import (
 	"acceptancetests/helpers"
-	"fmt"
 	"os"
 
 	. "github.com/onsi/ginkgo"
@@ -43,10 +42,10 @@ var _ = Describe("PostgreSQL", func() {
 		By("setting a key-value using the first app")
 		key := helpers.RandomString()
 		value := helpers.RandomString()
-		helpers.HTTPPut(fmt.Sprintf("http://%s.%s/%s", appOne, helpers.DefaultSharedDomain(), key), value)
+		appOne.PUT(value, key)
 
 		By("getting the value using the first app")
-		got := helpers.HTTPGet(fmt.Sprintf("http://%s.%s/%s", appOne, helpers.DefaultSharedDomain(), key))
+		got := appTwo.GET(key)
 		Expect(got).To(Equal(value))
 	})
 })

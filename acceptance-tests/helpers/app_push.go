@@ -9,7 +9,11 @@ import (
 	. "github.com/onsi/gomega/gexec"
 )
 
-func AppPushUnstartedBinaryBuildpack(prefix, appDir string) string {
+type AppInstance struct {
+	name string
+}
+
+func AppPushUnstartedBinaryBuildpack(prefix, appDir string) AppInstance {
 	name := RandomName(prefix)
 	session := StartCF("push", "--no-start", "-b", "binary_buildpack", "-p", appDir, name)
 	Eventually(session, 5*time.Minute).Should(Exit())
@@ -20,10 +24,10 @@ func AppPushUnstartedBinaryBuildpack(prefix, appDir string) string {
 		Fail("App failed to push")
 	}
 
-	return name
+	return AppInstance{name: name}
 }
 
-func AppPushUnstarted(prefix, appDir string) string {
+func AppPushUnstarted(prefix, appDir string) AppInstance {
 	name := RandomName(prefix)
 	session := StartCF("push", "--no-start", "-p", appDir, name)
 	Eventually(session, 5*time.Minute).Should(Exit())
@@ -34,5 +38,5 @@ func AppPushUnstarted(prefix, appDir string) string {
 		Fail("App failed to push")
 	}
 
-	return name
+	return AppInstance{name: name}
 }

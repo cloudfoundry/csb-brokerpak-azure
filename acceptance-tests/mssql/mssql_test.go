@@ -2,7 +2,6 @@ package mssql_test
 
 import (
 	"acceptancetests/helpers"
-	"fmt"
 	"os"
 
 	. "github.com/onsi/ginkgo"
@@ -40,21 +39,20 @@ var _ = Describe("MSSQL", func() {
 		By("checking that the app environment has a credhub reference for credentials")
 		Expect(binding.Credential()).To(helpers.HaveCredHubRef)
 
-		appOneURL := fmt.Sprintf("http://%s.%s", appOne, helpers.DefaultSharedDomain())
 		By("creating a schema using the first app")
 		schema := helpers.RandomShortName()
-		helpers.HTTPPut(fmt.Sprintf("%s/%s", appOneURL, schema), "")
+		appOne.PUT("", schema)
 
 		By("setting a key-value using the first app")
 		key := helpers.RandomString()
 		value := helpers.RandomString()
-		helpers.HTTPPut(fmt.Sprintf("%s/%s/%s", appOneURL, schema, key), value)
+		appOne.PUT(value, "%s/%s", schema, key)
 
 		By("getting the value using the second app")
-		got := helpers.HTTPGet(fmt.Sprintf("http://%s.%s/%s/%s", appTwo, helpers.DefaultSharedDomain(), schema, key))
+		got := appTwo.GET("%s/%s", schema, key)
 		Expect(got).To(Equal(value))
 
 		By("dropping the schema using the first app")
-		helpers.HTTPDelete(fmt.Sprintf("%s/%s", appOneURL, schema))
+		appOne.DELETE(schema)
 	})
 })

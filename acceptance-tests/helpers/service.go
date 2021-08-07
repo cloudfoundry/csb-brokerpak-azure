@@ -35,14 +35,14 @@ func (s ServiceInstance) Delete() {
 	}, 30*time.Minute, 30*time.Second).ShouldNot(ContainSubstring(s.name))
 }
 
-func (s ServiceInstance) Bind(app string) Binding {
+func (s ServiceInstance) Bind(app AppInstance) Binding {
 	name := RandomName()
-	CF("bind-service", app, s.name, "--binding-name", name)
+	CF("bind-service", app.name, s.name, "--binding-name", name)
 
 	return Binding{
 		serviceInstance: s,
 		bindingName:     name,
-		appName:         app,
+		appInstance:     app,
 	}
 }
 
