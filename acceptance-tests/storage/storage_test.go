@@ -1,6 +1,7 @@
 package storage_test
 
 import (
+	"acceptancetests/apps"
 	"acceptancetests/helpers"
 
 	. "github.com/onsi/ginkgo"
@@ -8,24 +9,15 @@ import (
 )
 
 var _ = Describe("Storage", func() {
-	var (
-		serviceInstance helpers.ServiceInstance
-		collectionName  string
-	)
-
-	BeforeEach(func() {
-		collectionName = helpers.RandomName("collection")
-		serviceInstance = helpers.CreateService("csb-azure-storage-account", "standard")
-	})
-
-	AfterEach(func() {
-		serviceInstance.Delete()
-	})
-
 	It("can be accessed by an app", func() {
+		By("creating a service instance")
+		collectionName := helpers.RandomName("collection")
+		serviceInstance := helpers.CreateService("csb-azure-storage-account", "standard")
+		defer serviceInstance.Delete()
+
 		By("pushing the unstarted app twice")
-		appOne := helpers.AppPushUnstarted("storage", "./storageapp")
-		appTwo := helpers.AppPushUnstarted("storage", "./storageapp")
+		appOne := helpers.AppPushUnstarted(apps.Storage)
+		appTwo := helpers.AppPushUnstarted(apps.Storage)
 		defer helpers.AppDelete(appOne, appTwo)
 
 		By("binding the apps to the storage service instance")

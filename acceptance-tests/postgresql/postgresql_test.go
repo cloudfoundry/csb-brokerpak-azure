@@ -1,32 +1,22 @@
 package postgresql_test
 
 import (
+	"acceptancetests/apps"
 	"acceptancetests/helpers"
-	"os"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
 
 var _ = Describe("PostgreSQL", func() {
-	var serviceInstance helpers.ServiceInstance
-
-	BeforeEach(func() {
-		serviceInstance = helpers.CreateService("csb-azure-postgresql", "small")
-	})
-
-	AfterEach(func() {
-		serviceInstance.Delete()
-	})
-
 	It("can be accessed by an app", func() {
-		By("building the app")
-		appDir := helpers.AppBuild("./postgresqlapp")
-		defer os.RemoveAll(appDir)
+		By("creating a service instance")
+		serviceInstance := helpers.CreateService("csb-azure-postgresql", "small")
+		defer serviceInstance.Delete()
 
 		By("pushing the unstarted app twice")
-		appOne := helpers.AppPushUnstartedBinaryBuildpack("postgresql", appDir)
-		appTwo := helpers.AppPushUnstartedBinaryBuildpack("postgresql", appDir)
+		appOne := helpers.AppPushUnstarted(apps.PostgeSQL)
+		appTwo := helpers.AppPushUnstarted(apps.PostgeSQL)
 		defer helpers.AppDelete(appOne, appTwo)
 
 		By("binding the apps to the service instance")

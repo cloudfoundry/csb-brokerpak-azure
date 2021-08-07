@@ -1,32 +1,22 @@
 package redis_test
 
 import (
+	"acceptancetests/apps"
 	"acceptancetests/helpers"
-	"os"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
 
 var _ = Describe("Redis", func() {
-	var serviceInstance helpers.ServiceInstance
-
-	BeforeEach(func() {
-		serviceInstance = helpers.CreateService("csb-azure-redis", "small")
-	})
-
-	AfterEach(func() {
-		serviceInstance.Delete()
-	})
-
 	It("can be accessed by an app", func() {
-		By("building the app")
-		appDir := helpers.AppBuild("./redisapp")
-		defer os.RemoveAll(appDir)
+		By("creating a service instance")
+		serviceInstance := helpers.CreateService("csb-azure-redis", "small")
+		defer serviceInstance.Delete()
 
 		By("pushing the unstarted app twice")
-		appOne := helpers.AppPushUnstartedBinaryBuildpack("redis", appDir)
-		appTwo := helpers.AppPushUnstartedBinaryBuildpack("redis", appDir)
+		appOne := helpers.AppPushUnstarted(apps.Redis)
+		appTwo := helpers.AppPushUnstarted(apps.Redis)
 		defer helpers.AppDelete(appOne, appTwo)
 
 		By("binding the apps to the Redis service instance")

@@ -1,32 +1,22 @@
 package mysql_test
 
 import (
+	"acceptancetests/apps"
 	"acceptancetests/helpers"
-	"os"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
 
 var _ = Describe("MySQL", func() {
-	var serviceInstance helpers.ServiceInstance
-
-	BeforeEach(func() {
-		serviceInstance = helpers.CreateService("csb-azure-mysql", "small")
-	})
-
-	AfterEach(func() {
-		serviceInstance.Delete()
-	})
-
 	It("can be accessed by an app", func() {
-		By("building the app")
-		appDir := helpers.AppBuild("./mysqlapp")
-		defer os.RemoveAll(appDir)
+		By("creating a service instance")
+		serviceInstance := helpers.CreateService("csb-azure-mysql", "small")
+		defer serviceInstance.Delete()
 
 		By("pushing the unstarted app twice")
-		appOne := helpers.AppPushUnstartedBinaryBuildpack("mysql", appDir)
-		appTwo := helpers.AppPushUnstartedBinaryBuildpack("mysql", appDir)
+		appOne := helpers.AppPushUnstarted(apps.MySQL)
+		appTwo := helpers.AppPushUnstarted(apps.MySQL)
 		defer helpers.AppDelete(appOne, appTwo)
 
 		By("binding the apps to the service instance")

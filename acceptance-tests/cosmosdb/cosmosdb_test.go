@@ -1,6 +1,7 @@
 package cosmosdb_test
 
 import (
+	"acceptancetests/apps"
 	"acceptancetests/helpers"
 	"fmt"
 
@@ -9,28 +10,17 @@ import (
 )
 
 var _ = Describe("CosmosDB", func() {
-	var (
-		serviceInstance helpers.ServiceInstance
-		databaseName    string
-		collectionName  string
-	)
-
-	BeforeEach(func() {
-		databaseName = helpers.RandomName("database")
-		collectionName = helpers.RandomName("collection")
-		serviceInstance = helpers.CreateService("csb-azure-cosmosdb-sql", "small", map[string]interface{}{
+	It("can be accessed by an app", func() {
+		By("creating a service instance")
+		databaseName := helpers.RandomName("database")
+		serviceInstance := helpers.CreateService("csb-azure-cosmosdb-sql", "small", map[string]interface{}{
 			"db_name": databaseName,
 		})
-	})
+		defer serviceInstance.Delete()
 
-	AfterEach(func() {
-		serviceInstance.Delete()
-	})
-
-	It("can be accessed by an app", func() {
 		By("pushing the unstarted app twice")
-		appOne := helpers.AppPushUnstarted("cosmosdb", "./cosmosdbapp")
-		appTwo := helpers.AppPushUnstarted("cosmosdb", "./cosmosdbapp")
+		appOne := helpers.AppPushUnstarted(apps.Cosmos)
+		appTwo := helpers.AppPushUnstarted(apps.Cosmos)
 		defer helpers.AppDelete(appOne, appTwo)
 
 		By("binding the apps to the CosmosDB service instance")
@@ -48,6 +38,7 @@ var _ = Describe("CosmosDB", func() {
 		Expect(databases).To(MatchJSON(fmt.Sprintf(`["%s"]`, databaseName)))
 
 		By("creating a collection")
+		collectionName := helpers.RandomName("collection")
 		appOne.PUT("", "%s/%s", databaseName, collectionName)
 
 		By("creating a document using the first app")
