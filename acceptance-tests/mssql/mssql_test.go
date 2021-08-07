@@ -4,14 +4,17 @@ import (
 	"acceptancetests/apps"
 	"acceptancetests/helpers"
 
+	. "github.com/onsi/ginkgo/extensions/table"
+
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("MSSQL", func() {
-	It("can be accessed by an app", func() {
+var _ = DescribeTable(
+	"MSSQL",
+	func(serviceOffering string) {
 		By("creating a service instance")
-		serviceInstance := helpers.CreateService("csb-azure-mssql", "small-v2")
+		serviceInstance := helpers.CreateService(serviceOffering, "small-v2")
 		defer serviceInstance.Delete()
 
 		By("pushing the unstarted app twice")
@@ -44,5 +47,7 @@ var _ = Describe("MSSQL", func() {
 
 		By("dropping the schema using the first app")
 		appOne.DELETE(schema)
-	})
-})
+	},
+	Entry("csb-azure-mssql", "csb-azure-mssql"),
+	Entry("csb-azure-mssql-failover-group", "csb-azure-mssql-failover-group"),
+)
