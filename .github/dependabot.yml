@@ -1,13 +1,61 @@
 version: 2
 updates:
-- package-ecosystem: npm
-  directory: "/acceptance-tests/azure/cosmosdb-test-app"
+- package-ecosystem: gomod
+  directory: "/tools/sqlfailover"
+  schedule:
+    interval: "weekly"
+    day: "monday"
+    time: "06:00"
+- package-ecosystem: gomod
+  directory: "/tools/psqlcmd"
+  schedule:
+    interval: "weekly"
+    day: "monday"
+    time: "06:00"
+- package-ecosystem: gomod
+  directory: "/acceptance-tests"
+  schedule:
+    interval: "weekly"
+    day: "monday"
+    time: "06:00"
+- package-ecosystem: gomod
+  directory: "/acceptance-tests/apps/mongodbapp"
+  schedule:
+    interval: "weekly"
+    day: "monday"
+    time: "06:00"
+- package-ecosystem: gomod
+  directory: "/acceptance-tests/apps/postgresqlapp"
+  schedule:
+    interval: "weekly"
+    day: "monday"
+    time: "06:00"
+- package-ecosystem: gomod
+  directory: "/acceptance-tests/apps/mssqlapp"
+  schedule:
+    interval: "weekly"
+    day: "monday"
+    time: "06:00"
+- package-ecosystem: gomod
+  directory: "/acceptance-tests/apps/mysqlapp"
+  schedule:
+    interval: "weekly"
+    day: "monday"
+    time: "06:00"
+- package-ecosystem: gomod
+  directory: "/acceptance-tests/apps/redisapp"
   schedule:
     interval: "weekly"
     day: "monday"
     time: "06:00"
 - package-ecosystem: npm
-  directory: "/acceptance-tests/azure/blob-storage-test-app"
+  directory: "/acceptance-tests/apps/cosmosdbapp"
+  schedule:
+    interval: "weekly"
+    day: "monday"
+    time: "06:00"
+- package-ecosystem: npm
+  directory: "/acceptance-tests/apps/storageapp"
   schedule:
     interval: "weekly"
     day: "monday"
