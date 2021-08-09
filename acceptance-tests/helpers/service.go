@@ -22,6 +22,7 @@ func CreateService(offering, plan string, parameters ...interface{}) ServiceInst
 
 	Eventually(func() string {
 		out, _ := CF("service", name)
+		Expect(out).NotTo(MatchRegexp(`status:\s+create failed`))
 		return out
 	}, 30*time.Minute, 30*time.Second).Should(MatchRegexp(`status:\s+create succeeded`))
 
@@ -48,6 +49,20 @@ func (s ServiceInstance) Bind(app AppInstance) Binding {
 		bindingName:     name,
 		appInstance:     app,
 	}
+}
+
+func (s ServiceInstance) CreateKey() ServiceKey {
+	name := RandomName()
+	CF("create-service-key", s.name, name)
+
+	return ServiceKey{
+		name:            name,
+		serviceInstance: s,
+	}
+}
+
+func (s ServiceInstance) Name() string {
+	return s.name
 }
 
 func serviceParameters(parameters []interface{}) []string {

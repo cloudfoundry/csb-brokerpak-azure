@@ -43,3 +43,7 @@ func (b Binding) Credential() interface{} {
 	Fail(fmt.Sprintf("could not find data for binding: %s\n%+v", b.bindingName, bindings))
 	return nil
 }
+
+func (b Binding) Unbind() {
+	CF("unbind-service", b.appInstance.name, b.serviceInstance.name)
+}

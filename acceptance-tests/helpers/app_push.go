@@ -38,7 +38,7 @@ func appBuildAndPushUnstartedBinaryBuildpack(app apps.AppCode) AppInstance {
 	appDir := appBuild(app.Dir())
 	defer os.RemoveAll(appDir)
 
-	session := StartCF("push", "--no-start", "-b", "binary_buildpack", "-p", appDir, name)
+	session := StartCF("push", "--no-start", "-b", "binary_buildpack", "-m", "50MB", "-p", appDir, name)
 	return waitForAppPush(session, name)
 }
 
