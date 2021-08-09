@@ -19,13 +19,17 @@ const (
 
 func App(config string) *mux.Router {
 	db := connect(config)
+	defer db.Close()
+	if err := db.Ping(); err != nil {
+		log.Fatalf("failed to ping database: %s", err)
+	}
 
 	r := mux.NewRouter()
 	r.HandleFunc("/", aliveness).Methods("HEAD", "GET")
-	r.HandleFunc("/{schema}", handleCreateSchema(db)).Methods("PUT")
-	r.HandleFunc("/{schema}", handleDropSchema(db)).Methods("DELETE")
-	r.HandleFunc("/{schema}/{key}", handleSet(db)).Methods("PUT")
-	r.HandleFunc("/{schema}/{key}", handleGet(db)).Methods("GET")
+	r.HandleFunc("/{schema}", handleCreateSchema(config)).Methods("PUT")
+	r.HandleFunc("/{schema}", handleDropSchema(config)).Methods("DELETE")
+	r.HandleFunc("/{schema}/{key}", handleSet(config)).Methods("PUT")
+	r.HandleFunc("/{schema}/{key}", handleGet(config)).Methods("GET")
 
 	return r
 }
@@ -39,10 +43,6 @@ func connect(config string) *sql.DB {
 	db, err := sql.Open("sqlserver", config)
 	if err != nil {
 		log.Fatalf("failed to connect to database: %s", err)
-	}
-
-	if err := db.Ping(); err != nil {
-		log.Fatalf("failed to ping database: %s", err)
 	}
 
 	return db

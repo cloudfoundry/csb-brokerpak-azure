@@ -1,7 +1,6 @@
 package app
 
 import (
-	"database/sql"
 	"fmt"
 	"io"
 	"log"
@@ -10,9 +9,11 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func handleSet(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
+func handleSet(config string) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		log.Println("Handling set.")
+		db := connect(config)
+		defer db.Close()
 
 		schema, err := schemaName(r)
 		if err != nil {
