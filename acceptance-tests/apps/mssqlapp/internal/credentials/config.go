@@ -1,19 +1,55 @@
 package credentials
 
-import "fmt"
+import (
+	"fmt"
+	"reflect"
+	"strings"
+)
 
 type Config struct {
-	Username string `mapstructure:"username"`
-	Password string `mapstructure:"password"`
-	Hostname string `mapstructure:"hostname"`
-	Port     int    `mapstructure:"port"`
-	Database string `mapstructure:"name"`
+	UserID   string `mapstructure:"username" config:"user id"`
+	Password string `mapstructure:"password" config:"password"`
+	Server   string `mapstructure:"hostname" config:"server"`
+	Port     int    `mapstructure:"port" config:"port"`
+	Database string `mapstructure:"name" config:"database"`
 }
 
 func (c Config) Valid() bool {
-	return c.Username != "" && c.Password != "" && c.Hostname != "" && c.Port != 0 && c.Database != ""
+	for _, v := range c.toMap() {
+		if reflect.ValueOf(v).IsZero() {
+			return false
+		}
+	}
+	return true
 }
 
 func (c Config) String() string {
-	return fmt.Sprintf("server=%s;user id=%s;password=%s;port=%d;database=%s;", c.Hostname, c.Username, c.Password, c.Port, c.Database)
+	params := c.toMap()
+	params["encrypt"] = true
+
+	var s strings.Builder
+	for k, v := range params {
+		s.WriteString(k)
+		switch t := v.(type) {
+		case int:
+			s.WriteString(fmt.Sprintf("=%d; ", t))
+		case bool:
+			s.WriteString(fmt.Sprintf("=%t; ", t))
+		default:
+			s.WriteString(fmt.Sprintf("=%s; ", t))
+		}
+	}
+	return s.String()
+}
+
+func (c Config) toMap() map[string]interface{} {
+	m := make(map[string]interface{})
+	v := reflect.ValueOf(c)
+	t := v.Type()
+	for i := 0; i < t.NumField(); i++ {
+		key := t.Field(i).Tag.Get("config")
+		value := v.Field(i).Interface()
+		m[key] = value
+	}
+	return m
 }
