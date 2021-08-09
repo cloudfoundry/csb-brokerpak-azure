@@ -17,8 +17,8 @@ const (
 	valueColumn = "valuedata"
 )
 
-func App(uri string) *mux.Router {
-	db := connect(uri)
+func App(config string) *mux.Router {
+	db := connect(config)
 
 	r := mux.NewRouter()
 	r.HandleFunc("/", aliveness).Methods("HEAD", "GET")
@@ -35,10 +35,14 @@ func aliveness(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
-func connect(uri string) *sql.DB {
-	db, err := sql.Open("sqlserver", uri)
+func connect(config string) *sql.DB {
+	db, err := sql.Open("sqlserver", config)
 	if err != nil {
 		log.Fatalf("failed to connect to database: %s", err)
+	}
+
+	if err := db.Ping(); err != nil {
+		log.Fatalf("failed to ping database: %s", err)
 	}
 
 	return db
