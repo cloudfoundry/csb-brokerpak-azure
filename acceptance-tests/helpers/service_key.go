@@ -18,7 +18,19 @@ func (k ServiceKey) Get(receiver interface{}) {
 	out, _ := CF("service-key", k.serviceInstance.name, k.name)
 	start := strings.Index(out, "{")
 	Expect(start).To(BeNumerically(">", 0), "could not find start of JSON")
-	err := json.Unmarshal([]byte(out[start:]), receiver)
+	data := []byte(out[start:])
+
+	if cfVersion() == cfVersionV8 {
+		var wrapper struct {
+			Credentials interface{} `json:"credentials"`
+		}
+		err := json.Unmarshal(data, &wrapper)
+		Expect(err).NotTo(HaveOccurred())
+		data, err = json.Marshal(wrapper.Credentials)
+		Expect(err).NotTo(HaveOccurred())
+	}
+
+	err := json.Unmarshal(data, receiver)
 	Expect(err).NotTo(HaveOccurred())
 }
 
