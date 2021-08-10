@@ -15,16 +15,22 @@ type ServiceInstance struct {
 
 func CreateService(offering, plan string, parameters ...interface{}) ServiceInstance {
 	name := RandomName(offering, plan)
-	args := append([]string{"create-service", offering, plan, name}, serviceParameters(parameters)...)
+	createCommandTimeout := time.Minute
+	args := []string{"create-service", offering, plan, name}
+	if cfVersion() == cfVersionV8 {
+		args = append(args, "--wait")
+		createCommandTimeout = time.Hour
+	}
+	args = append(args, serviceParameters(parameters)...)
 
 	session := StartCF(args...)
-	Eventually(session, time.Minute).Should(Exit(0))
+	Eventually(session, createCommandTimeout).Should(Exit(0))
 
 	Eventually(func() string {
 		out, _ := CF("service", name)
 		Expect(out).NotTo(MatchRegexp(`status:\s+create failed`))
 		return out
-	}, 30*time.Minute, 30*time.Second).Should(MatchRegexp(`status:\s+create succeeded`))
+	}, time.Hour, 30*time.Second).Should(MatchRegexp(`status:\s+create succeeded`))
 
 	return ServiceInstance{
 		name:     name,
@@ -33,7 +39,16 @@ func CreateService(offering, plan string, parameters ...interface{}) ServiceInst
 }
 
 func (s ServiceInstance) Delete() {
-	CF("delete-service", "-f", s.name)
+	args := []string{"delete-service", "-f", s.name}
+	deleteCommandTimeout := time.Minute
+	if cfVersion() == cfVersionV8 {
+		args = append(args, "--wait")
+		deleteCommandTimeout = time.Hour
+	}
+
+	session := StartCF(args...)
+	Eventually(session, deleteCommandTimeout).Should(Exit(0))
+
 	Eventually(func() string {
 		out, _ := CF("services")
 		return out
