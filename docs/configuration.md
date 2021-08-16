@@ -80,7 +80,7 @@ credhub:
 Brokerpak configuration values:
 | Environment Variable | Config File Value | Type | Description |
 |----------------------|------|-------------|------------------|
-| <tt>GSB_BROKERPAK_BUILTIN_PATH</tt> | brokerpak.builtin.path | string | <p>Path to search for .brokerpak files, default: <code>./</code></p>|
+|<tt>GSB_BROKERPAK_BUILTIN_PATH</tt> | brokerpak.builtin.path | string | <p>Path to search for .brokerpak files, default: <code>./</code></p>|
 |<tt>GSB_BROKERPAK_CONFIG</tt>|brokerpak.config| string | JSON global config for broker pak services|
 |<tt>GSB_PROVISION_DEFAULTS</tt>|provision.defaults| string | JSON global provision defaults|
 |<tt>GSB_SERVICE_*SERVICE_NAME*_PROVISION_DEFAULTS</tt>|service.*service-name*.provision.defaults| string | JSON provision defaults override for *service-name*|
@@ -113,7 +113,9 @@ provision:
 
 ### Provision Default Example
 
-The Azure MS SQL DB service (csb-azure-mssql-db) provisions databases on an existing MS SQL server. Configuring the server credentials looks like this:
+The [Azure MS SQL DB service](./service-offerings.md) (csb-azure-mssql-db) provisions databases on an existing MS SQL server. 
+
+Configuring the server credentials looks like this:
 ```yaml
 service:
   csb-azure-mssql-db:
@@ -164,25 +166,15 @@ service:
       }
     ]'
 ```
-## AWS Configuration
-
-The AWS brokerpak supports default values for access key id and secret access key credentials.
-
-| Environment Variable | Config File Value | Type | Description |
-|----------------------|-------------------|------|-------------|
-| AWS_ACCESS_KEY_ID        | aws.access_key_id     | string | access key id |
-| AWS_SECRET_ACCESS_KEY  | aws.secret_access_key | string | secret access key |
-
 ### Global Config Example
 
 Services for a given IaaS should have common parameter names for service wide platform resources (like regions)
 
-AWS services support global region and VPC ID:
+Azure services support global resource group:
 
 ```yaml
 provision:
   defaults: '{
-    "region": "us-west-1", 
-    "aws_vpc_id": "vpc-093f61a410460f34c"
+    "resource_group": "test-group"
   }'
 ```
