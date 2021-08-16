@@ -25,7 +25,7 @@ plan_updateable: true
 plans:
 - name: small
   id: fd07d12b-94f8-4f69-bd5b-e2c4e84fafc1
-  description: 'SQL Server latest version. Instance properties: General Purpose - Serverless ; 0.5 - 2 cores ; Max Memory: 6gb ; 50 GB storage ; auto-pause enabled after 1 hour of inactivity'
+  description: 'SQL Server latest version. Instance properties: General Purpose - Serverless ; 0.5 - 2 cores ; Max Memory: 6gb ; 5 GB storage ; auto-pause enabled after 1 hour of inactivity'
   display_name: "Small"
   properties:
     subsume: false
