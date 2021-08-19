@@ -12,11 +12,17 @@ func Read() (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("error reading app env: %w", err)
 	}
-	svs, err := app.Services.WithTag("mssql")
-	if err != nil {
-		return "", fmt.Errorf("error reading MSSQL service details")
+	if svs, err := app.Services.WithTag("mssql"); err == nil {
+		return readService(svs)
+	}
+	if svs, err := app.Services.WithLabel("azure-sqldb"); err == nil {
+		return readService(svs)
 	}
 
+	return "", fmt.Errorf("error reading MSSQL service details")
+}
+
+func readService(svs []cfenv.Service) (string, error) {
 	var c Config
 	if err := mapstructure.Decode(svs[0].Credentials, &c); err != nil {
 		return "", fmt.Errorf("failed to decode credentials: %w", err)

@@ -15,7 +15,7 @@ type ServiceInstance struct {
 
 func CreateService(offering, plan string, parameters ...interface{}) ServiceInstance {
 	name := RandomName(offering, plan)
-	createCommandTimeout := time.Minute
+	createCommandTimeout := 5 * time.Minute // MASB is slow to start creation
 	args := []string{"create-service", offering, plan, name}
 	if cfVersion() == cfVersionV8 {
 		args = append(args, "--wait")
