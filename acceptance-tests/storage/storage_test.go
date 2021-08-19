@@ -34,8 +34,8 @@ var _ = Describe("Storage", func() {
 		appOne.PUT("", collectionName)
 
 		By("uploading a blob using the first app")
-		blobName := helpers.RandomString()
-		blobData := helpers.RandomString()
+		blobName := helpers.RandomHex()
+		blobData := helpers.RandomHex()
 		appOne.PUT(blobData, "%s/%s", collectionName, blobName)
 
 		By("downloading the blob using the second app")

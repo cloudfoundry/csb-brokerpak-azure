@@ -30,8 +30,8 @@ var _ = Describe("MySQL", func() {
 		Expect(binding.Credential()).To(helpers.HaveCredHubRef)
 
 		By("setting a key-value using the first app")
-		key := helpers.RandomString()
-		value := helpers.RandomString()
+		key := helpers.RandomHex()
+		value := helpers.RandomHex()
 		appOne.PUT(value, key)
 
 		By("getting the value using the second app")

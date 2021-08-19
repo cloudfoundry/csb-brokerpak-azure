@@ -28,8 +28,8 @@ var _ = Describe("PostgreSQL", func() {
 		Expect(binding.Credential()).To(helpers.HaveCredHubRef)
 
 		By("setting a key-value")
-		key := helpers.RandomString()
-		value := helpers.RandomString()
+		key := helpers.RandomHex()
+		value := helpers.RandomHex()
 		app.PUT(value, key)
 
 		By("getting the value")

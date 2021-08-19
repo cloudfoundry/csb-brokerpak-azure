@@ -34,8 +34,8 @@ var _ = Describe("MSSQL Failover Group", func() {
 		appOne.PUT("", schema)
 
 		By("setting a key-value using the first app")
-		keyOne := helpers.RandomString()
-		valueOne := helpers.RandomString()
+		keyOne := helpers.RandomHex()
+		valueOne := helpers.RandomHex()
 		appOne.PUT(valueOne, "%s/%s", schema, keyOne)
 
 		By("getting the value using the second app")
@@ -52,8 +52,8 @@ var _ = Describe("MSSQL Failover Group", func() {
 		helpers.AppRestage(appTwo)
 
 		By("setting another key-value")
-		keyTwo := helpers.RandomString()
-		valueTwo := helpers.RandomString()
+		keyTwo := helpers.RandomHex()
+		valueTwo := helpers.RandomHex()
 		appTwo.PUT(valueTwo, "%s/%s", schema, keyTwo)
 
 		By("getting the previously set values")

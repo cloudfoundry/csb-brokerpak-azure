@@ -55,9 +55,11 @@ func (s ServiceInstance) Delete() {
 	}, 30*time.Minute, 30*time.Second).ShouldNot(ContainSubstring(s.name))
 }
 
-func (s ServiceInstance) Bind(app AppInstance) Binding {
+func (s ServiceInstance) Bind(app AppInstance, parameters ...interface{}) Binding {
 	name := RandomName()
-	CF("bind-service", app.name, s.name, "--binding-name", name)
+	args := []string{"bind-service", app.name, s.name, "--binding-name", name}
+	args = append(args, serviceParameters(parameters)...)
+	CF(args...)
 
 	return Binding{
 		serviceInstance: s,
