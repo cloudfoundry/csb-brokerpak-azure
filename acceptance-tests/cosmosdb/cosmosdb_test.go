@@ -42,8 +42,8 @@ var _ = Describe("CosmosDB", func() {
 		appOne.PUT("", "%s/%s", databaseName, collectionName)
 
 		By("creating a document using the first app")
-		documentName := helpers.RandomString()
-		documentData := helpers.RandomString()
+		documentName := helpers.RandomHex()
+		documentData := helpers.RandomHex()
 		appOne.PUT(documentData, "%s/%s/%s", databaseName, collectionName, documentName)
 
 		By("getting the document using the second app")

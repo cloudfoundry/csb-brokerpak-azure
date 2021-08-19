@@ -32,8 +32,8 @@ var _ = Describe("Without CredHub", func() {
 		app.PUT("", collectionName)
 
 		By("uploading a blob")
-		blobName := helpers.RandomString()
-		blobData := helpers.RandomString()
+		blobName := helpers.RandomHex()
+		blobData := helpers.RandomHex()
 		app.PUT(blobData, "%s/%s", collectionName, blobName)
 
 		By("downloading the blob")

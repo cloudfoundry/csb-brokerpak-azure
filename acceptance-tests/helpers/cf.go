@@ -1,17 +1,20 @@
 package helpers
 
 import (
+	"fmt"
 	"os/exec"
+	"strings"
 	"time"
 
-	"github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	. "github.com/onsi/gomega/gexec"
 )
 
 func StartCF(args ...string) *Session {
+	fmt.Fprintf(GinkgoWriter, "Running: cf %s\n", strings.Join(args, " "))
 	command := exec.Command("cf", args...)
-	session, err := Start(command, ginkgo.GinkgoWriter, ginkgo.GinkgoWriter)
+	session, err := Start(command, GinkgoWriter, GinkgoWriter)
 	Expect(err).NotTo(HaveOccurred())
 	return session
 }

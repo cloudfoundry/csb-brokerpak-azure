@@ -34,8 +34,8 @@ var _ = Describe("MSSQL", func() {
 		appOne.PUT("", schema)
 
 		By("setting a key-value using the first app")
-		key := helpers.RandomString()
-		value := helpers.RandomString()
+		key := helpers.RandomHex()
+		value := helpers.RandomHex()
 		appOne.PUT(value, "%s/%s", schema, key)
 
 		By("getting the value using the second app")
