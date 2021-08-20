@@ -26,7 +26,7 @@ func handleCreateSchema(config string) func(w http.ResponseWriter, r *http.Reque
 			return
 		}
 
-		_, err = db.Exec(fmt.Sprintf(`CREATE TABLE %s.%s (%s VARCHAR(255) NOT NULL, %s VARCHAR(255) NOT NULL)`, schema, tableName, keyColumn, valueColumn))
+		_, err = db.Exec(fmt.Sprintf(`CREATE TABLE %s.%s (%s VARCHAR(255) NOT NULL, %s VARCHAR(max) NOT NULL)`, schema, tableName, keyColumn, valueColumn))
 		if err != nil {
 			log.Printf("Error creating table: %s", err)
 			http.Error(w, "Failed to create table.", http.StatusBadRequest)

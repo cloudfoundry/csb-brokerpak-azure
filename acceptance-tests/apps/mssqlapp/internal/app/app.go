@@ -27,6 +27,7 @@ func App(config string) *mux.Router {
 	r := mux.NewRouter()
 	r.HandleFunc("/", aliveness).Methods("HEAD", "GET")
 	r.HandleFunc("/{schema}", handleCreateSchema(config)).Methods("PUT")
+	r.HandleFunc("/{schema}", handleFillDatabase(config)).Methods("POST")
 	r.HandleFunc("/{schema}", handleDropSchema(config)).Methods("DELETE")
 	r.HandleFunc("/{schema}/{key}", handleSet(config)).Methods("PUT")
 	r.HandleFunc("/{schema}/{key}", handleGet(config)).Methods("GET")
