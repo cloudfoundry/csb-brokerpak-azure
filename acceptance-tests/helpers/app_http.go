@@ -33,7 +33,7 @@ func (a AppInstance) PUT(data, format string, s ...interface{}) {
 	request.Header.Set("Content-Type", "text/html")
 	response, err := http.DefaultClient.Do(request)
 	Expect(err).NotTo(HaveOccurred())
-	Expect(response).To(SatisfyAny(HaveHTTPStatus(http.StatusCreated), HaveHTTPStatus(http.StatusOK)))
+	Expect(response).To(HaveHTTPStatus(http.StatusCreated, http.StatusOK))
 }
 
 func (a AppInstance) DELETE(format string, s ...interface{}) {
@@ -44,7 +44,7 @@ func (a AppInstance) DELETE(format string, s ...interface{}) {
 
 	response, err := http.DefaultClient.Do(request)
 	Expect(err).NotTo(HaveOccurred())
-	Expect(response).To(SatisfyAny(HaveHTTPStatus(http.StatusGone), HaveHTTPStatus(http.StatusNoContent)))
+	Expect(response).To(HaveHTTPStatus(http.StatusGone, http.StatusNoContent))
 }
 
 func (a AppInstance) url(format string, s ...interface{}) string {
