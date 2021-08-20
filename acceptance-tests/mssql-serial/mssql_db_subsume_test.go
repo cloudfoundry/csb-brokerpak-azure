@@ -97,8 +97,11 @@ func reconfigureCSBWithMASBServerDetails() string {
 			"admin_password":        metadata.PreProvisionedSQLPassword,
 		},
 	}
-	helpers.SetBrokerEnv("MSSQL_DB_SERVER_CREDS", creds)
-	helpers.SetBrokerEnv("GSB_SERVICE_CSB_AZURE_MSSQL_DB_PROVISION_DEFAULTS", map[string]interface{}{"server_credentials": creds})
+
+	helpers.SetBrokerEnv(
+		helpers.EnvVar{Name: "MSSQL_DB_SERVER_CREDS", Value: creds},
+		helpers.EnvVar{Name: "GSB_SERVICE_CSB_AZURE_MSSQL_DB_PROVISION_DEFAULTS", Value: map[string]interface{}{"server_credentials": creds}},
+	)
 
 	return tag
 }
