@@ -1,16 +1,17 @@
 package mssql_test
 
 import (
-	"acceptancetests/helpers"
-	"fmt"
 	"os"
+	"os/exec"
 	"regexp"
+	"strings"
 	"testing"
+	"time"
 
 	"code.cloudfoundry.org/jsonry"
-
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	"github.com/onsi/gomega/gexec"
 )
 
 func TestMSSQL(t *testing.T) {
@@ -23,6 +24,11 @@ var metadata struct {
 	PreProvisionedSQLUsername string `jsonry:"masb_config.pre_provisioned_sql.username"`
 	PreProvisionedSQLPassword string `jsonry:"masb_config.pre_provisioned_sql.password"`
 	PreProvisionedSQLServer   string `jsonry:"masb_config.pre_provisioned_sql.server_name"`
+	PreProvisionedSQLLocation string `jsonry:"masb_config.location"`
+	PreProvisionedFOGUsername string `jsonry:"masb_config.pre_provisioned_fog_sql.username"`
+	PreProvisionedFOGPassword string `jsonry:"masb_config.pre_provisioned_fog_sql.password"`
+	PreProvisionedFOGServer   string `jsonry:"masb_config.pre_provisioned_fog_sql.server_name"`
+	PreProvisionedFOGLocation string `jsonry:"masb_config.pre_provisioned_fog_sql.location"`
 }
 
 var _ = BeforeSuite(func() {
@@ -37,60 +43,24 @@ var _ = BeforeSuite(func() {
 	Expect(metadata.PreProvisionedSQLUsername).NotTo(BeEmpty())
 	Expect(metadata.PreProvisionedSQLPassword).NotTo(BeEmpty())
 	Expect(metadata.PreProvisionedSQLServer).NotTo(BeEmpty())
+	Expect(metadata.PreProvisionedSQLLocation).NotTo(BeEmpty())
+	Expect(metadata.PreProvisionedFOGUsername).NotTo(BeEmpty())
+	Expect(metadata.PreProvisionedFOGPassword).NotTo(BeEmpty())
+	Expect(metadata.PreProvisionedFOGServer).NotTo(BeEmpty())
+	Expect(metadata.PreProvisionedFOGLocation).NotTo(BeEmpty())
 })
-
-func failoverParameters(instance helpers.ServiceInstance) interface{} {
-	key := instance.CreateKey()
-	defer key.Delete()
-
-	var input struct {
-		ServerName string `json:"sqlServerName"`
-		Status     string `json:"status"`
-	}
-	key.Get(&input)
-
-	resourceGroup := extractResourceGroup(input.Status)
-	pairName := helpers.RandomName("server-pair")
-
-	type failoverServer struct {
-		Name          string `json:"server_name"`
-		ResourceGroup string `json:"resource_group"`
-	}
-
-	type failoverServerPair struct {
-		Primary   failoverServer `json:"primary"`
-		Secondary failoverServer `json:"secondary"`
-	}
-
-	type failoverServerPairs map[string]failoverServerPair
-
-	type output struct {
-		FOGInstanceName string              `json:"fog_instance_name"`
-		ServerPairName  string              `json:"server_pair_name"`
-		ServerPairs     failoverServerPairs `json:"server_pairs"`
-	}
-
-	return output{
-		FOGInstanceName: input.ServerName,
-		ServerPairName:  pairName,
-		ServerPairs: failoverServerPairs{
-			pairName: failoverServerPair{
-				Primary: failoverServer{
-					Name:          fmt.Sprintf("%s-primary", input.ServerName),
-					ResourceGroup: resourceGroup,
-				},
-				Secondary: failoverServer{
-					Name:          fmt.Sprintf("%s-secondary", input.ServerName),
-					ResourceGroup: resourceGroup,
-				},
-			},
-		},
-	}
-}
 
 func extractResourceGroup(status string) string {
 	matches := regexp.MustCompile(`resourceGroups/(.+?)/`).FindStringSubmatch(status)
 	Expect(matches).NotTo(BeNil())
 	Expect(len(matches)).To(BeNumerically(">=", 2))
 	return matches[1]
+}
+
+func fetchResourceID(kind, name, server string) string {
+	command := exec.Command("az", "sql", kind, "show", "--name", name, "--server", server, "--resource-group", metadata.ResourceGroup, "--query", "id", "-o", "tsv")
+	session, err := gexec.Start(command, GinkgoWriter, GinkgoWriter)
+	Expect(err).NotTo(HaveOccurred())
+	Eventually(session, time.Minute).Should(gexec.Exit(0))
+	return strings.TrimSpace(string(session.Out.Contents()))
 }
