@@ -6,18 +6,24 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-func SetBrokerEnv(key string, value interface{}) {
+type EnvVar struct {
+	Name  string
+	Value interface{}
+}
+
+func SetBrokerEnv(envVars ...EnvVar) {
 	const broker = "cloud-service-broker"
-	var val string
-	switch v := value.(type) {
-	case string:
-		val = v
-	default:
-		data, err := json.Marshal(v)
-		Expect(err).NotTo(HaveOccurred())
-		val = string(data)
+
+	for _, envVar := range envVars {
+		switch v := envVar.Value.(type) {
+		case string:
+			CF("set-env", broker, envVar.Name, v)
+		default:
+			data, err := json.Marshal(v)
+			Expect(err).NotTo(HaveOccurred())
+			CF("set-env", broker, envVar.Name, string(data))
+		}
 	}
 
-	CF("set-env", broker, key, val)
 	CF("restart", broker)
 }
