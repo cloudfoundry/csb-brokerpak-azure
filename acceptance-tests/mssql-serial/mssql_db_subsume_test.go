@@ -3,11 +3,6 @@ package mssql_test
 import (
 	"acceptancetests/apps"
 	"acceptancetests/helpers"
-	"os/exec"
-	"strings"
-	"time"
-
-	"github.com/onsi/gomega/gexec"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -40,7 +35,7 @@ var _ = Describe("MSSQL DB Subsume", func() {
 		app.PUT(value, "%s/%s", schema, key)
 
 		By("fetching the Azure resource ID of the database")
-		resource := fetchResourceID(masbDBName, metadata.PreProvisionedSQLServer)
+		resource := fetchResourceID("db", masbDBName, metadata.PreProvisionedSQLServer)
 
 		By("reconfiguring the CSB with DB server details")
 		serverTag := reconfigureCSBWithMASBServerDetails()
@@ -70,14 +65,6 @@ var _ = Describe("MSSQL DB Subsume", func() {
 		app.DELETE(schema)
 	})
 })
-
-func fetchResourceID(name, server string) string {
-	command := exec.Command("az", "sql", "db", "show", "--name", name, "--server", server, "--resource-group", metadata.ResourceGroup, "--query", "id", "-o", "tsv")
-	session, err := gexec.Start(command, GinkgoWriter, GinkgoWriter)
-	Expect(err).NotTo(HaveOccurred())
-	Eventually(session, time.Minute).Should(gexec.Exit(0))
-	return strings.TrimSpace(string(session.Out.Contents()))
-}
 
 func subsumeDBParams(resource, serverTag string) interface{} {
 	return map[string]interface{}{

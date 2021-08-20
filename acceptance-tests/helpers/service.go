@@ -38,6 +38,25 @@ func CreateService(offering, plan string, parameters ...interface{}) ServiceInst
 	}
 }
 
+func (s ServiceInstance) UpdateService(parameters ...string) {
+	createCommandTimeout := time.Minute
+	args := []string{"update-service", s.name}
+	if cfVersion() == cfVersionV8 {
+		args = append(args, "--wait")
+		createCommandTimeout = time.Hour
+	}
+	args = append(args, parameters...)
+
+	session := StartCF(args...)
+	Eventually(session, createCommandTimeout).Should(Exit(0))
+
+	Eventually(func() string {
+		out, _ := CF("service", s.name)
+		Expect(out).NotTo(MatchRegexp(`status:\s+update failed`))
+		return out
+	}, time.Hour, 30*time.Second).Should(MatchRegexp(`status:\s+update succeeded`))
+}
+
 func (s ServiceInstance) Delete() {
 	args := []string{"delete-service", "-f", s.name}
 	deleteCommandTimeout := time.Minute
