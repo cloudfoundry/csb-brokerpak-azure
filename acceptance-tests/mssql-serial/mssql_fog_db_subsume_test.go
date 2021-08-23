@@ -24,8 +24,8 @@ var _ = Describe("MSSQL Failover Group DB Subsume", func() {
 		app := helpers.AppPushUnstarted(apps.MSSQL)
 		defer helpers.AppDelete(app)
 
-		By("binding the app to the MASB service instance")
-		masbDBInstance.Bind(app)
+		By("binding the app to the MASB fog")
+		masbFOGInstance.Bind(app)
 
 		By("starting the apps")
 		helpers.AppStart(app)
@@ -56,7 +56,7 @@ var _ = Describe("MSSQL Failover Group DB Subsume", func() {
 		})
 		defer dbFogInstance.Delete()
 
-		By("purging the MASB service instance")
+		By("purging the MASB FOG instance")
 		helpers.CF("purge-service-instance", "-f", masbFOGInstance.Name())
 
 		By("updating to another plan")

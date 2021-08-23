@@ -34,10 +34,10 @@ func handleFillDatabase(config string) func(w http.ResponseWriter, r *http.Reque
 		_, err = stmt.Exec(row, randomString())
 		switch {
 		case err == nil:
-			log.Printf("inserted ok")
+			log.Println("inserted ok")
 			w.WriteHeader(http.StatusOK)
 		case strings.Contains(err.Error(), "has reached its size quota"):
-			log.Printf("database full\n")
+			log.Println("database full")
 			w.WriteHeader(http.StatusTooManyRequests)
 		default:
 			log.Printf("error inserting into database: %s\n", err)
