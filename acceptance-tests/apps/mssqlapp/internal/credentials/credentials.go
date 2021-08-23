@@ -2,6 +2,7 @@ package credentials
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/cloudfoundry-community/go-cfenv"
 	"github.com/mitchellh/mapstructure"
@@ -13,9 +14,15 @@ func Read() (string, error) {
 		return "", fmt.Errorf("error reading app env: %w", err)
 	}
 	if svs, err := app.Services.WithTag("mssql"); err == nil {
+		log.Println("found tag: mssql")
 		return readService(svs)
 	}
 	if svs, err := app.Services.WithLabel("azure-sqldb"); err == nil {
+		log.Println("found label: azure-sqldb")
+		return readService(svs)
+	}
+	if svs, err := app.Services.WithLabel("azure-sqldb-failover-group"); err == nil {
+		log.Println("found label: azure-sqldb-failover-group")
 		return readService(svs)
 	}
 
