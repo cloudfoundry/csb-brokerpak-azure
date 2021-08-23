@@ -16,7 +16,9 @@ var _ = Describe("MSSQL Server Pair and Failover Group DB", func() {
 		defer serverInstancePrimary.Delete()
 
 		// We have previously experienced problems with the CF CLI when doing things in parallel
-		By("creating a secondary server")
+		By("creating a secondary server in a different resource group")
+		secondaryResourceGroupInstance := helpers.CreateService("csb-azure-resource-group", "standard", serversConfig.secondaryResourceGroupConfig())
+		defer secondaryResourceGroupInstance.Delete()
 		serverInstanceSecondary := helpers.CreateService("csb-azure-mssql-server", "standard", serversConfig.secondaryConfig())
 		defer serverInstanceSecondary.Delete()
 
@@ -85,27 +87,30 @@ var _ = Describe("MSSQL Server Pair and Failover Group DB", func() {
 })
 
 func newDatabaseServerPair() databaseServerPair {
+	secondaryResourceGroup := helpers.RandomName(metadata.ResourceGroup)
 	return databaseServerPair{
 		serverPairTag: helpers.RandomShortName(),
 		Username:      helpers.RandomShortName(),
 		Password:      helpers.RandomPassword(),
-		Primary: databaseServerPairMember{
+		PrimaryServer: databaseServerPairMember{
 			Name:          helpers.RandomName("server"),
 			ResourceGroup: metadata.ResourceGroup,
 		},
-		Secondary: databaseServerPairMember{
+		SecondaryServer: databaseServerPairMember{
 			Name:          helpers.RandomName("server"),
-			ResourceGroup: metadata.ResourceGroup,
+			ResourceGroup: secondaryResourceGroup,
 		},
+		SecondaryResourceGroup: secondaryResourceGroup,
 	}
 }
 
 type databaseServerPair struct {
-	serverPairTag string
-	Username      string                   `json:"admin_username"`
-	Password      string                   `json:"admin_password"`
-	Primary       databaseServerPairMember `json:"primary"`
-	Secondary     databaseServerPairMember `json:"secondary"`
+	serverPairTag          string
+	Username               string                   `json:"admin_username"`
+	Password               string                   `json:"admin_password"`
+	PrimaryServer          databaseServerPairMember `json:"primary"`
+	SecondaryServer        databaseServerPairMember `json:"secondary"`
+	SecondaryResourceGroup string                   `json:"-"`
 }
 
 type databaseServerPairMember struct {
@@ -114,24 +119,36 @@ type databaseServerPairMember struct {
 }
 
 func (d databaseServerPair) primaryConfig() interface{} {
-	return d.memberConfig(d.Primary.Name, "westus")
+	return d.memberConfig(d.PrimaryServer.Name, "westus", d.PrimaryServer.ResourceGroup)
 }
 
 func (d databaseServerPair) secondaryConfig() interface{} {
-	return d.memberConfig(d.Secondary.Name, "eastus")
+	return d.memberConfig(d.SecondaryServer.Name, "eastus", d.SecondaryServer.ResourceGroup)
 }
 
-func (d databaseServerPair) memberConfig(name, location string) interface{} {
+func (d databaseServerPair) memberConfig(name, location, rg string) interface{} {
 	return struct {
-		Name     string `json:"instance_name"`
-		Username string `json:"admin_username"`
-		Password string `json:"admin_password"`
-		Location string `json:"location"`
+		Name          string `json:"instance_name"`
+		Username      string `json:"admin_username"`
+		Password      string `json:"admin_password"`
+		Location      string `json:"location"`
+		ResourceGroup string `json:"resource_group"`
 	}{
-		Name:     name,
-		Username: d.Username,
-		Password: d.Password,
-		Location: location,
+		Name:          name,
+		Username:      d.Username,
+		Password:      d.Password,
+		Location:      location,
+		ResourceGroup: rg,
+	}
+}
+
+func (d databaseServerPair) secondaryResourceGroupConfig() interface{} {
+	return struct {
+		InstanceName string `json:"instance_name"`
+		Location     string `json:"location"`
+	}{
+		InstanceName: d.SecondaryResourceGroup,
+		Location:     "eastus",
 	}
 }
 
