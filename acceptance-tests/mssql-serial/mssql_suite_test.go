@@ -3,7 +3,6 @@ package mssql_test
 import (
 	"os"
 	"os/exec"
-	"regexp"
 	"strings"
 	"testing"
 	"time"
@@ -49,13 +48,6 @@ var _ = BeforeSuite(func() {
 	Expect(metadata.PreProvisionedFOGServer).NotTo(BeEmpty())
 	Expect(metadata.PreProvisionedFOGLocation).NotTo(BeEmpty())
 })
-
-func extractResourceGroup(status string) string {
-	matches := regexp.MustCompile(`resourceGroups/(.+?)/`).FindStringSubmatch(status)
-	Expect(matches).NotTo(BeNil())
-	Expect(len(matches)).To(BeNumerically(">=", 2))
-	return matches[1]
-}
 
 func fetchResourceID(kind, name, server string) string {
 	command := exec.Command("az", "sql", kind, "show", "--name", name, "--server", server, "--resource-group", metadata.ResourceGroup, "--query", "id", "-o", "tsv")

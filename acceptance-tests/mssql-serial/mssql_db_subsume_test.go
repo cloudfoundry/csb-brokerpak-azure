@@ -47,6 +47,9 @@ var _ = Describe("MSSQL DB Subsume", func() {
 		By("purging the MASB service instance")
 		helpers.CF("purge-service-instance", "-f", masbServiceInstance.Name())
 
+		By("updating to another plan")
+		csbServiceInstance.UpdateService("-p", "small")
+
 		By("binding the app to the CSB service instance")
 		binding := csbServiceInstance.Bind(app)
 		defer helpers.AppDelete(app) // app needs to be deleted before service instance
