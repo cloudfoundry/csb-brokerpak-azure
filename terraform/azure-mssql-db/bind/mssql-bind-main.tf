@@ -25,11 +25,11 @@ resource "random_password" "password" {
   min_lower = 2
   min_special = 2
   depends_on = [random_string.username]
-}    
+}
 
 resource "null_resource" "create-sql-user" {
   provisioner "local-exec" {
-    command = format("psqlcmd %s %d %s %s \"CREATE USER [%s] with PASSWORD='%s';\"", 
+    command = format("psqlcmd %s %d %s %s \"CREATE USER [%s] with PASSWORD='%s';\"",
                      var.mssql_hostname,
                      var.mssql_port,
                      local.admin_username,
@@ -38,7 +38,7 @@ resource "null_resource" "create-sql-user" {
                      random_password.password.result)
     environment = {
       MSSQL_PASSWORD = local.admin_password
-    }  
+    }
   }
 
   provisioner "local-exec" {
@@ -66,7 +66,7 @@ resource "null_resource" "add-user-roles" {
   for_each = local.roles
 
   provisioner "local-exec" {
-    command = format("psqlcmd %s %d %s %s \"ALTER ROLE %s ADD MEMBER [%s];\"", 
+    command = format("psqlcmd %s %d %s %s \"ALTER ROLE %s ADD MEMBER [%s];\"",
                      var.mssql_hostname,
                      var.mssql_port,
                      local.admin_username,
@@ -90,7 +90,7 @@ resource "null_resource" "add-user-roles" {
                      random_string.username.result)
     environment = {
       MSSQL_PASSWORD = local.admin_password
-    }                     
+    }
   }
 
   depends_on = [null_resource.create-sql-user]
@@ -99,7 +99,7 @@ resource "null_resource" "add-user-roles" {
 # For execute permissions on stored procedures
 resource "null_resource" "add-execute-permission" {
   provisioner "local-exec" {
-    command = format("psqlcmd %s %d %s %s \"GRANT EXEC TO [%s];\"", 
+    command = format("psqlcmd %s %d %s %s \"GRANT EXEC TO [%s];\"",
                      var.mssql_hostname,
                      var.mssql_port,
                      local.admin_username,

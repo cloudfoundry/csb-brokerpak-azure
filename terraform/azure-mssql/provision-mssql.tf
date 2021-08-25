@@ -34,7 +34,7 @@ provider "azurerm" {
   subscription_id = var.azure_subscription_id
   client_id       = var.azure_client_id
   client_secret   = var.azure_client_secret
-  tenant_id       = var.azure_tenant_id  
+  tenant_id       = var.azure_tenant_id
 
   skip_provider_registration = var.skip_provider_registration
 }
@@ -48,8 +48,8 @@ locals {
     16 = "GP_Gen5_16"
     32 = "GP_Gen5_32"
     80 = "GP_Gen5_80"
-  }     
-  sku_name = length(var.sku_name) == 0 ? local.instance_types[var.cores] : var.sku_name    
+  }
+  sku_name = length(var.sku_name) == 0 ? local.instance_types[var.cores] : var.sku_name
   resource_group = length(var.resource_group) == 0 ? format("rg-%s", var.instance_name) : var.resource_group
 }
 
@@ -100,7 +100,7 @@ resource "azurerm_sql_virtual_network_rule" "allow_subnet_id" {
   resource_group_name = local.resource_group
   server_name         = azurerm_sql_server.azure_sql_db_server.name
   subnet_id           = var.authorized_network
-  count = var.authorized_network != "default" ? 1 : 0   
+  count = var.authorized_network != "default" ? 1 : 0
 }
 
 resource "azurerm_sql_firewall_rule" "sql_firewall_rule" {
@@ -109,7 +109,7 @@ resource "azurerm_sql_firewall_rule" "sql_firewall_rule" {
   server_name         = azurerm_sql_server.azure_sql_db_server.name
   start_ip_address    = "0.0.0.0"
   end_ip_address      = "0.0.0.0"
-  count = var.authorized_network == "default" ? 1 : 0  
+  count = var.authorized_network == "default" ? 1 : 0
 }
 
 output sqldbResourceGroup {value = azurerm_sql_server.azure_sql_db_server.resource_group_name}
@@ -121,11 +121,10 @@ output port {value = 1433}
 output name {value = azurerm_sql_database.azure_sql_db.name}
 output username {value = random_string.username.result}
 output password {value = random_password.password.result}
-output status {value = format("created db %s (id: %s) on server %s (id: %s) URL: https://portal.azure.com/#@%s/resource%s", 
-                               azurerm_sql_database.azure_sql_db.name, 
-                               azurerm_sql_database.azure_sql_db.id, 
-                               azurerm_sql_server.azure_sql_db_server.name, 
+output status {value = format("created db %s (id: %s) on server %s (id: %s) URL: https://portal.azure.com/#@%s/resource%s",
+                               azurerm_sql_database.azure_sql_db.name,
+                               azurerm_sql_database.azure_sql_db.id,
+                               azurerm_sql_server.azure_sql_db_server.name,
                                azurerm_sql_server.azure_sql_db_server.id,
                                var.azure_tenant_id,
                                azurerm_sql_database.azure_sql_db.id)}
-
