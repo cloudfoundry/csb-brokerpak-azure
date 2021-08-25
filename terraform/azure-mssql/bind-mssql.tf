@@ -33,43 +33,15 @@ resource "random_password" "password" {
   depends_on = [random_string.username]
 }
 
-resource "null_resource" "create-sql-login" {
-
-  provisioner "local-exec" {
-    command = format("psqlcmd %s %d %s master \"CREATE LOGIN [%s] with PASSWORD='%s'\"",
-                     var.mssql_hostname,
-                     var.mssql_port,
-                     var.admin_username,
-                     random_string.username.result,
-                     random_password.password.result)
-    environment = {
-      MSSQL_PASSWORD = var.admin_password
-    }
-  }
-
-  provisioner "local-exec" {
-	when = destroy
-    command = format("psqlcmd %s %d %s master \"DROP LOGIN [%s]\"",
-                     var.mssql_hostname,
-                     var.mssql_port,
-                     var.admin_username,
-                     random_string.username.result)
-    environment = {
-      MSSQL_PASSWORD = var.admin_password
-    }
-  }
-  depends_on = [random_password.password]
-}
-
 resource "null_resource" "create-sql-user" {
   provisioner "local-exec" {
-    command = format("psqlcmd %s %d %s %s \"CREATE USER [%s] from LOGIN %s;\"",
+    command = format("psqlcmd %s %d %s %s \"CREATE USER [%s] with PASSWORD='%s';\"",
                      var.mssql_hostname,
                      var.mssql_port,
                      var.admin_username,
                      var.mssql_db_name,
                      random_string.username.result,
-                     random_string.username.result)
+                     random_password.password.result)
     environment = {
       MSSQL_PASSWORD = var.admin_password
     }
@@ -88,7 +60,7 @@ resource "null_resource" "create-sql-user" {
     }
   }
 
-  depends_on = [null_resource.create-sql-login]
+  depends_on = [random_password.password]
 }
 
 locals {

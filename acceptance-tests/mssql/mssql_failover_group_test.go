@@ -21,7 +21,7 @@ var _ = Describe("MSSQL Failover Group", func() {
 
 		By("binding the apps to the service instance")
 		bindingOne := serviceInstance.Bind(appOne)
-		bindingTwo := serviceInstance.Bind(appTwo)
+		serviceInstance.Bind(appTwo)
 
 		By("starting the apps")
 		helpers.AppStart(appOne, appTwo)
@@ -42,14 +42,8 @@ var _ = Describe("MSSQL Failover Group", func() {
 		Expect(appTwo.GET("%s/%s", schema, keyOne)).To(Equal(valueOne))
 
 		By("triggering failover")
-		bindingTwo.Unbind() // binding one owns the schema, so cannot be unbound
 		failoverServiceInstance := helpers.CreateService("csb-azure-mssql-fog-run-failover", "standard", failoverParameters(serviceInstance))
 		defer failoverServiceInstance.Delete()
-
-		// Having to rebind is not ideal behaviour - see: https://www.pivotaltracker.com/story/show/179168006
-		By("rebinding the second app")
-		bindingTwo = serviceInstance.Bind(appTwo)
-		helpers.AppRestage(appTwo)
 
 		By("setting another key-value")
 		keyTwo := helpers.RandomHex()
@@ -61,7 +55,6 @@ var _ = Describe("MSSQL Failover Group", func() {
 		Expect(appTwo.GET("%s/%s", schema, keyTwo)).To(Equal(valueTwo))
 
 		By("reverting the failover")
-		bindingTwo.Unbind()
 		failoverServiceInstance.Delete()
 
 		By("dropping the schema")
