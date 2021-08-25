@@ -23,10 +23,10 @@ variable azure_client_secret { type = string }
 resource "null_resource" "run-failover" {
 
   provisioner "local-exec" {
-    command = format("sqlfailover %s %s %s", 
+    command = format("sqlfailover %s %s %s",
                      var.server_pairs[var.server_pair_name].secondary.resource_group,
                      var.server_pairs[var.server_pair_name].secondary.server_name,
-                     var.fog_instance_name) 
+                     var.fog_instance_name)
     environment = {
       ARM_SUBSCRIPTION_ID = var.azure_subscription_id
       ARM_TENANT_ID = var.azure_tenant_id
@@ -37,15 +37,15 @@ resource "null_resource" "run-failover" {
 
   provisioner "local-exec" {
 	when = destroy
-    command = format("sqlfailover %s %s %s", 
+    command = format("sqlfailover %s %s %s",
                      var.server_pairs[var.server_pair_name].primary.resource_group,
                      var.server_pairs[var.server_pair_name].primary.server_name,
-                     var.fog_instance_name)  
+                     var.fog_instance_name)
     environment = {
       ARM_SUBSCRIPTION_ID = var.azure_subscription_id
       ARM_TENANT_ID = var.azure_tenant_id
       ARM_CLIENT_ID = var.azure_client_id
       ARM_CLIENT_SECRET = var.azure_client_secret
-    }                     
+    }
   }
 }

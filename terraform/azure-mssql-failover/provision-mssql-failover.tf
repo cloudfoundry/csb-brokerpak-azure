@@ -37,7 +37,7 @@ provider "azurerm" {
   subscription_id = var.azure_subscription_id
   client_id       = var.azure_client_id
   client_secret   = var.azure_client_secret
-  tenant_id       = var.azure_tenant_id  
+  tenant_id       = var.azure_tenant_id
 
   skip_provider_registration = var.skip_provider_registration
 }
@@ -51,8 +51,8 @@ locals {
     16 = "GP_Gen5_16"
     32 = "GP_Gen5_32"
     80 = "GP_Gen5_80"
-  }     
-  sku_name = length(var.sku_name) == 0 ? local.instance_types[var.cores] : var.sku_name     
+  }
+  sku_name = length(var.sku_name) == 0 ? local.instance_types[var.cores] : var.sku_name
   resource_group = length(var.resource_group) == 0 ? format("rg-%s", var.instance_name) : var.resource_group
 }
 
@@ -123,11 +123,11 @@ locals {
     "francesouth" = "francecentral"
     "uaenorth" = "uaecentral"
     "uaecentral" = "uaenorth"
-    "southafricanorth" = "southafricawest" 
+    "southafricanorth" = "southafricawest"
     "southafricawest" = "southafricanorth"
     "germanycentral" = "germanynortheast"
     "germanynortheast" = "germanycentral"
-  }   
+  }
 }
 
 resource "azurerm_sql_server" "secondary_sql_db_server" {
@@ -179,7 +179,7 @@ resource "azurerm_sql_virtual_network_rule" "allow_subnet_id1" {
   resource_group_name = local.resource_group
   server_name         = azurerm_sql_server.primary_azure_sql_db_server.name
   subnet_id           = var.authorized_network
-  count = var.authorized_network != "default" ? 1 : 0   
+  count = var.authorized_network != "default" ? 1 : 0
 }
 
 resource "azurerm_sql_virtual_network_rule" "allow_subnet_id2" {
@@ -187,7 +187,7 @@ resource "azurerm_sql_virtual_network_rule" "allow_subnet_id2" {
   resource_group_name = local.resource_group
   server_name         = azurerm_sql_server.secondary_sql_db_server.name
   subnet_id           = var.authorized_network
-  count = var.authorized_network != "default" ? 1 : 0   
+  count = var.authorized_network != "default" ? 1 : 0
 }
 
 resource "azurerm_sql_firewall_rule" "server1" {
@@ -197,7 +197,7 @@ resource "azurerm_sql_firewall_rule" "server1" {
   server_name         = azurerm_sql_server.primary_azure_sql_db_server.name
   start_ip_address    = "0.0.0.0"
   end_ip_address      = "0.0.0.0"
-  count = var.authorized_network == "default" ? 1 : 0  
+  count = var.authorized_network == "default" ? 1 : 0
 }
 
 resource "azurerm_sql_firewall_rule" "server2" {
@@ -207,7 +207,7 @@ resource "azurerm_sql_firewall_rule" "server2" {
   server_name         = azurerm_sql_server.secondary_sql_db_server.name
   start_ip_address    = "0.0.0.0"
   end_ip_address      = "0.0.0.0"
-  count = var.authorized_network == "default" ? 1 : 0  
+  count = var.authorized_network == "default" ? 1 : 0
 }
 
 locals {

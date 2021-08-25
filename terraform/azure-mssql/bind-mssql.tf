@@ -31,7 +31,7 @@ resource "random_password" "password" {
   min_lower = 2
   min_special = 2
   depends_on = [random_string.username]
-}    
+}
 
 resource "null_resource" "create-sql-login" {
 
@@ -44,7 +44,7 @@ resource "null_resource" "create-sql-login" {
                      random_password.password.result)
     environment = {
       MSSQL_PASSWORD = var.admin_password
-    }                     
+    }
   }
 
   provisioner "local-exec" {
@@ -56,14 +56,14 @@ resource "null_resource" "create-sql-login" {
                      random_string.username.result)
     environment = {
       MSSQL_PASSWORD = var.admin_password
-    }                     
+    }
   }
   depends_on = [random_password.password]
 }
 
 resource "null_resource" "create-sql-user" {
   provisioner "local-exec" {
-    command = format("psqlcmd %s %d %s %s \"CREATE USER [%s] from LOGIN %s;\"", 
+    command = format("psqlcmd %s %d %s %s \"CREATE USER [%s] from LOGIN %s;\"",
                      var.mssql_hostname,
                      var.mssql_port,
                      var.admin_username,
@@ -72,7 +72,7 @@ resource "null_resource" "create-sql-user" {
                      random_string.username.result)
     environment = {
       MSSQL_PASSWORD = var.admin_password
-    }  
+    }
   }
 
   provisioner "local-exec" {
@@ -102,7 +102,7 @@ resource "null_resource" "add-user-roles" {
   for_each = local.roles
 
   provisioner "local-exec" {
-    command = format("psqlcmd %s %d %s %s \"ALTER ROLE %s ADD MEMBER [%s];\"", 
+    command = format("psqlcmd %s %d %s %s \"ALTER ROLE %s ADD MEMBER [%s];\"",
                      var.mssql_hostname,
                      var.mssql_port,
                      var.admin_username,
@@ -126,7 +126,7 @@ resource "null_resource" "add-user-roles" {
                      random_string.username.result)
     environment = {
       MSSQL_PASSWORD = var.admin_password
-    }                     
+    }
   }
 
   depends_on = [null_resource.create-sql-user]
@@ -135,7 +135,7 @@ resource "null_resource" "add-user-roles" {
 # For execute permissions on stored procedures
 resource "null_resource" "add-execute-permission" {
   provisioner "local-exec" {
-    command = format("psqlcmd %s %d %s %s \"GRANT EXEC TO [%s];\"", 
+    command = format("psqlcmd %s %d %s %s \"GRANT EXEC TO [%s];\"",
                      var.mssql_hostname,
                      var.mssql_port,
                      var.admin_username,
@@ -167,27 +167,26 @@ resource "null_resource" "add-execute-permission" {
 output username { value = random_string.username.result }
 output password { value = random_password.password.result }
 output "jdbcUrl" {
-  value = format("jdbc:sqlserver://%s:%d;database=%s;user=%s;password=%s;Encrypt=true;TrustServerCertificate=false;HostNameInCertificate=*.database.windows.net;loginTimeout=30", 
-                 var.mssql_hostname, 
+  value = format("jdbc:sqlserver://%s:%d;database=%s;user=%s;password=%s;Encrypt=true;TrustServerCertificate=false;HostNameInCertificate=*.database.windows.net;loginTimeout=30",
+                 var.mssql_hostname,
                  var.mssql_port,
-                 var.mssql_db_name, 
-                 random_string.username.result, 
+                 var.mssql_db_name,
+                 random_string.username.result,
                  random_password.password.result)
 }
 output "jdbcUrlForAuditingEnabled" {
-  value = format("jdbc:sqlserver://%s:%d;database=%s;user=%s;password=%s;Encrypt=true;TrustServerCertificate=false;HostNameInCertificate=*.database.windows.net;loginTimeout=30", 
-                 var.mssql_hostname, 
+  value = format("jdbc:sqlserver://%s:%d;database=%s;user=%s;password=%s;Encrypt=true;TrustServerCertificate=false;HostNameInCertificate=*.database.windows.net;loginTimeout=30",
+                 var.mssql_hostname,
                  var.mssql_port,
-                 var.mssql_db_name, 
+                 var.mssql_db_name,
                  random_string.username.result,
                  random_password.password.result)
 }
 output "uri" {
-  value = format("mssql://%s:%d/%s?encrypt=true&TrustServerCertificate=false&HostNameInCertificate=*.database.windows.net", 
-                 var.mssql_hostname, 
+  value = format("mssql://%s:%d/%s?encrypt=true&TrustServerCertificate=false&HostNameInCertificate=*.database.windows.net",
+                 var.mssql_hostname,
                  var.mssql_port,
                  var.mssql_db_name)
 }
 output "databaseLogin" {value = random_string.username.result}
 output "databaseLoginPassword" {value = random_password.password.result}
-

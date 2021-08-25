@@ -32,7 +32,7 @@ provider "azurerm" {
   subscription_id = var.azure_subscription_id
   client_id       = var.azure_client_id
   client_secret   = var.azure_client_secret
-  tenant_id       = var.azure_tenant_id  
+  tenant_id       = var.azure_tenant_id
 
   skip_provider_registration = var.skip_provider_registration
 }
@@ -83,7 +83,7 @@ resource "azurerm_sql_virtual_network_rule" "allow_subnet_id" {
   resource_group_name = local.resource_group
   server_name         = azurerm_sql_server.azure_sql_db_server.name
   subnet_id           = var.authorized_network
-  count = var.authorized_network != "default" ? 1 : 0   
+  count = var.authorized_network != "default" ? 1 : 0
 }
 
 resource "azurerm_sql_firewall_rule" "sql_firewall_rule" {
@@ -92,7 +92,7 @@ resource "azurerm_sql_firewall_rule" "sql_firewall_rule" {
   server_name         = azurerm_sql_server.azure_sql_db_server.name
   start_ip_address    = "0.0.0.0"
   end_ip_address      = "0.0.0.0"
-  count = var.authorized_network == "default" ? 1 : 0  
+  count = var.authorized_network == "default" ? 1 : 0
 }
 
 output "sqldbResourceGroup" {value = azurerm_sql_server.azure_sql_db_server.resource_group_name}

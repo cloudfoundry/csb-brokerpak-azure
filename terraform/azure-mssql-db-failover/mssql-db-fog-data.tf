@@ -18,6 +18,6 @@ locals {
     16 = "GP_Gen5_16"
     32 = "GP_Gen5_32"
     80 = "GP_Gen5_80"
-  }     
-  sku_name = length(var.sku_name) == 0 ? local.instance_types[var.cores] : var.sku_name 
+  }
+  sku_name = length(var.sku_name) == 0 ? local.instance_types[var.cores] : var.sku_name
 }
