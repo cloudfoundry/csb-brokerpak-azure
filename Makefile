@@ -11,12 +11,19 @@ help: ## list Makefile targets
 IAAS=azure
 DOCKER_OPTS=--rm -v $(PWD):/brokerpak -w /brokerpak --network=host
 CSB := $(or $(CSB), cfplatformeng/csb)
+USE_GO_CONTAINERS := $(or $(USE_GO_CONTAINERS), 1)
+
+ifeq ($(USE_GO_CONTAINERS), 0)
+BUILDER=./cloud-service-broker
+else
+BUILDER=docker run $(DOCKER_OPTS) $(CSB)
+endif
 
 .PHONY: build
-build: $(IAAS)-services-*.brokerpak 
+build: $(IAAS)-services-*.brokerpak
 
-$(IAAS)-services-*.brokerpak: *.yml terraform/*/*.tf ./tools/psqlcmd/build/psqlcmd_*.zip ./tools/sqlfailover/build/sqlfailover_*.zip
-	docker run $(DOCKER_OPTS) $(CSB) pak build
+$(IAAS)-services-*.brokerpak: *.yml terraform/*/*.tf ./tools/psqlcmd/build/psqlcmd_*.zip ./tools/sqlfailover/build/sqlfailover_*.zip cloud-service-broker
+	$(BUILDER) pak build
 
 SECURITY_USER_NAME := $(or $(SECURITY_USER_NAME), $(IAAS)-broker)
 SECURITY_USER_PASSWORD := $(or $(SECURITY_USER_PASSWORD), $(IAAS)-broker-pw)
@@ -39,7 +46,7 @@ run: build arm-subscription-id arm-tenant-id arm-client-id arm-client-secret ## 
 
 .PHONY: catalog
 catalog: build
-	docker run $(DOCKER_OPTS) \	
+	docker run $(DOCKER_OPTS) \
 		-e SECURITY_USER_NAME \
 		-e SECURITY_USER_PASSWORD \
 		-e USER \
@@ -112,10 +119,10 @@ clean: ## clean up build artifacts
 rebuild: clean build
 
 ./tools/psqlcmd/build/psqlcmd_*.zip: tools/psqlcmd/*.go
-	cd tools/psqlcmd; USE_GO_CONTAINERS=1 $(MAKE) build
+	cd tools/psqlcmd; USE_GO_CONTAINERS=$(USE_GO_CONTAINERS) $(MAKE) build
 
 ./tools/sqlfailover/build/sqlfailover_*.zip: tools/sqlfailover/*.go
-	cd tools/sqlfailover; USE_GO_CONTAINERS=1 $(MAKE) build
+	cd tools/sqlfailover; USE_GO_CONTAINERS=$(USE_GO_CONTAINERS) $(MAKE) build
 
 .PHONY: arm-subscription-id
 arm-subscription-id:
