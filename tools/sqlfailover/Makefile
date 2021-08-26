@@ -4,7 +4,7 @@ GO-VER = go$(GO-VERSION)
 
 SRC = $(shell find . -name "*.go" | grep -v "_test\." )
 VERSION=0.1.0
-ifeq ($(USE_GO_CONTAINERS),)
+ifeq ($(USE_GO_CONTAINERS), 0)
 GO=go
 GOIMPORTS=goimports
 else
@@ -50,7 +50,7 @@ build: ./build/$(EXE_NAME)_$(VERSION)_linux_amd64.zip ./build/$(EXE_NAME)_$(VERS
 
 .PHONY: lint
 lint: deps-goimports
-	git ls-files | grep '.go$$' | xargs $(GOIMPORTS) -l -w	
+	git ls-files | grep '.go$$' | xargs $(GOIMPORTS) -l -w
 
 .PHONY: test
 test: lint
