@@ -33,6 +33,22 @@ resource "random_password" "password" {
   depends_on = [random_string.username]
 }
 
+resource "null_resource" "create-sql-login" {
+  provisioner "local-exec" {
+	  when = destroy
+    command = format("psqlcmd %s %d %s master \"DROP LOGIN [%s]\"",
+                     var.mssql_hostname,
+                     var.mssql_port,
+                     var.admin_username,
+                     random_string.username.result)
+    on_failure = continue
+    environment = {
+      MSSQL_PASSWORD = var.admin_password
+    }
+  }
+  depends_on = [random_password.password]
+}
+
 resource "null_resource" "create-sql-user" {
   provisioner "local-exec" {
     command = format("psqlcmd %s %d %s %s \"CREATE USER [%s] with PASSWORD='%s';\"",
@@ -60,7 +76,9 @@ resource "null_resource" "create-sql-user" {
     }
   }
 
-  depends_on = [random_password.password]
+  # We used to create a login first, and although we no longer do that, we
+  # keep the dependency order for successful deletion
+  depends_on = [null_resource.create-sql-login]
 }
 
 locals {
