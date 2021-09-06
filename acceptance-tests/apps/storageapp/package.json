@@ -16,7 +16,7 @@
     "vcap_services": "^0.7.1"
   },
   "devDependencies": {
-    "@babel/eslint-parser": "^7.15.0",
+    "@babel/eslint-parser": "^7.15.4",
     "standard": "^16.0.3"
   },
   "standard": {
