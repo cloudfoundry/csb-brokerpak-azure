@@ -3,6 +3,7 @@ package mssql_test
 import (
 	"acceptancetests/apps"
 	"acceptancetests/helpers"
+	"acceptancetests/mssql-serial/mssql_helpers"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -12,23 +13,23 @@ var _ = Describe("MSSQL Server Pair and Failover Group DB", func() {
 	It("can be accessed by an app", func() {
 		By("creating a primary server")
 		serversConfig := newDatabaseServerPair()
-		serverInstancePrimary := helpers.CreateService("csb-azure-mssql-server", "standard", serversConfig.primaryConfig())
+		serverInstancePrimary := helpers.CreateService("csb-azure-mssql-server", "standard", serversConfig.PrimaryConfig())
 		defer serverInstancePrimary.Delete()
 
 		// We have previously experienced problems with the CF CLI when doing things in parallel
 		By("creating a secondary server in a different resource group")
-		secondaryResourceGroupInstance := helpers.CreateService("csb-azure-resource-group", "standard", serversConfig.secondaryResourceGroupConfig())
+		secondaryResourceGroupInstance := helpers.CreateService("csb-azure-resource-group", "standard", serversConfig.SecondaryResourceGroupConfig())
 		defer secondaryResourceGroupInstance.Delete()
-		serverInstanceSecondary := helpers.CreateService("csb-azure-mssql-server", "standard", serversConfig.secondaryConfig())
+		serverInstanceSecondary := helpers.CreateService("csb-azure-mssql-server", "standard", serversConfig.SecondaryConfig())
 		defer serverInstanceSecondary.Delete()
 
 		By("reconfiguring the CSB with DB server details")
-		serversConfig.reconfigureCSBWithServerDetails()
+		serversConfig.ReconfigureCSBWithServerDetails()
 
 		By("creating a database failover group on the server pair")
 		fogName := helpers.RandomName("fog")
 		dbFogInstance := helpers.CreateService("csb-azure-mssql-db-failover-group", "small", map[string]string{
-			"server_pair":   serversConfig.serverPairTag,
+			"server_pair":   serversConfig.ServerPairTag,
 			"instance_name": fogName,
 		})
 		defer dbFogInstance.Delete()
@@ -63,8 +64,8 @@ var _ = Describe("MSSQL Server Pair and Failover Group DB", func() {
 
 		By("triggering failover")
 		failoverServiceInstance := helpers.CreateService("csb-azure-mssql-fog-run-failover", "standard", map[string]interface{}{
-			"server_pair_name":  serversConfig.serverPairTag,
-			"server_pairs":      serversConfig.serverPairsConfig(),
+			"server_pair_name":  serversConfig.ServerPairTag,
+			"server_pairs":      serversConfig.ServerPairsConfig(),
 			"fog_instance_name": fogName,
 		})
 		defer failoverServiceInstance.Delete()
@@ -86,79 +87,20 @@ var _ = Describe("MSSQL Server Pair and Failover Group DB", func() {
 	})
 })
 
-func newDatabaseServerPair() databaseServerPair {
+func newDatabaseServerPair() mssql_helpers.DatabaseServerPair {
 	secondaryResourceGroup := helpers.RandomName(metadata.ResourceGroup)
-	return databaseServerPair{
-		serverPairTag: helpers.RandomShortName(),
+	return mssql_helpers.DatabaseServerPair{
+		ServerPairTag: helpers.RandomShortName(),
 		Username:      helpers.RandomShortName(),
 		Password:      helpers.RandomPassword(),
-		PrimaryServer: databaseServerPairMember{
+		PrimaryServer: mssql_helpers.DatabaseServerPairMember{
 			Name:          helpers.RandomName("server"),
 			ResourceGroup: metadata.ResourceGroup,
 		},
-		SecondaryServer: databaseServerPairMember{
+		SecondaryServer: mssql_helpers.DatabaseServerPairMember{
 			Name:          helpers.RandomName("server"),
 			ResourceGroup: secondaryResourceGroup,
 		},
 		SecondaryResourceGroup: secondaryResourceGroup,
 	}
-}
-
-type databaseServerPair struct {
-	serverPairTag          string
-	Username               string                   `json:"admin_username"`
-	Password               string                   `json:"admin_password"`
-	PrimaryServer          databaseServerPairMember `json:"primary"`
-	SecondaryServer        databaseServerPairMember `json:"secondary"`
-	SecondaryResourceGroup string                   `json:"-"`
-}
-
-type databaseServerPairMember struct {
-	Name          string `json:"server_name"`
-	ResourceGroup string `json:"resource_group"`
-}
-
-func (d databaseServerPair) primaryConfig() interface{} {
-	return d.memberConfig(d.PrimaryServer.Name, "westus", d.PrimaryServer.ResourceGroup)
-}
-
-func (d databaseServerPair) secondaryConfig() interface{} {
-	return d.memberConfig(d.SecondaryServer.Name, "eastus", d.SecondaryServer.ResourceGroup)
-}
-
-func (d databaseServerPair) memberConfig(name, location, rg string) interface{} {
-	return struct {
-		Name          string `json:"instance_name"`
-		Username      string `json:"admin_username"`
-		Password      string `json:"admin_password"`
-		Location      string `json:"location"`
-		ResourceGroup string `json:"resource_group"`
-	}{
-		Name:          name,
-		Username:      d.Username,
-		Password:      d.Password,
-		Location:      location,
-		ResourceGroup: rg,
-	}
-}
-
-func (d databaseServerPair) secondaryResourceGroupConfig() interface{} {
-	return struct {
-		InstanceName string `json:"instance_name"`
-		Location     string `json:"location"`
-	}{
-		InstanceName: d.SecondaryResourceGroup,
-		Location:     "eastus",
-	}
-}
-
-func (d databaseServerPair) serverPairsConfig() interface{} {
-	return map[string]interface{}{d.serverPairTag: d}
-}
-
-func (d databaseServerPair) reconfigureCSBWithServerDetails() {
-	helpers.SetBrokerEnv(
-		helpers.EnvVar{Name: "MSSQL_DB_FOG_SERVER_PAIR_CREDS", Value: d.serverPairsConfig()},
-		helpers.EnvVar{Name: "GSB_SERVICE_CSB_AZURE_MSSQL_DB_FAILOVER_GROUP_PROVISION_DEFAULTS", Value: map[string]interface{}{"server_credential_pairs": d.serverPairsConfig()}},
-	)
 }
