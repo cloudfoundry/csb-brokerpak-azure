@@ -34,6 +34,9 @@ resource "random_password" "password" {
 }
 
 resource "null_resource" "create-sql-login" {
+  # we now create users instead of logins (see tracker story #179168006). We still want
+  # to remove logins created with older versions when we unbind. We ignore failures
+  # as current version does not create logins and so this would fail.
   provisioner "local-exec" {
 	  when = destroy
     command = format("psqlcmd %s %d %s master \"DROP LOGIN [%s]\"",
