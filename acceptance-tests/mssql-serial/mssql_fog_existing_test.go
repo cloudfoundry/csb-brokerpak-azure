@@ -82,7 +82,6 @@ func resourceGroupConfig() resourceConfig {
 	}
 }
 
-
 type resourceConfig struct {
 	Name     string `json:"instance_name"`
 	Location string `json:"location"`
@@ -105,7 +104,7 @@ func newServerPair(resourceGroup string) mssql_helpers.DatabaseServerPair {
 }
 
 func failoverGroupConfig(serverPairTag string) map[string]string {
-	return  map[string]string{
+	return map[string]string{
 		"instance_name": helpers.RandomName("fog"),
 		"db_name":       helpers.RandomName("db"),
 		"server_pair":   serverPairTag,
