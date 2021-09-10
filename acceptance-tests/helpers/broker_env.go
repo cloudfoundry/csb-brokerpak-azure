@@ -17,7 +17,11 @@ func SetBrokerEnv(envVars ...EnvVar) {
 	for _, envVar := range envVars {
 		switch v := envVar.Value.(type) {
 		case string:
-			CF("set-env", broker, envVar.Name, v)
+			if v == "" {
+				CF("unset-env", broker, envVar.Name)
+			} else {
+				CF("set-env", broker, envVar.Name, v)
+			}
 		default:
 			data, err := json.Marshal(v)
 			Expect(err).NotTo(HaveOccurred())
