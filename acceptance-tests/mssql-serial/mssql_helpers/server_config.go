@@ -60,4 +60,3 @@ func (d DatabaseServerPair) ReconfigureCSBWithServerDetails() {
 		helpers.EnvVar{Name: "GSB_SERVICE_CSB_AZURE_MSSQL_DB_FAILOVER_GROUP_PROVISION_DEFAULTS", Value: map[string]interface{}{"server_credential_pairs": d.ServerPairsConfig()}},
 	)
 }
-
