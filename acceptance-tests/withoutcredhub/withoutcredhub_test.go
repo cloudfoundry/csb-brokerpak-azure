@@ -9,7 +9,7 @@ import (
 )
 
 var _ = Describe("Without CredHub", func() {
-	It("a service can be accessed by an app", func() {
+	It("can be accessed by an app", func() {
 		By("creating a service instance")
 		serviceInstance := helpers.CreateService("csb-azure-storage-account", "standard")
 		defer serviceInstance.Delete()

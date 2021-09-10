@@ -7,7 +7,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-func TestCosmosDB(t *testing.T) {
+func TestStorage(t *testing.T) {
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "Storage Suite")
 }
