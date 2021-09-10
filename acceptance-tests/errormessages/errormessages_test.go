@@ -19,7 +19,7 @@ var _ = Describe("Error Messages", func() {
 			session := helpers.StartCF("create-service", "csb-azure-mysql", "small", name, "-c", `{"location":"bogus"}`)
 			Eventually(session, time.Minute).Should(Exit(1))
 			Expect(session.Out).To(Say(`FAILED\n`))
-			Expect(session.Err).To(Say(`^Service broker error: \d+ error\(s\) occurred:.*location: location must be one of the following:( "\S+",?)+\n$`))
+			Expect(session.Err).To(Say(`Service broker error: 1 error\(s\) occurred:.*location: location must be one of the following:( "\S+",?)+\n$`))
 		})
 	})
 
