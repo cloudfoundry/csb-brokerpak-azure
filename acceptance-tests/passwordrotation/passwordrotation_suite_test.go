@@ -1,4 +1,4 @@
-package keyrotation_test
+package passwordrotation_test
 
 import (
 	"testing"
@@ -9,5 +9,5 @@ import (
 
 func TestKeyrotation(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Keyrotation Suite")
+	RunSpecs(t, "Passwordrotation Suite")
 }
