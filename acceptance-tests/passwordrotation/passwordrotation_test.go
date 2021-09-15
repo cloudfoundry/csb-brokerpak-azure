@@ -1,4 +1,4 @@
-package keyrotation_test
+package passwordrotation_test
 
 import (
 	"acceptancetests/apps"
