@@ -15,6 +15,8 @@ type EnvVar struct {
 }
 
 const broker = "cloud-service-broker"
+const encryptionEnabled = "ENCRYPTION_ENABLED"
+const encryptionPasswords = "ENCRYPTION_PASSWORDS"
 
 func SetBrokerEnv(envVars ...EnvVar) {
 	for _, envVar := range envVars {
@@ -48,23 +50,23 @@ func GetBrokerEncryptionEnv() BrokerEnvVars {
 	Expect(err).NotTo(HaveOccurred())
 
 	var encryptionPasswords EncryptionPasswords
-	err = json.Unmarshal([]byte(receiver.Var["EXPERIMENTAL_ENCRYPTION_PASSWORDS"]), &encryptionPasswords)
+	err = json.Unmarshal([]byte(receiver.Var[encryptionPasswords]), &encryptionPasswords)
 	Expect(err).NotTo(HaveOccurred())
 
 	return BrokerEnvVars{
 		EncryptionPasswords: encryptionPasswords,
-		EncryptionEnabled:  receiver.Var["EXPERIMENTAL_ENCRYPTION_ENABLED"] == "true",
+		EncryptionEnabled:  receiver.Var[encryptionEnabled] == "true",
 	}
 }
 
 func SetBrokerEncryptionEnv(brokerEnvVars BrokerEnvVars) {
 	envVars := []EnvVar{
 		{
-			Name: "EXPERIMENTAL_ENCRYPTION_ENABLED",
+			Name: encryptionEnabled,
 			Value: brokerEnvVars.EncryptionEnabled,
 		},
 		{
-			Name: "EXPERIMENTAL_ENCRYPTION_PASSWORDS",
+			Name: encryptionPasswords,
 			Value: brokerEnvVars.EncryptionPasswords,
 		},
 	}
