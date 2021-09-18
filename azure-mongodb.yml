@@ -46,6 +46,14 @@ plans:
     enable_automatic_failover: true
 provision:
   plan_inputs:
+  - field_name: private_endpoint_subnet_id
+    type: string
+    details: The ID of the Subnet within which Private Endpoint for the Redis cache will be created.
+    default: ""
+  - field_name: private_dns_zone_ids
+    type: array
+    details: Array of Private DNS Zone IDs to create private DNS zone groups for when using Private Endpoints
+    default: []
   user_inputs:
   - field_name: request_units
     required: true
