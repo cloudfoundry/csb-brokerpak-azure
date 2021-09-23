@@ -36,6 +36,7 @@ variable skip_provider_registration { type = bool }
 variable authorized_network { type = string }
 variable private_endpoint_subnet_id { type = string }
 variable private_dns_zone_ids { type = list(string) }
+variable public_network_access_enabled { type = bool }
 
 provider "azurerm" {
   version = ">= 2.33.0"
@@ -95,7 +96,7 @@ resource "azurerm_cosmosdb_account" "mongo-account" {
 	is_virtual_network_filter_enabled  = local.enable_virtual_network_filter
 	ip_range_filter                    = var.ip_range_filter
 	tags                               = var.labels	
-	public_network_access_enabled 	   = local.private_endpoint_enabled ? false : true
+	public_network_access_enabled 	   = var.public_network_access_enabled
 
 	dynamic "virtual_network_rule"  {
 		for_each = var.authorized_network == "" ? [] : (var.authorized_network == "" ? [] : [1])

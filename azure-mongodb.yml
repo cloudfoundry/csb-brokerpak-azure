@@ -211,6 +211,10 @@ provision:
     type: string
     default: ""
     details: The subnet ID of the Azure VNET to which the instance is locked down to. If left unspecified, it will be public.
+  - field_name: public_network_access_enabled
+    type: boolean
+    default: true
+    details: Whether or not public network access is allowed for this CosmosDB account. 
   computed_inputs:
   - name: labels
     default: ${json.marshal(request.default_labels)}
