@@ -87,6 +87,11 @@ func (s ServiceInstance) Bind(app AppInstance, parameters ...interface{}) Bindin
 	}
 }
 
+func (s ServiceInstance) Unbind(app AppInstance) {
+	args := []string{"unbind-service", app.name, s.name}
+	CF(args...)
+}
+
 func (s ServiceInstance) CreateKey() ServiceKey {
 	name := RandomName()
 	CF("create-service-key", s.name, name)
