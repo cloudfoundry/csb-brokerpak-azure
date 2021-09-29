@@ -46,6 +46,14 @@ plans:
     enable_automatic_failover: true
 provision:
   plan_inputs:
+  - field_name: private_endpoint_subnet_id
+    type: string
+    details: The ID of the Subnet within which Private Endpoint for the CosmosDB account will be created.
+    default: ""
+  - field_name: private_dns_zone_ids
+    type: array
+    details: Array of Private DNS Zone IDs to create private DNS zone groups for when using Private Endpoints
+    default: []
   user_inputs:
   - field_name: request_units
     required: true
@@ -203,6 +211,10 @@ provision:
     type: string
     default: ""
     details: The subnet ID of the Azure VNET to which the instance is locked down to. If left unspecified, it will be public.
+  - field_name: public_network_access_enabled
+    type: boolean
+    default: true
+    details: Whether or not public network access is allowed for this CosmosDB account. 
   computed_inputs:
   - name: labels
     default: ${json.marshal(request.default_labels)}
