@@ -34,6 +34,9 @@ variable max_staleness_prefix {	type= number }
 variable labels { type = map }
 variable skip_provider_registration { type = bool }
 variable authorized_network { type = string }
+variable private_endpoint_subnet_id { type = string }
+variable private_dns_zone_ids { type = list(string) }
+variable public_network_access_enabled { type = bool }
 
 provider "azurerm" {
   version = ">= 2.33.0"
@@ -47,9 +50,15 @@ provider "azurerm" {
   skip_provider_registration = var.skip_provider_registration
 }
 
+resource "random_string" "random" {
+  length = 8
+  special = false
+  upper = false
+}
+
 locals {
 	resource_group = length(var.resource_group) == 0 ? format("rg-%s", var.instance_name) : var.resource_group
-
+	private_endpoint_enabled = var.private_endpoint_subnet_id == null ? false : length(var.private_endpoint_subnet_id) > 0 ? true : false
 	enable_virtual_network_filter = (var.authorized_network != "")
 }
 
@@ -87,6 +96,7 @@ resource "azurerm_cosmosdb_account" "mongo-account" {
 	is_virtual_network_filter_enabled  = local.enable_virtual_network_filter
 	ip_range_filter                    = var.ip_range_filter
 	tags                               = var.labels	
+	public_network_access_enabled 	   = var.public_network_access_enabled
 
 	dynamic "virtual_network_rule"  {
 		for_each = var.authorized_network == "" ? [] : (var.authorized_network == "" ? [] : [1])
@@ -120,6 +130,30 @@ resource "azurerm_cosmosdb_mongo_collection" "mongo-collection" {
 		keys = [var.shard_key]
 		unique = true
 	}
+}
+
+resource "azurerm_private_endpoint" "private_endpoint" {
+  name                = "${random_string.random.result}-privateendpoint"
+  location            = var.location
+  resource_group_name = var.resource_group
+  subnet_id           = var.private_endpoint_subnet_id
+  tags                = var.labels
+  count = local.private_endpoint_enabled ? 1 : 0
+
+  private_service_connection {
+    name                           = "${random_string.random.result}-privateserviceconnection"
+    private_connection_resource_id = azurerm_cosmosdb_account.mongo-account.id
+    subresource_names              = [ "MongoDB" ]
+    is_manual_connection           = false
+  }
+
+  dynamic "private_dns_zone_group" {
+    for_each = length(var.private_dns_zone_ids) == 0 ? [] : [1]
+    content {
+      name = "${random_string.random.result}-privatednszonegroup"
+      private_dns_zone_ids = var.private_dns_zone_ids
+    }
+  }
 }
 
 output uri { value = replace(azurerm_cosmosdb_account.mongo-account.connection_strings[0], "/?", "/${azurerm_cosmosdb_mongo_database.mongo-db.name}?")  }
