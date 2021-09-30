@@ -1,4 +1,4 @@
-# Copyright 2020 Pivotal Software, Inc.
+# Copyright 2021 Pivotal Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,31 +13,31 @@
 # limitations under the License.
 
 dependencies:
-- name: terraform
-  version: 0.12.30
-  source: https://github.com/hashicorp/terraform/archive/v0.12.30.zip
-  source_sha256: d93afe75708f706f416a7968f65af8302ac9c492a21aa958ffb2202bd9390e4d
-- name: terraform-provider-azurerm
-  version: 2.33.0
-  source: https://github.com/terraform-providers/terraform-provider-azurerm/archive/v2.33.0.zip
-  souce_sha256: 35c0a627bda77f40c34b69def0e83b2fcd67a82716a787dd42a714101ce61795
-- name: terraform-provider-azurerm
-  version: 2.59.0
-  source: https://github.com/terraform-providers/terraform-provider-azurerm/archive/v2.59.0.zip
-  source_sha256: 2ae0c7f88388d3c85312697c33316a6169764da7b65067a96658aea67f348c9a
-- name: terraform-provider-random
-  version: 2.2.1
-  source: https://github.com/hashicorp/terraform-provider-random/archive/refs/tags/v2.2.1.zip
-  source_sha256: de665715107f480e0c8ba94249cc4499dd5c442ace9e0315f3e3732ea61c5bee
-- name: terraform-provider-postgresql
-  version: 1.5.0
-  source: https://github.com/terraform-providers/terraform-provider-postgresql/archive/v1.5.0.zip
-  source_sha256: 55fab82ee9c67b2880534cd09bb255b0ae70c82eccb474a4a674b60a41a0e108
-- name: terraform-provider-mysql
-  version: 1.9.0
-  source: https://github.com/hashicorp/terraform-provider-mysql/archive/refs/tags/v1.9.0.zip
-  source_sha256: 8cd135baba86b5568f7685152201b3f73300aa1fe455c6873da05bff1418b707
-- name: terraform-provider-null
-  version: 2.1.2
-  source: https://github.com/hashicorp/terraform-provider-null/archive/refs/tags/v2.1.2.zip
-  source_sha256: 6ad84a569972b1f88533905c4f1fda5b233447f622e14ada8d1aa68ab7705893
+    - name: terraform
+      version: 0.12.30
+      source: https://github.com/hashicorp/terraform/archive/v0.12.30.zip
+      source_sha256: d93afe75708f706f416a7968f65af8302ac9c492a21aa958ffb2202bd9390e4d
+    - name: terraform-provider-azurerm
+      version: 2.33.0
+      source: https://github.com/terraform-providers/terraform-provider-azurerm/archive/v2.33.0.zip
+      source_sha256: 35c0a627bda77f40c34b69def0e83b2fcd67a82716a787dd42a714101ce61795
+    - name: terraform-provider-azurerm
+      version: 2.59.0
+      source: https://github.com/terraform-providers/terraform-provider-azurerm/archive/v2.59.0.zip
+      source_sha256: 2ae0c7f88388d3c85312697c33316a6169764da7b65067a96658aea67f348c9a
+    - name: terraform-provider-mysql
+      version: 1.9.0
+      source: https://releases.hashicorp.com/terraform-provider-mysql/1.9.0/terraform-provider-mysql_1.9.0_linux_amd64.zip
+      source_sha256: 58011051a7ec9274225d92876aff2967b8469189682f22f528f2b152a5da8aba
+    - name: terraform-provider-null
+      version: 2.1.2
+      source: https://releases.hashicorp.com/terraform-provider-null/2.1.2/terraform-provider-null_2.1.2_linux_amd64.zip
+      source_sha256: 16fc2d9b10cf9e5123bf956e7032c338cc93a03be1ca2e9f3d3b7014c0e866c7
+    - name: terraform-provider-postgresql
+      version: 1.5.0
+      source: https://github.com/terraform-providers/terraform-provider-postgresql/archive/v1.5.0.zip
+      source_sha256: 55fab82ee9c67b2880534cd09bb255b0ae70c82eccb474a4a674b60a41a0e108
+    - name: terraform-provider-random
+      version: 2.2.1
+      source: https://releases.hashicorp.com/terraform-provider-random/2.2.1/terraform-provider-random_2.2.1_linux_amd64.zip
+      source_sha256: 7fa7737661380d18cba3cdc71c4ec6f2fd281b9d61112f6b48d06ca8bbf97771
