@@ -37,7 +37,7 @@ var _ = Describe("Error Messages", func() {
 			}, 10*time.Minute, 10*time.Second).Should(MatchRegexp(`status:\s+create failed`))
 
 			stdout, _ := helpers.CF("service", name)
-			Expect(stdout).To(MatchRegexp(`message:\s+Error: Error creating Azure Storage Account "\S+":.*Original Error: Code="ResourceGroupNotFound" Message="Resource group 'bogus' could not be found."`))
+			Expect(stdout).To(MatchRegexp(`message:\s+Error: creating Azure Storage Account "\S+":.*Original Error: Code="ResourceGroupNotFound" Message="Resource group 'bogus' could not be found."`))
 		})
 	})
 })
