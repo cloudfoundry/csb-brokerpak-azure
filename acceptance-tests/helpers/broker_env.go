@@ -54,7 +54,7 @@ func SetBrokerEnvAndRestart(envVars ...EnvVar) {
 	CF("restart", broker)
 }
 
-func GetBrokerEncryptionEnv() BrokerEnvVars {
+func GetBrokerEncryptionEnv(broker string) BrokerEnvVars {
 	out, _ := CF("app", "--guid", broker)
 	guid := strings.TrimSpace(string(out))
 
@@ -76,7 +76,7 @@ func GetBrokerEncryptionEnv() BrokerEnvVars {
 	}
 }
 
-func SetBrokerEncryptionEnv(brokerEnvVars BrokerEnvVars) {
+func SetBrokerEncryptionEnv(brokerName string, brokerEnvVars BrokerEnvVars) {
 	envVars := []EnvVar{
 		{
 			Name: encryptionEnabledEnvVar,
@@ -87,7 +87,9 @@ func SetBrokerEncryptionEnv(brokerEnvVars BrokerEnvVars) {
 			Value: brokerEnvVars.EncryptionPasswords,
 		},
 	}
-	SetBrokerEnvAndRestart(envVars...)
+	SetBrokerEnv(brokerName, envVars...)
+	session := StartCF("restart", brokerName)
+	waitForAppPush(session, brokerName)
 }
 
 type BrokerEnvVars  struct {

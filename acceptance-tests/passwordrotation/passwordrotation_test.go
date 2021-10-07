@@ -7,14 +7,18 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("Keyrotation", func() {
+var _ = Describe("Password Rotation", func() {
 	It("should reencrypt the DB when keys are rotated", func() {
+		By("pushing latest released broker version")
+		serviceBroker := helpers.PushAndStartBroker(brokerName, developmentBuildDir)
+		defer serviceBroker.Delete()
+
 		By("creating a service")
-		serviceInstance := helpers.CreateService("csb-azure-postgresql", "small")
+		serviceInstance := helpers.CreateServiceInBroker("csb-azure-postgresql", "small", brokerName)
 		defer serviceInstance.Delete()
 
 		By("getting current passwords")
-		encryptionPasswords := helpers.GetBrokerEncryptionEnv()
+		encryptionPasswords := helpers.GetBrokerEncryptionEnv(brokerName)
 
 		By("rotating the keys")
 		Expect(encryptionPasswords.EncryptionEnabled).To(BeTrue())
@@ -29,7 +33,7 @@ var _ = Describe("Keyrotation", func() {
 			Label:   "second-password",
 			Primary: true,
 		}
-		helpers.SetBrokerEncryptionEnv(helpers.BrokerEnvVars{
+		helpers.SetBrokerEncryptionEnv(brokerName, helpers.BrokerEnvVars{
 			EncryptionEnabled: encryptionPasswords.EncryptionEnabled,
 			EncryptionPasswords: helpers.EncryptionPasswords{
 				oldPass,
@@ -48,12 +52,11 @@ var _ = Describe("Keyrotation", func() {
 		helpers.AppStart(app)
 
 		By("restarting the broker with new keys only")
-		helpers.SetBrokerEncryptionEnv(helpers.BrokerEnvVars{
+		helpers.SetBrokerEncryptionEnv(brokerName, helpers.BrokerEnvVars{
 			EncryptionEnabled: encryptionPasswords.EncryptionEnabled,
 			EncryptionPasswords: helpers.EncryptionPasswords{
 				newPass,
 			},
 		})
-
 	})
 })
