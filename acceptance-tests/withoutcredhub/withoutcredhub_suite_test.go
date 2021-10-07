@@ -14,14 +14,14 @@ func TestWithoutCredHub(t *testing.T) {
 }
 
 var _ = BeforeSuite(func() {
-	helpers.SetBrokerEnv(helpers.EnvVar{
+	helpers.SetBrokerEnvAndRestart(helpers.EnvVar{
 		Name:  "CH_CRED_HUB_URL",
 		Value: "",
 	})
 })
 
 var _ = AfterSuite(func() {
-	helpers.SetBrokerEnv(helpers.EnvVar{
+	helpers.SetBrokerEnvAndRestart(helpers.EnvVar{
 		Name:  "CH_CRED_HUB_URL",
 		Value: "https://credhub.service.cf.internal:8844",
 	})
