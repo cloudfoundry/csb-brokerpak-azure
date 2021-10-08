@@ -30,7 +30,7 @@ func PushAndStartBroker(brokerName, brokerDir string) ServiceBroker {
 	brokerApp := pushNoStartServiceBroker(brokerName, brokerDir)
 	setEnvVars(brokerName)
 
-	mySqlInstance := CreateServiceInBroker("p.mysql", "db-small")
+	mySqlInstance := CreateService("p.mysql", "db-small")
 	CF("bind-service", brokerName, mySqlInstance.name)
 
 	session := StartCF("restart", brokerName)
