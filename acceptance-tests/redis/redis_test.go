@@ -11,7 +11,7 @@ import (
 var _ = Describe("Redis", func() {
 	It("can be accessed by an app", func() {
 		By("creating a service instance")
-		serviceInstance := helpers.CreateService("csb-azure-redis", "small")
+		serviceInstance := helpers.CreateServiceInBroker("csb-azure-redis", "small", helpers.DefaultBroker().Name)
 		defer serviceInstance.Delete()
 
 		By("pushing the unstarted app twice")

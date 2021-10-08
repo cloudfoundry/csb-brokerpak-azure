@@ -16,15 +16,21 @@ const brokerUsername = "brokeruser"
 const brokerPassword = "brokeruserpassword"
 
 type ServiceBroker struct {
-	name          string
+	Name          string
 	mySqlInstance ServiceInstance
+}
+
+func DefaultBroker() ServiceBroker {
+	return ServiceBroker{
+		Name: "cloud-service-broker",
+	}
 }
 
 func PushAndStartBroker(brokerName, brokerDir string) ServiceBroker {
 	brokerApp := pushNoStartServiceBroker(brokerName, brokerDir)
 	setEnvVars(brokerName)
 
-	mySqlInstance := CreateService("p.mysql", "db-small")
+	mySqlInstance := CreateServiceInBroker("p.mysql", "db-small")
 	CF("bind-service", brokerName, mySqlInstance.name)
 
 	session := StartCF("restart", brokerName)
@@ -35,25 +41,25 @@ func PushAndStartBroker(brokerName, brokerDir string) ServiceBroker {
 	waitForBrokerOperation(session, brokerName)
 
 	return ServiceBroker{
-		name:          brokerName,
+		Name:          brokerName,
 		mySqlInstance: mySqlInstance,
 	}
 }
 
 func (b ServiceBroker) Update(brokerDir string) {
-	brokerApp := pushServiceBroker(b.name, brokerDir)
+	brokerApp := pushServiceBroker(b.Name, brokerDir)
 
 	brokerURL := getBrokerAppURL(brokerApp)
-	session := StartCF("update-service-broker", b.name, brokerUsername, brokerPassword, "https://"+brokerURL)
-	waitForBrokerOperation(session, b.name)
+	session := StartCF("update-service-broker", b.Name, brokerUsername, brokerPassword, "https://"+brokerURL)
+	waitForBrokerOperation(session, b.Name)
 }
 
 func (b ServiceBroker) Delete() {
-	session := StartCF("delete-service-broker", b.name, "-f")
-	waitForBrokerOperation(session, b.name)
+	session := StartCF("delete-service-broker", b.Name, "-f")
+	waitForBrokerOperation(session, b.Name)
 
-	session = StartCF("delete", b.name, "-f")
-	waitForAppDelete(session, b.name)
+	session = StartCF("delete", b.Name, "-f")
+	waitForAppDelete(session, b.Name)
 
 	b.mySqlInstance.Delete()
 }
