@@ -41,7 +41,7 @@ var _ = Describe("MSSQL DB Subsume", func() {
 		serverTag := reconfigureCSBWithMASBServerDetails()
 
 		By("subsuming the database")
-		csbServiceInstance := helpers.CreateServiceInBroker("csb-azure-mssql-db", "subsume", helpers.DefaultBroker().Name, subsumeDBParams(resource, serverTag))
+		csbServiceInstance := helpers.CreateService("csb-azure-mssql-db", "subsume", subsumeDBParams(resource, serverTag))
 		defer csbServiceInstance.Delete()
 
 		By("purging the MASB service instance")
@@ -88,7 +88,7 @@ func reconfigureCSBWithMASBServerDetails() string {
 		},
 	}
 
-	helpers.SetBrokerEnvAndRestart(
+	helpers.SetBrokerEnv(
 		helpers.EnvVar{Name: "MSSQL_DB_SERVER_CREDS", Value: creds},
 		helpers.EnvVar{Name: "GSB_SERVICE_CSB_AZURE_MSSQL_DB_PROVISION_DEFAULTS", Value: map[string]interface{}{"server_credentials": creds}},
 	)

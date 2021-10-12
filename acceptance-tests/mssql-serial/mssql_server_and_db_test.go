@@ -12,14 +12,14 @@ var _ = Describe("MSSQL Server and DB", func() {
 	It("can be accessed by an app", func() {
 		By("creating a server")
 		serverConfig := newDatabaseServer()
-		serverInstance := helpers.CreateServiceInBroker("csb-azure-mssql-server", "standard", helpers.DefaultBroker().Name, serverConfig)
+		serverInstance := helpers.CreateService("csb-azure-mssql-server", "standard", serverConfig)
 		defer serverInstance.Delete()
 
 		By("reconfiguring the CSB with DB server details")
 		serverTag := serverConfig.reconfigureCSBWithServerDetails()
 
 		By("creating a database in the server")
-		dbInstance := helpers.CreateServiceInBroker("csb-azure-mssql-db", "small", helpers.DefaultBroker().Name, map[string]string{"server": serverTag})
+		dbInstance := helpers.CreateService("csb-azure-mssql-db", "small", map[string]string{"server": serverTag})
 		defer dbInstance.Delete()
 
 		By("pushing the unstarted app twice")
@@ -96,7 +96,7 @@ func (d databaseServer) reconfigureCSBWithServerDetails() string {
 		},
 	}
 
-	helpers.SetBrokerEnvAndRestart(
+	helpers.SetBrokerEnv(
 		helpers.EnvVar{Name: "MSSQL_DB_SERVER_CREDS", Value: creds},
 		helpers.EnvVar{Name: "GSB_SERVICE_CSB_AZURE_MSSQL_DB_PROVISION_DEFAULTS", Value: map[string]interface{}{"server_credentials": creds}},
 	)
