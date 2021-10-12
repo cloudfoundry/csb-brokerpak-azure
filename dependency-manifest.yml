@@ -22,22 +22,22 @@ dependencies:
       source: https://github.com/terraform-providers/terraform-provider-azurerm/archive/v2.33.0.zip
       source_sha256: 35c0a627bda77f40c34b69def0e83b2fcd67a82716a787dd42a714101ce61795
     - name: terraform-provider-azurerm
-      version: 2.79.1
-      source: https://github.com/terraform-providers/terraform-provider-azurerm/archive/v2.79.1.zip
-      source_sha256: 75e2b312f527115c3875051a65daf3dec58ced3dfa598ca1b3b092518ebc7029
+      version: 2.80.0
+      source: https://github.com/terraform-providers/terraform-provider-azurerm/archive/v2.80.0.zip
+      source_sha256: 7820ca43a13bf8ebb0bee05cdc65dd19c1243b90634977054c45b6479f8e7b6b
     - name: terraform-provider-mysql
       version: 1.9.0
       source: https://releases.hashicorp.com/terraform-provider-mysql/1.9.0/terraform-provider-mysql_1.9.0_linux_amd64.zip
       source_sha256: 58011051a7ec9274225d92876aff2967b8469189682f22f528f2b152a5da8aba
     - name: terraform-provider-null
-      version: 2.1.2
-      source: https://releases.hashicorp.com/terraform-provider-null/2.1.2/terraform-provider-null_2.1.2_linux_amd64.zip
-      source_sha256: 16fc2d9b10cf9e5123bf956e7032c338cc93a03be1ca2e9f3d3b7014c0e866c7
+      version: 3.1.0
+      source: https://github.com/terraform-providers/terraform-provider-null/archive/v3.1.0.zip
+      source_sha256: 7f2da3d363b285daed6457e54a3054562c12b8f30f08b894ae5ef7b01790e93a
     - name: terraform-provider-postgresql
-      version: 1.5.0
-      source: https://github.com/terraform-providers/terraform-provider-postgresql/archive/v1.5.0.zip
-      source_sha256: 55fab82ee9c67b2880534cd09bb255b0ae70c82eccb474a4a674b60a41a0e108
+      version: 1.7.1
+      source: https://github.com/terraform-providers/terraform-provider-postgresql/archive/v1.7.1.zip
+      source_sha256: 0ceb5c1fa8322b5d4e2c62b8993703248e4d01bb7ec7249b3cd86741c3ff7ebf
     - name: terraform-provider-random
-      version: 2.2.1
-      source: https://releases.hashicorp.com/terraform-provider-random/2.2.1/terraform-provider-random_2.2.1_linux_amd64.zip
-      source_sha256: 7fa7737661380d18cba3cdc71c4ec6f2fd281b9d61112f6b48d06ca8bbf97771
+      version: 3.1.0
+      source: https://github.com/terraform-providers/terraform-provider-random/archive/v3.1.0.zip
+      source_sha256: de00c751bce59bce24e1b08cd9aff7536cabe52a27605c54f91c38b3b419abed
