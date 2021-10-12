@@ -13,11 +13,9 @@ var _ = Describe("CosmosDB", func() {
 	It("can be accessed by an app", func() {
 		By("creating a service instance")
 		databaseName := helpers.RandomName("database")
-		serviceInstance := helpers.CreateServiceInBroker(
-			"csb-azure-cosmosdb-sql",
-			"small",
-			helpers.DefaultBroker().Name,
-			map[string]interface{}{"db_name": databaseName })
+		serviceInstance := helpers.CreateService("csb-azure-cosmosdb-sql", "small", map[string]interface{}{
+			"db_name": databaseName,
+		})
 		defer serviceInstance.Delete()
 
 		By("pushing the unstarted app twice")

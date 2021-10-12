@@ -18,24 +18,7 @@ const broker = "cloud-service-broker"
 const encryptionEnabledEnvVar = "ENCRYPTION_ENABLED"
 const encryptionPasswordsEnvVar = "ENCRYPTION_PASSWORDS"
 
-func SetBrokerEnv(brokerName string, envVars ...EnvVar) {
-	for _, envVar := range envVars {
-		switch v := envVar.Value.(type) {
-		case string:
-			if v == "" {
-				CF("unset-env", brokerName, envVar.Name)
-			} else {
-				CF("set-env", brokerName, envVar.Name, v)
-			}
-		default:
-			data, err := json.Marshal(v)
-			Expect(err).NotTo(HaveOccurred())
-			CF("set-env", brokerName, envVar.Name, string(data))
-		}
-	}
-}
-
-func SetBrokerEnvAndRestart(envVars ...EnvVar) {
+func SetBrokerEnv(envVars ...EnvVar) {
 	for _, envVar := range envVars {
 		switch v := envVar.Value.(type) {
 		case string:
@@ -54,7 +37,7 @@ func SetBrokerEnvAndRestart(envVars ...EnvVar) {
 	CF("restart", broker)
 }
 
-func GetBrokerEncryptionEnv(broker string) BrokerEnvVars {
+func GetBrokerEncryptionEnv() BrokerEnvVars {
 	out, _ := CF("app", "--guid", broker)
 	guid := strings.TrimSpace(string(out))
 
@@ -76,7 +59,7 @@ func GetBrokerEncryptionEnv(broker string) BrokerEnvVars {
 	}
 }
 
-func SetBrokerEncryptionEnv(brokerName string, brokerEnvVars BrokerEnvVars) {
+func SetBrokerEncryptionEnv(brokerEnvVars BrokerEnvVars) {
 	envVars := []EnvVar{
 		{
 			Name: encryptionEnabledEnvVar,
@@ -87,9 +70,7 @@ func SetBrokerEncryptionEnv(brokerName string, brokerEnvVars BrokerEnvVars) {
 			Value: brokerEnvVars.EncryptionPasswords,
 		},
 	}
-	SetBrokerEnv(brokerName, envVars...)
-	session := StartCF("restart", brokerName)
-	waitForAppPush(session, brokerName)
+	SetBrokerEnv(envVars...)
 }
 
 type BrokerEnvVars  struct {

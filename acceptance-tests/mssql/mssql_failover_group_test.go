@@ -11,7 +11,7 @@ import (
 var _ = Describe("MSSQL Failover Group", func() {
 	It("can be accessed by an app before and after failover", func() {
 		By("creating a service instance")
-		serviceInstance := helpers.CreateServiceInBroker("csb-azure-mssql-failover-group", "small-v2", helpers.DefaultBroker().Name)
+		serviceInstance := helpers.CreateService("csb-azure-mssql-failover-group", "small-v2")
 		defer serviceInstance.Delete()
 
 		By("pushing the unstarted app twice")
@@ -42,7 +42,7 @@ var _ = Describe("MSSQL Failover Group", func() {
 		Expect(appTwo.GET("%s/%s", schema, keyOne)).To(Equal(valueOne))
 
 		By("triggering failover")
-		failoverServiceInstance := helpers.CreateServiceInBroker("csb-azure-mssql-fog-run-failover", "standard", helpers.DefaultBroker().Name , failoverParameters(serviceInstance))
+		failoverServiceInstance := helpers.CreateService("csb-azure-mssql-fog-run-failover", "standard", failoverParameters(serviceInstance))
 		defer failoverServiceInstance.Delete()
 
 		By("setting another key-value")

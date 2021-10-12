@@ -1,7 +1,6 @@
 package upgrade_test
 
 import (
-	"acceptancetests/helpers"
 	"flag"
 	"testing"
 
@@ -10,13 +9,9 @@ import (
 )
 
 var developmentBuildDir string
-var releasedBuildDir string
-var brokerName string
 
 func init() {
-	flag.StringVar(&releasedBuildDir, "releasedBuildDir", "../../../azure-released", "location of released version of built broker and brokerpak")
-	flag.StringVar(&developmentBuildDir, "developmentBuildDir", "../../dev-release", "location of development version of built broker and brokerpak")
-	brokerName = helpers.RandomName("csb")
+	flag.StringVar(&developmentBuildDir, "developmentBuildDir", "/test-broker-update", "location of built broker and brokerpak")
 }
 
 func TestUpgrade(t *testing.T) {

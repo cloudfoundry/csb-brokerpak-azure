@@ -10,12 +10,8 @@ import (
 var _ = Describe("UpgradeTest", func() {
 	Context("When upgrading broker version", func(){
 		It("should continue to work", func() {
-			By("pushing latest released broker version")
-			serviceBroker := helpers.PushAndStartBroker(brokerName, releasedBuildDir)
-			defer serviceBroker.Delete()
-
 			By("creating a service")
-			serviceInstance := helpers.CreateServiceInBroker("csb-azure-redis", "small", brokerName)
+			serviceInstance := helpers.CreateService("csb-azure-redis", "small")
 			defer serviceInstance.Delete()
 
 			By("pushing the unstarted app twice")
@@ -38,7 +34,7 @@ var _ = Describe("UpgradeTest", func() {
 			Expect(got).To(Equal(value))
 
 			By("pushing the development version of the broker")
-			serviceBroker.Update(developmentBuildDir)
+			helpers.PushBrokerApp(developmentBuildDir)
 
 			By("deleting bindings created before the upgrade")
 			serviceInstance.Unbind(appOne)
