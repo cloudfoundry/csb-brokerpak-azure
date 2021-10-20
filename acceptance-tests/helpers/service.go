@@ -14,17 +14,36 @@ type ServiceInstance struct {
 }
 
 func CreateService(offering, plan string, parameters ...interface{}) ServiceInstance {
-	name := RandomName(offering, plan)
-	createCommandTimeout := 5 * time.Minute // MASB is slow to start creation
-	args := []string{"create-service", offering, plan, name}
-	if cfVersion() == cfVersionV8 {
-		args = append(args, "--wait")
-		createCommandTimeout = time.Hour
+	switch cfVersion() {
+	case cfVersionV8:
+		return createServiceWithWait(offering, plan, parameters...)
+	default:
+		return createServiceWithPoll(offering, plan, parameters...)
 	}
-	args = append(args, serviceParameters(parameters)...)
+}
+
+func createServiceWithWait(offering, plan string, parameters ...interface{}) ServiceInstance {
+	name := RandomName(offering, plan)
+	args := append([]string{"create-service", offering, plan, name, "--wait"}, serviceParameters(parameters)...)
 
 	session := StartCF(args...)
-	Eventually(session, createCommandTimeout).Should(Exit(0))
+	Eventually(session, time.Hour).Should(Exit(0), func() string {
+		out, _ := CF("service", name)
+		return out
+	})
+
+	return ServiceInstance{
+		name:     name,
+		offering: offering,
+	}
+}
+
+func createServiceWithPoll(offering, plan string, parameters ...interface{}) ServiceInstance {
+	name := RandomName(offering, plan)
+	args := append([]string{"create-service", offering, plan, name}, serviceParameters(parameters)...)
+
+	session := StartCF(args...)
+	Eventually(session, 5*time.Minute).Should(Exit(0))
 
 	Eventually(func() string {
 		out, _ := CF("service", name)
@@ -39,16 +58,29 @@ func CreateService(offering, plan string, parameters ...interface{}) ServiceInst
 }
 
 func (s ServiceInstance) UpdateService(parameters ...string) {
-	createCommandTimeout := time.Minute
-	args := []string{"update-service", s.name}
-	if cfVersion() == cfVersionV8 {
-		args = append(args, "--wait")
-		createCommandTimeout = time.Hour
+	switch cfVersion() {
+	case cfVersionV8:
+		s.updateServiceWithWait(parameters...)
+	default:
+		s.updateServiceWithPoll(parameters...)
 	}
-	args = append(args, parameters...)
+}
+
+func (s ServiceInstance) updateServiceWithWait(parameters ...string) {
+	args := append([]string{"update-service", s.name, "--wait"}, parameters...)
 
 	session := StartCF(args...)
-	Eventually(session, createCommandTimeout).Should(Exit(0))
+	Eventually(session, time.Hour).Should(Exit(0), func() string {
+		out, _ := CF("service", s.name)
+		return out
+	})
+}
+
+func (s ServiceInstance) updateServiceWithPoll(parameters ...string) {
+	args := append([]string{"update-service", s.name}, parameters...)
+
+	session := StartCF(args...)
+	Eventually(session, 5*time.Minute).Should(Exit(0))
 
 	Eventually(func() string {
 		out, _ := CF("service", s.name)
