@@ -60,9 +60,3 @@ updates:
     interval: "weekly"
     day: "saturday"
     time: "06:00"
-- package-ecosystem: npm
-  directory: "/acceptance-tests/spring-music-validator"
-  schedule:
-    interval: "weekly"
-    day: "saturday"
-    time: "06:00"
