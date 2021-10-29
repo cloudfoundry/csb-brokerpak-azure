@@ -140,11 +140,6 @@ provision:
     type: string
     details: Name of server pair from server_credential_pairs to create database upon
     required: true
-  - field_name: server_credential_pairs
-    type: object
-    details: 'JSON hash of server pair name to set of server credentials. { "name": { "admin_username":"...", "admin_password":"...", "primary":{"server_name":"...", "resource_group":..."}, "secondary":{"server_name":"...", "resource_group":..."}, ...}'
-    required: true
-    default: ${config("azure.mssql_db_fog_server_pair_creds")}
   - field_name: read_write_endpoint_failover_policy
     type: string
     details: Faileover policy (Automatic or Manual)
@@ -197,6 +192,11 @@ provision:
     default: ${json.marshal(request.default_labels)}
     overwrite: true
     type: object
+  - name: server_credential_pairs
+    type: object
+    details: 'JSON hash of server pair name to set of server credentials. { "name": { "admin_username":"...", "admin_password":"...", "primary":{"server_name":"...", "resource_group":..."}, "secondary":{"server_name":"...", "resource_group":..."}, ...}'
+    required: true
+    default: ${config("azure.mssql_db_fog_server_pair_creds")}
   outputs:
   - field_name: sqlServerName
     type: string

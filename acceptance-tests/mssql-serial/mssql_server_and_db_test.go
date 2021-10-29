@@ -69,21 +69,6 @@ type databaseServer struct {
 	Password string `json:"admin_password"`
 }
 
-func (d databaseServer) asServerCredentials() interface{} {
-	serverTag := helpers.RandomShortName()
-	return map[string]interface{}{
-		"server": serverTag,
-		"server_credentials": map[string]interface{}{
-			serverTag: map[string]string{
-				"server_name":           d.Name,
-				"server_resource_group": metadata.ResourceGroup,
-				"admin_username":        d.Username,
-				"admin_password":        d.Password,
-			},
-		},
-	}
-}
-
 func (d databaseServer) reconfigureCSBWithServerDetails() string {
 	serverTag := helpers.RandomShortName()
 

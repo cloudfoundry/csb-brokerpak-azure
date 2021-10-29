@@ -111,6 +111,5 @@ func serverPairsConfig(serverPairTag string) interface{} {
 func reconfigureCSBWithServerDetails(serverPairTag string) {
 	helpers.SetBrokerEnv(
 		helpers.EnvVar{Name: "MSSQL_DB_FOG_SERVER_PAIR_CREDS", Value: serverPairsConfig(serverPairTag)},
-		helpers.EnvVar{Name: "GSB_SERVICE_CSB_AZURE_MSSQL_DB_FAILOVER_GROUP_PROVISION_DEFAULTS", Value: map[string]interface{}{"server_credential_pairs": serverPairsConfig(serverPairTag)}},
 	)
 }
