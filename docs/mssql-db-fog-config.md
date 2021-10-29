@@ -48,7 +48,7 @@ An operator will likely configure *server_credential_pairs* for developers to us
 
 See [configuration documentation](./configuration.md) and [Azure installation documentation](azure-installation.md) for reference.
 
-To globally configure *server_credential_pairs*, include the following in the configuration file for the broker:
+To configure *server_credential_pairs*, include the following in the configuration file for the broker:
 
 ```yaml
 azure:
