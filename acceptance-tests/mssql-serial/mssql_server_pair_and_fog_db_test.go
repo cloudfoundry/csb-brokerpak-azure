@@ -13,14 +13,14 @@ var _ = Describe("MSSQL Server Pair and Failover Group DB", func() {
 	It("can be accessed by an app", func() {
 		By("creating a primary server")
 		serversConfig := newDatabaseServerPair()
-		serverInstancePrimary := helpers.CreateServiceInBroker("csb-azure-mssql-server", "standard", helpers.DefaultBroker().Name, serversConfig.PrimaryConfig())
+		serverInstancePrimary := helpers.CreateServiceFromBroker("csb-azure-mssql-server", "standard", helpers.DefaultBroker().Name, serversConfig.PrimaryConfig())
 		defer serverInstancePrimary.Delete()
 
 		// We have previously experienced problems with the CF CLI when doing things in parallel
 		By("creating a secondary server in a different resource group")
-		secondaryResourceGroupInstance := helpers.CreateServiceInBroker("csb-azure-resource-group", "standard", helpers.DefaultBroker().Name, serversConfig.SecondaryResourceGroupConfig())
+		secondaryResourceGroupInstance := helpers.CreateServiceFromBroker("csb-azure-resource-group", "standard", helpers.DefaultBroker().Name, serversConfig.SecondaryResourceGroupConfig())
 		defer secondaryResourceGroupInstance.Delete()
-		serverInstanceSecondary := helpers.CreateServiceInBroker("csb-azure-mssql-server", "standard", helpers.DefaultBroker().Name, serversConfig.SecondaryConfig())
+		serverInstanceSecondary := helpers.CreateServiceFromBroker("csb-azure-mssql-server", "standard", helpers.DefaultBroker().Name, serversConfig.SecondaryConfig())
 		defer serverInstanceSecondary.Delete()
 
 		By("reconfiguring the CSB with DB server details")
@@ -28,7 +28,7 @@ var _ = Describe("MSSQL Server Pair and Failover Group DB", func() {
 
 		By("creating a database failover group on the server pair")
 		fogName := helpers.RandomName("fog")
-		dbFogInstance := helpers.CreateServiceInBroker("csb-azure-mssql-db-failover-group", "small", helpers.DefaultBroker().Name, map[string]string{
+		dbFogInstance := helpers.CreateServiceFromBroker("csb-azure-mssql-db-failover-group", "small", helpers.DefaultBroker().Name, map[string]string{
 			"server_pair":   serversConfig.ServerPairTag,
 			"instance_name": fogName,
 		})
@@ -63,7 +63,7 @@ var _ = Describe("MSSQL Server Pair and Failover Group DB", func() {
 		Expect(got).To(Equal(valueOne))
 
 		By("triggering failover")
-		failoverServiceInstance := helpers.CreateServiceInBroker("csb-azure-mssql-fog-run-failover", "standard", helpers.DefaultBroker().Name, map[string]interface{}{
+		failoverServiceInstance := helpers.CreateServiceFromBroker("csb-azure-mssql-fog-run-failover", "standard", helpers.DefaultBroker().Name, map[string]interface{}{
 			"server_pair_name":  serversConfig.ServerPairTag,
 			"server_pairs":      serversConfig.ServerPairsConfig(),
 			"fog_instance_name": fogName,

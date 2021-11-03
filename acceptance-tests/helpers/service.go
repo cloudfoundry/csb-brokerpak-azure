@@ -12,7 +12,7 @@ type ServiceInstance struct {
 	offering string
 	name     string
 }
-func CreateServiceInBroker(offering, plan, broker string, parameters ...interface{}) ServiceInstance {
+func CreateServiceFromBroker(offering, plan, broker string, parameters ...interface{}) ServiceInstance {
 	name := RandomName(offering, plan)
 	createCommandTimeout := 5 * time.Minute // MASB is slow to start creation
 	args := []string{"create-service", offering, plan, name, "-b", broker}

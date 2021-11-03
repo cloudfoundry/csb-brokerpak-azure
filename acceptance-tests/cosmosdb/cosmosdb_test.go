@@ -13,7 +13,7 @@ var _ = Describe("CosmosDB", func() {
 	It("can be accessed by an app", func() {
 		By("creating a service instance")
 		databaseName := helpers.RandomName("database")
-		serviceInstance := helpers.CreateServiceInBroker(
+		serviceInstance := helpers.CreateServiceFromBroker(
 			"csb-azure-cosmosdb-sql",
 			"small",
 			helpers.DefaultBroker().Name,

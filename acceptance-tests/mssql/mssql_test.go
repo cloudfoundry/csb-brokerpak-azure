@@ -11,7 +11,7 @@ import (
 var _ = Describe("MSSQL", func() {
 	It("can be accessed by an app", func() {
 		By("creating a service instance")
-		serviceInstance := helpers.CreateServiceInBroker("csb-azure-mssql", "small-v2", helpers.DefaultBroker().Name)
+		serviceInstance := helpers.CreateServiceFromBroker("csb-azure-mssql", "small-v2", helpers.DefaultBroker().Name)
 		defer serviceInstance.Delete()
 
 		By("pushing the unstarted app twice")
