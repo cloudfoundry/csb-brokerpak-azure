@@ -12,14 +12,14 @@ var _ = Describe("MSSQL Server and DB", func() {
 	It("can be accessed by an app", func() {
 		By("creating a server")
 		serverConfig := newDatabaseServer()
-		serverInstance := helpers.CreateServiceInBroker("csb-azure-mssql-server", "standard", helpers.DefaultBroker().Name, serverConfig)
+		serverInstance := helpers.CreateServiceFromBroker("csb-azure-mssql-server", "standard", helpers.DefaultBroker().Name, serverConfig)
 		defer serverInstance.Delete()
 
 		By("reconfiguring the CSB with DB server details")
 		serverTag := serverConfig.reconfigureCSBWithServerDetails()
 
 		By("creating a database in the server")
-		dbInstance := helpers.CreateServiceInBroker("csb-azure-mssql-db", "small", helpers.DefaultBroker().Name, map[string]string{"server": serverTag})
+		dbInstance := helpers.CreateServiceFromBroker("csb-azure-mssql-db", "small", helpers.DefaultBroker().Name, map[string]string{"server": serverTag})
 		defer dbInstance.Delete()
 
 		By("pushing the unstarted app twice")

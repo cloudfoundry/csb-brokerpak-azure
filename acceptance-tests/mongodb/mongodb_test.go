@@ -14,7 +14,7 @@ var _ = Describe("MongoDB", func() {
 		By("creating a service instance")
 		databaseName := helpers.RandomName("database")
 		collectionName := helpers.RandomName("collection")
-		serviceInstance := helpers.CreateServiceInBroker("csb-azure-mongodb", "small", helpers.DefaultBroker().Name, map[string]interface{}{
+		serviceInstance := helpers.CreateServiceFromBroker("csb-azure-mongodb", "small", helpers.DefaultBroker().Name, map[string]interface{}{
 			"db_name":         databaseName,
 			"collection_name": collectionName,
 			"shard_key":       "_id",

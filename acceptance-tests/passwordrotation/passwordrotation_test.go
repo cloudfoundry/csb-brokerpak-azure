@@ -14,7 +14,7 @@ var _ = Describe("Password Rotation", func() {
 		defer serviceBroker.Delete()
 
 		By("creating a service")
-		serviceInstance := helpers.CreateServiceInBroker("csb-azure-postgresql", "small", brokerName)
+		serviceInstance := helpers.CreateServiceFromBroker("csb-azure-postgresql", "small", brokerName)
 		defer serviceInstance.Delete()
 
 		By("getting current passwords")
