@@ -11,7 +11,7 @@ import (
 var _ = Describe("Without CredHub", func() {
 	It("can be accessed by an app", func() {
 		By("creating a service instance")
-		serviceInstance := helpers.CreateService("csb-azure-storage-account", "standard")
+		serviceInstance := helpers.CreateServiceInBroker("csb-azure-storage-account", "standard", helpers.DefaultBroker().Name,)
 		defer serviceInstance.Delete()
 
 		By("pushing the unstarted app")
