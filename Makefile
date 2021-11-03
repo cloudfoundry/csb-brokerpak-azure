@@ -105,12 +105,22 @@ push-broker: cloud-service-broker build arm-subscription-id arm-tenant-id arm-cl
 
 .PHONY: push-local-broker
 push-local-broker: local-cloud-service-broker build arm-subscription-id arm-tenant-id arm-client-id arm-client-secret ## push the broker with this brokerpak
-	MANIFEST=cf-manifest.yml APP_NAME=$(APP_NAME) DB_TLS=$(DB_TLS) GSB_PROVISION_DEFAULTS='$(GSB_PROVISION_DEFAULTS)' ./scripts/push-broker.sh
+	MANIFEST=cf-manifest.yml APP_NAME=$(APP_NAME) DB_TLS=$(DB_TLS) GSB_PROVISION_DEFAULTS='$(GSB_PROVISION_DEFAULTS)' GSB_SERVICE_CSB_AZURE_MSSQL_FAILOVER_GROUP_PLANS='$(GSB_SERVICE_CSB_AZURE_MSSQL_FAILOVER_GROUP_PLANS)' ./scripts/push-broker.sh
+
+.PHONY: collect-released
+collect-released:
+	mkdir -p ../azure-released
+	wget $(shell curl -sL https://api.github.com/repos/cloudfoundry-incubator/cloud-service-broker/releases/latest | jq -r '.assets[] | select(.name == "cloud-service-broker.linux") | .browser_download_url') -P ../azure-released
+	mv ./../azure-released/cloud-service-broker.linux ./../azure-released/cloud-service-broker
+	chmod +x ./../azure-released/cloud-service-broker
+	wget $(shell curl -sL https://api.github.com/repos/cloudfoundry-incubator/csb-brokerpak-azure/releases/latest | jq -r '.assets[0].browser_download_url') -P ../azure-released
+	cp cf-manifest.yml ../azure-released
 
 .PHONY: clean
 clean: ## clean up build artifacts
 	- rm $(IAAS)-services-*.brokerpak
 	- rm ./cloud-service-broker
+	- rm -rf released
 	- rm ./brokerpak-user-docs.md
 	- cd tools/psqlcmd; $(MAKE) clean
 	- cd tools/sqlfailover; $(MAKE) clean

@@ -48,7 +48,7 @@ var _ = Describe("MSSQL Failover Group DB Subsume", func() {
 		reconfigureCSBWithServerDetails(serverPairTag)
 
 		By("subsuming the database failover group")
-		dbFogInstance := helpers.CreateService("csb-azure-mssql-db-failover-group", "subsume", map[string]string{
+		dbFogInstance := helpers.CreateServiceInBroker("csb-azure-mssql-db-failover-group", "subsume", helpers.DefaultBroker().Name, map[string]string{
 			"azure_primary_db_id":   fetchResourceID("db", masbDBName, metadata.PreProvisionedSQLServer),
 			"azure_secondary_db_id": fetchResourceID("db", masbDBName, metadata.PreProvisionedFOGServer),
 			"azure_fog_id":          fetchResourceID("failover-group", fogName, metadata.PreProvisionedSQLServer),
@@ -109,7 +109,7 @@ func serverPairsConfig(serverPairTag string) interface{} {
 }
 
 func reconfigureCSBWithServerDetails(serverPairTag string) {
-	helpers.SetBrokerEnv(
+	helpers.SetBrokerEnvAndRestart(
 		helpers.EnvVar{Name: "MSSQL_DB_FOG_SERVER_PAIR_CREDS", Value: serverPairsConfig(serverPairTag)},
 	)
 }
