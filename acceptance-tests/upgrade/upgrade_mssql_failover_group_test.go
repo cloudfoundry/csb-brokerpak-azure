@@ -49,6 +49,9 @@ var _ = Describe("UpgradeMssqlTest", func() {
 			By("pushing the development version of the broker")
 			serviceBroker.Update(developmentBuildDir)
 
+			By("dropping the schema used to allow us to unbind")
+			appOne.DELETE(schema)
+
 			By("deleting bindings created before the upgrade")
 			serviceInstance.Unbind(appOne)
 			serviceInstance.Unbind(appTwo)
@@ -58,6 +61,10 @@ var _ = Describe("UpgradeMssqlTest", func() {
 			serviceInstance.Bind(appTwo)
 			helpers.AppRestage(appOne, appTwo)
 
+			By("creating a schema using the first app")
+			schema = helpers.RandomShortName()
+			appOne.PUT("", schema)
+
 			keyTwo := helpers.RandomHex()
 			valueTwo := helpers.RandomHex()
 			appOne.PUT(valueTwo, "%s/%s", schema, keyTwo)
@@ -65,14 +72,11 @@ var _ = Describe("UpgradeMssqlTest", func() {
 			got = appTwo.GET("%s/%s", schema, keyTwo)
 			Expect(got).To(Equal(valueTwo))
 
-			By("getting the previously set values")
-			Expect(appTwo.GET("%s/%s", schema, keyOne)).To(Equal(valueOne))
-
 			By("updating the instance plan")
 			serviceInstance.UpdateService("-p", "medium")
 
 			By("triggering failover")
-			failoverServiceInstance := helpers.CreateServiceFromBroker("csb-azure-mssql-fog-run-failover", "standard", helpers.DefaultBroker().Name , failoverParameters(serviceInstance))
+			failoverServiceInstance := helpers.CreateServiceFromBroker("csb-azure-mssql-fog-run-failover", "standard", brokerName, failoverParameters(serviceInstance))
 			defer failoverServiceInstance.Delete()
 
 			By("checking it still works")
@@ -84,8 +88,10 @@ var _ = Describe("UpgradeMssqlTest", func() {
 			Expect(got).To(Equal(valueThree))
 
 			By("getting the previously set values")
-			Expect(appTwo.GET("%s/%s", schema, keyOne)).To(Equal(valueOne))
+			Expect(appTwo.GET("%s/%s", schema, keyTwo)).To(Equal(valueTwo))
 
+			By("dropping the schema used to allow us to unbind")
+			appOne.DELETE(schema)
 		})
 	})
 })

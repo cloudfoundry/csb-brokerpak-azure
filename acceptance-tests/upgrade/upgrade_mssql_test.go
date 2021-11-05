@@ -47,6 +47,9 @@ var _ = Describe("UpgradeMssqlTest", func() {
 			By("pushing the development version of the broker")
 			serviceBroker.Update(developmentBuildDir)
 
+			By("dropping the schema used to allow us to unbind")
+			appOne.DELETE(schema)
+
 			By("deleting bindings created before the upgrade")
 			serviceInstance.Unbind(appOne)
 			serviceInstance.Unbind(appTwo)
@@ -55,6 +58,10 @@ var _ = Describe("UpgradeMssqlTest", func() {
 			serviceInstance.Bind(appOne)
 			serviceInstance.Bind(appTwo)
 			helpers.AppRestage(appOne, appTwo)
+
+			By("creating a schema using the first app")
+			schema = helpers.RandomShortName()
+			appOne.PUT("", schema)
 
 			key = helpers.RandomHex()
 			value = helpers.RandomHex()
@@ -73,6 +80,9 @@ var _ = Describe("UpgradeMssqlTest", func() {
 
 			got = appTwo.GET("%s/%s", schema, key)
 			Expect(got).To(Equal(value))
+
+			By("dropping the schema used to allow us to unbind")
+			appOne.DELETE(schema)
 		})
 	})
 })
