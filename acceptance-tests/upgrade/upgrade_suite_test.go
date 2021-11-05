@@ -1,7 +1,6 @@
 package upgrade_test
 
 import (
-	"acceptancetests/helpers"
 	"flag"
 	"testing"
 

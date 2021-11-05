@@ -7,20 +7,21 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("UpgradeTest", func() {
+var _ = Describe("UpgradeMysqlTest", func() {
 	Context("When upgrading broker version", func(){
 		It("should continue to work", func() {
 			By("pushing latest released broker version")
+			brokerName := helpers.RandomName("csb-mysql")
 			serviceBroker := helpers.PushAndStartBroker(brokerName, releasedBuildDir)
 			defer serviceBroker.Delete()
 
 			By("creating a service")
-			serviceInstance := helpers.CreateServiceFromBroker("csb-azure-redis", "small", brokerName)
+			serviceInstance := helpers.CreateServiceFromBroker("csb-azure-mysql", "small", brokerName)
 			defer serviceInstance.Delete()
 
 			By("pushing the unstarted app twice")
-			appOne := helpers.AppPushUnstarted(apps.Redis)
-			appTwo := helpers.AppPushUnstarted(apps.Redis)
+			appOne := helpers.AppPushUnstarted(apps.MySQL)
+			appTwo := helpers.AppPushUnstarted(apps.MySQL)
 			defer helpers.AppDelete(appOne, appTwo)
 
 			By("binding to the apps")
