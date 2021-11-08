@@ -30,7 +30,7 @@ var _ = Describe("UpgradeMssqlDBFailoverTest", func() {
 			defer serverInstanceSecondary.Delete()
 
 			By("reconfiguring the CSB with DB server details")
-			serversConfig.ReconfigureCSBWithServerDetails()
+			serversConfig.ReconfigureCSBWithServerDetails(brokerName)
 
 			By("creating a failover group service instance")
 			fogConfig := failoverGroupConfig(serversConfig.ServerPairTag)
@@ -76,6 +76,10 @@ var _ = Describe("UpgradeMssqlDBFailoverTest", func() {
 			initialFogInstance.Bind(appOne)
 			initialFogInstance.Bind(appTwo)
 			helpers.AppRestage(appOne, appTwo)
+
+			By("creating a schema using the first app")
+			schema = helpers.RandomShortName()
+			appOne.PUT("", schema)
 
 			keyTwo := helpers.RandomHex()
 			valueTwo := helpers.RandomHex()

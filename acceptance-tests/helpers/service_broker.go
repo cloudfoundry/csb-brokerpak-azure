@@ -167,6 +167,10 @@ func SetBrokerEnv(brokerName string, envVars ...EnvVar) {
 	}
 }
 
+func RestartBroker(broker string) {
+	CF("restart", broker)
+}
+
 func SetBrokerEnvAndRestart(envVars ...EnvVar) {
 	for _, envVar := range envVars {
 		switch v := envVar.Value.(type) {

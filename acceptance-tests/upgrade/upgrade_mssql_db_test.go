@@ -21,7 +21,7 @@ var _ = Describe("UpgradeMssqlDBTest", func() {
 			defer serverInstance.Delete()
 
 			By("reconfiguring the CSB with DB server details")
-			serverTag := serverConfig.reconfigureCSBWithServerDetails()
+			serverTag := serverConfig.reconfigureCSBWithServerDetails(brokerName)
 
 			By("creating a database in the server")
 			dbInstance := helpers.CreateServiceFromBroker("csb-azure-mssql-db", "small", brokerName, map[string]string{"server": serverTag})
@@ -110,7 +110,7 @@ type databaseServer struct {
 	Password string `json:"admin_password"`
 }
 
-func (d databaseServer) reconfigureCSBWithServerDetails() string {
+func (d databaseServer) reconfigureCSBWithServerDetails(broker string) string {
 	serverTag := helpers.RandomShortName()
 
 	creds := map[string]interface{}{
@@ -122,9 +122,9 @@ func (d databaseServer) reconfigureCSBWithServerDetails() string {
 		},
 	}
 
-	helpers.SetBrokerEnvAndRestart(
-		helpers.EnvVar{Name: "MSSQL_DB_SERVER_CREDS", Value: creds},
-	)
+	helpers.SetBrokerEnv(broker, helpers.EnvVar{Name: "MSSQL_DB_SERVER_CREDS", Value: creds})
+
+	helpers.RestartBroker(broker)
 
 	return serverTag
 }
