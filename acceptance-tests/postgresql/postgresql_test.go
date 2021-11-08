@@ -14,26 +14,35 @@ var _ = Describe("PostgreSQL", func() {
 		serviceInstance := helpers.CreateServiceFromBroker("csb-azure-postgresql", "small", helpers.DefaultBroker().Name)
 		defer serviceInstance.Delete()
 
-		By("pushing the unstarted app")
-		app := helpers.AppPushUnstarted(apps.PostgeSQL)
-		defer helpers.AppDelete(app)
+		By("pushing the unstarted app twice")
+		appOne := helpers.AppPushUnstarted(apps.PostgeSQL)
+		appTwo := helpers.AppPushUnstarted(apps.PostgeSQL)
+		defer helpers.AppDelete(appOne, appTwo)
 
-		By("binding the app to the service instance")
-		binding := serviceInstance.Bind(app)
+		By("binding the apps to the service instance")
+		binding := serviceInstance.Bind(appOne)
+		serviceInstance.Bind(appTwo)
 
-		By("starting the app")
-		helpers.AppStart(app)
+		By("starting the apps")
+		helpers.AppStart(appOne, appTwo)
 
 		By("checking that the app environment has a credhub reference for credentials")
 		Expect(binding.Credential()).To(helpers.HaveCredHubRef)
 
-		By("setting a key-value")
+		By("creating a schema using the first app")
+		schema := helpers.RandomShortName()
+		appOne.PUT("", schema)
+
+		By("setting a key-value using the first app")
 		key := helpers.RandomHex()
 		value := helpers.RandomHex()
-		app.PUT(value, key)
+		appOne.PUT(value, "%s/%s", schema, key)
 
-		By("getting the value")
-		got := app.GET(key)
+		By("getting the value using the second app")
+		got := appTwo.GET("%s/%s", schema, key)
 		Expect(got).To(Equal(value))
+
+		By("dropping the schema using the first app")
+		appOne.DELETE(schema)
 	})
 })
