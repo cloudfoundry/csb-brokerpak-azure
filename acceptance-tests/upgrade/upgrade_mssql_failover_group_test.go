@@ -9,7 +9,7 @@ import (
 	"regexp"
 )
 
-var _ = Describe("UpgradeMssqlTest", func() {
+var _ = Describe("UpgradeMssqlFailoverGroupTest", func() {
 	Context("When upgrading broker version", func(){
 		It("should continue to work", func() {
 			By("pushing latest released broker version")
