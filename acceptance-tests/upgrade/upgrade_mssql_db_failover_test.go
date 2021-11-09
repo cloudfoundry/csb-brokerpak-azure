@@ -81,6 +81,7 @@ var _ = Describe("UpgradeMssqlDBFailoverTest", func() {
 			schema = helpers.RandomShortName()
 			appOne.PUT("", schema)
 
+			By("checking data can be written and read")
 			keyTwo := helpers.RandomHex()
 			valueTwo := helpers.RandomHex()
 			appOne.PUT(valueTwo, "%s/%s", schema, keyTwo)

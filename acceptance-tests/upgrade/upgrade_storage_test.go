@@ -34,13 +34,13 @@ var _ = Describe("UpgradeStorageTest", func() {
 			appOne.PUT("", collectionName)
 
 			By("uploading a blob using the first app")
-			blobName := helpers.RandomHex()
-			blobData := helpers.RandomHex()
-			appOne.PUT(blobData, "%s/%s", collectionName, blobName)
+			blobNameOne := helpers.RandomHex()
+			blobDataOne := helpers.RandomHex()
+			appOne.PUT(blobDataOne, "%s/%s", collectionName, blobNameOne)
 
 			By("downloading the blob using the second app")
-			got := appTwo.GET("%s/%s", collectionName, blobName)
-			Expect(got).To(Equal(blobData))
+			got := appTwo.GET("%s/%s", collectionName, blobNameOne)
+			Expect(got).To(Equal(blobDataOne))
 
 			By("pushing the development version of the broker")
 			serviceBroker.Update(developmentBuildDir)
@@ -52,13 +52,18 @@ var _ = Describe("UpgradeStorageTest", func() {
 			By("creating new bindings and testing they still work")
 			serviceInstance.Bind(appOne)
 			serviceInstance.Bind(appTwo)
-
 			helpers.AppRestage(appOne, appTwo)
-			blobName = helpers.RandomHex()
-			blobData = helpers.RandomHex()
-			appOne.PUT(blobData, "%s/%s", collectionName, blobName)
-			got = appTwo.GET("%s/%s", collectionName, blobName)
-			Expect(got).To(Equal(blobData))
+
+			By("checking that previously written data is accessible")
+			got = appTwo.GET("%s/%s", collectionName, blobNameOne)
+			Expect(got).To(Equal(blobDataOne))
+
+			By("checking that data can still be written and read")
+			blobNameTwo := helpers.RandomHex()
+			blobDataTwo := helpers.RandomHex()
+			appOne.PUT(blobDataTwo, "%s/%s", collectionName, blobNameTwo)
+			got = appTwo.GET("%s/%s", collectionName, blobNameTwo)
+			Expect(got).To(Equal(blobDataTwo))
 		})
 	})
 })

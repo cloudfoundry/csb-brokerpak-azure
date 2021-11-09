@@ -44,13 +44,13 @@ var _ = Describe("UpgradeMssqlDBTest", func() {
 			appOne.PUT("", schema)
 
 			By("setting a key-value using the first app")
-			key := helpers.RandomHex()
-			value := helpers.RandomHex()
-			appOne.PUT(value, "%s/%s", schema, key)
+			keyOne := helpers.RandomHex()
+			valueOne := helpers.RandomHex()
+			appOne.PUT(valueOne, "%s/%s", schema, keyOne)
 
 			By("getting the value using the second app")
-			got := appTwo.GET("%s/%s", schema, key)
-			Expect(got).To(Equal(value))
+			got := appTwo.GET("%s/%s", schema, keyOne)
+			Expect(got).To(Equal(valueOne))
 
 			By("pushing the development version of the broker")
 			serviceBroker.Update(developmentBuildDir)
@@ -72,23 +72,27 @@ var _ = Describe("UpgradeMssqlDBTest", func() {
 			appOne.PUT("", schema)
 
 			By("checking the new bindings work")
-			key = helpers.RandomHex()
-			value = helpers.RandomHex()
-			appOne.PUT(value, "%s/%s", schema, key)
+			keyTwo := helpers.RandomHex()
+			valueTwo := helpers.RandomHex()
+			appOne.PUT(valueTwo, "%s/%s", schema, keyTwo)
 
-			got = appTwo.GET("%s/%s", schema, key)
-			Expect(got).To(Equal(value))
+			got = appTwo.GET("%s/%s", schema, keyTwo)
+			Expect(got).To(Equal(valueTwo))
 
 			By("updating the instance plan")
 			dbInstance.UpdateService("-p", "medium")
 
-			By("checking it still works")
-			key = helpers.RandomHex()
-			value = helpers.RandomHex()
-			appOne.PUT(value, "%s/%s", schema, key)
+			By("checking previously created data still accessible")
+			got = appTwo.GET("%s/%s", schema, keyTwo)
+			Expect(got).To(Equal(valueTwo))
 
-			got = appTwo.GET("%s/%s", schema, key)
-			Expect(got).To(Equal(value))
+			By("checking data can still be written and read")
+			keyThree := helpers.RandomHex()
+			valueThree := helpers.RandomHex()
+			appOne.PUT(valueThree, "%s/%s", schema, keyThree)
+
+			got = appTwo.GET("%s/%s", schema, keyThree)
+			Expect(got).To(Equal(valueThree))
 
 			By("dropping the schema used to allow us to unbind")
 			appOne.DELETE(schema)
