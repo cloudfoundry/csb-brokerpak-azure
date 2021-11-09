@@ -58,6 +58,14 @@ provision:
     type: number
     default: 5
     details: Maximum storage allocated to the database instance in GB
+  - field_name: min_capacity
+    type: number
+    default: 1
+    details: Minimal capacity that database will always have allocated in GB, if not paused. This property is only settable for General Purpose Serverless databases.
+  - field_name: auto_pause_delay
+    type: number
+    default: -1
+    details: Time in minutes after which database is automatically paused. A value of -1 means that automatic pause is disabled. This property is only settable for General Purpose Serverless databases.
   - field_name: instance_name
     type: string
     details: Name for your Azure SQL Faileover Group
@@ -299,5 +307,11 @@ examples:
   description: Create a medium Azure SQL Database failover group with manual failover
   plan_id: c5e8ec57-ab5a-4bbf-ac6d-5075a97ed1a5
   provision_params: { "read_write_endpoint_failover_policy": "Manual" }
+  bind_params: {}
+  bind_can_fail: true  
+- name: failover-group-azuresql-db-small-serverless-configuration
+  description: Create a small Serverless Azure SQL Database failover group
+  plan_id: eb9856fa-b285-11eb-ae46-536679aeffe8
+  provision_params: { "sku_name":"GP_S_Gen5_1" }
   bind_params: {}
   bind_can_fail: true  

@@ -25,6 +25,8 @@ variable labels { type = map }
 variable sku_name { type = string }
 variable cores { type = number }
 variable max_storage_gb { type = number }
+variable min_capacity { type = number }
+variable auto_pause_delay { type = number }
 variable authorized_network {type = string}
 variable skip_provider_registration { type = bool }
 variable read_write_endpoint_failover_policy { type = string }
@@ -147,6 +149,8 @@ resource "azurerm_mssql_database" "azure_sql_db" {
   sku_name            = local.sku_name
   max_size_gb         = var.max_storage_gb
   tags                = var.labels
+  min_capacity        = var.min_capacity
+  auto_pause_delay_in_minutes = var.auto_pause_delay
 }
 
 resource "azurerm_mssql_database" "secondary_azure_sql_db" {
