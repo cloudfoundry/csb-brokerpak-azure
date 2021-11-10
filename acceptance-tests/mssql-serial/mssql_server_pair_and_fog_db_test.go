@@ -24,7 +24,7 @@ var _ = Describe("MSSQL Server Pair and Failover Group DB", func() {
 		defer serverInstanceSecondary.Delete()
 
 		By("reconfiguring the CSB with DB server details")
-		serversConfig.ReconfigureCSBWithServerDetails()
+		serversConfig.ReconfigureCSBWithServerDetails(helpers.DefaultBroker().Name)
 
 		By("creating a database failover group on the server pair")
 		fogName := helpers.RandomName("fog")

@@ -42,7 +42,7 @@ var _ = Describe("Password Rotation", func() {
 		})
 
 		By("pushing the unstarted app")
-		app := helpers.AppPushUnstarted(apps.PostgeSQL)
+		app := helpers.AppPushUnstarted(apps.PostgreSQL)
 		defer helpers.AppDelete(app)
 
 		By("creating a binding")
