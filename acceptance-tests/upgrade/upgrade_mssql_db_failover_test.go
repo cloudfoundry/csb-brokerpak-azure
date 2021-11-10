@@ -30,7 +30,7 @@ var _ = Describe("UpgradeMssqlDBFailoverTest", func() {
 			defer serverInstanceSecondary.Delete()
 
 			By("reconfiguring the CSB with DB server details")
-			serversConfig.ReconfigureCSBWithServerDetails(brokerName)
+			serversConfig.ReconfigureCustomCSBWithServerDetails(brokerName)
 
 			By("creating a failover group service instance")
 			fogConfig := failoverGroupConfig(serversConfig.ServerPairTag)
