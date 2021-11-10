@@ -54,9 +54,8 @@ func (d DatabaseServerPair) ServerPairsConfig() interface{} {
 	return map[string]interface{}{d.ServerPairTag: d}
 }
 
-func (d DatabaseServerPair) ReconfigureCSBWithServerDetails(broker string) {
-	helpers.SetBrokerEnv(
-		broker, helpers.EnvVar{Name: "MSSQL_DB_FOG_SERVER_PAIR_CREDS", Value: d.ServerPairsConfig()},
+func (d DatabaseServerPair) ReconfigureCSBWithServerDetails() {
+	helpers.SetBrokerEnvAndRestart(
+		helpers.EnvVar{Name: "MSSQL_DB_FOG_SERVER_PAIR_CREDS", Value: d.ServerPairsConfig()},
 	)
-	helpers.RestartBroker(broker)
 }
