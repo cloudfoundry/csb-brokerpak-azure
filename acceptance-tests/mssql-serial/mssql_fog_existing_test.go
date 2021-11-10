@@ -24,7 +24,7 @@ var _ = Describe("MSSQL Failover Group Existing", func() {
 		defer serverInstanceSecondary.Delete()
 
 		By("reconfiguring the CSB with DB server details")
-		serversConfig.ReconfigureCSBWithServerDetails(helpers.DefaultBroker().Name)
+		serversConfig.ReconfigureCSBWithServerDetails()
 
 		By("creating a failover group service instance")
 		fogConfig := failoverGroupConfig(serversConfig.ServerPairTag)
