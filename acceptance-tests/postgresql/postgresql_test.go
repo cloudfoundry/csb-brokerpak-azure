@@ -15,8 +15,8 @@ var _ = Describe("PostgreSQL", func() {
 		defer serviceInstance.Delete()
 
 		By("pushing the unstarted app twice")
-		appOne := helpers.AppPushUnstarted(apps.PostgeSQL)
-		appTwo := helpers.AppPushUnstarted(apps.PostgeSQL)
+		appOne := helpers.AppPushUnstarted(apps.PostgreSQL)
+		appTwo := helpers.AppPushUnstarted(apps.PostgreSQL)
 		defer helpers.AppDelete(appOne, appTwo)
 
 		By("binding the apps to the service instance")

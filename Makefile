@@ -19,6 +19,11 @@ else
 BUILDER=docker run $(DOCKER_OPTS) $(CSB)
 endif
 
+.PHONY: acceptance-tests
+acceptance-tests:
+	BROKER_NAME=broker-cf-test push-broker
+	ginkgo -v -r -p --stream acceptance-tests
+
 .PHONY: build
 build: $(IAAS)-services-*.brokerpak
 

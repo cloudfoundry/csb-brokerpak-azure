@@ -7,20 +7,21 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("UpgradeTest", func() {
+var _ = Describe("UpgradeMysqlTest", func() {
 	Context("When upgrading broker version", func(){
 		It("should continue to work", func() {
 			By("pushing latest released broker version")
+			brokerName := helpers.RandomName("csb-mysql")
 			serviceBroker := helpers.PushAndStartBroker(brokerName, releasedBuildDir)
 			defer serviceBroker.Delete()
 
 			By("creating a service")
-			serviceInstance := helpers.CreateServiceFromBroker("csb-azure-redis", "small", brokerName)
+			serviceInstance := helpers.CreateServiceFromBroker("csb-azure-mysql", "small", brokerName)
 			defer serviceInstance.Delete()
 
 			By("pushing the unstarted app twice")
-			appOne := helpers.AppPushUnstarted(apps.Redis)
-			appTwo := helpers.AppPushUnstarted(apps.Redis)
+			appOne := helpers.AppPushUnstarted(apps.MySQL)
+			appTwo := helpers.AppPushUnstarted(apps.MySQL)
 			defer helpers.AppDelete(appOne, appTwo)
 
 			By("binding to the apps")
@@ -29,13 +30,13 @@ var _ = Describe("UpgradeTest", func() {
 			helpers.AppStart(appOne, appTwo)
 
 			By("setting a key-value using the first app")
-			key := helpers.RandomHex()
-			value := helpers.RandomHex()
-			appOne.PUT(value, key)
+			keyOne := helpers.RandomHex()
+			valueOne := helpers.RandomHex()
+			appOne.PUT(valueOne, keyOne)
 
 			By("getting the value using the second app")
-			got := appTwo.GET(key)
-			Expect(got).To(Equal(value))
+			got := appTwo.GET(keyOne)
+			Expect(got).To(Equal(valueOne))
 
 			By("pushing the development version of the broker")
 			serviceBroker.Update(developmentBuildDir)
@@ -48,21 +49,27 @@ var _ = Describe("UpgradeTest", func() {
 			serviceInstance.Bind(appOne)
 			serviceInstance.Bind(appTwo)
 			helpers.AppRestage(appOne, appTwo)
-			key = helpers.RandomHex()
-			value = helpers.RandomHex()
-			appOne.PUT(value, key)
-			got = appTwo.GET(key)
-			Expect(got).To(Equal(value))
+
+			By("creating new data - post upgrade")
+			keyTwo := helpers.RandomHex()
+			valueTwo := helpers.RandomHex()
+			appOne.PUT(valueTwo, keyTwo)
+			got = appTwo.GET(keyTwo)
+			Expect(got).To(Equal(valueTwo))
 
 			By("updating the instance plan")
 			serviceInstance.UpdateService("-p", "medium")
 
-			By("checking it still works")
-			key = helpers.RandomHex()
-			value = helpers.RandomHex()
-			appOne.PUT(value, key)
-			got = appTwo.GET(key)
-			Expect(got).To(Equal(value))
+			By("checking previously written data is still accessible")
+			got = appTwo.GET(keyTwo)
+			Expect(got).To(Equal(valueTwo))
+
+			By("checking data can still be written and read")
+			keyThree := helpers.RandomHex()
+			valueThree := helpers.RandomHex()
+			appOne.PUT(valueThree, keyThree)
+			got = appTwo.GET(keyThree)
+			Expect(got).To(Equal(valueThree))
 		})
 	})
 })

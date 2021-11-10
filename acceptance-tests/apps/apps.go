@@ -9,9 +9,9 @@ const (
 	Storage   AppCode = "storageapp"
 	MongoDB   AppCode = "mongodbapp"
 	MySQL     AppCode = "mysqlapp"
-	MSSQL     AppCode = "mssqlapp"
-	PostgeSQL AppCode = "postgresqlapp"
-	Redis     AppCode = "redisapp"
+	MSSQL      AppCode = "mssqlapp"
+	PostgreSQL AppCode = "postgresqlapp"
+	Redis      AppCode = "redisapp"
 )
 
 func (a AppCode) Dir() string {
