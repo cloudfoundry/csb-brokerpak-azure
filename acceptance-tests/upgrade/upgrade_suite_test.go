@@ -14,8 +14,8 @@ var developmentBuildDir string
 var releasedBuildDir string
 
 func init() {
-	flag.StringVar(&releasedBuildDir, "releasedBuildDir", "/Users/normanja/workspace/csb/azure-released", "location of released version of built broker and brokerpak")
-	flag.StringVar(&developmentBuildDir, "developmentBuildDir", "/Users/normanja/workspace/csb/test-broker-update", "location of development version of built broker and brokerpak")
+	flag.StringVar(&releasedBuildDir, "releasedBuildDir", "../../../azure-released", "location of released version of built broker and brokerpak")
+	flag.StringVar(&developmentBuildDir, "developmentBuildDir", "../../dev-release", "location of development version of built broker and brokerpak")
 }
 
 var _ = BeforeSuite(func() {
