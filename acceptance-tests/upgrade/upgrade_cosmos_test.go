@@ -75,21 +75,6 @@ var _ = Describe("UpgradeCosmosTest", func() {
 
 			got = appTwo.GET("%s/%s/%s", databaseName, collectionName, documentNameTwo)
 			Expect(got).To(Equal(documentDataTwo))
-
-			By("updating the instance plan")
-			serviceInstance.UpdateService("-p", "medium")
-
-			By("checking previous data still accessible")
-			got = appTwo.GET("%s/%s/%s", databaseName, collectionName, documentNameTwo)
-			Expect(got).To(Equal(documentDataTwo))
-
-			By("checking new data can be written and read")
-			documentNameThree := helpers.RandomHex()
-			documentDataThree := helpers.RandomHex()
-			appOne.PUT(documentDataThree, "%s/%s/%s", databaseName, collectionName, documentNameThree)
-
-			got = appTwo.GET("%s/%s/%s", databaseName, collectionName, documentNameThree)
-			Expect(got).To(Equal(documentDataThree))
 		})
 	})
 })
