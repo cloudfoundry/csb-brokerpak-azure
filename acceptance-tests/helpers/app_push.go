@@ -14,6 +14,8 @@ import (
 	. "github.com/onsi/gomega/gexec"
 )
 
+const cfOperationWaitTime = 20 * time.Minute
+
 type AppInstance struct {
 	name string
 }
@@ -62,7 +64,7 @@ func appBuild(source string) string {
 }
 
 func waitForAppPush(session *Session, name string) AppInstance {
-	Eventually(session, 5*time.Minute).Should(Exit())
+	Eventually(session, cfOperationWaitTime).Should(Exit())
 
 	if session.ExitCode() != 0 {
 		fmt.Fprintf(GinkgoWriter, "FAILED to push app. Getting logs...")
@@ -74,7 +76,7 @@ func waitForAppPush(session *Session, name string) AppInstance {
 }
 
 func waitForAppDelete(session *Session, name string) AppInstance {
-	Eventually(session, 5*time.Minute).Should(Exit())
+	Eventually(session, cfOperationWaitTime).Should(Exit())
 
 	if session.ExitCode() != 0 {
 		fmt.Fprintf(GinkgoWriter, "FAILED to delete app. Getting logs...")
