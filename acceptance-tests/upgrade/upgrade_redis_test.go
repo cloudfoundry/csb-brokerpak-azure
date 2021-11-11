@@ -48,17 +48,8 @@ var _ = Describe("UpgradeRedisTest", func() {
 			By("creating new bindings and testing they still work")
 			serviceInstance.Bind(appOne)
 			serviceInstance.Bind(appTwo)
+
 			helpers.AppRestage(appOne, appTwo)
-			key = helpers.RandomHex()
-			value = helpers.RandomHex()
-			appOne.PUT(value, key)
-			got = appTwo.GET(key)
-			Expect(got).To(Equal(value))
-
-			By("updating the instance plan")
-			serviceInstance.UpdateService("-p", "medium")
-
-			By("checking it still works")
 			key = helpers.RandomHex()
 			value = helpers.RandomHex()
 			appOne.PUT(value, key)
