@@ -72,6 +72,24 @@ var _ = Describe("UpgradeMssqlFailoverGroupTest", func() {
 			got = appTwo.GET("%s/%s", schema, keyTwo)
 			Expect(got).To(Equal(valueTwo))
 
+			By("updating the instance plan")
+			serviceInstance.UpdateService("-p", "medium")
+
+			By("triggering failover")
+			failoverServiceInstance := helpers.CreateServiceFromBroker("csb-azure-mssql-fog-run-failover", "standard", brokerName, failoverParameters(serviceInstance))
+			defer failoverServiceInstance.Delete()
+
+			By("getting the previously set values")
+			Expect(appTwo.GET("%s/%s", schema, keyTwo)).To(Equal(valueTwo))
+
+			By("checking data can still be written and read")
+			keyThree := helpers.RandomHex()
+			valueThree := helpers.RandomHex()
+			appOne.PUT(valueThree, "%s/%s", schema, keyThree)
+
+			got = appTwo.GET("%s/%s", schema, keyThree)
+			Expect(got).To(Equal(valueThree))
+
 			By("dropping the schema used to allow us to unbind")
 			appOne.DELETE(schema)
 		})
