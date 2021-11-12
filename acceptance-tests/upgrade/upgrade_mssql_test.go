@@ -71,6 +71,21 @@ var _ = Describe("UpgradeMssqlTest", func() {
 			got = appTwo.GET("%s/%s", schema, keyTwo)
 			Expect(got).To(Equal(valueTwo))
 
+			By("updating the instance plan")
+			serviceInstance.UpdateService("-p", "medium")
+
+			By("checking previously written data still accessible")
+			got = appTwo.GET("%s/%s", schema, keyTwo)
+			Expect(got).To(Equal(valueTwo))
+
+			By("checking data can still be written and read")
+			keyThree := helpers.RandomHex()
+			valueThree := helpers.RandomHex()
+			appOne.PUT(valueThree, "%s/%s", schema, keyThree)
+
+			got = appTwo.GET("%s/%s", schema, keyThree)
+			Expect(got).To(Equal(valueThree))
+
 			By("dropping the schema used to allow us to unbind")
 			appOne.DELETE(schema)
 		})

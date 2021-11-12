@@ -56,6 +56,23 @@ var _ = Describe("UpgradeMysqlTest", func() {
 			appOne.PUT(valueTwo, keyTwo)
 			got = appTwo.GET(keyTwo)
 			Expect(got).To(Equal(valueTwo))
+
+			By("checking data inserted before broker upgrade")
+			Expect(appTwo.GET(keyOne)).To(Equal(valueOne))
+
+			By("updating the instance plan")
+			serviceInstance.UpdateService("-p", "medium")
+
+			By("checking previously written data is still accessible")
+			got = appTwo.GET(keyTwo)
+			Expect(got).To(Equal(valueTwo))
+
+			By("checking data can still be written and read")
+			keyThree := helpers.RandomHex()
+			valueThree := helpers.RandomHex()
+			appOne.PUT(valueThree, keyThree)
+			got = appTwo.GET(keyThree)
+			Expect(got).To(Equal(valueThree))
 		})
 	})
 })

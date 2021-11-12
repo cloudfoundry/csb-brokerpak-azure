@@ -89,6 +89,16 @@ var _ = Describe("UpgradeMssqlDBFailoverTest", func() {
 			got = appTwo.GET("%s/%s", schema, keyTwo)
 			Expect(got).To(Equal(valueTwo))
 
+			By("connecting to the existing failover group")
+			dbFogInstance := helpers.CreateServiceFromBroker("csb-azure-mssql-db-failover-group", "existing", brokerName, fogConfig)
+			defer dbFogInstance.Delete()
+
+			By("purging the initial FOG instance")
+			helpers.CF("purge-service-instance", "-f", initialFogInstance.Name())
+
+			By("getting the previously set values")
+			Expect(appTwo.GET("%s/%s", schema, keyTwo)).To(Equal(valueTwo))
+
 			By("dropping the schema used to allow us to unbind")
 			appOne.DELETE(schema)
 		})

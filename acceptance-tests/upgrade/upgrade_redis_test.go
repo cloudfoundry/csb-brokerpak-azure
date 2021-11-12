@@ -30,13 +30,13 @@ var _ = Describe("UpgradeRedisTest", func() {
 			helpers.AppStart(appOne, appTwo)
 
 			By("setting a key-value using the first app")
-			key := helpers.RandomHex()
-			value := helpers.RandomHex()
-			appOne.PUT(value, key)
+			key1 := helpers.RandomHex()
+			value1 := helpers.RandomHex()
+			appOne.PUT(value1, key1)
 
 			By("getting the value using the second app")
-			got := appTwo.GET(key)
-			Expect(got).To(Equal(value))
+			got := appTwo.GET(key1)
+			Expect(got).To(Equal(value1))
 
 			By("pushing the development version of the broker")
 			serviceBroker.Update(developmentBuildDir)
@@ -48,13 +48,23 @@ var _ = Describe("UpgradeRedisTest", func() {
 			By("creating new bindings and testing they still work")
 			serviceInstance.Bind(appOne)
 			serviceInstance.Bind(appTwo)
-
 			helpers.AppRestage(appOne, appTwo)
-			key = helpers.RandomHex()
-			value = helpers.RandomHex()
-			appOne.PUT(value, key)
-			got = appTwo.GET(key)
-			Expect(got).To(Equal(value))
+			key2 := helpers.RandomHex()
+			value2 := helpers.RandomHex()
+			appOne.PUT(value2, key2)
+			Expect(appTwo.GET(key2)).To(Equal(value2))
+
+			By("getting the value using the second app")
+			Expect(appTwo.GET(key1)).To(Equal(value1))
+
+			By("updating the instance plan")
+			serviceInstance.UpdateService("-p", "medium")
+
+			By("checking it still works")
+			key3 := helpers.RandomHex()
+			value3 := helpers.RandomHex()
+			appOne.PUT(value3, key3)
+			Expect(appTwo.GET(key3)).To(Equal(value3))
 		})
 	})
 })
