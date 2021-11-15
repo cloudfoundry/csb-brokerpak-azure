@@ -12,7 +12,7 @@ var _ = Describe("UpgradeMssqlDBFailoverTest", func() {
 	Context("When upgrading broker version", func(){
 		It("should continue to work", func() {
 			By("pushing latest released broker version")
-			brokerName := helpers.RandomName("csb-mssql-db-failover")
+			brokerName := helpers.RandomName("mssql-db-fo")
 			serviceBroker := helpers.PushAndStartBroker(brokerName, releasedBuildDir)
 			defer serviceBroker.Delete()
 
