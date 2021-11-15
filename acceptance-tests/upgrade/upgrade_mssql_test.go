@@ -47,6 +47,13 @@ var _ = Describe("UpgradeMssqlTest", func() {
 			By("pushing the development version of the broker")
 			serviceBroker.Update(developmentBuildDir)
 
+			By("updating the instance plan")
+			serviceInstance.UpdateService("-p", "medium")
+
+			By("checking previously written data still accessible")
+			got = appTwo.GET("%s/%s", schema, keyOne)
+			Expect(got).To(Equal(valueOne))
+
 			By("dropping the schema used to allow us to unbind")
 			appOne.DELETE(schema)
 
@@ -62,21 +69,6 @@ var _ = Describe("UpgradeMssqlTest", func() {
 			By("creating a schema using the first app")
 			schema = helpers.RandomShortName()
 			appOne.PUT("", schema)
-
-			By("setting a key-value using the first app - post upgrade")
-			keyTwo := helpers.RandomHex()
-			valueTwo := helpers.RandomHex()
-			appOne.PUT(valueTwo, "%s/%s", schema, keyTwo)
-
-			got = appTwo.GET("%s/%s", schema, keyTwo)
-			Expect(got).To(Equal(valueTwo))
-
-			By("updating the instance plan")
-			serviceInstance.UpdateService("-p", "medium")
-
-			By("checking previously written data still accessible")
-			got = appTwo.GET("%s/%s", schema, keyTwo)
-			Expect(got).To(Equal(valueTwo))
 
 			By("checking data can still be written and read")
 			keyThree := helpers.RandomHex()
