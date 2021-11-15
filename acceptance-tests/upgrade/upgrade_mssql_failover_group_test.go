@@ -49,6 +49,20 @@ var _ = Describe("UpgradeMssqlFailoverGroupTest", func() {
 			By("pushing the development version of the broker")
 			serviceBroker.Update(developmentBuildDir)
 
+			By("updating the instance plan")
+			serviceInstance.UpdateService("-p", "medium")
+
+			By("getting the previously set value using the second app")
+			got = appTwo.GET("%s/%s", schema, keyOne)
+			Expect(got).To(Equal(valueOne))
+
+			By("triggering failover")
+			failoverServiceInstance := helpers.CreateServiceFromBroker("csb-azure-mssql-fog-run-failover", "standard", brokerName, failoverParameters(serviceInstance))
+			defer failoverServiceInstance.Delete()
+
+			By("getting the previously set values")
+			Expect(appTwo.GET("%s/%s", schema, keyOne)).To(Equal(valueOne))
+
 			By("dropping the schema used to allow us to unbind")
 			appOne.DELETE(schema)
 
@@ -71,24 +85,6 @@ var _ = Describe("UpgradeMssqlFailoverGroupTest", func() {
 
 			got = appTwo.GET("%s/%s", schema, keyTwo)
 			Expect(got).To(Equal(valueTwo))
-
-			By("updating the instance plan")
-			serviceInstance.UpdateService("-p", "medium")
-
-			By("triggering failover")
-			failoverServiceInstance := helpers.CreateServiceFromBroker("csb-azure-mssql-fog-run-failover", "standard", brokerName, failoverParameters(serviceInstance))
-			defer failoverServiceInstance.Delete()
-
-			By("getting the previously set values")
-			Expect(appTwo.GET("%s/%s", schema, keyTwo)).To(Equal(valueTwo))
-
-			By("checking data can still be written and read")
-			keyThree := helpers.RandomHex()
-			valueThree := helpers.RandomHex()
-			appOne.PUT(valueThree, "%s/%s", schema, keyThree)
-
-			got = appTwo.GET("%s/%s", schema, keyThree)
-			Expect(got).To(Equal(valueThree))
 
 			By("dropping the schema used to allow us to unbind")
 			appOne.DELETE(schema)
