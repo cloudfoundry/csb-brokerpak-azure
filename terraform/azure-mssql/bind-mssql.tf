@@ -87,7 +87,9 @@ resource "null_resource" "create-sql-user" {
 locals {
   roles = { "db_ddladmin" = "db_ddladmin"
             "db_datareader" = "db_datareader"
-            "db_datawriter" = "db_datawriter" }
+            "db_datawriter" = "db_datawriter"
+            "db_accessadmin" = "db_accessadmin"
+  }
 }
 
 resource "null_resource" "add-user-roles" {
