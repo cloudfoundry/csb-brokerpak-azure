@@ -45,6 +45,9 @@ var _ = Describe("UpgradeStorageTest", func() {
 			By("pushing the development version of the broker")
 			serviceBroker.Update(developmentBuildDir)
 
+			By("re-applying the terraform for service instance")
+			serviceInstance.UpdateService("-c", "{\"replication_type\":\"GRS\"}")
+
 			By("deleting bindings created before the upgrade")
 			serviceInstance.Unbind(appOne)
 			serviceInstance.Unbind(appTwo)
