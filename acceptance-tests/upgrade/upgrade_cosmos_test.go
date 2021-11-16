@@ -59,6 +59,13 @@ var _ = Describe("UpgradeCosmosTest", func() {
 			By("pushing the development version of the broker")
 			serviceBroker.Update(developmentBuildDir)
 
+			By("updating the instance plan")
+			serviceInstance.UpdateService("-p", "medium")
+
+			By("checking previous data still accessible")
+			got = appTwo.GET("%s/%s/%s", databaseName, collectionName, documentNameOne)
+			Expect(got).To(Equal(documentDataOne))
+
 			By("deleting bindings created before the upgrade")
 			serviceInstance.Unbind(appOne)
 			serviceInstance.Unbind(appTwo)
@@ -75,24 +82,6 @@ var _ = Describe("UpgradeCosmosTest", func() {
 
 			got = appTwo.GET("%s/%s/%s", databaseName, collectionName, documentNameTwo)
 			Expect(got).To(Equal(documentDataTwo))
-
-			By("getting the value before broker upgrade")
-			Expect(appTwo.GET("%s/%s/%s", databaseName, collectionName, documentNameOne)).To(Equal(documentDataOne))
-
-			By("updating the instance plan")
-			serviceInstance.UpdateService("-p", "medium")
-
-			By("checking previous data still accessible")
-			got = appTwo.GET("%s/%s/%s", databaseName, collectionName, documentNameTwo)
-			Expect(got).To(Equal(documentDataTwo))
-
-			By("checking new data can be written and read")
-			documentNameThree := helpers.RandomHex()
-			documentDataThree := helpers.RandomHex()
-			appOne.PUT(documentDataThree, "%s/%s/%s", databaseName, collectionName, documentNameThree)
-
-			got = appTwo.GET("%s/%s/%s", databaseName, collectionName, documentNameThree)
-			Expect(got).To(Equal(documentDataThree))
 		})
 	})
 })
