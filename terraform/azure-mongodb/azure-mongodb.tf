@@ -108,6 +108,10 @@ resource "azurerm_cosmosdb_account" "mongo-account" {
     capabilities {
         name = "EnableAggregationPipeline"
     }
+
+    capabilities {
+        name = "EnableMongo"
+    }
 }
 
 resource "azurerm_cosmosdb_mongo_database" "mongo-db" {
@@ -128,6 +132,11 @@ resource "azurerm_cosmosdb_mongo_collection" "mongo-collection" {
 
 	index {
 		keys = [var.shard_key]
+		unique = true
+	}
+
+	index {
+		keys = ["_id"]
 		unique = true
 	}
 }
