@@ -79,24 +79,15 @@ var _ = Describe("UpgradeMssqlDBFailoverTest", func() {
 			By("purging the initial FOG instance")
 			helpers.CF("purge-service-instance", "-f", initialFogInstance.Name())
 
+			By("creating new bindings and testing they still work")
+			dbFogInstance.Bind(appOne)
+			dbFogInstance.Bind(appTwo)
+			helpers.AppRestage(appOne, appTwo)
+			defer dbFogInstance.Unbind(appOne)
+			defer dbFogInstance.Unbind(appTwo)
+
 			By("getting the previously set values")
 			Expect(appTwo.GET("%s/%s", schema, keyOne)).To(Equal(valueOne))
-
-			By("dropping the schema used to allow us to unbind")
-			appOne.DELETE(schema)
-
-			By("deleting bindings created before the upgrade")
-			initialFogInstance.Unbind(appOne)
-			initialFogInstance.Unbind(appTwo)
-
-			By("creating new bindings and testing they still work")
-			initialFogInstance.Bind(appOne)
-			initialFogInstance.Bind(appTwo)
-			helpers.AppRestage(appOne, appTwo)
-
-			By("creating a schema using the first app")
-			schema = helpers.RandomShortName()
-			appOne.PUT("", schema)
 
 			By("checking data can be written and read")
 			keyTwo := helpers.RandomHex()
