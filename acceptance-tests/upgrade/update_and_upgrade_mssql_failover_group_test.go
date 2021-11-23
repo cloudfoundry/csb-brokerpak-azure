@@ -4,13 +4,14 @@ import (
 	"acceptancetests/apps"
 	"acceptancetests/helpers"
 	"fmt"
+	"regexp"
+
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"regexp"
 )
 
 var _ = Describe("UpgradeMssqlFailoverGroupTest", func() {
-	Context("When upgrading broker version", func() {
+	When("upgrading broker version", func() {
 		It("should continue to work", func() {
 			By("pushing latest released broker version")
 			brokerName := helpers.RandomName("csb-mssql-fog")
