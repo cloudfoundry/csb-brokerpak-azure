@@ -4,12 +4,13 @@ import (
 	"acceptancetests/apps"
 	"acceptancetests/helpers"
 	"acceptancetests/mssql-serial/mssql_helpers"
+
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
 
 var _ = Describe("UpgradeMssqlDBFailoverTest", func() {
-	Context("When upgrading broker version", func() {
+	When("upgrading broker version", func() {
 		It("should continue to work", func() {
 			By("pushing latest released broker version")
 			brokerName := helpers.RandomName("mssql-db-fo")
