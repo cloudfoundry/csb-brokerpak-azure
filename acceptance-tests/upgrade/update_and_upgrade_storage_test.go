@@ -3,12 +3,13 @@ package upgrade_test
 import (
 	"acceptancetests/apps"
 	"acceptancetests/helpers"
+
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
 
 var _ = Describe("UpgradeStorageTest", func() {
-	Context("When upgrading broker version", func() {
+	When("upgrading broker version", func() {
 		It("should continue to work", func() {
 			By("pushing latest released broker version")
 			brokerName := helpers.RandomName("csb-storage")
