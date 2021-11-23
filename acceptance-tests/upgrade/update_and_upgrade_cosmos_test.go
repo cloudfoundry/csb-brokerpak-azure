@@ -4,12 +4,13 @@ import (
 	"acceptancetests/apps"
 	"acceptancetests/helpers"
 	"fmt"
+
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
 
 var _ = Describe("UpgradeCosmosTest", func() {
-	Context("When upgrading broker version", func(){
+	Context("When upgrading broker version", func() {
 		It("should continue to work", func() {
 			By("pushing latest released broker version")
 			brokerName := helpers.RandomName("csb-cosmos")
@@ -22,7 +23,7 @@ var _ = Describe("UpgradeCosmosTest", func() {
 				"csb-azure-cosmosdb-sql",
 				"small",
 				brokerName,
-				map[string]interface{}{"db_name": databaseName })
+				map[string]interface{}{"db_name": databaseName})
 			defer serviceInstance.Delete()
 
 			By("pushing the unstarted app twice")

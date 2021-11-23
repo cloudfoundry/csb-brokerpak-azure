@@ -8,7 +8,7 @@ import (
 )
 
 var _ = Describe("UpgradeMssqlDBTest", func() {
-	Context("When upgrading broker version", func(){
+	Context("When upgrading broker version", func() {
 		It("should continue to work", func() {
 			By("pushing latest released broker version")
 			brokerName := helpers.RandomName("csb-mssql-db")
@@ -17,7 +17,7 @@ var _ = Describe("UpgradeMssqlDBTest", func() {
 
 			By("creating a service")
 			serverConfig := newDatabaseServer()
-			serverInstance := helpers.CreateServiceFromBroker("csb-azure-mssql-server", "standard",brokerName, serverConfig)
+			serverInstance := helpers.CreateServiceFromBroker("csb-azure-mssql-server", "standard", brokerName, serverConfig)
 			defer serverInstance.Delete()
 
 			By("reconfiguring the CSB with DB server details")

@@ -208,18 +208,18 @@ func GetBrokerEncryptionEnv(broker string) BrokerEnvVars {
 
 	return BrokerEnvVars{
 		EncryptionPasswords: encryptionPasswords,
-		EncryptionEnabled:  receiver.Var[encryptionEnabledEnvVar] == "true",
+		EncryptionEnabled:   receiver.Var[encryptionEnabledEnvVar] == "true",
 	}
 }
 
 func SetBrokerEncryptionEnv(brokerName string, brokerEnvVars BrokerEnvVars) {
 	envVars := []EnvVar{
 		{
-			Name: encryptionEnabledEnvVar,
+			Name:  encryptionEnabledEnvVar,
 			Value: brokerEnvVars.EncryptionEnabled,
 		},
 		{
-			Name: encryptionPasswordsEnvVar,
+			Name:  encryptionPasswordsEnvVar,
 			Value: brokerEnvVars.EncryptionPasswords,
 		},
 	}
@@ -228,17 +228,17 @@ func SetBrokerEncryptionEnv(brokerName string, brokerEnvVars BrokerEnvVars) {
 	waitForAppPush(session, brokerName)
 }
 
-type BrokerEnvVars  struct {
+type BrokerEnvVars struct {
 	EncryptionPasswords EncryptionPasswords
-	EncryptionEnabled bool
+	EncryptionEnabled   bool
 }
 
 type EncryptionPasswords []EncryptionPassword
 
 type EncryptionPassword struct {
 	Password Password `json:"password"`
-	Label string `json:"label"`
-	Primary bool `json:"primary"`
+	Label    string   `json:"label"`
+	Primary  bool     `json:"primary"`
 }
 
 type Password struct {

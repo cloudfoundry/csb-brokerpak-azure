@@ -8,7 +8,7 @@ import (
 )
 
 var _ = Describe("UpgradeMssqlTest", func() {
-	Context("When upgrading broker version", func(){
+	Context("When upgrading broker version", func() {
 		It("should continue to work", func() {
 			By("pushing latest released broker version")
 			brokerName := helpers.RandomName("csb-mssql")

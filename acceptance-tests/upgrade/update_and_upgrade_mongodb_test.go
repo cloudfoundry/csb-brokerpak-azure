@@ -8,7 +8,7 @@ import (
 )
 
 var _ = Describe("UpgradeMongoTest", func() {
-	Context("When upgrading broker version", func(){
+	Context("When upgrading broker version", func() {
 		It("should continue to work", func() {
 			By("pushing latest released broker version")
 			brokerName := helpers.RandomName("csb-mssql-db")
@@ -66,7 +66,6 @@ var _ = Describe("UpgradeMongoTest", func() {
 			By("getting the document using the second app")
 			got = appTwo.GET("%s/%s/%s", databaseName, collectionName, documentNameTwo)
 			Expect(got).To(Equal(documentDataTwo))
-
 
 		})
 	})

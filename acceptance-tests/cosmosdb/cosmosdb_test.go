@@ -17,7 +17,7 @@ var _ = Describe("CosmosDB", func() {
 			"csb-azure-cosmosdb-sql",
 			"small",
 			helpers.DefaultBroker().Name,
-			map[string]interface{}{"db_name": databaseName })
+			map[string]interface{}{"db_name": databaseName})
 		defer serviceInstance.Delete()
 
 		By("pushing the unstarted app twice")

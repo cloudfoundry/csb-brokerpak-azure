@@ -16,7 +16,7 @@ var _ = Describe("Error Messages", func() {
 			name := helpers.RandomName("error")
 			defer helpers.CF("delete-service", "-f", name)
 
-			session := helpers.StartCF("create-service", "csb-azure-mysql", "small", name,"-b",helpers.DefaultBroker().Name, "-c", `{"location":"bogus"}`)
+			session := helpers.StartCF("create-service", "csb-azure-mysql", "small", name, "-b", helpers.DefaultBroker().Name, "-c", `{"location":"bogus"}`)
 			Eventually(session, time.Minute).Should(Exit(1))
 			Expect(session.Out).To(Say(`FAILED\n`))
 			Expect(session.Err).To(Say(`Service broker error: 1 error\(s\) occurred:.*location: location must be one of the following:( "\S+",?)+\n$`))
@@ -28,7 +28,7 @@ var _ = Describe("Error Messages", func() {
 			name := helpers.RandomName("error")
 			defer helpers.CF("delete-service", "-f", name)
 
-			session := helpers.StartCF("create-service", "csb-azure-storage-account", "standard", name,"-b",helpers.DefaultBroker().Name, "-c", `{"resource_group":"bogus"}`)
+			session := helpers.StartCF("create-service", "csb-azure-storage-account", "standard", name, "-b", helpers.DefaultBroker().Name, "-c", `{"resource_group":"bogus"}`)
 			Eventually(session, time.Minute).Should(Exit(0))
 
 			Eventually(func() string {
