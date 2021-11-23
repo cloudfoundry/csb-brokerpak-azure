@@ -42,7 +42,7 @@ var _ = Describe("MSSQL Failover Group", func() {
 		Expect(appTwo.GET("%s/%s", schema, keyOne)).To(Equal(valueOne))
 
 		By("triggering failover")
-		failoverServiceInstance := helpers.CreateServiceFromBroker("csb-azure-mssql-fog-run-failover", "standard", helpers.DefaultBroker().Name , failoverParameters(serviceInstance))
+		failoverServiceInstance := helpers.CreateServiceFromBroker("csb-azure-mssql-fog-run-failover", "standard", helpers.DefaultBroker().Name, failoverParameters(serviceInstance))
 		defer failoverServiceInstance.Delete()
 
 		By("setting another key-value")
