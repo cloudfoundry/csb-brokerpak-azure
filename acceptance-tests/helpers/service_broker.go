@@ -1,14 +1,14 @@
 package helpers
 
 import (
-	"code.cloudfoundry.org/jsonry"
 	"encoding/json"
 	"fmt"
-	. "github.com/onsi/gomega"
 	"os"
 	"strings"
 	"time"
 
+	"code.cloudfoundry.org/jsonry"
+	. "github.com/onsi/gomega"
 	. "github.com/onsi/gomega/gexec"
 )
 
@@ -19,8 +19,7 @@ const encryptionEnabledEnvVar = "ENCRYPTION_ENABLED"
 const encryptionPasswordsEnvVar = "ENCRYPTION_PASSWORDS"
 
 type ServiceBroker struct {
-	Name          string
-	mySqlInstance ServiceInstance
+	Name string
 }
 
 func DefaultBroker() ServiceBroker {
@@ -33,8 +32,8 @@ func PushAndStartBroker(brokerName, brokerDir string) ServiceBroker {
 	brokerApp := pushNoStartServiceBroker(brokerName, brokerDir)
 	setEnvVars(brokerName)
 
-	mySqlInstance := CreateService("p.mysql", "db-small")
-	CF("bind-service", brokerName, mySqlInstance.name)
+	schemaName := strings.ReplaceAll(brokerName, "-", "_")
+	CF("bind-service", brokerName, "csb-sql", "-c", fmt.Sprintf(`{"schema":"%s"}`, schemaName))
 
 	session := StartCF("restart", brokerName)
 	waitForAppPush(session, brokerName)
@@ -44,8 +43,7 @@ func PushAndStartBroker(brokerName, brokerDir string) ServiceBroker {
 	waitForBrokerOperation(session, brokerName)
 
 	return ServiceBroker{
-		Name:          brokerName,
-		mySqlInstance: mySqlInstance,
+		Name: brokerName,
 	}
 }
 
@@ -63,8 +61,6 @@ func (b ServiceBroker) Delete() {
 
 	session = StartCF("delete", b.Name, "-f")
 	waitForAppDelete(session, b.Name)
-
-	b.mySqlInstance.Delete()
 }
 
 func setEnvVars(brokerName string) {
