@@ -22,6 +22,55 @@ type ServiceBroker struct {
 	Name string
 }
 
+type Option func(*config)
+
+type config struct {
+	name string
+	env  []EnvVar
+	dir  string
+}
+
+func CreateBroker(opts ...Option) ServiceBroker {
+	cfg := config{
+		name: RandomName("csb"),
+		env:  nil,
+		dir:  "../..",
+	}
+
+	for _, o := range opts {
+		o(&cfg)
+	}
+
+	brokerApp := pushNoStartServiceBroker(cfg.name, cfg.dir)
+	setEnvVars(cfg.name, cfg.env...)
+
+	schemaName := strings.ReplaceAll(cfg.name, "-", "_")
+	CF("bind-service", cfg.name, "csb-sql", "-c", fmt.Sprintf(`{"schema":"%s"}`, schemaName))
+
+	session := StartCF("restart", cfg.name)
+	waitForAppPush(session, cfg.name)
+
+	brokerURL := getBrokerAppURL(brokerApp)
+	session = StartCF("create-service-broker", cfg.name, brokerUsername, brokerPassword, "https://"+brokerURL, "--space-scoped")
+	waitForBrokerOperation(session, cfg.name)
+
+	return ServiceBroker{
+		Name: cfg.name,
+	}
+}
+
+func BrokerWithPrefix(prefix string) Option {
+	return func(c *config) {
+		c.name = RandomName(prefix)
+	}
+}
+
+func BrokerWithEnv(env ...EnvVar) Option {
+	return func(c *config) {
+		c.env = env
+	}
+}
+
 func DefaultBroker() ServiceBroker {
 	return ServiceBroker{
 		Name: "broker-cf-test",
@@ -63,7 +112,7 @@ func (b ServiceBroker) Delete() {
 	waitForAppDelete(session, b.Name)
 }
 
-func setEnvVars(brokerName string) {
+func setEnvVars(brokerName string, extra ...EnvVar) {
 	envVars := requiredEnvVar(
 		"ARM_SUBSCRIPTION_ID",
 		"ARM_TENANT_ID",
@@ -88,6 +137,8 @@ func setEnvVars(brokerName string) {
 		EnvVar{Name: "ENCRYPTION_ENABLED", Value: true},
 		EnvVar{Name: "ENCRYPTION_PASSWORDS", Value: `[{"password": {"secret":"superSecretP@SSw0Rd1234!"},"label":"first-encryption","primary":true}]`},
 	)
+
+	envVars = append(envVars, extra...)
 
 	SetBrokerEnv(brokerName, envVars...)
 }
