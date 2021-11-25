@@ -1,6 +1,7 @@
 package helpers
 
 import (
+	"acceptancetests/helpers/cf"
 	"fmt"
 	"strings"
 
@@ -16,10 +17,10 @@ type Binding struct {
 }
 
 func (b Binding) Credential() interface{} {
-	out, _ := CF("app", "--guid", b.appInstance.name)
+	out, _ := cf.Run("app", "--guid", b.appInstance.name)
 	guid := strings.TrimSpace(string(out))
 
-	env, _ := CF("curl", fmt.Sprintf("/v3/apps/%s/env", guid))
+	env, _ := cf.Run("curl", fmt.Sprintf("/v3/apps/%s/env", guid))
 
 	var receiver struct {
 		Services map[string]interface{} `jsonry:"system_env_json.VCAP_SERVICES"`
@@ -45,5 +46,5 @@ func (b Binding) Credential() interface{} {
 }
 
 func (b Binding) Unbind() {
-	CF("unbind-service", b.appInstance.name, b.serviceInstance.name)
+	cf.Run("unbind-service", b.appInstance.name, b.serviceInstance.name)
 }

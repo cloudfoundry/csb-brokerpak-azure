@@ -1,6 +1,7 @@
 package helpers
 
 import (
+	"acceptancetests/helpers/cf"
 	"encoding/json"
 	"time"
 
@@ -17,17 +18,17 @@ func CreateServiceFromBroker(offering, plan, broker string, parameters ...interf
 	name := RandomName(offering, plan)
 	createCommandTimeout := 5 * time.Minute // MASB is slow to start creation
 	args := []string{"create-service", offering, plan, name, "-b", broker}
-	if cfVersion() == cfVersionV8 {
+	if cf.Version() == cf.VersionV8 {
 		args = append(args, "--wait")
 		createCommandTimeout = time.Hour
 	}
 	args = append(args, serviceParameters(parameters)...)
 
-	session := StartCF(args...)
+	session := cf.Start(args...)
 	Eventually(session, createCommandTimeout).Should(Exit(0))
 
 	Eventually(func() string {
-		out, _ := CF("service", name)
+		out, _ := cf.Run("service", name)
 		Expect(out).NotTo(MatchRegexp(`status:\s+create failed`))
 		return out
 	}, time.Hour, 30*time.Second).Should(MatchRegexp(`status:\s+create succeeded`))
@@ -39,8 +40,8 @@ func CreateServiceFromBroker(offering, plan, broker string, parameters ...interf
 }
 
 func CreateService(offering, plan string, parameters ...interface{}) ServiceInstance {
-	switch cfVersion() {
-	case cfVersionV8:
+	switch cf.Version() {
+	case cf.VersionV8:
 		return createServiceWithWait(offering, plan, parameters...)
 	default:
 		return createServiceWithPoll(offering, plan, parameters...)
@@ -51,9 +52,9 @@ func createServiceWithWait(offering, plan string, parameters ...interface{}) Ser
 	name := RandomName(offering, plan)
 	args := append([]string{"create-service", offering, plan, name, "--wait"}, serviceParameters(parameters)...)
 
-	session := StartCF(args...)
+	session := cf.Start(args...)
 	Eventually(session, time.Hour).Should(Exit(0), func() string {
-		out, _ := CF("service", name)
+		out, _ := cf.Run("service", name)
 		return out
 	})
 
@@ -67,11 +68,11 @@ func createServiceWithPoll(offering, plan string, parameters ...interface{}) Ser
 	name := RandomName(offering, plan)
 	args := append([]string{"create-service", offering, plan, name}, serviceParameters(parameters)...)
 
-	session := StartCF(args...)
+	session := cf.Start(args...)
 	Eventually(session, 5*time.Minute).Should(Exit(0))
 
 	Eventually(func() string {
-		out, _ := CF("service", name)
+		out, _ := cf.Run("service", name)
 		Expect(out).NotTo(MatchRegexp(`status:\s+create failed`))
 		return out
 	}, time.Hour, 30*time.Second).Should(MatchRegexp(`status:\s+create succeeded`))
@@ -83,8 +84,8 @@ func createServiceWithPoll(offering, plan string, parameters ...interface{}) Ser
 }
 
 func (s ServiceInstance) UpdateService(parameters ...string) {
-	switch cfVersion() {
-	case cfVersionV8:
+	switch cf.Version() {
+	case cf.VersionV8:
 		s.updateServiceWithWait(parameters...)
 	default:
 		s.updateServiceWithPoll(parameters...)
@@ -94,9 +95,9 @@ func (s ServiceInstance) UpdateService(parameters ...string) {
 func (s ServiceInstance) updateServiceWithWait(parameters ...string) {
 	args := append([]string{"update-service", s.name, "--wait"}, parameters...)
 
-	session := StartCF(args...)
+	session := cf.Start(args...)
 	Eventually(session, time.Hour).Should(Exit(0), func() string {
-		out, _ := CF("service", s.name)
+		out, _ := cf.Run("service", s.name)
 		return out
 	})
 }
@@ -104,11 +105,11 @@ func (s ServiceInstance) updateServiceWithWait(parameters ...string) {
 func (s ServiceInstance) updateServiceWithPoll(parameters ...string) {
 	args := append([]string{"update-service", s.name}, parameters...)
 
-	session := StartCF(args...)
+	session := cf.Start(args...)
 	Eventually(session, 5*time.Minute).Should(Exit(0))
 
 	Eventually(func() string {
-		out, _ := CF("service", s.name)
+		out, _ := cf.Run("service", s.name)
 		Expect(out).NotTo(MatchRegexp(`status:\s+update failed`))
 		return out
 	}, time.Hour, 30*time.Second).Should(MatchRegexp(`status:\s+update succeeded`))
@@ -117,16 +118,16 @@ func (s ServiceInstance) updateServiceWithPoll(parameters ...string) {
 func (s ServiceInstance) Delete() {
 	args := []string{"delete-service", "-f", s.name}
 	deleteCommandTimeout := time.Minute
-	if cfVersion() == cfVersionV8 {
+	if cf.Version() == cf.VersionV8 {
 		args = append(args, "--wait")
 		deleteCommandTimeout = time.Hour
 	}
 
-	session := StartCF(args...)
+	session := cf.Start(args...)
 	Eventually(session, deleteCommandTimeout).Should(Exit(0))
 
 	Eventually(func() string {
-		out, _ := CF("services")
+		out, _ := cf.Run("services")
 		return out
 	}, 30*time.Minute, 30*time.Second).ShouldNot(ContainSubstring(s.name))
 }
@@ -135,7 +136,7 @@ func (s ServiceInstance) Bind(app AppInstance, parameters ...interface{}) Bindin
 	name := RandomName()
 	args := []string{"bind-service", app.name, s.name, "--binding-name", name}
 	args = append(args, serviceParameters(parameters)...)
-	CF(args...)
+	cf.Run(args...)
 
 	return Binding{
 		serviceInstance: s,
@@ -146,12 +147,12 @@ func (s ServiceInstance) Bind(app AppInstance, parameters ...interface{}) Bindin
 
 func (s ServiceInstance) Unbind(app AppInstance) {
 	args := []string{"unbind-service", app.name, s.name}
-	CF(args...)
+	cf.Run(args...)
 }
 
 func (s ServiceInstance) CreateKey() ServiceKey {
 	name := RandomName()
-	CF("create-service-key", s.name, name)
+	cf.Run("create-service-key", s.name, name)
 
 	return ServiceKey{
 		name:            name,

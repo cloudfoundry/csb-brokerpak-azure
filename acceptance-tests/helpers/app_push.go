@@ -2,6 +2,7 @@ package helpers
 
 import (
 	"acceptancetests/apps"
+	"acceptancetests/helpers/cf"
 	"fmt"
 	"os"
 	"os/exec"
@@ -31,7 +32,7 @@ func AppPushUnstarted(app apps.AppCode) AppInstance {
 
 func appPushUnstartedNoBuildpack(app apps.AppCode) AppInstance {
 	name := RandomName(string(app))
-	session := StartCF("push", "--no-start", "-p", app.Dir(), name)
+	session := cf.Start("push", "--no-start", "-p", app.Dir(), name)
 	return waitForAppPush(session, name)
 }
 
@@ -40,7 +41,7 @@ func appBuildAndPushUnstartedBinaryBuildpack(app apps.AppCode) AppInstance {
 	appDir := appBuild(app.Dir())
 	defer os.RemoveAll(appDir)
 
-	session := StartCF("push", "--no-start", "-b", "binary_buildpack", "-m", "50MB", "-p", appDir, name)
+	session := cf.Start("push", "--no-start", "-b", "binary_buildpack", "-m", "50MB", "-p", appDir, name)
 	return waitForAppPush(session, name)
 }
 
@@ -68,7 +69,7 @@ func waitForAppPush(session *Session, name string) AppInstance {
 
 	if session.ExitCode() != 0 {
 		fmt.Fprintf(GinkgoWriter, "FAILED to push app. Getting logs...")
-		CF("logs", name, "--recent")
+		cf.Run("logs", name, "--recent")
 		Fail("App failed to push")
 	}
 
@@ -80,7 +81,7 @@ func waitForAppDelete(session *Session, name string) AppInstance {
 
 	if session.ExitCode() != 0 {
 		fmt.Fprintf(GinkgoWriter, "FAILED to delete app. Getting logs...")
-		CF("logs", name, "--recent")
+		cf.Run("logs", name, "--recent")
 		Fail("App failed to delete")
 	}
 

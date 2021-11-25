@@ -1,6 +1,7 @@
 package helpers
 
 import (
+	"acceptancetests/helpers/cf"
 	"regexp"
 	"strings"
 
@@ -12,7 +13,7 @@ var regex = regexp.MustCompile(`^(\S+)\s+shared\s+(http)?\s*$`)
 
 func DefaultSharedDomain() string {
 	if defaultDomain == "" {
-		output, _ := CF("domains")
+		output, _ := cf.Run("domains")
 		for _, line := range strings.Split(output, "\n") {
 			matches := regex.FindStringSubmatch(line)
 			if len(matches) > 0 {

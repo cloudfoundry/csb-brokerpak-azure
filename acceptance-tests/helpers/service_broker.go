@@ -1,6 +1,7 @@
 package helpers
 
 import (
+	"acceptancetests/helpers/cf"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -45,13 +46,13 @@ func CreateBroker(opts ...Option) ServiceBroker {
 	setEnvVars(cfg.name, cfg.env...)
 
 	schemaName := strings.ReplaceAll(cfg.name, "-", "_")
-	CF("bind-service", cfg.name, "csb-sql", "-c", fmt.Sprintf(`{"schema":"%s"}`, schemaName))
+	cf.Run("bind-service", cfg.name, "csb-sql", "-c", fmt.Sprintf(`{"schema":"%s"}`, schemaName))
 
-	session := StartCF("restart", cfg.name)
+	session := cf.Start("restart", cfg.name)
 	waitForAppPush(session, cfg.name)
 
 	brokerURL := getBrokerAppURL(brokerApp)
-	session = StartCF("create-service-broker", cfg.name, brokerUsername, brokerPassword, "https://"+brokerURL, "--space-scoped")
+	session = cf.Start("create-service-broker", cfg.name, brokerUsername, brokerPassword, "https://"+brokerURL, "--space-scoped")
 	waitForBrokerOperation(session, cfg.name)
 
 	return ServiceBroker{
@@ -87,15 +88,15 @@ func (b ServiceBroker) Update(brokerDir string) {
 	brokerApp := pushServiceBroker(b.Name, brokerDir)
 
 	brokerURL := getBrokerAppURL(brokerApp)
-	session := StartCF("update-service-broker", b.Name, brokerUsername, brokerPassword, "https://"+brokerURL)
+	session := cf.Start("update-service-broker", b.Name, brokerUsername, brokerPassword, "https://"+brokerURL)
 	waitForBrokerOperation(session, b.Name)
 }
 
 func (b ServiceBroker) Delete() {
-	session := StartCF("delete-service-broker", b.Name, "-f")
+	session := cf.Start("delete-service-broker", b.Name, "-f")
 	waitForBrokerOperation(session, b.Name)
 
-	session = StartCF("delete", b.Name, "-f")
+	session = cf.Start("delete", b.Name, "-f")
 	waitForAppDelete(session, b.Name)
 }
 
@@ -152,9 +153,9 @@ func requiredEnvVar(envVars ...string) []EnvVar {
 }
 
 func getBrokerAppURL(brokerApp AppInstance) string {
-	out, _ := CF("app", "--guid", brokerApp.name)
+	out, _ := cf.Run("app", "--guid", brokerApp.name)
 	guid := strings.TrimSpace(out)
-	env, _ := CF("curl", fmt.Sprintf("/v3/apps/%s/env", guid))
+	env, _ := cf.Run("curl", fmt.Sprintf("/v3/apps/%s/env", guid))
 
 	var receiver struct {
 		BrokerURL []string `jsonry:"application_env_json.VCAP_APPLICATION.application_uris[]"`
@@ -165,12 +166,12 @@ func getBrokerAppURL(brokerApp AppInstance) string {
 }
 
 func pushNoStartServiceBroker(brokerName, brokerDir string) AppInstance {
-	session := StartCF("push", brokerName, "--no-start", "-p", brokerDir, "-f", fmt.Sprintf("%s/cf-manifest.yml", brokerDir), "--var", fmt.Sprintf("app=%s", brokerName))
+	session := cf.Start("push", brokerName, "--no-start", "-p", brokerDir, "-f", fmt.Sprintf("%s/cf-manifest.yml", brokerDir), "--var", fmt.Sprintf("app=%s", brokerName))
 	return waitForAppPush(session, brokerName)
 }
 
 func pushServiceBroker(brokerName, brokerDir string) AppInstance {
-	session := StartCF("push", brokerName, "-p", brokerDir, "-f", fmt.Sprintf("%s/cf-manifest.yml", brokerDir), "--var", fmt.Sprintf("app=%s", brokerName))
+	session := cf.Start("push", brokerName, "-p", brokerDir, "-f", fmt.Sprintf("%s/cf-manifest.yml", brokerDir), "--var", fmt.Sprintf("app=%s", brokerName))
 	return waitForAppPush(session, brokerName)
 }
 
@@ -189,20 +190,20 @@ func SetBrokerEnv(brokerName string, envVars ...EnvVar) {
 		switch v := envVar.Value.(type) {
 		case string:
 			if v == "" {
-				CF("unset-env", brokerName, envVar.Name)
+				cf.Run("unset-env", brokerName, envVar.Name)
 			} else {
-				CF("set-env", brokerName, envVar.Name, v)
+				cf.Run("set-env", brokerName, envVar.Name, v)
 			}
 		default:
 			data, err := json.Marshal(v)
 			Expect(err).NotTo(HaveOccurred())
-			CF("set-env", brokerName, envVar.Name, string(data))
+			cf.Run("set-env", brokerName, envVar.Name, string(data))
 		}
 	}
 }
 
 func RestartBroker(broker string) {
-	CF("restart", broker)
+	cf.Run("restart", broker)
 }
 
 func SetBrokerEnvAndRestart(envVars ...EnvVar) {
@@ -210,25 +211,25 @@ func SetBrokerEnvAndRestart(envVars ...EnvVar) {
 		switch v := envVar.Value.(type) {
 		case string:
 			if v == "" {
-				CF("unset-env", broker, envVar.Name)
+				cf.Run("unset-env", broker, envVar.Name)
 			} else {
-				CF("set-env", broker, envVar.Name, v)
+				cf.Run("set-env", broker, envVar.Name, v)
 			}
 		default:
 			data, err := json.Marshal(v)
 			Expect(err).NotTo(HaveOccurred())
-			CF("set-env", broker, envVar.Name, string(data))
+			cf.Run("set-env", broker, envVar.Name, string(data))
 		}
 	}
 
-	CF("restart", broker)
+	cf.Run("restart", broker)
 }
 
 func GetBrokerEncryptionEnv(broker string) BrokerEnvVars {
-	out, _ := CF("app", "--guid", broker)
+	out, _ := cf.Run("app", "--guid", broker)
 	guid := strings.TrimSpace(string(out))
 
-	env, _ := CF("curl", fmt.Sprintf("/v3/apps/%s/environment_variables", guid))
+	env, _ := cf.Run("curl", fmt.Sprintf("/v3/apps/%s/environment_variables", guid))
 
 	var receiver struct {
 		Var map[string]string `jsonry:"var"`
@@ -258,7 +259,7 @@ func SetBrokerEncryptionEnv(brokerName string, brokerEnvVars BrokerEnvVars) {
 		},
 	}
 	SetBrokerEnv(brokerName, envVars...)
-	session := StartCF("restart", brokerName)
+	session := cf.Start("restart", brokerName)
 	waitForAppPush(session, brokerName)
 }
 
