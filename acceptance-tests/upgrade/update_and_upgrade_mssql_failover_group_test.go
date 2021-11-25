@@ -14,12 +14,14 @@ var _ = Describe("UpgradeMssqlFailoverGroupTest", func() {
 	When("upgrading broker version", func() {
 		It("should continue to work", func() {
 			By("pushing latest released broker version")
-			brokerName := helpers.RandomName("csb-mssql-fog")
-			serviceBroker := helpers.PushAndStartBroker(brokerName, releasedBuildDir)
+			serviceBroker := helpers.CreateBroker(
+				helpers.BrokerWithPrefix("csb-mssql-fog"),
+				helpers.BrokerFromDir(releasedBuildDir),
+			)
 			defer serviceBroker.Delete()
 
 			By("creating a service")
-			serviceInstance := helpers.CreateServiceFromBroker("csb-azure-mssql-failover-group", "small-v2", brokerName)
+			serviceInstance := helpers.CreateServiceFromBroker("csb-azure-mssql-failover-group", "small-v2", serviceBroker.Name)
 			defer serviceInstance.Delete()
 
 			By("pushing the unstarted app twice")
@@ -58,7 +60,7 @@ var _ = Describe("UpgradeMssqlFailoverGroupTest", func() {
 			Expect(got).To(Equal(valueOne))
 
 			By("triggering failover")
-			failoverServiceInstance := helpers.CreateServiceFromBroker("csb-azure-mssql-fog-run-failover", "standard", brokerName, failoverParameters(serviceInstance))
+			failoverServiceInstance := helpers.CreateServiceFromBroker("csb-azure-mssql-fog-run-failover", "standard", serviceBroker.Name, failoverParameters(serviceInstance))
 			defer failoverServiceInstance.Delete()
 
 			By("getting the previously set values")

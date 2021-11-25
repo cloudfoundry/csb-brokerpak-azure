@@ -13,29 +13,32 @@ var _ = Describe("UpgradeMssqlDBFailoverTest", func() {
 	When("upgrading broker version", func() {
 		It("should continue to work", func() {
 			By("pushing latest released broker version")
-			brokerName := helpers.RandomName("mssql-db-fo")
-			serviceBroker := helpers.PushAndStartBroker(brokerName, releasedBuildDir)
+			serviceBroker := helpers.CreateBroker(
+				helpers.BrokerWithPrefix("csb-db-fo"),
+				helpers.BrokerFromDir(releasedBuildDir),
+			)
+
 			defer serviceBroker.Delete()
 
 			By("creating a new resource group")
 			rgConfig := resourceGroupConfig()
-			resourceGroupInstance := helpers.CreateServiceFromBroker("csb-azure-resource-group", "standard", brokerName, rgConfig)
+			resourceGroupInstance := helpers.CreateServiceFromBroker("csb-azure-resource-group", "standard", serviceBroker.Name, rgConfig)
 			defer resourceGroupInstance.Delete()
 
 			By("creating primary and secondary DB servers in the resource group")
 			serversConfig := newServerPair(rgConfig.Name)
-			serverInstancePrimary := helpers.CreateServiceFromBroker("csb-azure-mssql-server", "standard", brokerName, serversConfig.PrimaryConfig())
+			serverInstancePrimary := helpers.CreateServiceFromBroker("csb-azure-mssql-server", "standard", serviceBroker.Name, serversConfig.PrimaryConfig())
 			defer serverInstancePrimary.Delete()
 
-			serverInstanceSecondary := helpers.CreateServiceFromBroker("csb-azure-mssql-server", "standard", brokerName, serversConfig.SecondaryConfig())
+			serverInstanceSecondary := helpers.CreateServiceFromBroker("csb-azure-mssql-server", "standard", serviceBroker.Name, serversConfig.SecondaryConfig())
 			defer serverInstanceSecondary.Delete()
 
 			By("reconfiguring the CSB with DB server details")
-			serversConfig.ReconfigureCustomCSBWithServerDetails(brokerName)
+			serversConfig.ReconfigureCustomCSBWithServerDetails(serviceBroker.Name)
 
 			By("creating a failover group service instance")
 			fogConfig := failoverGroupConfig(serversConfig.ServerPairTag)
-			initialFogInstance := helpers.CreateServiceFromBroker("csb-azure-mssql-db-failover-group", "small", brokerName, fogConfig)
+			initialFogInstance := helpers.CreateServiceFromBroker("csb-azure-mssql-db-failover-group", "small", serviceBroker.Name, fogConfig)
 			defer initialFogInstance.Delete()
 
 			By("pushing the unstarted app twice")
@@ -74,7 +77,7 @@ var _ = Describe("UpgradeMssqlDBFailoverTest", func() {
 			Expect(got).To(Equal(valueOne))
 
 			By("connecting to the existing failover group")
-			dbFogInstance := helpers.CreateServiceFromBroker("csb-azure-mssql-db-failover-group", "existing", brokerName, fogConfig)
+			dbFogInstance := helpers.CreateServiceFromBroker("csb-azure-mssql-db-failover-group", "existing", serviceBroker.Name, fogConfig)
 			defer dbFogInstance.Delete()
 
 			By("purging the initial FOG instance")

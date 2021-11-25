@@ -12,14 +12,16 @@ var _ = Describe("UpgradeMongoTest", func() {
 	When("upgrading broker version", func() {
 		It("should continue to work", func() {
 			By("pushing latest released broker version")
-			brokerName := helpers.RandomName("csb-mssql-db")
-			serviceBroker := helpers.PushAndStartBroker(brokerName, releasedBuildDir)
+			serviceBroker := helpers.CreateBroker(
+				helpers.BrokerWithPrefix("csb-mssql-db"),
+				helpers.BrokerFromDir(releasedBuildDir),
+			)
 			defer serviceBroker.Delete()
 
 			By("creating a service instance")
 			databaseName := helpers.RandomName("database")
 			collectionName := helpers.RandomName("collection")
-			serviceInstance := helpers.CreateServiceFromBroker("csb-azure-mongodb", "small", brokerName, map[string]interface{}{
+			serviceInstance := helpers.CreateServiceFromBroker("csb-azure-mongodb", "small", serviceBroker.Name, map[string]interface{}{
 				"db_name":         databaseName,
 				"collection_name": collectionName,
 				"shard_key":       "_id",

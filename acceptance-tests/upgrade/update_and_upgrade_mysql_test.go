@@ -12,12 +12,14 @@ var _ = Describe("UpgradeMysqlTest", func() {
 	When("upgrading broker version", func() {
 		It("should continue to work", func() {
 			By("pushing latest released broker version")
-			brokerName := helpers.RandomName("csb-mysql")
-			serviceBroker := helpers.PushAndStartBroker(brokerName, releasedBuildDir)
+			serviceBroker := helpers.CreateBroker(
+				helpers.BrokerWithPrefix("csb-mysql"),
+				helpers.BrokerFromDir(releasedBuildDir),
+			)
 			defer serviceBroker.Delete()
 
 			By("creating a service")
-			serviceInstance := helpers.CreateServiceFromBroker("csb-azure-mysql", "small", brokerName)
+			serviceInstance := helpers.CreateServiceFromBroker("csb-azure-mysql", "small", serviceBroker.Name)
 			defer serviceInstance.Delete()
 
 			By("pushing the unstarted app twice")
