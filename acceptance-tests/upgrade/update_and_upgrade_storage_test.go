@@ -12,12 +12,14 @@ var _ = Describe("UpgradeStorageTest", func() {
 	When("upgrading broker version", func() {
 		It("should continue to work", func() {
 			By("pushing latest released broker version")
-			brokerName := helpers.RandomName("csb-storage")
-			serviceBroker := helpers.PushAndStartBroker(brokerName, releasedBuildDir)
+			serviceBroker := helpers.CreateBroker(
+				helpers.BrokerWithPrefix("csb-storage"),
+				helpers.BrokerFromDir(releasedBuildDir),
+			)
 			defer serviceBroker.Delete()
 
 			By("creating a service")
-			serviceInstance := helpers.CreateServiceFromBroker("csb-azure-storage-account", "standard", brokerName)
+			serviceInstance := helpers.CreateServiceFromBroker("csb-azure-storage-account", "standard", serviceBroker.Name)
 			defer serviceInstance.Delete()
 
 			By("pushing the unstarted app twice")

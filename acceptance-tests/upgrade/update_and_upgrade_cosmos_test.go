@@ -13,8 +13,10 @@ var _ = Describe("UpgradeCosmosTest", func() {
 	When("upgrading broker version", func() {
 		It("should continue to work", func() {
 			By("pushing latest released broker version")
-			brokerName := helpers.RandomName("csb-cosmos")
-			serviceBroker := helpers.PushAndStartBroker(brokerName, releasedBuildDir)
+			serviceBroker := helpers.CreateBroker(
+				helpers.BrokerWithPrefix("csb-cosmos"),
+				helpers.BrokerFromDir(releasedBuildDir),
+			)
 			defer serviceBroker.Delete()
 
 			By("creating a service")
@@ -22,7 +24,7 @@ var _ = Describe("UpgradeCosmosTest", func() {
 			serviceInstance := helpers.CreateServiceFromBroker(
 				"csb-azure-cosmosdb-sql",
 				"small",
-				brokerName,
+				serviceBroker.Name,
 				map[string]interface{}{"db_name": databaseName})
 			defer serviceInstance.Delete()
 

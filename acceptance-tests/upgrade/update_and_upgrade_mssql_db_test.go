@@ -12,20 +12,22 @@ var _ = Describe("UpgradeMssqlDBTest", func() {
 	When("upgrading broker version", func() {
 		It("should continue to work", func() {
 			By("pushing latest released broker version")
-			brokerName := helpers.RandomName("csb-mssql-db")
-			serviceBroker := helpers.PushAndStartBroker(brokerName, releasedBuildDir)
+			serviceBroker := helpers.CreateBroker(
+				helpers.BrokerWithPrefix("csb-mssql-srvdb"),
+				helpers.BrokerFromDir(releasedBuildDir),
+			)
 			defer serviceBroker.Delete()
 
 			By("creating a service")
 			serverConfig := newDatabaseServer()
-			serverInstance := helpers.CreateServiceFromBroker("csb-azure-mssql-server", "standard", brokerName, serverConfig)
+			serverInstance := helpers.CreateServiceFromBroker("csb-azure-mssql-server", "standard", serviceBroker.Name, serverConfig)
 			defer serverInstance.Delete()
 
 			By("reconfiguring the CSB with DB server details")
-			serverTag := serverConfig.reconfigureCSBWithServerDetails(brokerName)
+			serverTag := serverConfig.reconfigureCSBWithServerDetails(serviceBroker.Name)
 
 			By("creating a database in the server")
-			dbInstance := helpers.CreateServiceFromBroker("csb-azure-mssql-db", "small", brokerName, map[string]string{"server": serverTag})
+			dbInstance := helpers.CreateServiceFromBroker("csb-azure-mssql-db", "small", serviceBroker.Name, map[string]string{"server": serverTag})
 			defer dbInstance.Delete()
 
 			By("pushing the unstarted app twice")

@@ -71,28 +71,15 @@ func BrokerWithEnv(env ...EnvVar) Option {
 	}
 }
 
-func DefaultBroker() ServiceBroker {
-	return ServiceBroker{
-		Name: "broker-cf-test",
+func BrokerFromDir(dir string) Option {
+	return func(c *config) {
+		c.dir = dir
 	}
 }
 
-func PushAndStartBroker(brokerName, brokerDir string) ServiceBroker {
-	brokerApp := pushNoStartServiceBroker(brokerName, brokerDir)
-	setEnvVars(brokerName)
-
-	schemaName := strings.ReplaceAll(brokerName, "-", "_")
-	CF("bind-service", brokerName, "csb-sql", "-c", fmt.Sprintf(`{"schema":"%s"}`, schemaName))
-
-	session := StartCF("restart", brokerName)
-	waitForAppPush(session, brokerName)
-
-	brokerURL := getBrokerAppURL(brokerApp)
-	session = StartCF("create-service-broker", brokerName, brokerUsername, brokerPassword, "https://"+brokerURL, "--space-scoped")
-	waitForBrokerOperation(session, brokerName)
-
+func DefaultBroker() ServiceBroker {
 	return ServiceBroker{
-		Name: brokerName,
+		Name: "broker-cf-test",
 	}
 }
 
