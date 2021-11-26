@@ -4,6 +4,7 @@ import (
 	"acceptancetests/apps"
 	"acceptancetests/helpers"
 	"acceptancetests/helpers/cf"
+	"acceptancetests/helpers/matchers"
 	"acceptancetests/helpers/random"
 
 	. "github.com/onsi/ginkgo"
@@ -47,7 +48,7 @@ var _ = Describe("MSSQL Failover Group Existing", func() {
 		helpers.AppStart(app)
 
 		By("checking that the app environment has a credhub reference for credentials")
-		Expect(bindingOne.Credential()).To(helpers.HaveCredHubRef)
+		Expect(bindingOne.Credential()).To(matchers.HaveCredHubRef)
 
 		By("creating a schema")
 		schema := random.Name(random.WithMaxLength(10))
@@ -70,7 +71,7 @@ var _ = Describe("MSSQL Failover Group Existing", func() {
 		defer helpers.AppDelete(app) // app needs to be deleted before service instance
 
 		By("checking that the app environment has a credhub reference for credentials")
-		Expect(bindingTwo.Credential()).To(helpers.HaveCredHubRef)
+		Expect(bindingTwo.Credential()).To(matchers.HaveCredHubRef)
 
 		By("getting the value set with the initial binding")
 		got := app.GET("%s/%s", schema, key)
