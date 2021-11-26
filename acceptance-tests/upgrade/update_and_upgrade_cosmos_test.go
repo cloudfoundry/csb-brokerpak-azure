@@ -3,6 +3,7 @@ package upgrade_test
 import (
 	"acceptancetests/apps"
 	"acceptancetests/helpers"
+	"acceptancetests/helpers/random"
 	"fmt"
 
 	. "github.com/onsi/ginkgo"
@@ -20,7 +21,7 @@ var _ = Describe("UpgradeCosmosTest", func() {
 			defer serviceBroker.Delete()
 
 			By("creating a service")
-			databaseName := helpers.RandomName("database")
+			databaseName := random.Name(random.WithPrefix("database"))
 			serviceInstance := helpers.CreateServiceFromBroker(
 				"csb-azure-cosmosdb-sql",
 				"small",
@@ -47,12 +48,12 @@ var _ = Describe("UpgradeCosmosTest", func() {
 			Expect(databases).To(MatchJSON(fmt.Sprintf(`["%s"]`, databaseName)))
 
 			By("creating a collection")
-			collectionName := helpers.RandomName("collection")
+			collectionName := random.Name(random.WithPrefix("collection"))
 			appOne.PUT("", "%s/%s", databaseName, collectionName)
 
 			By("creating a document using the first app")
-			documentNameOne := helpers.RandomHex()
-			documentDataOne := helpers.RandomHex()
+			documentNameOne := random.Hexadecimal()
+			documentDataOne := random.Hexadecimal()
 			appOne.PUT(documentDataOne, "%s/%s/%s", databaseName, collectionName, documentNameOne)
 
 			By("getting the value using the second app")
@@ -79,8 +80,8 @@ var _ = Describe("UpgradeCosmosTest", func() {
 			helpers.AppRestage(appOne, appTwo)
 
 			By("creating a document using the first app - after upgrade")
-			documentNameTwo := helpers.RandomHex()
-			documentDataTwo := helpers.RandomHex()
+			documentNameTwo := random.Hexadecimal()
+			documentDataTwo := random.Hexadecimal()
 			appOne.PUT(documentDataTwo, "%s/%s/%s", databaseName, collectionName, documentNameTwo)
 
 			got = appTwo.GET("%s/%s/%s", databaseName, collectionName, documentNameTwo)

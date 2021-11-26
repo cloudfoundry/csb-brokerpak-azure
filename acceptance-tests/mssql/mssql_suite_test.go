@@ -2,6 +2,7 @@ package mssql_test
 
 import (
 	"acceptancetests/helpers"
+	"acceptancetests/helpers/random"
 	"fmt"
 	"regexp"
 	"testing"
@@ -26,7 +27,7 @@ func failoverParameters(instance helpers.ServiceInstance) interface{} {
 	key.Get(&input)
 
 	resourceGroup := extractResourceGroup(input.Status)
-	pairName := helpers.RandomName("server-pair")
+	pairName := random.Name(random.WithPrefix("server-pair"))
 
 	type failoverServer struct {
 		Name          string `json:"server_name"`

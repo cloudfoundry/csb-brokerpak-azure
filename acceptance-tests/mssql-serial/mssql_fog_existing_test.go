@@ -3,7 +3,10 @@ package mssql_test
 import (
 	"acceptancetests/apps"
 	"acceptancetests/helpers"
+	"acceptancetests/helpers/cf"
+	"acceptancetests/helpers/random"
 	"acceptancetests/mssql-serial/mssql_helpers"
+
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
@@ -44,12 +47,12 @@ var _ = Describe("MSSQL Failover Group Existing", func() {
 		Expect(bindingOne.Credential()).To(helpers.HaveCredHubRef)
 
 		By("creating a schema")
-		schema := helpers.RandomShortName()
+		schema := random.Name(random.WithMaxLength(10))
 		app.PUT("", schema)
 
 		By("setting a key-value")
-		key := helpers.RandomHex()
-		value := helpers.RandomHex()
+		key := random.Hexadecimal()
+		value := random.Hexadecimal()
 		app.PUT(value, "%s/%s", schema, key)
 
 		By("connecting to the existing failover group")
@@ -57,7 +60,7 @@ var _ = Describe("MSSQL Failover Group Existing", func() {
 		defer dbFogInstance.Delete()
 
 		By("purging the initial FOG instance")
-		helpers.CF("purge-service-instance", "-f", initialFogInstance.Name())
+		cf.Run("purge-service-instance", "-f", initialFogInstance.Name())
 
 		By("binding the app to the CSB service instance")
 		bindingTwo := dbFogInstance.Bind(app)
@@ -77,7 +80,7 @@ var _ = Describe("MSSQL Failover Group Existing", func() {
 
 func resourceGroupConfig() resourceConfig {
 	return resourceConfig{
-		Name:     helpers.RandomName("rg"),
+		Name:     random.Name(random.WithPrefix("rg")),
 		Location: "westus",
 	}
 }
@@ -89,15 +92,15 @@ type resourceConfig struct {
 
 func newServerPair(resourceGroup string) mssql_helpers.DatabaseServerPair {
 	return mssql_helpers.DatabaseServerPair{
-		ServerPairTag: helpers.RandomShortName(),
-		Username:      helpers.RandomShortName(),
-		Password:      helpers.RandomPassword(),
+		ServerPairTag: random.Name(random.WithMaxLength(10)),
+		Username:      random.Name(random.WithMaxLength(10)),
+		Password:      random.Password(),
 		PrimaryServer: mssql_helpers.DatabaseServerPairMember{
-			Name:          helpers.RandomName("server"),
+			Name:          random.Name(random.WithPrefix("server")),
 			ResourceGroup: resourceGroup,
 		},
 		SecondaryServer: mssql_helpers.DatabaseServerPairMember{
-			Name:          helpers.RandomName("server"),
+			Name:          random.Name(random.WithPrefix("server")),
 			ResourceGroup: resourceGroup,
 		},
 	}
@@ -105,8 +108,8 @@ func newServerPair(resourceGroup string) mssql_helpers.DatabaseServerPair {
 
 func failoverGroupConfig(serverPairTag string) map[string]string {
 	return map[string]string{
-		"instance_name": helpers.RandomName("fog"),
-		"db_name":       helpers.RandomName("db"),
+		"instance_name": random.Name(random.WithPrefix("fog")),
+		"db_name":       random.Name(random.WithPrefix("db")),
 		"server_pair":   serverPairTag,
 	}
 }

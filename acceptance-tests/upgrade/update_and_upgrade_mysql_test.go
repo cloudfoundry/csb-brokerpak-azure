@@ -3,6 +3,7 @@ package upgrade_test
 import (
 	"acceptancetests/apps"
 	"acceptancetests/helpers"
+	"acceptancetests/helpers/random"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -33,8 +34,8 @@ var _ = Describe("UpgradeMysqlTest", func() {
 			helpers.AppStart(appOne, appTwo)
 
 			By("setting a key-value using the first app")
-			keyOne := helpers.RandomHex()
-			valueOne := helpers.RandomHex()
+			keyOne := random.Hexadecimal()
+			valueOne := random.Hexadecimal()
 			appOne.PUT(valueOne, keyOne)
 
 			By("getting the value using the second app")
@@ -54,8 +55,8 @@ var _ = Describe("UpgradeMysqlTest", func() {
 			helpers.AppRestage(appOne, appTwo)
 
 			By("creating new data - post upgrade")
-			keyTwo := helpers.RandomHex()
-			valueTwo := helpers.RandomHex()
+			keyTwo := random.Hexadecimal()
+			valueTwo := random.Hexadecimal()
 			appOne.PUT(valueTwo, keyTwo)
 			got = appTwo.GET(keyTwo)
 			Expect(got).To(Equal(valueTwo))
@@ -71,8 +72,8 @@ var _ = Describe("UpgradeMysqlTest", func() {
 			Expect(got).To(Equal(valueTwo))
 
 			By("checking data can still be written and read")
-			keyThree := helpers.RandomHex()
-			valueThree := helpers.RandomHex()
+			keyThree := random.Hexadecimal()
+			valueThree := random.Hexadecimal()
 			appOne.PUT(valueThree, keyThree)
 			got = appTwo.GET(keyThree)
 			Expect(got).To(Equal(valueThree))

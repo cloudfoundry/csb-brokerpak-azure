@@ -3,6 +3,7 @@ package upgrade_test
 import (
 	"acceptancetests/apps"
 	"acceptancetests/helpers"
+	"acceptancetests/helpers/random"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -33,8 +34,8 @@ var _ = Describe("UpgradeRedisTest", func() {
 			helpers.AppStart(appOne, appTwo)
 
 			By("setting a key-value using the first app")
-			key1 := helpers.RandomHex()
-			value1 := helpers.RandomHex()
+			key1 := random.Hexadecimal()
+			value1 := random.Hexadecimal()
 			appOne.PUT(value1, key1)
 
 			By("getting the value using the second app")
@@ -52,8 +53,8 @@ var _ = Describe("UpgradeRedisTest", func() {
 			serviceInstance.Bind(appOne)
 			serviceInstance.Bind(appTwo)
 			helpers.AppRestage(appOne, appTwo)
-			key2 := helpers.RandomHex()
-			value2 := helpers.RandomHex()
+			key2 := random.Hexadecimal()
+			value2 := random.Hexadecimal()
 			appOne.PUT(value2, key2)
 			Expect(appTwo.GET(key2)).To(Equal(value2))
 
@@ -64,8 +65,8 @@ var _ = Describe("UpgradeRedisTest", func() {
 			serviceInstance.UpdateService("-p", "medium")
 
 			By("checking it still works")
-			key3 := helpers.RandomHex()
-			value3 := helpers.RandomHex()
+			key3 := random.Hexadecimal()
+			value3 := random.Hexadecimal()
 			appOne.PUT(value3, key3)
 			Expect(appTwo.GET(key3)).To(Equal(value3))
 		})

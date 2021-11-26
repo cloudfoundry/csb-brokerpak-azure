@@ -3,6 +3,7 @@ package mysql_test
 import (
 	"acceptancetests/apps"
 	"acceptancetests/helpers"
+	"acceptancetests/helpers/random"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -30,8 +31,8 @@ var _ = Describe("MySQL", func() {
 		Expect(binding.Credential()).To(helpers.HaveCredHubRef)
 
 		By("setting a key-value using the first app")
-		key := helpers.RandomHex()
-		value := helpers.RandomHex()
+		key := random.Hexadecimal()
+		value := random.Hexadecimal()
 		appOne.PUT(value, key)
 
 		By("getting the value using the second app")

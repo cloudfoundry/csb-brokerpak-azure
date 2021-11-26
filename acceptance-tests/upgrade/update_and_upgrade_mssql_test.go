@@ -3,6 +3,7 @@ package upgrade_test
 import (
 	"acceptancetests/apps"
 	"acceptancetests/helpers"
+	"acceptancetests/helpers/random"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -35,12 +36,12 @@ var _ = Describe("UpgradeMssqlTest", func() {
 			helpers.AppStart(appOne, appTwo)
 
 			By("creating a schema using the first app")
-			schema := helpers.RandomShortName()
+			schema := random.Name(random.WithMaxLength(10))
 			appOne.PUT("", schema)
 
 			By("setting a key-value using the first app")
-			keyOne := helpers.RandomHex()
-			valueOne := helpers.RandomHex()
+			keyOne := random.Hexadecimal()
+			valueOne := random.Hexadecimal()
 			appOne.PUT(valueOne, "%s/%s", schema, keyOne)
 
 			By("getting the value using the second app")
@@ -70,12 +71,12 @@ var _ = Describe("UpgradeMssqlTest", func() {
 			helpers.AppRestage(appOne, appTwo)
 
 			By("creating a schema using the first app")
-			schema = helpers.RandomShortName()
+			schema = random.Name(random.WithMaxLength(10))
 			appOne.PUT("", schema)
 
 			By("checking data can still be written and read")
-			keyThree := helpers.RandomHex()
-			valueThree := helpers.RandomHex()
+			keyThree := random.Hexadecimal()
+			valueThree := random.Hexadecimal()
 			appOne.PUT(valueThree, "%s/%s", schema, keyThree)
 
 			got = appTwo.GET("%s/%s", schema, keyThree)

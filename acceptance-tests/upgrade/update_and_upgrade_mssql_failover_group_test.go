@@ -3,6 +3,7 @@ package upgrade_test
 import (
 	"acceptancetests/apps"
 	"acceptancetests/helpers"
+	"acceptancetests/helpers/random"
 	"fmt"
 	"regexp"
 
@@ -37,12 +38,12 @@ var _ = Describe("UpgradeMssqlFailoverGroupTest", func() {
 			helpers.AppStart(appOne, appTwo)
 
 			By("creating a schema using the first app")
-			schema := helpers.RandomShortName()
+			schema := random.Name(random.WithMaxLength(10))
 			appOne.PUT("", schema)
 
 			By("setting a key-value using the first app")
-			keyOne := helpers.RandomHex()
-			valueOne := helpers.RandomHex()
+			keyOne := random.Hexadecimal()
+			valueOne := random.Hexadecimal()
 			appOne.PUT(valueOne, "%s/%s", schema, keyOne)
 
 			By("getting the value using the second app")
@@ -79,11 +80,11 @@ var _ = Describe("UpgradeMssqlFailoverGroupTest", func() {
 			helpers.AppRestage(appOne, appTwo)
 
 			By("creating a schema using the first app")
-			schema = helpers.RandomShortName()
+			schema = random.Name(random.WithMaxLength(10))
 			appOne.PUT("", schema)
 
-			keyTwo := helpers.RandomHex()
-			valueTwo := helpers.RandomHex()
+			keyTwo := random.Hexadecimal()
+			valueTwo := random.Hexadecimal()
 			appOne.PUT(valueTwo, "%s/%s", schema, keyTwo)
 
 			got = appTwo.GET("%s/%s", schema, keyTwo)
@@ -106,7 +107,7 @@ func failoverParameters(instance helpers.ServiceInstance) interface{} {
 	key.Get(&input)
 
 	resourceGroup := extractResourceGroup(input.Status)
-	pairName := helpers.RandomName("server-pair")
+	pairName := random.Name(random.WithPrefix("server-pair"))
 
 	type failoverServer struct {
 		Name          string `json:"server_name"`

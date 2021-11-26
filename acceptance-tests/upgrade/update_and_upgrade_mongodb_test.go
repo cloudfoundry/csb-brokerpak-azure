@@ -3,6 +3,7 @@ package upgrade_test
 import (
 	"acceptancetests/apps"
 	"acceptancetests/helpers"
+	"acceptancetests/helpers/random"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -19,8 +20,8 @@ var _ = Describe("UpgradeMongoTest", func() {
 			defer serviceBroker.Delete()
 
 			By("creating a service instance")
-			databaseName := helpers.RandomName("database")
-			collectionName := helpers.RandomName("collection")
+			databaseName := random.Name(random.WithPrefix("database"))
+			collectionName := random.Name(random.WithPrefix("collection"))
 			serviceInstance := helpers.CreateServiceFromBroker("csb-azure-mongodb", "small", serviceBroker.Name, map[string]interface{}{
 				"db_name":         databaseName,
 				"collection_name": collectionName,
@@ -41,8 +42,8 @@ var _ = Describe("UpgradeMongoTest", func() {
 			helpers.AppStart(appOne, appTwo)
 
 			By("creating a document using the first app")
-			documentNameOne := helpers.RandomHex()
-			documentDataOne := helpers.RandomHex()
+			documentNameOne := random.Hexadecimal()
+			documentDataOne := random.Hexadecimal()
 			appOne.PUT(documentDataOne, "%s/%s/%s", databaseName, collectionName, documentNameOne)
 
 			By("getting the document using the second app")
@@ -62,8 +63,8 @@ var _ = Describe("UpgradeMongoTest", func() {
 			helpers.AppRestage(appOne, appTwo)
 
 			By("creating a document using the first app - post upgrade")
-			documentNameTwo := helpers.RandomHex()
-			documentDataTwo := helpers.RandomHex()
+			documentNameTwo := random.Hexadecimal()
+			documentDataTwo := random.Hexadecimal()
 			appOne.PUT(documentDataTwo, "%s/%s/%s", databaseName, collectionName, documentNameTwo)
 
 			By("getting the document using the second app")

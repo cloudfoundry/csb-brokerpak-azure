@@ -3,6 +3,7 @@ package upgrade_test
 import (
 	"acceptancetests/apps"
 	"acceptancetests/helpers"
+	"acceptancetests/helpers/random"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -33,12 +34,12 @@ var _ = Describe("UpgradeStorageTest", func() {
 			helpers.AppStart(appOne, appTwo)
 
 			By("creating a collection")
-			collectionName := helpers.RandomName("collection")
+			collectionName := random.Name(random.WithPrefix("collection"))
 			appOne.PUT("", collectionName)
 
 			By("uploading a blob using the first app")
-			blobNameOne := helpers.RandomHex()
-			blobDataOne := helpers.RandomHex()
+			blobNameOne := random.Hexadecimal()
+			blobDataOne := random.Hexadecimal()
 			appOne.PUT(blobDataOne, "%s/%s", collectionName, blobNameOne)
 
 			By("downloading the blob using the second app")
@@ -65,8 +66,8 @@ var _ = Describe("UpgradeStorageTest", func() {
 			Expect(got).To(Equal(blobDataOne))
 
 			By("checking that data can still be written and read")
-			blobNameTwo := helpers.RandomHex()
-			blobDataTwo := helpers.RandomHex()
+			blobNameTwo := random.Hexadecimal()
+			blobDataTwo := random.Hexadecimal()
 			appOne.PUT(blobDataTwo, "%s/%s", collectionName, blobNameTwo)
 			got = appTwo.GET("%s/%s", collectionName, blobNameTwo)
 			Expect(got).To(Equal(blobDataTwo))

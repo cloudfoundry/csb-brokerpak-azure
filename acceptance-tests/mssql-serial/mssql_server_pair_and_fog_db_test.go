@@ -3,6 +3,7 @@ package mssql_test
 import (
 	"acceptancetests/apps"
 	"acceptancetests/helpers"
+	"acceptancetests/helpers/random"
 	"acceptancetests/mssql-serial/mssql_helpers"
 
 	. "github.com/onsi/ginkgo"
@@ -27,7 +28,7 @@ var _ = Describe("MSSQL Server Pair and Failover Group DB", func() {
 		serversConfig.ReconfigureCSBWithServerDetails()
 
 		By("creating a database failover group on the server pair")
-		fogName := helpers.RandomName("fog")
+		fogName := random.Name(random.WithPrefix("fog"))
 		dbFogInstance := helpers.CreateServiceFromBroker("csb-azure-mssql-db-failover-group", "small", helpers.DefaultBroker().Name, map[string]string{
 			"server_pair":   serversConfig.ServerPairTag,
 			"instance_name": fogName,
@@ -50,12 +51,12 @@ var _ = Describe("MSSQL Server Pair and Failover Group DB", func() {
 		Expect(binding.Credential()).To(helpers.HaveCredHubRef)
 
 		By("creating a schema using the first app")
-		schema := helpers.RandomShortName()
+		schema := random.Name(random.WithMaxLength(10))
 		appOne.PUT("", schema)
 
 		By("setting a key-value using the first app")
-		keyOne := helpers.RandomHex()
-		valueOne := helpers.RandomHex()
+		keyOne := random.Hexadecimal()
+		valueOne := random.Hexadecimal()
 		appOne.PUT(valueOne, "%s/%s", schema, keyOne)
 
 		By("getting the value using the second app")
@@ -71,8 +72,8 @@ var _ = Describe("MSSQL Server Pair and Failover Group DB", func() {
 		defer failoverServiceInstance.Delete()
 
 		By("setting another key-value")
-		keyTwo := helpers.RandomHex()
-		valueTwo := helpers.RandomHex()
+		keyTwo := random.Hexadecimal()
+		valueTwo := random.Hexadecimal()
 		appTwo.PUT(valueTwo, "%s/%s", schema, keyTwo)
 
 		By("getting the previously set values")
@@ -88,17 +89,17 @@ var _ = Describe("MSSQL Server Pair and Failover Group DB", func() {
 })
 
 func newDatabaseServerPair() mssql_helpers.DatabaseServerPair {
-	secondaryResourceGroup := helpers.RandomName(metadata.ResourceGroup)
+	secondaryResourceGroup := random.Name(random.WithPrefix(metadata.ResourceGroup))
 	return mssql_helpers.DatabaseServerPair{
-		ServerPairTag: helpers.RandomShortName(),
-		Username:      helpers.RandomShortName(),
-		Password:      helpers.RandomPassword(),
+		ServerPairTag: random.Name(random.WithMaxLength(10)),
+		Username:      random.Name(random.WithMaxLength(10)),
+		Password:      random.Password(),
 		PrimaryServer: mssql_helpers.DatabaseServerPairMember{
-			Name:          helpers.RandomName("server"),
+			Name:          random.Name(random.WithPrefix("server")),
 			ResourceGroup: metadata.ResourceGroup,
 		},
 		SecondaryServer: mssql_helpers.DatabaseServerPairMember{
-			Name:          helpers.RandomName("server"),
+			Name:          random.Name(random.WithPrefix("server")),
 			ResourceGroup: secondaryResourceGroup,
 		},
 		SecondaryResourceGroup: secondaryResourceGroup,
