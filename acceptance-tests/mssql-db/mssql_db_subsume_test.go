@@ -4,6 +4,7 @@ import (
 	"acceptancetests/apps"
 	"acceptancetests/helpers"
 	"acceptancetests/helpers/cf"
+	"acceptancetests/helpers/matchers"
 	"acceptancetests/helpers/random"
 	"os/exec"
 	"strings"
@@ -72,7 +73,7 @@ var _ = Describe("MSSQL DB Subsume", func() {
 		helpers.AppRestage(app)
 
 		By("checking that the app environment has a credhub reference for credentials")
-		Expect(binding.Credential()).To(helpers.HaveCredHubRef)
+		Expect(binding.Credential()).To(matchers.HaveCredHubRef)
 
 		By("getting the value set with the MASB binding")
 		got := app.GET("%s/%s", schema, key)

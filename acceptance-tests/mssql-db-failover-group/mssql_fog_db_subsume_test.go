@@ -4,6 +4,7 @@ import (
 	"acceptancetests/apps"
 	"acceptancetests/helpers"
 	"acceptancetests/helpers/cf"
+	"acceptancetests/helpers/matchers"
 	"acceptancetests/helpers/random"
 	"os/exec"
 	"strings"
@@ -78,7 +79,7 @@ var _ = Describe("MSSQL Failover Group DB Subsume", func() {
 		defer helpers.AppDelete(app) // app needs to be deleted before service instance
 
 		By("checking that the app environment has a credhub reference for credentials")
-		Expect(binding.Credential()).To(helpers.HaveCredHubRef)
+		Expect(binding.Credential()).To(matchers.HaveCredHubRef)
 
 		By("getting the value set with the MASB binding")
 		got = app.GET("%s/%s", schema, key)

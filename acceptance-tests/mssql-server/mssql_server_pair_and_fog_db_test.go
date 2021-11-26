@@ -3,6 +3,7 @@ package mssql_server_test
 import (
 	"acceptancetests/apps"
 	"acceptancetests/helpers"
+	"acceptancetests/helpers/matchers"
 	"acceptancetests/helpers/random"
 
 	. "github.com/onsi/ginkgo"
@@ -53,7 +54,7 @@ var _ = Describe("MSSQL Server Pair and Failover Group DB", func() {
 		helpers.AppStart(appOne, appTwo)
 
 		By("checking that the app environment has a credhub reference for credentials")
-		Expect(binding.Credential()).To(helpers.HaveCredHubRef)
+		Expect(binding.Credential()).To(matchers.HaveCredHubRef)
 
 		By("creating a schema using the first app")
 		schema := random.Name(random.WithMaxLength(10))
