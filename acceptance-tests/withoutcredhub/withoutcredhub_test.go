@@ -3,6 +3,7 @@ package withoutcredhub_test
 import (
 	"acceptancetests/apps"
 	"acceptancetests/helpers"
+	"acceptancetests/helpers/matchers"
 	"acceptancetests/helpers/random"
 
 	. "github.com/onsi/ginkgo"
@@ -30,7 +31,7 @@ var _ = Describe("Without CredHub", func() {
 		helpers.AppStart(app)
 
 		By("checking that the app environment does not a credhub reference for credentials")
-		Expect(binding.Credential()).NotTo(helpers.HaveCredHubRef)
+		Expect(binding.Credential()).NotTo(matchers.HaveCredHubRef)
 
 		By("creating a collection")
 		collectionName := random.Name(random.WithPrefix("collection"))

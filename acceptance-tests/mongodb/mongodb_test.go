@@ -3,6 +3,7 @@ package mongodb_test
 import (
 	"acceptancetests/apps"
 	"acceptancetests/helpers"
+	"acceptancetests/helpers/matchers"
 	"acceptancetests/helpers/random"
 	"fmt"
 
@@ -35,7 +36,7 @@ var _ = Describe("MongoDB", func() {
 		helpers.AppStart(appOne, appTwo)
 
 		By("checking that the app environment has a credhub reference for credentials")
-		Expect(binding.Credential()).To(helpers.HaveCredHubRef)
+		Expect(binding.Credential()).To(matchers.HaveCredHubRef)
 
 		By("checking that the specified database has been created")
 		databases := appOne.GET("")

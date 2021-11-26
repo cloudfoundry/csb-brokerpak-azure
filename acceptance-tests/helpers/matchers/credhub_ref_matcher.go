@@ -1,4 +1,4 @@
-package helpers
+package matchers
 
 import "github.com/onsi/gomega"
 
