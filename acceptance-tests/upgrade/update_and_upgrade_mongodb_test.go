@@ -1,8 +1,8 @@
 package upgrade_test
 
 import (
-	"acceptancetests/apps"
 	"acceptancetests/helpers"
+	"acceptancetests/helpers/apps"
 	"acceptancetests/helpers/random"
 
 	. "github.com/onsi/ginkgo"
@@ -30,16 +30,16 @@ var _ = Describe("UpgradeMongoTest", func() {
 			defer serviceInstance.Delete()
 
 			By("pushing the unstarted app twice")
-			appOne := helpers.AppPushUnstarted(apps.MongoDB)
-			appTwo := helpers.AppPushUnstarted(apps.MongoDB)
-			defer helpers.AppDelete(appOne, appTwo)
+			appOne := apps.Push(apps.WithApp(apps.MongoDB))
+			appTwo := apps.Push(apps.WithApp(apps.MongoDB))
+			defer apps.Delete(appOne, appTwo)
 
 			By("binding the apps to the MongoDB service instance")
 			serviceInstance.Bind(appOne)
 			serviceInstance.Bind(appTwo)
 
 			By("starting the apps")
-			helpers.AppStart(appOne, appTwo)
+			apps.Start(appOne, appTwo)
 
 			By("creating a document using the first app")
 			documentNameOne := random.Hexadecimal()
@@ -60,7 +60,7 @@ var _ = Describe("UpgradeMongoTest", func() {
 			By("creating new bindings")
 			serviceInstance.Bind(appOne)
 			serviceInstance.Bind(appTwo)
-			helpers.AppRestage(appOne, appTwo)
+			apps.Restage(appOne, appTwo)
 
 			By("creating a document using the first app - post upgrade")
 			documentNameTwo := random.Hexadecimal()

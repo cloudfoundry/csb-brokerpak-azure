@@ -1,8 +1,8 @@
 package mssql_db_failover_group_test
 
 import (
-	"acceptancetests/apps"
 	"acceptancetests/helpers"
+	"acceptancetests/helpers/apps"
 	"acceptancetests/helpers/cf"
 	"acceptancetests/helpers/matchers"
 	"acceptancetests/helpers/random"
@@ -29,14 +29,14 @@ var _ = Describe("MSSQL Failover Group DB Subsume", func() {
 		defer masbFOGInstance.Delete()
 
 		By("pushing the unstarted app twice")
-		app := helpers.AppPushUnstarted(apps.MSSQL)
-		defer helpers.AppDelete(app)
+		app := apps.Push(apps.WithApp(apps.MSSQL))
+		defer apps.Delete(app)
 
 		By("binding the app to the MASB fog")
 		masbFOGInstance.Bind(app)
 
 		By("starting the apps")
-		helpers.AppStart(app)
+		apps.Start(app)
 
 		By("creating a schema using the app")
 		schema := random.Name(random.WithMaxLength(10))
@@ -76,7 +76,7 @@ var _ = Describe("MSSQL Failover Group DB Subsume", func() {
 
 		By("binding the app to the CSB service instance")
 		binding := dbFogInstance.Bind(app)
-		defer helpers.AppDelete(app) // app needs to be deleted before service instance
+		defer apps.Delete(app) // app needs to be deleted before service instance
 
 		By("checking that the app environment has a credhub reference for credentials")
 		Expect(binding.Credential()).To(matchers.HaveCredHubRef)

@@ -1,8 +1,8 @@
 package upgrade_test
 
 import (
-	"acceptancetests/apps"
 	"acceptancetests/helpers"
+	"acceptancetests/helpers/apps"
 	"acceptancetests/helpers/cf"
 	"acceptancetests/helpers/random"
 	"acceptancetests/mssql-serial/mssql_helpers"
@@ -44,16 +44,16 @@ var _ = Describe("UpgradeMssqlDBFailoverTest", func() {
 			defer initialFogInstance.Delete()
 
 			By("pushing the unstarted app twice")
-			appOne := helpers.AppPushUnstarted(apps.MSSQL)
-			appTwo := helpers.AppPushUnstarted(apps.MSSQL)
-			defer helpers.AppDelete(appOne, appTwo)
+			appOne := apps.Push(apps.WithApp(apps.MSSQL))
+			appTwo := apps.Push(apps.WithApp(apps.MSSQL))
+			defer apps.Delete(appOne, appTwo)
 
 			By("binding to the apps")
 			initialFogInstance.Bind(appOne)
 			initialFogInstance.Bind(appTwo)
 
 			By("starting the apps")
-			helpers.AppStart(appOne, appTwo)
+			apps.Start(appOne, appTwo)
 
 			By("creating a schema using the first app")
 			schema := random.Name(random.WithMaxLength(10))
@@ -88,7 +88,7 @@ var _ = Describe("UpgradeMssqlDBFailoverTest", func() {
 			By("creating new bindings and testing they still work")
 			dbFogInstance.Bind(appOne)
 			dbFogInstance.Bind(appTwo)
-			helpers.AppRestage(appOne, appTwo)
+			apps.Restage(appOne, appTwo)
 			defer dbFogInstance.Unbind(appOne)
 			defer dbFogInstance.Unbind(appTwo)
 

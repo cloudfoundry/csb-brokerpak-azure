@@ -1,4 +1,4 @@
-package helpers
+package apps
 
 import (
 	"acceptancetests/helpers/domains"
@@ -11,7 +11,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-func (a AppInstance) GET(format string, s ...interface{}) string {
+func (a App) GET(format string, s ...interface{}) string {
 	url := a.url(format, s...)
 	fmt.Fprintf(GinkgoWriter, "HTTP GET: %s\n", url)
 	response, err := http.Get(url)
@@ -26,7 +26,7 @@ func (a AppInstance) GET(format string, s ...interface{}) string {
 	return string(data)
 }
 
-func (a AppInstance) PUT(data, format string, s ...interface{}) {
+func (a App) PUT(data, format string, s ...interface{}) {
 	url := a.url(format, s...)
 	fmt.Fprintf(GinkgoWriter, "HTTP PUT: %s\n", url)
 	fmt.Fprintf(GinkgoWriter, "Sending data: %s\n", data)
@@ -37,7 +37,7 @@ func (a AppInstance) PUT(data, format string, s ...interface{}) {
 	Expect(response).To(HaveHTTPStatus(http.StatusCreated, http.StatusOK))
 }
 
-func (a AppInstance) DELETE(format string, s ...interface{}) {
+func (a App) DELETE(format string, s ...interface{}) {
 	url := a.url(format, s...)
 	fmt.Fprintf(GinkgoWriter, "HTTP DELETE: %s\n", url)
 	request, err := http.NewRequest(http.MethodDelete, url, nil)
@@ -48,8 +48,8 @@ func (a AppInstance) DELETE(format string, s ...interface{}) {
 	Expect(response).To(HaveHTTPStatus(http.StatusGone, http.StatusNoContent))
 }
 
-func (a AppInstance) url(format string, s ...interface{}) string {
-	base := fmt.Sprintf("http://%s.%s", a.name, domains.Default())
+func (a App) url(format string, s ...interface{}) string {
+	base := fmt.Sprintf("http://%s.%s", a.Name, domains.Default())
 	path := fmt.Sprintf(format, s...)
 	switch {
 	case len(path) == 0:

@@ -1,8 +1,8 @@
 package postgresql_test
 
 import (
-	"acceptancetests/apps"
 	"acceptancetests/helpers"
+	"acceptancetests/helpers/apps"
 	"acceptancetests/helpers/matchers"
 	"acceptancetests/helpers/random"
 
@@ -17,16 +17,16 @@ var _ = Describe("PostgreSQL", func() {
 		defer serviceInstance.Delete()
 
 		By("pushing the unstarted app twice")
-		appOne := helpers.AppPushUnstarted(apps.PostgreSQL)
-		appTwo := helpers.AppPushUnstarted(apps.PostgreSQL)
-		defer helpers.AppDelete(appOne, appTwo)
+		appOne := apps.Push(apps.WithApp(apps.PostgreSQL))
+		appTwo := apps.Push(apps.WithApp(apps.PostgreSQL))
+		defer apps.Delete(appOne, appTwo)
 
 		By("binding the apps to the service instance")
 		binding := serviceInstance.Bind(appOne)
 		serviceInstance.Bind(appTwo)
 
 		By("starting the apps")
-		helpers.AppStart(appOne, appTwo)
+		apps.Start(appOne, appTwo)
 
 		By("checking that the app environment has a credhub reference for credentials")
 		Expect(binding.Credential()).To(matchers.HaveCredHubRef)

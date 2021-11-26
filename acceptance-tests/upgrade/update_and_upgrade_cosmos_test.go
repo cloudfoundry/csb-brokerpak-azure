@@ -1,8 +1,8 @@
 package upgrade_test
 
 import (
-	"acceptancetests/apps"
 	"acceptancetests/helpers"
+	"acceptancetests/helpers/apps"
 	"acceptancetests/helpers/random"
 	"fmt"
 
@@ -30,16 +30,16 @@ var _ = Describe("UpgradeCosmosTest", func() {
 			defer serviceInstance.Delete()
 
 			By("pushing the unstarted app twice")
-			appOne := helpers.AppPushUnstarted(apps.Cosmos)
-			appTwo := helpers.AppPushUnstarted(apps.Cosmos)
-			defer helpers.AppDelete(appOne, appTwo)
+			appOne := apps.Push(apps.WithApp(apps.Cosmos))
+			appTwo := apps.Push(apps.WithApp(apps.Cosmos))
+			defer apps.Delete(appOne, appTwo)
 
 			By("binding to the apps")
 			serviceInstance.Bind(appOne)
 			serviceInstance.Bind(appTwo)
 
 			By("starting the apps")
-			helpers.AppStart(appOne, appTwo)
+			apps.Start(appOne, appTwo)
 
 			By("checking that the specified database has been created")
 			databases := appOne.GET("/")
@@ -77,7 +77,7 @@ var _ = Describe("UpgradeCosmosTest", func() {
 			By("creating new bindings and testing they still work")
 			serviceInstance.Bind(appOne)
 			serviceInstance.Bind(appTwo)
-			helpers.AppRestage(appOne, appTwo)
+			apps.Restage(appOne, appTwo)
 
 			By("creating a document using the first app - after upgrade")
 			documentNameTwo := random.Hexadecimal()

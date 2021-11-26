@@ -1,8 +1,8 @@
 package upgrade_test
 
 import (
-	"acceptancetests/apps"
 	"acceptancetests/helpers"
+	"acceptancetests/helpers/apps"
 	"acceptancetests/helpers/random"
 
 	. "github.com/onsi/ginkgo"
@@ -24,14 +24,14 @@ var _ = Describe("UpgradeStorageTest", func() {
 			defer serviceInstance.Delete()
 
 			By("pushing the unstarted app twice")
-			appOne := helpers.AppPushUnstarted(apps.Storage)
-			appTwo := helpers.AppPushUnstarted(apps.Storage)
-			defer helpers.AppDelete(appOne, appTwo)
+			appOne := apps.Push(apps.WithApp(apps.Storage))
+			appTwo := apps.Push(apps.WithApp(apps.Storage))
+			defer apps.Delete(appOne, appTwo)
 
 			By("binding to the apps")
 			serviceInstance.Bind(appOne)
 			serviceInstance.Bind(appTwo)
-			helpers.AppStart(appOne, appTwo)
+			apps.Start(appOne, appTwo)
 
 			By("creating a collection")
 			collectionName := random.Name(random.WithPrefix("collection"))
@@ -59,7 +59,7 @@ var _ = Describe("UpgradeStorageTest", func() {
 			By("creating new bindings and testing they still work")
 			serviceInstance.Bind(appOne)
 			serviceInstance.Bind(appTwo)
-			helpers.AppRestage(appOne, appTwo)
+			apps.Restage(appOne, appTwo)
 
 			By("checking that previously written data is accessible")
 			got = appTwo.GET("%s/%s", collectionName, blobNameOne)

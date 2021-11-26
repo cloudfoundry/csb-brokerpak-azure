@@ -1,8 +1,8 @@
 package mysql_test
 
 import (
-	"acceptancetests/apps"
 	"acceptancetests/helpers"
+	"acceptancetests/helpers/apps"
 	"acceptancetests/helpers/matchers"
 	"acceptancetests/helpers/random"
 
@@ -17,16 +17,16 @@ var _ = Describe("MySQL", func() {
 		defer serviceInstance.Delete()
 
 		By("pushing the unstarted app twice")
-		appOne := helpers.AppPushUnstarted(apps.MySQL)
-		appTwo := helpers.AppPushUnstarted(apps.MySQL)
-		defer helpers.AppDelete(appOne, appTwo)
+		appOne := apps.Push(apps.WithApp(apps.MySQL))
+		appTwo := apps.Push(apps.WithApp(apps.MySQL))
+		defer apps.Delete(appOne, appTwo)
 
 		By("binding the apps to the service instance")
 		binding := serviceInstance.Bind(appOne)
 		serviceInstance.Bind(appTwo)
 
 		By("starting the apps")
-		helpers.AppStart(appOne, appTwo)
+		apps.Start(appOne, appTwo)
 
 		By("checking that the app environment has a credhub reference for credentials")
 		Expect(binding.Credential()).To(matchers.HaveCredHubRef)
