@@ -3,6 +3,7 @@ package mssql_test
 import (
 	"acceptancetests/apps"
 	"acceptancetests/helpers"
+	"acceptancetests/helpers/random"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -38,12 +39,12 @@ var _ = Describe("MSSQL Server and DB", func() {
 		Expect(binding.Credential()).To(helpers.HaveCredHubRef)
 
 		By("creating a schema using the first app")
-		schema := helpers.RandomShortName()
+		schema := random.Name(random.WithMaxLength(10))
 		appOne.PUT("", schema)
 
 		By("setting a key-value using the first app")
-		key := helpers.RandomHex()
-		value := helpers.RandomHex()
+		key := random.Hexadecimal()
+		value := random.Hexadecimal()
 		appOne.PUT(value, "%s/%s", schema, key)
 
 		By("getting the value using the second app")
@@ -57,9 +58,9 @@ var _ = Describe("MSSQL Server and DB", func() {
 
 func newDatabaseServer() databaseServer {
 	return databaseServer{
-		Name:     helpers.RandomName("server"),
-		Username: helpers.RandomShortName(),
-		Password: helpers.RandomPassword(),
+		Name:     random.Name(random.WithPrefix("server")),
+		Username: random.Name(random.WithMaxLength(10)),
+		Password: random.Password(),
 	}
 }
 
@@ -70,7 +71,7 @@ type databaseServer struct {
 }
 
 func (d databaseServer) reconfigureCSBWithServerDetails() string {
-	serverTag := helpers.RandomShortName()
+	serverTag := random.Name(random.WithMaxLength(10))
 
 	creds := map[string]interface{}{
 		serverTag: map[string]string{

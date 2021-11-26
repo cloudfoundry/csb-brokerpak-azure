@@ -2,6 +2,7 @@ package helpers
 
 import (
 	"acceptancetests/helpers/cf"
+	"acceptancetests/helpers/random"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -33,7 +34,7 @@ type config struct {
 
 func CreateBroker(opts ...Option) ServiceBroker {
 	cfg := config{
-		name: RandomName("csb"),
+		name: random.Name(random.WithPrefix("csb")),
 		env:  nil,
 		dir:  "../..",
 	}
@@ -62,7 +63,7 @@ func CreateBroker(opts ...Option) ServiceBroker {
 
 func BrokerWithPrefix(prefix string) Option {
 	return func(c *config) {
-		c.name = RandomName(prefix)
+		c.name = random.Name(random.WithPrefix(prefix))
 	}
 }
 

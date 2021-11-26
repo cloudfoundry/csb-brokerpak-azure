@@ -3,6 +3,7 @@ package helpers
 import (
 	"acceptancetests/apps"
 	"acceptancetests/helpers/cf"
+	"acceptancetests/helpers/random"
 	"fmt"
 	"os"
 	"os/exec"
@@ -31,13 +32,13 @@ func AppPushUnstarted(app apps.AppCode) AppInstance {
 }
 
 func appPushUnstartedNoBuildpack(app apps.AppCode) AppInstance {
-	name := RandomName(string(app))
+	name := random.Name(random.WithPrefix(string(app)))
 	session := cf.Start("push", "--no-start", "-p", app.Dir(), name)
 	return waitForAppPush(session, name)
 }
 
 func appBuildAndPushUnstartedBinaryBuildpack(app apps.AppCode) AppInstance {
-	name := RandomName(string(app))
+	name := random.Name(random.WithPrefix(string(app)))
 	appDir := appBuild(app.Dir())
 	defer os.RemoveAll(appDir)
 

@@ -3,6 +3,8 @@ package mssql_test
 import (
 	"acceptancetests/apps"
 	"acceptancetests/helpers"
+	"acceptancetests/helpers/cf"
+	"acceptancetests/helpers/random"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -11,12 +13,12 @@ import (
 var _ = Describe("MSSQL Failover Group DB Subsume", func() {
 	It("can be accessed by an app", func() {
 		By("creating a service instance using the MASB broker")
-		masbDBName := helpers.RandomName("db")
+		masbDBName := random.Name(random.WithPrefix("db"))
 		masbDBInstance := helpers.CreateService("azure-sqldb", "StandardS0", masbServerConfig(masbDBName))
 		defer masbDBInstance.Delete()
 
 		By("creating a failover group using the MASB broker")
-		fogName := helpers.RandomName("fog")
+		fogName := random.Name(random.WithPrefix("fog"))
 		masbFOGInstance := helpers.CreateService("azure-sqldb-failover-group", "SecondaryDatabaseWithFailoverGroup", masbFOGConfig(masbDBName, fogName))
 		defer masbFOGInstance.Delete()
 
@@ -31,12 +33,12 @@ var _ = Describe("MSSQL Failover Group DB Subsume", func() {
 		helpers.AppStart(app)
 
 		By("creating a schema using the app")
-		schema := helpers.RandomShortName()
+		schema := random.Name(random.WithMaxLength(10))
 		app.PUT("", schema)
 
 		By("setting a key-value using the app")
-		key := helpers.RandomHex()
-		value := helpers.RandomHex()
+		key := random.Hexadecimal()
+		value := random.Hexadecimal()
 		app.PUT(value, "%s/%s", schema, key)
 
 		By("getting the value using the app")
@@ -44,7 +46,7 @@ var _ = Describe("MSSQL Failover Group DB Subsume", func() {
 		Expect(got).To(Equal(value))
 
 		By("reconfiguring the CSB with DB server details")
-		serverPairTag := helpers.RandomShortName()
+		serverPairTag := random.Name(random.WithMaxLength(10))
 		reconfigureCSBWithServerDetails(serverPairTag)
 
 		By("subsuming the database failover group")
@@ -57,7 +59,7 @@ var _ = Describe("MSSQL Failover Group DB Subsume", func() {
 		defer dbFogInstance.Delete()
 
 		By("purging the MASB FOG instance")
-		helpers.CF("purge-service-instance", "-f", masbFOGInstance.Name())
+		cf.Run("purge-service-instance", "-f", masbFOGInstance.Name())
 
 		By("updating to another plan")
 		dbFogInstance.UpdateService("-p", "small")

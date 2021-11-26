@@ -3,6 +3,8 @@ package mssql_test
 import (
 	"acceptancetests/apps"
 	"acceptancetests/helpers"
+	"acceptancetests/helpers/cf"
+	"acceptancetests/helpers/random"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -11,7 +13,7 @@ import (
 var _ = Describe("MSSQL DB Subsume", func() {
 	It("can be accessed by an app", func() {
 		By("creating a service instance using the MASB broker")
-		masbDBName := helpers.RandomName("db")
+		masbDBName := random.Name(random.WithPrefix("db"))
 		masbServiceInstance := helpers.CreateService("azure-sqldb", "basic", masbServerConfig(masbDBName))
 		defer masbServiceInstance.Delete()
 
@@ -26,12 +28,12 @@ var _ = Describe("MSSQL DB Subsume", func() {
 		helpers.AppStart(app)
 
 		By("creating a schema using the app")
-		schema := helpers.RandomShortName()
+		schema := random.Name(random.WithMaxLength(10))
 		app.PUT("", schema)
 
 		By("setting a key-value using the app")
-		key := helpers.RandomHex()
-		value := helpers.RandomHex()
+		key := random.Hexadecimal()
+		value := random.Hexadecimal()
 		app.PUT(value, "%s/%s", schema, key)
 
 		By("fetching the Azure resource ID of the database")
@@ -45,7 +47,7 @@ var _ = Describe("MSSQL DB Subsume", func() {
 		defer csbServiceInstance.Delete()
 
 		By("purging the MASB service instance")
-		helpers.CF("purge-service-instance", "-f", masbServiceInstance.Name())
+		cf.Run("purge-service-instance", "-f", masbServiceInstance.Name())
 
 		By("updating to another plan")
 		csbServiceInstance.UpdateService("-p", "small")
@@ -78,7 +80,7 @@ func subsumeDBParams(resource, serverTag string) interface{} {
 }
 
 func reconfigureCSBWithMASBServerDetails() string {
-	tag := helpers.RandomShortName()
+	tag := random.Name(random.WithMaxLength(10))
 	creds := map[string]interface{}{
 		tag: map[string]string{
 			"server_name":           metadata.PreProvisionedSQLServer,

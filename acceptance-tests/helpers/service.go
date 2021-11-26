@@ -2,6 +2,7 @@ package helpers
 
 import (
 	"acceptancetests/helpers/cf"
+	"acceptancetests/helpers/random"
 	"encoding/json"
 	"time"
 
@@ -15,7 +16,7 @@ type ServiceInstance struct {
 }
 
 func CreateServiceFromBroker(offering, plan, broker string, parameters ...interface{}) ServiceInstance {
-	name := RandomName(offering, plan)
+	name := random.Name(random.WithPrefix(offering, plan))
 	createCommandTimeout := 5 * time.Minute // MASB is slow to start creation
 	args := []string{"create-service", offering, plan, name, "-b", broker}
 	if cf.Version() == cf.VersionV8 {
@@ -49,7 +50,7 @@ func CreateService(offering, plan string, parameters ...interface{}) ServiceInst
 }
 
 func createServiceWithWait(offering, plan string, parameters ...interface{}) ServiceInstance {
-	name := RandomName(offering, plan)
+	name := random.Name(random.WithPrefix(offering, plan))
 	args := append([]string{"create-service", offering, plan, name, "--wait"}, serviceParameters(parameters)...)
 
 	session := cf.Start(args...)
@@ -65,7 +66,7 @@ func createServiceWithWait(offering, plan string, parameters ...interface{}) Ser
 }
 
 func createServiceWithPoll(offering, plan string, parameters ...interface{}) ServiceInstance {
-	name := RandomName(offering, plan)
+	name := random.Name(random.WithPrefix(offering, plan))
 	args := append([]string{"create-service", offering, plan, name}, serviceParameters(parameters)...)
 
 	session := cf.Start(args...)
@@ -133,7 +134,7 @@ func (s ServiceInstance) Delete() {
 }
 
 func (s ServiceInstance) Bind(app AppInstance, parameters ...interface{}) Binding {
-	name := RandomName()
+	name := random.Name()
 	args := []string{"bind-service", app.name, s.name, "--binding-name", name}
 	args = append(args, serviceParameters(parameters)...)
 	cf.Run(args...)
@@ -151,7 +152,7 @@ func (s ServiceInstance) Unbind(app AppInstance) {
 }
 
 func (s ServiceInstance) CreateKey() ServiceKey {
-	name := RandomName()
+	name := random.Name()
 	cf.Run("create-service-key", s.name, name)
 
 	return ServiceKey{

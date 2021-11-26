@@ -3,6 +3,7 @@ package mssql_test
 import (
 	"acceptancetests/apps"
 	"acceptancetests/helpers"
+	"acceptancetests/helpers/random"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -30,12 +31,12 @@ var _ = Describe("MSSQL Failover Group", func() {
 		Expect(bindingOne.Credential()).To(helpers.HaveCredHubRef)
 
 		By("creating a schema using the first app")
-		schema := helpers.RandomShortName()
+		schema := random.Name(random.WithMaxLength(10))
 		appOne.PUT("", schema)
 
 		By("setting a key-value using the first app")
-		keyOne := helpers.RandomHex()
-		valueOne := helpers.RandomHex()
+		keyOne := random.Hexadecimal()
+		valueOne := random.Hexadecimal()
 		appOne.PUT(valueOne, "%s/%s", schema, keyOne)
 
 		By("getting the value using the second app")
@@ -46,8 +47,8 @@ var _ = Describe("MSSQL Failover Group", func() {
 		defer failoverServiceInstance.Delete()
 
 		By("setting another key-value")
-		keyTwo := helpers.RandomHex()
-		valueTwo := helpers.RandomHex()
+		keyTwo := random.Hexadecimal()
+		valueTwo := random.Hexadecimal()
 		appTwo.PUT(valueTwo, "%s/%s", schema, keyTwo)
 
 		By("getting the previously set values")
