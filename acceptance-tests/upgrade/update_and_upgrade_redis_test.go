@@ -1,8 +1,8 @@
 package upgrade_test
 
 import (
-	"acceptancetests/apps"
 	"acceptancetests/helpers"
+	"acceptancetests/helpers/apps"
 	"acceptancetests/helpers/random"
 
 	. "github.com/onsi/ginkgo"
@@ -24,14 +24,14 @@ var _ = Describe("UpgradeRedisTest", func() {
 			defer serviceInstance.Delete()
 
 			By("pushing the unstarted app twice")
-			appOne := helpers.AppPushUnstarted(apps.Redis)
-			appTwo := helpers.AppPushUnstarted(apps.Redis)
-			defer helpers.AppDelete(appOne, appTwo)
+			appOne := apps.Push(apps.WithApp(apps.Redis))
+			appTwo := apps.Push(apps.WithApp(apps.Redis))
+			defer apps.Delete(appOne, appTwo)
 
 			By("binding to the apps")
 			serviceInstance.Bind(appOne)
 			serviceInstance.Bind(appTwo)
-			helpers.AppStart(appOne, appTwo)
+			apps.Start(appOne, appTwo)
 
 			By("setting a key-value using the first app")
 			key1 := random.Hexadecimal()
@@ -52,7 +52,7 @@ var _ = Describe("UpgradeRedisTest", func() {
 			By("creating new bindings and testing they still work")
 			serviceInstance.Bind(appOne)
 			serviceInstance.Bind(appTwo)
-			helpers.AppRestage(appOne, appTwo)
+			apps.Restage(appOne, appTwo)
 			key2 := random.Hexadecimal()
 			value2 := random.Hexadecimal()
 			appOne.PUT(value2, key2)

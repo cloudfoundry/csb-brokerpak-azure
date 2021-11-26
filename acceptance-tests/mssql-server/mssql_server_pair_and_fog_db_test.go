@@ -1,8 +1,8 @@
 package mssql_server_test
 
 import (
-	"acceptancetests/apps"
 	"acceptancetests/helpers"
+	"acceptancetests/helpers/apps"
 	"acceptancetests/helpers/matchers"
 	"acceptancetests/helpers/random"
 
@@ -42,16 +42,16 @@ var _ = Describe("MSSQL Server Pair and Failover Group DB", func() {
 		defer dbFogInstance.Delete()
 
 		By("pushing the unstarted app twice")
-		appOne := helpers.AppPushUnstarted(apps.MSSQL)
-		appTwo := helpers.AppPushUnstarted(apps.MSSQL)
-		defer helpers.AppDelete(appOne, appTwo)
+		appOne := apps.Push(apps.WithApp(apps.MSSQL))
+		appTwo := apps.Push(apps.WithApp(apps.MSSQL))
+		defer apps.Delete(appOne, appTwo)
 
 		By("binding the apps to the service instance")
 		binding := dbFogInstance.Bind(appOne)
 		dbFogInstance.Bind(appTwo)
 
 		By("starting the apps")
-		helpers.AppStart(appOne, appTwo)
+		apps.Start(appOne, appTwo)
 
 		By("checking that the app environment has a credhub reference for credentials")
 		Expect(binding.Credential()).To(matchers.HaveCredHubRef)

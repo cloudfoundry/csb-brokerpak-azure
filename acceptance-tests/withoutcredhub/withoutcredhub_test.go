@@ -1,8 +1,8 @@
 package withoutcredhub_test
 
 import (
-	"acceptancetests/apps"
 	"acceptancetests/helpers"
+	"acceptancetests/helpers/apps"
 	"acceptancetests/helpers/matchers"
 	"acceptancetests/helpers/random"
 
@@ -21,14 +21,14 @@ var _ = Describe("Without CredHub", func() {
 		defer serviceInstance.Delete()
 
 		By("pushing the unstarted app")
-		app := helpers.AppPushUnstarted(apps.Storage)
-		defer helpers.AppDelete(app)
+		app := apps.Push(apps.WithApp(apps.Storage))
+		defer apps.Delete(app)
 
 		By("binding the app to the storage service instance")
 		binding := serviceInstance.Bind(app)
 
 		By("starting the app")
-		helpers.AppStart(app)
+		apps.Start(app)
 
 		By("checking that the app environment does not a credhub reference for credentials")
 		Expect(binding.Credential()).NotTo(matchers.HaveCredHubRef)

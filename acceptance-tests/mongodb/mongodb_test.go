@@ -1,8 +1,8 @@
 package mongodb_test
 
 import (
-	"acceptancetests/apps"
 	"acceptancetests/helpers"
+	"acceptancetests/helpers/apps"
 	"acceptancetests/helpers/matchers"
 	"acceptancetests/helpers/random"
 	"fmt"
@@ -24,16 +24,16 @@ var _ = Describe("MongoDB", func() {
 		defer serviceInstance.Delete()
 
 		By("pushing the unstarted app twice")
-		appOne := helpers.AppPushUnstarted(apps.MongoDB)
-		appTwo := helpers.AppPushUnstarted(apps.MongoDB)
-		defer helpers.AppDelete(appOne, appTwo)
+		appOne := apps.Push(apps.WithApp(apps.MongoDB))
+		appTwo := apps.Push(apps.WithApp(apps.MongoDB))
+		defer apps.Delete(appOne, appTwo)
 
 		By("binding the apps to the MongoDB service instance")
 		binding := serviceInstance.Bind(appOne)
 		serviceInstance.Bind(appTwo)
 
 		By("starting the apps")
-		helpers.AppStart(appOne, appTwo)
+		apps.Start(appOne, appTwo)
 
 		By("checking that the app environment has a credhub reference for credentials")
 		Expect(binding.Credential()).To(matchers.HaveCredHubRef)

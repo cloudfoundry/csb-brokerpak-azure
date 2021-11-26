@@ -1,8 +1,8 @@
 package upgrade_test
 
 import (
-	"acceptancetests/apps"
 	"acceptancetests/helpers"
+	"acceptancetests/helpers/apps"
 	"acceptancetests/helpers/random"
 
 	. "github.com/onsi/ginkgo"
@@ -24,14 +24,14 @@ var _ = Describe("UpgradeMysqlTest", func() {
 			defer serviceInstance.Delete()
 
 			By("pushing the unstarted app twice")
-			appOne := helpers.AppPushUnstarted(apps.MySQL)
-			appTwo := helpers.AppPushUnstarted(apps.MySQL)
-			defer helpers.AppDelete(appOne, appTwo)
+			appOne := apps.Push(apps.WithApp(apps.MySQL))
+			appTwo := apps.Push(apps.WithApp(apps.MySQL))
+			defer apps.Delete(appOne, appTwo)
 
 			By("binding to the apps")
 			serviceInstance.Bind(appOne)
 			serviceInstance.Bind(appTwo)
-			helpers.AppStart(appOne, appTwo)
+			apps.Start(appOne, appTwo)
 
 			By("setting a key-value using the first app")
 			keyOne := random.Hexadecimal()
@@ -52,7 +52,7 @@ var _ = Describe("UpgradeMysqlTest", func() {
 			By("creating new bindings and testing they still work")
 			serviceInstance.Bind(appOne)
 			serviceInstance.Bind(appTwo)
-			helpers.AppRestage(appOne, appTwo)
+			apps.Restage(appOne, appTwo)
 
 			By("creating new data - post upgrade")
 			keyTwo := random.Hexadecimal()
