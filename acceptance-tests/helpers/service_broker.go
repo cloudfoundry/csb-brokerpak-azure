@@ -1,6 +1,7 @@
 package helpers
 
 import (
+	"acceptancetests/helpers/apps"
 	"acceptancetests/helpers/cf"
 	"acceptancetests/helpers/random"
 	"encoding/json"
@@ -10,6 +11,7 @@ import (
 	"time"
 
 	"code.cloudfoundry.org/jsonry"
+	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	. "github.com/onsi/gomega/gexec"
 )
@@ -19,6 +21,7 @@ const brokerPassword = "brokeruserpassword"
 const broker = "cloud-service-broker"
 const encryptionEnabledEnvVar = "ENCRYPTION_ENABLED"
 const encryptionPasswordsEnvVar = "ENCRYPTION_PASSWORDS"
+const cfOperationWaitTime = 20 * time.Minute
 
 type ServiceBroker struct {
 	Name string
@@ -153,8 +156,8 @@ func requiredEnvVar(envVars ...string) []EnvVar {
 	return toSet
 }
 
-func getBrokerAppURL(brokerApp AppInstance) string {
-	out, _ := cf.Run("app", "--guid", brokerApp.name)
+func getBrokerAppURL(brokerApp apps.App) string {
+	out, _ := cf.Run("app", "--guid", brokerApp.Name)
 	guid := strings.TrimSpace(out)
 	env, _ := cf.Run("curl", fmt.Sprintf("/v3/apps/%s/env", guid))
 
@@ -166,12 +169,12 @@ func getBrokerAppURL(brokerApp AppInstance) string {
 	return receiver.BrokerURL[0]
 }
 
-func pushNoStartServiceBroker(brokerName, brokerDir string) AppInstance {
+func pushNoStartServiceBroker(brokerName, brokerDir string) apps.App {
 	session := cf.Start("push", brokerName, "--no-start", "-p", brokerDir, "-f", fmt.Sprintf("%s/cf-manifest.yml", brokerDir), "--var", fmt.Sprintf("app=%s", brokerName))
 	return waitForAppPush(session, brokerName)
 }
 
-func pushServiceBroker(brokerName, brokerDir string) AppInstance {
+func pushServiceBroker(brokerName, brokerDir string) apps.App {
 	session := cf.Start("push", brokerName, "-p", brokerDir, "-f", fmt.Sprintf("%s/cf-manifest.yml", brokerDir), "--var", fmt.Sprintf("app=%s", brokerName))
 	return waitForAppPush(session, brokerName)
 }
@@ -279,4 +282,28 @@ type EncryptionPassword struct {
 
 type Password struct {
 	Secret string `json:"secret"`
+}
+
+func waitForAppPush(session *Session, name string) apps.App {
+	Eventually(session, cfOperationWaitTime).Should(Exit())
+
+	if session.ExitCode() != 0 {
+		fmt.Fprintf(GinkgoWriter, "FAILED to push app. Getting logs...")
+		cf.Run("logs", name, "--recent")
+		Fail("App failed to push")
+	}
+
+	return apps.App{Name: name}
+}
+
+func waitForAppDelete(session *Session, name string) apps.App {
+	Eventually(session, cfOperationWaitTime).Should(Exit())
+
+	if session.ExitCode() != 0 {
+		fmt.Fprintf(GinkgoWriter, "FAILED to delete app. Getting logs...")
+		cf.Run("logs", name, "--recent")
+		Fail("App failed to delete")
+	}
+
+	return apps.App{Name: name}
 }

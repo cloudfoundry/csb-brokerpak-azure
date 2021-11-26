@@ -1,8 +1,8 @@
 package passwordrotation_test
 
 import (
-	"acceptancetests/apps"
 	"acceptancetests/helpers"
+	"acceptancetests/helpers/apps"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -42,14 +42,14 @@ var _ = Describe("Password Rotation", func() {
 		})
 
 		By("pushing the unstarted app")
-		app := helpers.AppPushUnstarted(apps.PostgreSQL)
-		defer helpers.AppDelete(app)
+		app := apps.Push(apps.WithApp(apps.PostgreSQL))
+		defer apps.Delete(app)
 
 		By("creating a binding")
 		serviceInstance.Bind(app)
 
 		By("starting the app")
-		helpers.AppStart(app)
+		apps.Start(app)
 
 		By("restarting the broker with new keys only")
 		helpers.SetBrokerEncryptionEnv(serviceBroker.Name, helpers.BrokerEnvVars{

@@ -1,6 +1,7 @@
 package helpers
 
 import (
+	"acceptancetests/helpers/apps"
 	"acceptancetests/helpers/cf"
 	"acceptancetests/helpers/random"
 	"encoding/json"
@@ -133,9 +134,9 @@ func (s ServiceInstance) Delete() {
 	}, 30*time.Minute, 30*time.Second).ShouldNot(ContainSubstring(s.name))
 }
 
-func (s ServiceInstance) Bind(app AppInstance, parameters ...interface{}) Binding {
+func (s ServiceInstance) Bind(app apps.App, parameters ...interface{}) Binding {
 	name := random.Name()
-	args := []string{"bind-service", app.name, s.name, "--binding-name", name}
+	args := []string{"bind-service", app.Name, s.name, "--binding-name", name}
 	args = append(args, serviceParameters(parameters)...)
 	cf.Run(args...)
 
@@ -146,8 +147,8 @@ func (s ServiceInstance) Bind(app AppInstance, parameters ...interface{}) Bindin
 	}
 }
 
-func (s ServiceInstance) Unbind(app AppInstance) {
-	args := []string{"unbind-service", app.name, s.name}
+func (s ServiceInstance) Unbind(app apps.App) {
+	args := []string{"unbind-service", app.Name, s.name}
 	cf.Run(args...)
 }
 

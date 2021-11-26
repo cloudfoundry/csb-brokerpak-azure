@@ -1,6 +1,7 @@
 package helpers
 
 import (
+	"acceptancetests/helpers/apps"
 	"acceptancetests/helpers/cf"
 	"fmt"
 	"strings"
@@ -13,11 +14,11 @@ import (
 type Binding struct {
 	serviceInstance ServiceInstance
 	bindingName     string
-	appInstance     AppInstance
+	appInstance     apps.App
 }
 
 func (b Binding) Credential() interface{} {
-	out, _ := cf.Run("app", "--guid", b.appInstance.name)
+	out, _ := cf.Run("app", "--guid", b.appInstance.Name)
 	guid := strings.TrimSpace(string(out))
 
 	env, _ := cf.Run("curl", fmt.Sprintf("/v3/apps/%s/env", guid))
@@ -46,5 +47,5 @@ func (b Binding) Credential() interface{} {
 }
 
 func (b Binding) Unbind() {
-	cf.Run("unbind-service", b.appInstance.name, b.serviceInstance.name)
+	cf.Run("unbind-service", b.appInstance.Name, b.serviceInstance.name)
 }
