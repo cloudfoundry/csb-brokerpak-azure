@@ -9,7 +9,7 @@ import (
 // Name returns a random name that cannot be longer (but may be shorter) than 30
 // characters, or a lower limit if specified.
 func Name(opts ...Option) string {
-	c := cfg(append([]Option{WithMaxLength(30), WithDelimiter("-")}, opts...))
+	c := cfg(append([]Option{WithMaxLength(100), WithDelimiter("-")}, opts...))
 
 	parts := c.prefix
 
@@ -21,7 +21,7 @@ func Name(opts ...Option) string {
 
 	joined := strings.Join(parts, c.delimiter)
 	if len(joined) > c.length {
-		return joined[:c.length+1]
+		return joined[:c.length]
 	}
 
 	return joined
