@@ -1,6 +1,7 @@
 package helpers
 
 import (
+	"acceptancetests/helpers/cf"
 	"fmt"
 	"time"
 
@@ -11,12 +12,12 @@ import (
 
 func AppStart(apps ...AppInstance) {
 	for _, app := range apps {
-		session := StartCF("start", app.name)
+		session := cf.Start("start", app.name)
 		Eventually(session, 5*time.Minute).Should(Exit())
 
 		if session.ExitCode() != 0 {
 			fmt.Fprintf(GinkgoWriter, "FAILED to start app. Getting logs...")
-			CF("logs", app.name, "--recent")
+			cf.Run("logs", app.name, "--recent")
 			Fail("App failed to start")
 		}
 	}
@@ -24,12 +25,12 @@ func AppStart(apps ...AppInstance) {
 
 func AppRestage(apps ...AppInstance) {
 	for _, app := range apps {
-		session := StartCF("restage", app.name)
+		session := cf.Start("restage", app.name)
 		Eventually(session, 5*time.Minute).Should(Exit())
 
 		if session.ExitCode() != 0 {
 			fmt.Fprintf(GinkgoWriter, "FAILED to restage app. Getting logs...")
-			CF("logs", app.name, "--recent")
+			cf.Run("logs", app.name, "--recent")
 			Fail("App failed to start")
 		}
 	}

@@ -3,6 +3,8 @@ package upgrade_test
 import (
 	"acceptancetests/apps"
 	"acceptancetests/helpers"
+	"acceptancetests/helpers/cf"
+	"acceptancetests/helpers/random"
 	"acceptancetests/mssql-serial/mssql_helpers"
 
 	. "github.com/onsi/ginkgo"
@@ -54,12 +56,12 @@ var _ = Describe("UpgradeMssqlDBFailoverTest", func() {
 			helpers.AppStart(appOne, appTwo)
 
 			By("creating a schema using the first app")
-			schema := helpers.RandomShortName()
+			schema := random.Name(random.WithMaxLength(10))
 			appOne.PUT("", schema)
 
 			By("setting a key-value using the first app")
-			keyOne := helpers.RandomHex()
-			valueOne := helpers.RandomHex()
+			keyOne := random.Hexadecimal()
+			valueOne := random.Hexadecimal()
 			appOne.PUT(valueOne, "%s/%s", schema, keyOne)
 
 			By("getting the value using the second app")
@@ -81,7 +83,7 @@ var _ = Describe("UpgradeMssqlDBFailoverTest", func() {
 			defer dbFogInstance.Delete()
 
 			By("purging the initial FOG instance")
-			helpers.CF("purge-service-instance", "-f", initialFogInstance.Name())
+			cf.Run("purge-service-instance", "-f", initialFogInstance.Name())
 
 			By("creating new bindings and testing they still work")
 			dbFogInstance.Bind(appOne)
@@ -94,8 +96,8 @@ var _ = Describe("UpgradeMssqlDBFailoverTest", func() {
 			Expect(appTwo.GET("%s/%s", schema, keyOne)).To(Equal(valueOne))
 
 			By("checking data can be written and read")
-			keyTwo := helpers.RandomHex()
-			valueTwo := helpers.RandomHex()
+			keyTwo := random.Hexadecimal()
+			valueTwo := random.Hexadecimal()
 			appOne.PUT(valueTwo, "%s/%s", schema, keyTwo)
 
 			got = appTwo.GET("%s/%s", schema, keyTwo)
@@ -109,7 +111,7 @@ var _ = Describe("UpgradeMssqlDBFailoverTest", func() {
 
 func resourceGroupConfig() resourceConfig {
 	return resourceConfig{
-		Name:     helpers.RandomName("rg"),
+		Name:     random.Name(random.WithPrefix("rg")),
 		Location: "westus",
 	}
 }
@@ -121,15 +123,15 @@ type resourceConfig struct {
 
 func newServerPair(resourceGroup string) mssql_helpers.DatabaseServerPair {
 	return mssql_helpers.DatabaseServerPair{
-		ServerPairTag: helpers.RandomShortName(),
-		Username:      helpers.RandomShortName(),
-		Password:      helpers.RandomPassword(),
+		ServerPairTag: random.Name(random.WithMaxLength(10)),
+		Username:      random.Name(random.WithMaxLength(10)),
+		Password:      random.Password(),
 		PrimaryServer: mssql_helpers.DatabaseServerPairMember{
-			Name:          helpers.RandomName("server"),
+			Name:          random.Name(random.WithPrefix("server")),
 			ResourceGroup: resourceGroup,
 		},
 		SecondaryServer: mssql_helpers.DatabaseServerPairMember{
-			Name:          helpers.RandomName("server"),
+			Name:          random.Name(random.WithPrefix("server")),
 			ResourceGroup: resourceGroup,
 		},
 	}
@@ -137,8 +139,8 @@ func newServerPair(resourceGroup string) mssql_helpers.DatabaseServerPair {
 
 func failoverGroupConfig(serverPairTag string) map[string]string {
 	return map[string]string{
-		"instance_name": helpers.RandomName("fog"),
-		"db_name":       helpers.RandomName("db"),
+		"instance_name": random.Name(random.WithPrefix("fog")),
+		"db_name":       random.Name(random.WithPrefix("db")),
 		"server_pair":   serverPairTag,
 	}
 }

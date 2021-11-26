@@ -3,6 +3,7 @@ package mongodb_test
 import (
 	"acceptancetests/apps"
 	"acceptancetests/helpers"
+	"acceptancetests/helpers/random"
 	"fmt"
 
 	. "github.com/onsi/ginkgo"
@@ -12,8 +13,8 @@ import (
 var _ = Describe("MongoDB", func() {
 	It("can be accessed by an app", func() {
 		By("creating a service instance")
-		databaseName := helpers.RandomName("database")
-		collectionName := helpers.RandomName("collection")
+		databaseName := random.Name(random.WithPrefix("database"))
+		collectionName := random.Name(random.WithPrefix("collection"))
 		serviceInstance := helpers.CreateServiceFromBroker("csb-azure-mongodb", "small", helpers.DefaultBroker().Name, map[string]interface{}{
 			"db_name":         databaseName,
 			"collection_name": collectionName,
@@ -45,8 +46,8 @@ var _ = Describe("MongoDB", func() {
 		Expect(collections).To(MatchJSON(fmt.Sprintf(`["%s"]`, collectionName)))
 
 		By("creating a document using the first app")
-		documentName := helpers.RandomHex()
-		documentData := helpers.RandomHex()
+		documentName := random.Hexadecimal()
+		documentData := random.Hexadecimal()
 		appOne.PUT(documentData, "%s/%s/%s", databaseName, collectionName, documentName)
 
 		By("getting the document using the second app")

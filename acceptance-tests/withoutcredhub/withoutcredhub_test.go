@@ -3,6 +3,7 @@ package withoutcredhub_test
 import (
 	"acceptancetests/apps"
 	"acceptancetests/helpers"
+	"acceptancetests/helpers/random"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -32,12 +33,12 @@ var _ = Describe("Without CredHub", func() {
 		Expect(binding.Credential()).NotTo(helpers.HaveCredHubRef)
 
 		By("creating a collection")
-		collectionName := helpers.RandomName("collection")
+		collectionName := random.Name(random.WithPrefix("collection"))
 		app.PUT("", collectionName)
 
 		By("uploading a blob")
-		blobName := helpers.RandomHex()
-		blobData := helpers.RandomHex()
+		blobName := random.Hexadecimal()
+		blobData := random.Hexadecimal()
 		app.PUT(blobData, "%s/%s", collectionName, blobName)
 
 		By("downloading the blob")

@@ -3,6 +3,7 @@ package upgrade_test
 import (
 	"acceptancetests/apps"
 	"acceptancetests/helpers"
+	"acceptancetests/helpers/random"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -43,12 +44,12 @@ var _ = Describe("UpgradeMssqlDBTest", func() {
 			helpers.AppStart(appOne, appTwo)
 
 			By("creating a schema using the first app")
-			schema := helpers.RandomShortName()
+			schema := random.Name(random.WithMaxLength(10))
 			appOne.PUT("", schema)
 
 			By("setting a key-value using the first app")
-			keyOne := helpers.RandomHex()
-			valueOne := helpers.RandomHex()
+			keyOne := random.Hexadecimal()
+			valueOne := random.Hexadecimal()
 			appOne.PUT(valueOne, "%s/%s", schema, keyOne)
 
 			By("getting the value using the second app")
@@ -78,12 +79,12 @@ var _ = Describe("UpgradeMssqlDBTest", func() {
 			helpers.AppRestage(appOne, appTwo)
 
 			By("creating a schema using the first app")
-			schema = helpers.RandomShortName()
+			schema = random.Name(random.WithMaxLength(10))
 			appOne.PUT("", schema)
 
 			By("checking data can still be written and read")
-			keyTwo := helpers.RandomHex()
-			valueTwo := helpers.RandomHex()
+			keyTwo := random.Hexadecimal()
+			valueTwo := random.Hexadecimal()
 			appOne.PUT(valueTwo, "%s/%s", schema, keyTwo)
 
 			got = appTwo.GET("%s/%s", schema, keyTwo)
@@ -97,9 +98,9 @@ var _ = Describe("UpgradeMssqlDBTest", func() {
 
 func newDatabaseServer() databaseServer {
 	return databaseServer{
-		Name:     helpers.RandomName("server"),
-		Username: helpers.RandomShortName(),
-		Password: helpers.RandomPassword(),
+		Name:     random.Name(random.WithPrefix("server")),
+		Username: random.Name(random.WithMaxLength(10)),
+		Password: random.Password(),
 	}
 }
 
@@ -110,7 +111,7 @@ type databaseServer struct {
 }
 
 func (d databaseServer) reconfigureCSBWithServerDetails(broker string) string {
-	serverTag := helpers.RandomShortName()
+	serverTag := random.Name(random.WithMaxLength(10))
 
 	creds := map[string]interface{}{
 		serverTag: map[string]string{

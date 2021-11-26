@@ -3,6 +3,7 @@ package cosmosdb_test
 import (
 	"acceptancetests/apps"
 	"acceptancetests/helpers"
+	"acceptancetests/helpers/random"
 	"fmt"
 
 	. "github.com/onsi/ginkgo"
@@ -12,7 +13,7 @@ import (
 var _ = Describe("CosmosDB", func() {
 	It("can be accessed by an app", func() {
 		By("creating a service instance")
-		databaseName := helpers.RandomName("database")
+		databaseName := random.Name(random.WithPrefix("database"))
 		serviceInstance := helpers.CreateServiceFromBroker(
 			"csb-azure-cosmosdb-sql",
 			"small",
@@ -40,12 +41,12 @@ var _ = Describe("CosmosDB", func() {
 		Expect(databases).To(MatchJSON(fmt.Sprintf(`["%s"]`, databaseName)))
 
 		By("creating a collection")
-		collectionName := helpers.RandomName("collection")
+		collectionName := random.Name(random.WithPrefix("collection"))
 		appOne.PUT("", "%s/%s", databaseName, collectionName)
 
 		By("creating a document using the first app")
-		documentName := helpers.RandomHex()
-		documentData := helpers.RandomHex()
+		documentName := random.Hexadecimal()
+		documentData := random.Hexadecimal()
 		appOne.PUT(documentData, "%s/%s/%s", databaseName, collectionName, documentName)
 
 		By("getting the document using the second app")

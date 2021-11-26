@@ -1,6 +1,7 @@
 package helpers
 
 import (
+	"acceptancetests/helpers/cf"
 	"encoding/json"
 	"reflect"
 	"strings"
@@ -15,12 +16,12 @@ type ServiceKey struct {
 
 func (k ServiceKey) Get(receiver interface{}) {
 	Expect(reflect.ValueOf(receiver).Kind()).To(Equal(reflect.Ptr), "receiver must be a pointer")
-	out, _ := CF("service-key", k.serviceInstance.name, k.name)
+	out, _ := cf.Run("service-key", k.serviceInstance.name, k.name)
 	start := strings.Index(out, "{")
 	Expect(start).To(BeNumerically(">", 0), "could not find start of JSON")
 	data := []byte(out[start:])
 
-	if cfVersion() == cfVersionV8 {
+	if cf.Version() == cf.VersionV8 {
 		var wrapper struct {
 			Credentials interface{} `json:"credentials"`
 		}
@@ -35,5 +36,5 @@ func (k ServiceKey) Get(receiver interface{}) {
 }
 
 func (k ServiceKey) Delete() {
-	CF("delete-service-key", "-f", k.serviceInstance.name, k.name)
+	cf.Run("delete-service-key", "-f", k.serviceInstance.name, k.name)
 }

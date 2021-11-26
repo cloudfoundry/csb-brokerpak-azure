@@ -3,6 +3,7 @@ package storage_test
 import (
 	"acceptancetests/apps"
 	"acceptancetests/helpers"
+	"acceptancetests/helpers/random"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -11,7 +12,7 @@ import (
 var _ = Describe("Storage", func() {
 	It("can be accessed by an app", func() {
 		By("creating a service instance")
-		collectionName := helpers.RandomName("collection")
+		collectionName := random.Name(random.WithPrefix("collection"))
 		serviceInstance := helpers.CreateServiceFromBroker("csb-azure-storage-account", "standard", helpers.DefaultBroker().Name)
 		defer serviceInstance.Delete()
 
@@ -34,8 +35,8 @@ var _ = Describe("Storage", func() {
 		appOne.PUT("", collectionName)
 
 		By("uploading a blob using the first app")
-		blobName := helpers.RandomHex()
-		blobData := helpers.RandomHex()
+		blobName := random.Hexadecimal()
+		blobData := random.Hexadecimal()
 		appOne.PUT(blobData, "%s/%s", collectionName, blobName)
 
 		By("downloading the blob using the second app")
