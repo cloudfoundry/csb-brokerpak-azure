@@ -1,6 +1,7 @@
 package helpers
 
 import (
+	"acceptancetests/helpers/domains"
 	"fmt"
 	"io"
 	"net/http"
@@ -48,7 +49,7 @@ func (a AppInstance) DELETE(format string, s ...interface{}) {
 }
 
 func (a AppInstance) url(format string, s ...interface{}) string {
-	base := fmt.Sprintf("http://%s.%s", a.name, DefaultSharedDomain())
+	base := fmt.Sprintf("http://%s.%s", a.name, domains.Default())
 	path := fmt.Sprintf(format, s...)
 	switch {
 	case len(path) == 0:

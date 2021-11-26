@@ -1,17 +1,17 @@
-package helpers
+package domains
 
 import (
 	"acceptancetests/helpers/cf"
 	"regexp"
 	"strings"
 
-	. "github.com/onsi/gomega"
+	"github.com/onsi/gomega"
 )
 
 var defaultDomain string
 var regex = regexp.MustCompile(`^(\S+)\s+shared\s+(http)?\s*$`)
 
-func DefaultSharedDomain() string {
+func Default() string {
 	if defaultDomain == "" {
 		output, _ := cf.Run("domains")
 		for _, line := range strings.Split(output, "\n") {
@@ -22,6 +22,6 @@ func DefaultSharedDomain() string {
 		}
 	}
 
-	Expect(defaultDomain).NotTo(BeEmpty())
+	gomega.Expect(defaultDomain).NotTo(gomega.BeEmpty())
 	return defaultDomain
 }
