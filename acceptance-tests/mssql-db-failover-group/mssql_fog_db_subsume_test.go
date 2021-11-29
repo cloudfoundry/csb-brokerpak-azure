@@ -1,10 +1,15 @@
-package mssql_test
+package mssql_db_failover_group_test
 
 import (
 	"acceptancetests/apps"
 	"acceptancetests/helpers"
 	"acceptancetests/helpers/cf"
 	"acceptancetests/helpers/random"
+	"os/exec"
+	"strings"
+	"time"
+
+	"github.com/onsi/gomega/gexec"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -45,12 +50,16 @@ var _ = Describe("MSSQL Failover Group DB Subsume", func() {
 		got := app.GET("%s/%s", schema, key)
 		Expect(got).To(Equal(value))
 
-		By("reconfiguring the CSB with DB server details")
+		By("Create the CSB with DB server details")
 		serverPairTag := random.Name(random.WithMaxLength(10))
-		reconfigureCSBWithServerDetails(serverPairTag)
+		serviceBroker := helpers.CreateBroker(
+			helpers.BrokerWithPrefix("csb-mssql-fog-db"),
+			helpers.BrokerWithEnv(helpers.EnvVar{Name: "MSSQL_DB_FOG_SERVER_PAIR_CREDS", Value: serverPairsConfig(serverPairTag)}),
+		)
+		defer serviceBroker.Delete()
 
 		By("subsuming the database failover group")
-		dbFogInstance := helpers.CreateServiceFromBroker("csb-azure-mssql-db-failover-group", "subsume", helpers.DefaultBroker().Name, map[string]string{
+		dbFogInstance := helpers.CreateServiceFromBroker("csb-azure-mssql-db-failover-group", "subsume", serviceBroker.Name, map[string]string{
 			"azure_primary_db_id":   fetchResourceID("db", masbDBName, metadata.PreProvisionedSQLServer),
 			"azure_secondary_db_id": fetchResourceID("db", masbDBName, metadata.PreProvisionedFOGServer),
 			"azure_fog_id":          fetchResourceID("failover-group", fogName, metadata.PreProvisionedSQLServer),
@@ -110,8 +119,18 @@ func serverPairsConfig(serverPairTag string) interface{} {
 	}
 }
 
-func reconfigureCSBWithServerDetails(serverPairTag string) {
-	helpers.SetBrokerEnvAndRestart(
-		helpers.EnvVar{Name: "MSSQL_DB_FOG_SERVER_PAIR_CREDS", Value: serverPairsConfig(serverPairTag)},
-	)
+func masbServerConfig(dbName string) interface{} {
+	return map[string]string{
+		"sqlServerName": metadata.PreProvisionedSQLServer,
+		"sqldbName":     dbName,
+		"resourceGroup": metadata.ResourceGroup,
+	}
+}
+
+func fetchResourceID(kind, name, server string) string {
+	command := exec.Command("az", "sql", kind, "show", "--name", name, "--server", server, "--resource-group", metadata.ResourceGroup, "--query", "id", "-o", "tsv")
+	session, err := gexec.Start(command, GinkgoWriter, GinkgoWriter)
+	Expect(err).NotTo(HaveOccurred())
+	Eventually(session, time.Minute).Should(gexec.Exit(0))
+	return strings.TrimSpace(string(session.Out.Contents()))
 }

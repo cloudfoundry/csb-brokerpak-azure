@@ -1,21 +1,18 @@
-package mssql_test
+package mssql_db_test
 
 import (
 	"os"
-	"os/exec"
-	"strings"
 	"testing"
-	"time"
 
 	"code.cloudfoundry.org/jsonry"
+
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"github.com/onsi/gomega/gexec"
 )
 
-func TestMSSQL(t *testing.T) {
+func TestMssqlDb(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "MSSQL Serial Suite")
+	RunSpecs(t, "MssqlDb Suite")
 }
 
 var metadata struct {
@@ -48,11 +45,3 @@ var _ = BeforeSuite(func() {
 	Expect(metadata.PreProvisionedFOGServer).NotTo(BeEmpty())
 	Expect(metadata.PreProvisionedFOGLocation).NotTo(BeEmpty())
 })
-
-func fetchResourceID(kind, name, server string) string {
-	command := exec.Command("az", "sql", kind, "show", "--name", name, "--server", server, "--resource-group", metadata.ResourceGroup, "--query", "id", "-o", "tsv")
-	session, err := gexec.Start(command, GinkgoWriter, GinkgoWriter)
-	Expect(err).NotTo(HaveOccurred())
-	Eventually(session, time.Minute).Should(gexec.Exit(0))
-	return strings.TrimSpace(string(session.Out.Contents()))
-}

@@ -1,4 +1,4 @@
-package mssql_test
+package mssql_server_test
 
 import (
 	"acceptancetests/apps"
@@ -11,16 +11,24 @@ import (
 
 var _ = Describe("MSSQL Server and DB", func() {
 	It("can be accessed by an app", func() {
-		By("creating a server")
 		serverConfig := newDatabaseServer()
-		serverInstance := helpers.CreateServiceFromBroker("csb-azure-mssql-server", "standard", helpers.DefaultBroker().Name, serverConfig)
+
+		By("Create CSB with server details")
+		serverTag := random.Name(random.WithMaxLength(10))
+		creds := serverConfig.getMASBServerDetails(serverTag)
+
+		serviceBroker := helpers.CreateBroker(
+			helpers.BrokerWithPrefix("csb-mssql-db"),
+			helpers.BrokerWithEnv(helpers.EnvVar{Name: "MSSQL_DB_SERVER_CREDS", Value: creds}),
+		)
+		defer serviceBroker.Delete()
+
+		By("creating a server")
+		serverInstance := helpers.CreateServiceFromBroker("csb-azure-mssql-server", "standard", serviceBroker.Name, serverConfig)
 		defer serverInstance.Delete()
 
-		By("reconfiguring the CSB with DB server details")
-		serverTag := serverConfig.reconfigureCSBWithServerDetails()
-
 		By("creating a database in the server")
-		dbInstance := helpers.CreateServiceFromBroker("csb-azure-mssql-db", "small", helpers.DefaultBroker().Name, map[string]string{"server": serverTag})
+		dbInstance := helpers.CreateServiceFromBroker("csb-azure-mssql-db", "small", serviceBroker.Name, map[string]string{"server": serverTag})
 		defer dbInstance.Delete()
 
 		By("pushing the unstarted app twice")
@@ -70,21 +78,13 @@ type databaseServer struct {
 	Password string `json:"admin_password"`
 }
 
-func (d databaseServer) reconfigureCSBWithServerDetails() string {
-	serverTag := random.Name(random.WithMaxLength(10))
-
-	creds := map[string]interface{}{
-		serverTag: map[string]string{
+func (d databaseServer) getMASBServerDetails(tag string) map[string]interface{} {
+	return map[string]interface{}{
+		tag: map[string]string{
 			"server_name":           d.Name,
 			"server_resource_group": metadata.ResourceGroup,
 			"admin_username":        d.Username,
 			"admin_password":        d.Password,
 		},
 	}
-
-	helpers.SetBrokerEnvAndRestart(
-		helpers.EnvVar{Name: "MSSQL_DB_SERVER_CREDS", Value: creds},
-	)
-
-	return serverTag
 }
