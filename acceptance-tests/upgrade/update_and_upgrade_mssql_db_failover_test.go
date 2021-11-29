@@ -20,7 +20,7 @@ var _ = Describe("UpgradeMssqlDBFailoverTest", func() {
 			serviceBroker := helpers.CreateBroker(
 				helpers.BrokerWithPrefix("csb-db-fo"),
 				helpers.BrokerFromDir(releasedBuildDir),
-				helpers.BrokerWithEnv(helpers.EnvVar{Name: "MSSQL_DB_FOG_SERVER_PAIR_CREDS", Value: serversConfig.ServerPairsConfig()}),
+				helpers.BrokerWithEnv(apps.EnvVar{Name: "MSSQL_DB_FOG_SERVER_PAIR_CREDS", Value: serversConfig.ServerPairsConfig()}),
 			)
 
 			defer serviceBroker.Delete()

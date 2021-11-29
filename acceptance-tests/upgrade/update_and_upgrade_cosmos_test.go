@@ -84,6 +84,7 @@ var _ = Describe("UpgradeCosmosTest", func() {
 			documentDataTwo := random.Hexadecimal()
 			appOne.PUT(documentDataTwo, "%s/%s/%s", databaseName, collectionName, documentNameTwo)
 
+			By("getting the document using the second app")
 			got = appTwo.GET("%s/%s/%s", databaseName, collectionName, documentNameTwo)
 			Expect(got).To(Equal(documentDataTwo))
 		})
