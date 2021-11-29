@@ -17,7 +17,7 @@ var _ = Describe("MSSQL Server Pair and Failover Group DB", func() {
 		By("Create CSB with server details")
 		serviceBroker := helpers.CreateBroker(
 			helpers.BrokerWithPrefix("csb-mssql-db"),
-			helpers.BrokerWithEnv(helpers.EnvVar{Name: "MSSQL_DB_FOG_SERVER_PAIR_CREDS", Value: serversConfig.ServerPairsConfig()}),
+			helpers.BrokerWithEnv(apps.EnvVar{Name: "MSSQL_DB_FOG_SERVER_PAIR_CREDS", Value: serversConfig.ServerPairsConfig()}),
 		)
 		defer serviceBroker.Delete()
 

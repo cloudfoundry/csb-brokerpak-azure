@@ -20,7 +20,7 @@ var _ = Describe("MSSQL Server and DB", func() {
 
 		serviceBroker := helpers.CreateBroker(
 			helpers.BrokerWithPrefix("csb-mssql-db"),
-			helpers.BrokerWithEnv(helpers.EnvVar{Name: "MSSQL_DB_SERVER_CREDS", Value: creds}),
+			helpers.BrokerWithEnv(apps.EnvVar{Name: "MSSQL_DB_SERVER_CREDS", Value: creds}),
 		)
 		defer serviceBroker.Delete()
 

@@ -18,7 +18,7 @@ var _ = Describe("MSSQL Failover Group Existing", func() {
 		serversConfig := newServerPair(rgConfig.Name)
 		serviceBroker := helpers.CreateBroker(
 			helpers.BrokerWithPrefix("csb-mssql-db-fog"),
-			helpers.BrokerWithEnv(helpers.EnvVar{Name: "MSSQL_DB_FOG_SERVER_PAIR_CREDS", Value: serversConfig.ServerPairsConfig()}),
+			helpers.BrokerWithEnv(apps.EnvVar{Name: "MSSQL_DB_FOG_SERVER_PAIR_CREDS", Value: serversConfig.ServerPairsConfig()}),
 		)
 		defer serviceBroker.Delete()
 
