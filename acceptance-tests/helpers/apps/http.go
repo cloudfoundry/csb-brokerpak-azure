@@ -1,7 +1,6 @@
 package apps
 
 import (
-	"acceptancetests/helpers/domains"
 	"fmt"
 	"io"
 	"net/http"
@@ -12,7 +11,7 @@ import (
 )
 
 func (a App) GET(format string, s ...interface{}) string {
-	url := a.url(format, s...)
+	url := a.urlf(format, s...)
 	fmt.Fprintf(GinkgoWriter, "HTTP GET: %s\n", url)
 	response, err := http.Get(url)
 	Expect(err).NotTo(HaveOccurred())
@@ -27,7 +26,7 @@ func (a App) GET(format string, s ...interface{}) string {
 }
 
 func (a App) PUT(data, format string, s ...interface{}) {
-	url := a.url(format, s...)
+	url := a.urlf(format, s...)
 	fmt.Fprintf(GinkgoWriter, "HTTP PUT: %s\n", url)
 	fmt.Fprintf(GinkgoWriter, "Sending data: %s\n", data)
 	request, err := http.NewRequest(http.MethodPut, url, strings.NewReader(data))
@@ -38,7 +37,7 @@ func (a App) PUT(data, format string, s ...interface{}) {
 }
 
 func (a App) DELETE(format string, s ...interface{}) {
-	url := a.url(format, s...)
+	url := a.urlf(format, s...)
 	fmt.Fprintf(GinkgoWriter, "HTTP DELETE: %s\n", url)
 	request, err := http.NewRequest(http.MethodDelete, url, nil)
 	Expect(err).NotTo(HaveOccurred())
@@ -48,8 +47,8 @@ func (a App) DELETE(format string, s ...interface{}) {
 	Expect(response).To(HaveHTTPStatus(http.StatusGone, http.StatusNoContent))
 }
 
-func (a App) url(format string, s ...interface{}) string {
-	base := fmt.Sprintf("http://%s.%s", a.Name, domains.Default())
+func (a App) urlf(format string, s ...interface{}) string {
+	base := a.URL
 	path := fmt.Sprintf(format, s...)
 	switch {
 	case len(path) == 0:
