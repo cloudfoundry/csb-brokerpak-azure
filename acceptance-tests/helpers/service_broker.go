@@ -165,6 +165,23 @@ func waitForBrokerOperation(session *Session, name string) {
 	Expect(session.ExitCode()).To(BeZero())
 }
 
+func SetBrokerEnv(brokerName string, envVars ...apps.EnvVar) {
+	for _, envVar := range envVars {
+		switch v := envVar.Value.(type) {
+		case string:
+			if v == "" {
+				cf.Run("unset-env", brokerName, envVar.Name)
+			} else {
+				cf.Run("set-env", brokerName, envVar.Name, v)
+			}
+		default:
+			data, err := json.Marshal(v)
+			Expect(err).NotTo(HaveOccurred())
+			cf.Run("set-env", brokerName, envVar.Name, string(data))
+		}
+	}
+}
+
 func RestartBroker(broker string) {
 	cf.Run("restart", broker)
 }

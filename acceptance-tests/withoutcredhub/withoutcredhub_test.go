@@ -12,7 +12,7 @@ import (
 
 var _ = Describe("Without CredHub", func() {
 	It("can be accessed by an app", func() {
-		env := helpers.EnvVar{Name: "CH_CRED_HUB_URL", Value: ""}
+		env := apps.EnvVar{Name: "CH_CRED_HUB_URL", Value: ""}
 		broker := helpers.CreateBroker(helpers.BrokerWithPrefix("csb-storage"), helpers.BrokerWithEnv(env))
 		defer broker.Delete()
 

@@ -55,7 +55,7 @@ var _ = Describe("MSSQL Failover Group DB Subsume", func() {
 		serverPairTag := random.Name(random.WithMaxLength(10))
 		serviceBroker := helpers.CreateBroker(
 			helpers.BrokerWithPrefix("csb-mssql-fog-db"),
-			helpers.BrokerWithEnv(helpers.EnvVar{Name: "MSSQL_DB_FOG_SERVER_PAIR_CREDS", Value: serverPairsConfig(serverPairTag)}),
+			helpers.BrokerWithEnv(apps.EnvVar{Name: "MSSQL_DB_FOG_SERVER_PAIR_CREDS", Value: serverPairsConfig(serverPairTag)}),
 		)
 		defer serviceBroker.Delete()
 

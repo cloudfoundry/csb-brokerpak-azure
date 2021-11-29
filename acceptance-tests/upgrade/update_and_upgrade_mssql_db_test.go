@@ -122,7 +122,7 @@ func (d databaseServer) reconfigureCSBWithServerDetails(broker string) string {
 		},
 	}
 
-	helpers.SetBrokerEnv(broker, helpers.EnvVar{Name: "MSSQL_DB_SERVER_CREDS", Value: creds})
+	helpers.SetBrokerEnv(broker, apps.EnvVar{Name: "MSSQL_DB_SERVER_CREDS", Value: creds})
 
 	helpers.RestartBroker(broker)
 
