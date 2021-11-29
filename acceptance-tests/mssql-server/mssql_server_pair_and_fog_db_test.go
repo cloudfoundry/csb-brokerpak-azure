@@ -9,7 +9,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = FDescribe("MSSQL Server Pair and Failover Group DB", func() {
+var _ = Describe("MSSQL Server Pair and Failover Group DB", func() {
 	It("can be accessed by an app", func() {
 		serversConfig := newDatabaseServerPair()
 
