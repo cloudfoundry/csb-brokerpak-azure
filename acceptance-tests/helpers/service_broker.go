@@ -16,12 +16,14 @@ import (
 	. "github.com/onsi/gomega/gexec"
 )
 
-const brokerUsername = "brokeruser"
-const brokerPassword = "brokeruserpassword"
-const broker = "cloud-service-broker"
-const encryptionEnabledEnvVar = "ENCRYPTION_ENABLED"
-const encryptionPasswordsEnvVar = "ENCRYPTION_PASSWORDS"
-const cfOperationWaitTime = 20 * time.Minute
+const (
+	brokerUsername            = "brokeruser"
+	brokerPassword            = "brokeruserpassword"
+	broker                    = "cloud-service-broker"
+	encryptionEnabledEnvVar   = "ENCRYPTION_ENABLED"
+	encryptionPasswordsEnvVar = "ENCRYPTION_PASSWORDS"
+	cfOperationWaitTime       = 20 * time.Minute
+)
 
 type ServiceBroker struct {
 	Name string
@@ -31,7 +33,7 @@ type Option func(*config)
 
 type config struct {
 	name string
-	env  []EnvVar
+	env  []apps.EnvVar
 	dir  string
 }
 
@@ -46,17 +48,20 @@ func CreateBroker(opts ...Option) ServiceBroker {
 		o(&cfg)
 	}
 
-	brokerApp := pushNoStartServiceBroker(cfg.name, cfg.dir)
-	setEnvVars(cfg.name, cfg.env...)
+	brokerApp := apps.Push(
+		apps.WithName(cfg.name),
+		apps.WithDir(cfg.dir),
+		apps.WithManifest(fmt.Sprintf("%s/cf-manifest.yml", cfg.dir)),
+		apps.WithVariable("app", cfg.name),
+	)
+	setEnvVars(brokerApp, cfg.env...)
 
 	schemaName := strings.ReplaceAll(cfg.name, "-", "_")
 	cf.Run("bind-service", cfg.name, "csb-sql", "-c", fmt.Sprintf(`{"schema":"%s"}`, schemaName))
 
-	session := cf.Start("restart", cfg.name)
-	waitForAppPush(session, cfg.name)
+	brokerApp.Start()
 
-	brokerURL := getBrokerAppURL(brokerApp)
-	session = cf.Start("create-service-broker", cfg.name, brokerUsername, brokerPassword, "https://"+brokerURL, "--space-scoped")
+	session := cf.Start("create-service-broker", cfg.name, brokerUsername, brokerPassword, brokerApp.URL, "--space-scoped")
 	waitForBrokerOperation(session, cfg.name)
 
 	return ServiceBroker{
@@ -70,7 +75,7 @@ func BrokerWithPrefix(prefix string) Option {
 	}
 }
 
-func BrokerWithEnv(env ...EnvVar) Option {
+func BrokerWithEnv(env ...apps.EnvVar) Option {
 	return func(c *config) {
 		c.env = env
 	}
@@ -89,10 +94,9 @@ func DefaultBroker() ServiceBroker {
 }
 
 func (b ServiceBroker) Update(brokerDir string) {
-	brokerApp := pushServiceBroker(b.Name, brokerDir)
+	brokerApp := apps.Push(apps.WithName(b.Name), apps.WithDir(brokerDir))
 
-	brokerURL := getBrokerAppURL(brokerApp)
-	session := cf.Start("update-service-broker", b.Name, brokerUsername, brokerPassword, "https://"+brokerURL)
+	session := cf.Start("update-service-broker", b.Name, brokerUsername, brokerPassword, brokerApp.URL)
 	waitForBrokerOperation(session, b.Name)
 }
 
@@ -104,7 +108,7 @@ func (b ServiceBroker) Delete() {
 	waitForAppDelete(session, b.Name)
 }
 
-func setEnvVars(brokerName string, extra ...EnvVar) {
+func setEnvVars(app apps.App, extra ...apps.EnvVar) {
 	envVars := requiredEnvVar(
 		"ARM_SUBSCRIPTION_ID",
 		"ARM_TENANT_ID",
@@ -123,60 +127,37 @@ func setEnvVars(brokerName string, extra ...EnvVar) {
 	)...)
 
 	envVars = append(envVars,
-		EnvVar{Name: "SECURITY_USER_NAME", Value: brokerUsername},
-		EnvVar{Name: "SECURITY_USER_PASSWORD", Value: brokerPassword},
-		EnvVar{Name: "DB_TLS", Value: "skip-verify"},
-		EnvVar{Name: "ENCRYPTION_ENABLED", Value: true},
-		EnvVar{Name: "ENCRYPTION_PASSWORDS", Value: `[{"password": {"secret":"superSecretP@SSw0Rd1234!"},"label":"first-encryption","primary":true}]`},
+		apps.EnvVar{Name: "SECURITY_USER_NAME", Value: brokerUsername},
+		apps.EnvVar{Name: "SECURITY_USER_PASSWORD", Value: brokerPassword},
+		apps.EnvVar{Name: "DB_TLS", Value: "skip-verify"},
+		apps.EnvVar{Name: "ENCRYPTION_ENABLED", Value: true},
+		apps.EnvVar{Name: "ENCRYPTION_PASSWORDS", Value: `[{"password": {"secret":"superSecretP@SSw0Rd1234!"},"label":"first-encryption","primary":true}]`},
 	)
 
 	envVars = append(envVars, extra...)
 
-	SetBrokerEnv(brokerName, envVars...)
+	app.SetEnv(envVars...)
 }
 
-func optionalEnvVar(envVars ...string) []EnvVar {
-	var toSet []EnvVar
+func optionalEnvVar(envVars ...string) []apps.EnvVar {
+	var toSet []apps.EnvVar
 	for _, envVarName := range envVars {
 		value, set := os.LookupEnv(envVarName)
 		if set {
-			toSet = append(toSet, EnvVar{Name: envVarName, Value: value})
+			toSet = append(toSet, apps.EnvVar{Name: envVarName, Value: value})
 		}
 	}
 	return toSet
 }
 
-func requiredEnvVar(envVars ...string) []EnvVar {
-	var toSet []EnvVar
+func requiredEnvVar(envVars ...string) []apps.EnvVar {
+	var toSet []apps.EnvVar
 	for _, envVarName := range envVars {
 		value := os.Getenv(envVarName)
 		Expect(value).NotTo(BeEmpty(), fmt.Sprintf("You must set the %s environment variable", envVarName))
-		toSet = append(toSet, EnvVar{Name: envVarName, Value: value})
+		toSet = append(toSet, apps.EnvVar{Name: envVarName, Value: value})
 	}
 	return toSet
-}
-
-func getBrokerAppURL(brokerApp apps.App) string {
-	out, _ := cf.Run("app", "--guid", brokerApp.Name)
-	guid := strings.TrimSpace(out)
-	env, _ := cf.Run("curl", fmt.Sprintf("/v3/apps/%s/env", guid))
-
-	var receiver struct {
-		BrokerURL []string `jsonry:"application_env_json.VCAP_APPLICATION.application_uris[]"`
-	}
-	err := jsonry.Unmarshal([]byte(env), &receiver)
-	Expect(err).NotTo(HaveOccurred())
-	return receiver.BrokerURL[0]
-}
-
-func pushNoStartServiceBroker(brokerName, brokerDir string) apps.App {
-	session := cf.Start("push", brokerName, "--no-start", "-p", brokerDir, "-f", fmt.Sprintf("%s/cf-manifest.yml", brokerDir), "--var", fmt.Sprintf("app=%s", brokerName))
-	return waitForAppPush(session, brokerName)
-}
-
-func pushServiceBroker(brokerName, brokerDir string) apps.App {
-	session := cf.Start("push", brokerName, "-p", brokerDir, "-f", fmt.Sprintf("%s/cf-manifest.yml", brokerDir), "--var", fmt.Sprintf("app=%s", brokerName))
-	return waitForAppPush(session, brokerName)
 }
 
 func waitForBrokerOperation(session *Session, name string) {
@@ -184,33 +165,11 @@ func waitForBrokerOperation(session *Session, name string) {
 	Expect(session.ExitCode()).To(BeZero())
 }
 
-type EnvVar struct {
-	Name  string
-	Value interface{}
-}
-
-func SetBrokerEnv(brokerName string, envVars ...EnvVar) {
-	for _, envVar := range envVars {
-		switch v := envVar.Value.(type) {
-		case string:
-			if v == "" {
-				cf.Run("unset-env", brokerName, envVar.Name)
-			} else {
-				cf.Run("set-env", brokerName, envVar.Name, v)
-			}
-		default:
-			data, err := json.Marshal(v)
-			Expect(err).NotTo(HaveOccurred())
-			cf.Run("set-env", brokerName, envVar.Name, string(data))
-		}
-	}
-}
-
 func RestartBroker(broker string) {
 	cf.Run("restart", broker)
 }
 
-func SetBrokerEnvAndRestart(envVars ...EnvVar) {
+func SetBrokerEnvAndRestart(envVars ...apps.EnvVar) {
 	for _, envVar := range envVars {
 		switch v := envVar.Value.(type) {
 		case string:
@@ -252,7 +211,7 @@ func GetBrokerEncryptionEnv(broker string) BrokerEnvVars {
 }
 
 func SetBrokerEncryptionEnv(brokerName string, brokerEnvVars BrokerEnvVars) {
-	envVars := []EnvVar{
+	envVars := []apps.EnvVar{
 		{
 			Name:  encryptionEnabledEnvVar,
 			Value: brokerEnvVars.EncryptionEnabled,
@@ -262,7 +221,7 @@ func SetBrokerEncryptionEnv(brokerName string, brokerEnvVars BrokerEnvVars) {
 			Value: brokerEnvVars.EncryptionPasswords,
 		},
 	}
-	SetBrokerEnv(brokerName, envVars...)
+	apps.SetEnv(brokerName, envVars...)
 	session := cf.Start("restart", brokerName)
 	waitForAppPush(session, brokerName)
 }
