@@ -17,6 +17,8 @@ type config struct {
 	name      string
 	buildpack string
 	memory    string
+	manifest  string
+	variables map[string]string
 	dir       dir
 }
 
@@ -27,20 +29,30 @@ func Push(opts ...Option) App {
 	defaults := []Option{WithName(random.Name(random.WithPrefix("app")))}
 	WithOptions(append(defaults, opts...)...)(&c)
 
-	if c.dir.path() == "" {
-		Fail("App directory must be specified")
-	}
-
 	cmd := []string{"push", "--no-start"}
 	switch {
 	case c.buildpack != "":
 		cmd = append(cmd, "-b", c.buildpack)
 	case c.memory != "":
 		cmd = append(cmd, "-m", c.memory)
+	case c.manifest != "":
+		cmd = append(cmd, "-f", c.manifest)
 	}
 
-	cmd = append(cmd, "-p", c.dir.path(), c.name)
+	for k, v := range c.variables {
+		cmd = append(cmd, "--var", fmt.Sprintf("%s=%s", k, v))
+	}
+
+	if c.dir.path() == "" {
+		Fail("App directory must be specified")
+	}
+	cmd = append(cmd, "-p", c.dir.path())
 	defer c.dir.cleanup()
+
+	if c.name == "" {
+		Fail("App name must be specified")
+	}
+	cmd = append(cmd, c.name)
 
 	session := cf.Start(cmd...)
 	Eventually(session, pushWaitTime).Should(gexec.Exit())
@@ -52,7 +64,10 @@ func Push(opts ...Option) App {
 		Fail("App failed to push")
 	}
 
-	return App{Name: c.name}
+	return App{
+		Name: c.name,
+		URL:  url(c.name),
+	}
 }
 
 func WithBinaryBuildpack() Option {
@@ -71,6 +86,21 @@ func WithName(name string) Option {
 func WithDir(dir string) Option {
 	return func(c *config) {
 		c.dir = staticDir(dir)
+	}
+}
+
+func WithManifest(manifest string) Option {
+	return func(c *config) {
+		c.manifest = manifest
+	}
+}
+
+func WithVariable(key, value string) Option {
+	return func(c *config) {
+		if c.variables == nil {
+			c.variables = make(map[string]string)
+		}
+		c.variables[key] = value
 	}
 }
 

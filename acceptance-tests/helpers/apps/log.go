@@ -9,7 +9,7 @@ import (
 
 func checkSuccess(code int, name string) {
 	if code != 0 {
-		fmt.Fprintf(GinkgoWriter, "Operation FAILED. Getting logs...")
+		fmt.Fprintln(GinkgoWriter, "Operation FAILED. Getting logs...")
 		cf.Run("logs", name, "--recent")
 		Fail("App operation failed")
 	}
