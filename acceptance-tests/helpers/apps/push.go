@@ -15,6 +15,7 @@ const pushWaitTime = 20 * time.Minute
 
 type config struct {
 	name      string
+	start     bool
 	buildpack string
 	memory    string
 	manifest  string
@@ -29,13 +30,17 @@ func Push(opts ...Option) App {
 	defaults := []Option{WithName(random.Name(random.WithPrefix("app")))}
 	WithOptions(append(defaults, opts...)...)(&c)
 
-	cmd := []string{"push", "--no-start"}
-	switch {
-	case c.buildpack != "":
+	cmd := []string{"push"}
+	if !c.start {
+		cmd = append(cmd, "--no-start")
+	}
+	if c.buildpack != "" {
 		cmd = append(cmd, "-b", c.buildpack)
-	case c.memory != "":
+	}
+	if c.memory != "" {
 		cmd = append(cmd, "-m", c.memory)
-	case c.manifest != "":
+	}
+	if c.manifest != "" {
 		cmd = append(cmd, "-f", c.manifest)
 	}
 
@@ -101,6 +106,12 @@ func WithVariable(key, value string) Option {
 			c.variables = make(map[string]string)
 		}
 		c.variables[key] = value
+	}
+}
+
+func WithStartedState() Option {
+	return func(c *config) {
+		c.start = true
 	}
 }
 

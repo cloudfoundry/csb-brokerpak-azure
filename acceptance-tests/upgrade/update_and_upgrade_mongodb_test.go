@@ -14,7 +14,7 @@ var _ = Describe("UpgradeMongoTest", func() {
 		It("should continue to work", func() {
 			By("pushing latest released broker version")
 			serviceBroker := helpers.CreateBroker(
-				helpers.BrokerWithPrefix("csb-mssql-db"),
+				helpers.BrokerWithPrefix("csb-mongodb"),
 				helpers.BrokerFromDir(releasedBuildDir),
 			)
 			defer serviceBroker.Delete()
@@ -22,7 +22,7 @@ var _ = Describe("UpgradeMongoTest", func() {
 			By("creating a service instance")
 			databaseName := random.Name(random.WithPrefix("database"))
 			collectionName := random.Name(random.WithPrefix("collection"))
-			serviceInstance := helpers.CreateServiceFromBroker("csb-azure-mongodb", "small", serviceBroker.Name, map[string]interface{}{
+			serviceInstance := helpers.CreateServiceFromBroker("csb-azure-mongodb", "medium", serviceBroker.Name, map[string]interface{}{
 				"db_name":         databaseName,
 				"collection_name": collectionName,
 				"shard_key":       "_id",
@@ -53,6 +53,13 @@ var _ = Describe("UpgradeMongoTest", func() {
 			By("pushing the development version of the broker")
 			serviceBroker.Update(developmentBuildDir)
 
+			By("updating the instance plan")
+			serviceInstance.UpdateService("-p", "large")
+
+			By("checking previous data still accessible")
+			got = appTwo.GET("%s/%s/%s", databaseName, collectionName, documentNameOne)
+			Expect(got).To(Equal(documentDataOne))
+
 			By("deleting bindings created before the upgrade")
 			serviceInstance.Unbind(appOne)
 			serviceInstance.Unbind(appTwo)
@@ -70,7 +77,6 @@ var _ = Describe("UpgradeMongoTest", func() {
 			By("getting the document using the second app")
 			got = appTwo.GET("%s/%s/%s", databaseName, collectionName, documentNameTwo)
 			Expect(got).To(Equal(documentDataTwo))
-
 		})
 	})
 })
