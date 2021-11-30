@@ -21,15 +21,13 @@ func handleFetchDocument(client *mongo.Client) func(w http.ResponseWriter, r *ht
 		filter := bson.D{{Key: documentNameKey, Value: documentName}}
 		result := client.Database(databaseName).Collection(collectionName).FindOne(r.Context(), filter)
 		if result.Err() != nil {
-			log.Printf("error finding document: %s", result.Err())
-			http.Error(w, "Failed to finding document.", http.StatusNotFound)
+			fail(w, http.StatusNotFound, "error finding document: %s", result.Err())
 			return
 		}
 
 		var receiver bson.D
 		if err := result.Decode(&receiver); err != nil {
-			log.Printf("error decoding document: %s", err)
-			http.Error(w, "Failed to decode document.", http.StatusNotFound)
+			fail(w, http.StatusNotFound, "error decoding document: %s", err)
 			return
 		}
 
@@ -41,8 +39,7 @@ func handleFetchDocument(client *mongo.Client) func(w http.ResponseWriter, r *ht
 		}
 
 		if data == nil {
-			log.Printf("error find document data: %+v", receiver)
-			http.Error(w, "Failed to find document data.", http.StatusNotFound)
+			fail(w, http.StatusNotFound, "error find document data: %+v", receiver)
 			return
 		}
 

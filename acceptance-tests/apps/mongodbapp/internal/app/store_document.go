@@ -19,8 +19,7 @@ func handleStoreDocument(client *mongo.Client) func(w http.ResponseWriter, r *ht
 
 		rawData, err := io.ReadAll(r.Body)
 		if err != nil {
-			log.Printf("Error parsing data: %s", err)
-			http.Error(w, "Failed to parse data.", http.StatusBadRequest)
+			fail(w, http.StatusBadRequest, "Error parsing data: %s", err)
 			return
 		}
 
@@ -29,12 +28,11 @@ func handleStoreDocument(client *mongo.Client) func(w http.ResponseWriter, r *ht
 
 		result, err := client.Database(databaseName).Collection(collectionName).InsertOne(r.Context(), document)
 		if err != nil {
-			log.Printf("Error creating document %q with data %q in database %q, collection %q: %s", documentName, data, databaseName, collectionName, err)
-			http.Error(w, "Failed to create document.", http.StatusFailedDependency)
+			fail(w, http.StatusFailedDependency, "Error creating document %q with data %q in database %q, collection %q: %s", documentName, data, databaseName, collectionName, err)
 			return
 		}
 
 		w.WriteHeader(http.StatusCreated)
-		log.Printf("Created document %q with data %q in database %q, collection %q.", result.InsertedID, documentName, data, databaseName, collectionName)
+		log.Printf("Created document %q (named %q) with data %q in database %q, collection %q.", result.InsertedID, documentName, data, databaseName, collectionName)
 	}
 }

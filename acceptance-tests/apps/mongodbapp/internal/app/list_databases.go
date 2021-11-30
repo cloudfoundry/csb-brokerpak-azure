@@ -15,15 +15,13 @@ func handleListDatabases(client *mongo.Client) func(w http.ResponseWriter, r *ht
 		log.Println("Handling list database.")
 		list, err := client.ListDatabaseNames(r.Context(), bson.D{})
 		if err != nil {
-			log.Printf("error listing databases: %s", err)
-			http.Error(w, "Failed to list databases.", http.StatusNotFound)
+			fail(w, http.StatusNotFound, "error listing databases: %s", err)
 			return
 		}
 
 		data, err := json.Marshal(list)
 		if err != nil {
-			log.Printf("JSON error: %s", err)
-			http.Error(w, "Failed to serialize database list.", http.StatusNotFound)
+			fail(w, http.StatusNotFound, "JSON error: %s", err)
 			return
 		}
 
