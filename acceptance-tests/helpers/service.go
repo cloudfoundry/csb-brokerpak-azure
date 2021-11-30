@@ -131,7 +131,7 @@ func (s ServiceInstance) Delete() {
 	Eventually(func() string {
 		out, _ := cf.Run("services")
 		return out
-	}, 30*time.Minute, 30*time.Second).ShouldNot(ContainSubstring(s.name))
+	}, time.Hour, 30*time.Second).ShouldNot(ContainSubstring(s.name))
 }
 
 func (s ServiceInstance) Bind(app apps.App, parameters ...interface{}) Binding {

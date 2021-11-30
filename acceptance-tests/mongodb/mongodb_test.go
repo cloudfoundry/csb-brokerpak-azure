@@ -16,7 +16,7 @@ var _ = Describe("MongoDB", func() {
 		By("creating a service instance")
 		databaseName := random.Name(random.WithPrefix("database"))
 		collectionName := random.Name(random.WithPrefix("collection"))
-		serviceInstance := helpers.CreateServiceFromBroker("csb-azure-mongodb", "small", helpers.DefaultBroker().Name, map[string]interface{}{
+		serviceInstance := helpers.CreateServiceFromBroker("csb-azure-mongodb", "medium", helpers.DefaultBroker().Name, map[string]interface{}{
 			"db_name":         databaseName,
 			"collection_name": collectionName,
 			"shard_key":       "_id",
@@ -53,6 +53,13 @@ var _ = Describe("MongoDB", func() {
 
 		By("getting the document using the second app")
 		got := appTwo.GET("%s/%s/%s", databaseName, collectionName, documentName)
+		Expect(got).To(Equal(documentData))
+
+		By("updating the instance plan")
+		serviceInstance.UpdateService("-p", "large")
+
+		By("checking previous data still accessible")
+		got = appTwo.GET("%s/%s/%s", databaseName, collectionName, documentData)
 		Expect(got).To(Equal(documentData))
 	})
 })
