@@ -5,7 +5,6 @@ import (
 	"acceptancetests/helpers/apps"
 	"acceptancetests/helpers/cf"
 	"acceptancetests/helpers/random"
-	"acceptancetests/mssql-serial/mssql_helpers"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -15,28 +14,27 @@ var _ = Describe("UpgradeMssqlDBFailoverTest", func() {
 	When("upgrading broker version", func() {
 		It("should continue to work", func() {
 			By("pushing latest released broker version")
+			rgConfig := resourceGroupConfig()
+			serversConfig := newServerPair(rgConfig.Name)
+
 			serviceBroker := helpers.CreateBroker(
 				helpers.BrokerWithPrefix("csb-db-fo"),
 				helpers.BrokerFromDir(releasedBuildDir),
+				helpers.BrokerWithEnv(helpers.EnvVar{Name: "MSSQL_DB_FOG_SERVER_PAIR_CREDS", Value: serversConfig.ServerPairsConfig()}),
 			)
 
 			defer serviceBroker.Delete()
 
 			By("creating a new resource group")
-			rgConfig := resourceGroupConfig()
 			resourceGroupInstance := helpers.CreateServiceFromBroker("csb-azure-resource-group", "standard", serviceBroker.Name, rgConfig)
 			defer resourceGroupInstance.Delete()
 
 			By("creating primary and secondary DB servers in the resource group")
-			serversConfig := newServerPair(rgConfig.Name)
 			serverInstancePrimary := helpers.CreateServiceFromBroker("csb-azure-mssql-server", "standard", serviceBroker.Name, serversConfig.PrimaryConfig())
 			defer serverInstancePrimary.Delete()
 
 			serverInstanceSecondary := helpers.CreateServiceFromBroker("csb-azure-mssql-server", "standard", serviceBroker.Name, serversConfig.SecondaryConfig())
 			defer serverInstanceSecondary.Delete()
-
-			By("reconfiguring the CSB with DB server details")
-			serversConfig.ReconfigureCustomCSBWithServerDetails(serviceBroker.Name)
 
 			By("creating a failover group service instance")
 			fogConfig := failoverGroupConfig(serversConfig.ServerPairTag)
@@ -121,16 +119,16 @@ type resourceConfig struct {
 	Location string `json:"location"`
 }
 
-func newServerPair(resourceGroup string) mssql_helpers.DatabaseServerPair {
-	return mssql_helpers.DatabaseServerPair{
+func newServerPair(resourceGroup string) DatabaseServerPair {
+	return DatabaseServerPair{
 		ServerPairTag: random.Name(random.WithMaxLength(10)),
 		Username:      random.Name(random.WithMaxLength(10)),
 		Password:      random.Password(),
-		PrimaryServer: mssql_helpers.DatabaseServerPairMember{
+		PrimaryServer: DatabaseServerPairMember{
 			Name:          random.Name(random.WithPrefix("server")),
 			ResourceGroup: resourceGroup,
 		},
-		SecondaryServer: mssql_helpers.DatabaseServerPairMember{
+		SecondaryServer: DatabaseServerPairMember{
 			Name:          random.Name(random.WithPrefix("server")),
 			ResourceGroup: resourceGroup,
 		},
@@ -143,4 +141,56 @@ func failoverGroupConfig(serverPairTag string) map[string]string {
 		"db_name":       random.Name(random.WithPrefix("db")),
 		"server_pair":   serverPairTag,
 	}
+}
+
+type DatabaseServerPair struct {
+	ServerPairTag          string
+	Username               string                   `json:"admin_username"`
+	Password               string                   `json:"admin_password"`
+	PrimaryServer          DatabaseServerPairMember `json:"primary"`
+	SecondaryServer        DatabaseServerPairMember `json:"secondary"`
+	SecondaryResourceGroup string                   `json:"-"`
+}
+
+type DatabaseServerPairMember struct {
+	Name          string `json:"server_name"`
+	ResourceGroup string `json:"resource_group"`
+}
+
+func (d DatabaseServerPair) PrimaryConfig() interface{} {
+	return d.memberConfig(d.PrimaryServer.Name, "westus", d.PrimaryServer.ResourceGroup)
+}
+
+func (d DatabaseServerPair) SecondaryConfig() interface{} {
+	return d.memberConfig(d.SecondaryServer.Name, "eastus", d.SecondaryServer.ResourceGroup)
+}
+
+func (d DatabaseServerPair) memberConfig(name, location, rg string) interface{} {
+	return struct {
+		Name          string `json:"instance_name"`
+		Username      string `json:"admin_username"`
+		Password      string `json:"admin_password"`
+		Location      string `json:"location"`
+		ResourceGroup string `json:"resource_group"`
+	}{
+		Name:          name,
+		Username:      d.Username,
+		Password:      d.Password,
+		Location:      location,
+		ResourceGroup: rg,
+	}
+}
+
+func (d DatabaseServerPair) SecondaryResourceGroupConfig() interface{} {
+	return struct {
+		InstanceName string `json:"instance_name"`
+		Location     string `json:"location"`
+	}{
+		InstanceName: d.SecondaryResourceGroup,
+		Location:     "eastus",
+	}
+}
+
+func (d DatabaseServerPair) ServerPairsConfig() interface{} {
+	return map[string]interface{}{d.ServerPairTag: d}
 }
