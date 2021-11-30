@@ -58,8 +58,16 @@ var _ = Describe("MongoDB", func() {
 		By("updating the instance plan")
 		serviceInstance.UpdateService("-p", "large")
 
+		By("checking that the created database is still present")
+		databases = appOne.GET("")
+		Expect(databases).To(MatchJSON(fmt.Sprintf(`["%s"]`, databaseName)))
+
+		By("checking that the created collection is still present")
+		collections = appOne.GET(databaseName)
+		Expect(collections).To(MatchJSON(fmt.Sprintf(`["%s"]`, collectionName)))
+
 		By("checking previous data still accessible")
-		got = appTwo.GET("%s/%s/%s", databaseName, collectionName, documentData)
+		got = appTwo.GET("%s/%s/%s", databaseName, collectionName, documentName)
 		Expect(got).To(Equal(documentData))
 	})
 })
