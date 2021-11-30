@@ -15,22 +15,20 @@ func handleSet(client *redis.Client) func(w http.ResponseWriter, r *http.Request
 
 		key, ok := mux.Vars(r)["key"]
 		if !ok {
-			log.Println("Key missing.")
-			http.Error(w, "Key missing.", http.StatusBadRequest)
+			fail(w, http.StatusBadRequest, "Key missing.")
 			return
 		}
 
 		rawValue, err := io.ReadAll(r.Body)
 		if err != nil {
-			log.Printf("Error parsing value: %s", err)
+			fail(w, http.StatusBadRequest, "Error parsing value: %s", err)
 			http.Error(w, "Failed to parse value.", http.StatusBadRequest)
 			return
 		}
 
 		value := string(rawValue)
 		if err := client.Set(r.Context(), key, value, 0).Err(); err != nil {
-			log.Printf("Error setting key %q to value %q: %s", key, value, err)
-			http.Error(w, "Failed to set value.", http.StatusFailedDependency)
+			fail(w, http.StatusFailedDependency, "Error setting key %q to value %q: %s", key, value, err)
 			return
 		}
 

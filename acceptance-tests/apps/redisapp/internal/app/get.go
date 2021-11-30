@@ -1,10 +1,11 @@
 package app
 
 import (
-	"github.com/go-redis/redis/v8"
-	"github.com/gorilla/mux"
 	"log"
 	"net/http"
+
+	"github.com/go-redis/redis/v8"
+	"github.com/gorilla/mux"
 )
 
 func handleGet(client *redis.Client) func(w http.ResponseWriter, r *http.Request) {
@@ -13,15 +14,13 @@ func handleGet(client *redis.Client) func(w http.ResponseWriter, r *http.Request
 
 		key, ok := mux.Vars(r)["key"]
 		if !ok {
-			log.Println("Key missing.")
-			http.Error(w, "Key missing.", http.StatusBadRequest)
+			fail(w, http.StatusBadRequest, "key missing")
 			return
 		}
 
 		value, err := client.Get(r.Context(), key).Result()
 		if err != nil {
-			log.Printf("Error retrieving value: %s", err)
-			http.Error(w, "Failed to retrieve value.", http.StatusNotFound)
+			fail(w, http.StatusNotFound, "Error retrieving value: %s", err)
 			return
 		}
 

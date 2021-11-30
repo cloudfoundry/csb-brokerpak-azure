@@ -49,3 +49,9 @@ func connect(config *mysql.Config) *sql.DB {
 
 	return db
 }
+
+func fail(w http.ResponseWriter, code int, format string, a ...interface{}) {
+	msg := fmt.Sprintf(format, a...)
+	log.Println(msg)
+	http.Error(w, msg, code)
+}

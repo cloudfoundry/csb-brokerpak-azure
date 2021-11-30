@@ -18,15 +18,13 @@ func handleListCollections(client *mongo.Client) func(w http.ResponseWriter, r *
 		databaseName := mux.Vars(r)["database"]
 		list, err := client.Database(databaseName).ListCollectionNames(r.Context(), bson.D{})
 		if err != nil {
-			log.Printf("error listing collections: %s", err)
-			http.Error(w, "Failed to list collections.", http.StatusNotFound)
+			fail(w, http.StatusNotFound, "error listing collections: %s", err)
 			return
 		}
 
 		data, err := json.Marshal(list)
 		if err != nil {
-			log.Printf("JSON error: %s", err)
-			http.Error(w, "Failed to serialize database list.", http.StatusNotFound)
+			fail(w, http.StatusNotFound, "JSON error: %s", err)
 			return
 		}
 

@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -44,4 +45,10 @@ func connect(uri string) *mongo.Client {
 	}
 
 	return client
+}
+
+func fail(w http.ResponseWriter, code int, format string, a ...interface{}) {
+	msg := fmt.Sprintf(format, a...)
+	log.Println(msg)
+	http.Error(w, msg, code)
 }
