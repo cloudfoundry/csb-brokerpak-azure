@@ -1,4 +1,4 @@
-package mssql_server_test
+package mssql_server_pair_test
 
 import (
 	"acceptancetests/helpers"
