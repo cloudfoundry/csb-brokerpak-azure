@@ -58,9 +58,6 @@ var _ = Describe("UpgradeMssqlTest", func() {
 			got = appTwo.GET("%s/%s", schema, keyOne)
 			Expect(got).To(Equal(valueOne))
 
-			By("dropping the schema used to allow us to unbind")
-			appOne.DELETE(schema)
-
 			By("deleting bindings created before the upgrade")
 			serviceInstance.Unbind(appOne)
 			serviceInstance.Unbind(appTwo)
@@ -70,20 +67,21 @@ var _ = Describe("UpgradeMssqlTest", func() {
 			serviceInstance.Bind(appTwo)
 			apps.Restage(appOne, appTwo)
 
+			By("checking previously written data still accessible")
+			got = appTwo.GET("%s/%s", schema, keyOne)
+			Expect(got).To(Equal(valueOne))
+
 			By("creating a schema using the first app")
-			schema = random.Name(random.WithMaxLength(10))
-			appOne.PUT("", schema)
+			schemaTwo := random.Name(random.WithMaxLength(10))
+			appOne.PUT("", schemaTwo)
 
 			By("checking data can still be written and read")
-			keyThree := random.Hexadecimal()
-			valueThree := random.Hexadecimal()
-			appOne.PUT(valueThree, "%s/%s", schema, keyThree)
+			keyTwo := random.Hexadecimal()
+			valueTwo := random.Hexadecimal()
+			appOne.PUT(valueTwo, "%s/%s", schemaTwo, keyTwo)
 
-			got = appTwo.GET("%s/%s", schema, keyThree)
-			Expect(got).To(Equal(valueThree))
-
-			By("dropping the schema used to allow us to unbind")
-			appOne.DELETE(schema)
+			got = appTwo.GET("%s/%s", schemaTwo, keyTwo)
+			Expect(got).To(Equal(valueTwo))
 		})
 	})
 })
