@@ -19,7 +19,7 @@ func handleCreateSchema(config string) func(w http.ResponseWriter, r *http.Reque
 			return
 		}
 
-		_, err = db.Exec(fmt.Sprintf(`CREATE SCHEMA %s`, schema))
+		_, err = db.Exec(fmt.Sprintf(`CREATE SCHEMA %s AUTHORIZATION dbo`, schema))
 		if err != nil {
 			log.Printf("Error creating schema: %s", err)
 			http.Error(w, "Failed to create schema.", http.StatusBadRequest)
