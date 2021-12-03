@@ -70,6 +70,10 @@ var _ = Describe("UpgradeMongoTest", func() {
 			serviceInstance.Bind(appTwo)
 			apps.Restage(appOne, appTwo)
 
+			By("checking previous data still accessible")
+			got = appTwo.GET("%s/%s/%s", databaseName, collectionName, documentNameOne)
+			Expect(got).To(Equal(documentDataOne))
+
 			By("creating a document using the first app - post upgrade")
 			documentNameTwo := random.Hexadecimal()
 			documentDataTwo := random.Hexadecimal()
