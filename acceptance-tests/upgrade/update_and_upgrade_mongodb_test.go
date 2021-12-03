@@ -23,7 +23,7 @@ var _ = Describe("UpgradeMongoTest", func() {
 			By("creating a service instance")
 			databaseName := random.Name(random.WithPrefix("database"))
 			collectionName := random.Name(random.WithPrefix("collection"))
-			serviceInstance := helpers.CreateServiceFromBroker("csb-azure-mongodb", "medium", serviceBroker.Name, map[string]interface{}{
+			serviceInstance := helpers.CreateServiceFromBroker("csb-azure-mongodb", "small", serviceBroker.Name, map[string]interface{}{
 				"db_name":         databaseName,
 				"collection_name": collectionName,
 				"shard_key":       "_id",
@@ -55,7 +55,7 @@ var _ = Describe("UpgradeMongoTest", func() {
 			serviceBroker.Update(developmentBuildDir)
 
 			By("updating the instance plan")
-			serviceInstance.UpdateService("-p", "large")
+			serviceInstance.UpdateService("-p", "medium")
 
 			By("checking previous data still accessible")
 			got = appTwo.GET("%s/%s/%s", databaseName, collectionName, documentNameOne)
