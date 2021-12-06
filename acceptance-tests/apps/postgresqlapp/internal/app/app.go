@@ -40,7 +40,7 @@ func connect(uri string) *sql.DB {
 	if err != nil {
 		log.Fatalf("failed to connect to database: %s", err)
 	}
-
+	db.SetMaxIdleConns(0)
 	return db
 }
 
