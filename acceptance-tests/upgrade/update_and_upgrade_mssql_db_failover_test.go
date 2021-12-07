@@ -22,7 +22,7 @@ var _ = Describe("UpgradeMssqlDBFailoverTest", func() {
 				helpers.BrokerFromDir(releasedBuildDir),
 				helpers.BrokerWithEnv(
 					apps.EnvVar{Name: "MSSQL_DB_FOG_SERVER_PAIR_CREDS", Value: serversConfig.ServerPairsConfig()},
-			)
+				))
 
 			defer serviceBroker.Delete()
 
