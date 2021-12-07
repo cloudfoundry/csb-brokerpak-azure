@@ -16,7 +16,6 @@ var _ = Describe("UpgradeMssqlTest", func() {
 			serviceBroker := helpers.CreateBroker(
 				helpers.BrokerWithPrefix("csb-mssql"),
 				helpers.BrokerFromDir(releasedBuildDir),
-				helpers.BrokerWithEnv(apps.EnvVar{Name: "BROKERPAK_UPDATES_ENABLED", Value: true}),
 			)
 			defer serviceBroker.Delete()
 

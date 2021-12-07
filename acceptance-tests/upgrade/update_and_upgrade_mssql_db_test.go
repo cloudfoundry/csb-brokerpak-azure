@@ -9,14 +9,13 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("UpgradeMssqlDBTest", func() {
+var _ = FDescribe("UpgradeMssqlDBTest", func() {
 	When("upgrading broker version", func() {
 		It("should continue to work", func() {
 			By("pushing latest released broker version")
 			serviceBroker := helpers.CreateBroker(
 				helpers.BrokerWithPrefix("csb-mssql-srvdb"),
 				helpers.BrokerFromDir(releasedBuildDir),
-				helpers.BrokerWithEnv(apps.EnvVar{Name: "BROKERPAK_UPDATES_ENABLED", Value: true}),
 			)
 			defer serviceBroker.Delete()
 
