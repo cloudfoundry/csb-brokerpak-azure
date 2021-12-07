@@ -18,7 +18,6 @@ var _ = Describe("UpgradeMssqlFailoverGroupTest", func() {
 			serviceBroker := helpers.CreateBroker(
 				helpers.BrokerWithPrefix("csb-mssql-fog"),
 				helpers.BrokerFromDir(releasedBuildDir),
-				helpers.BrokerWithEnv(apps.EnvVar{Name: "BROKERPAK_UPDATES_ENABLED", Value: true}),
 			)
 			defer serviceBroker.Delete()
 

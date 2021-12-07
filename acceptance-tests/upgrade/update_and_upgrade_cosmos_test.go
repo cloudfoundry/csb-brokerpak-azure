@@ -17,7 +17,6 @@ var _ = Describe("UpgradeCosmosTest", func() {
 			serviceBroker := helpers.CreateBroker(
 				helpers.BrokerWithPrefix("csb-cosmos"),
 				helpers.BrokerFromDir(releasedBuildDir),
-				helpers.BrokerWithEnv(apps.EnvVar{Name: "BROKERPAK_UPDATES_ENABLED", Value: true}),
 			)
 			defer serviceBroker.Delete()
 

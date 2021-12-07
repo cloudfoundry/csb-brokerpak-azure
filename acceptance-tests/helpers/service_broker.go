@@ -132,6 +132,7 @@ func setEnvVars(app apps.App, extra ...apps.EnvVar) {
 		apps.EnvVar{Name: "DB_TLS", Value: "skip-verify"},
 		apps.EnvVar{Name: "ENCRYPTION_ENABLED", Value: true},
 		apps.EnvVar{Name: "ENCRYPTION_PASSWORDS", Value: `[{"password": {"secret":"superSecretP@SSw0Rd1234!"},"label":"first-encryption","primary":true}]`},
+		apps.EnvVar{Name: "BROKERPAK_UPDATES_ENABLED", Value: true},
 	)
 
 	envVars = append(envVars, extra...)
