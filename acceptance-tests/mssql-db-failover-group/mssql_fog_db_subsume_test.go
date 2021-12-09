@@ -56,6 +56,8 @@ var _ = Describe("MSSQL Failover Group DB Subsume", func() {
 		serviceBroker := helpers.CreateBroker(
 			helpers.BrokerWithPrefix("csb-mssql-fog-db"),
 			helpers.BrokerWithEnv(apps.EnvVar{Name: "MSSQL_DB_FOG_SERVER_PAIR_CREDS", Value: serverPairsConfig(serverPairTag)}),
+			// Disable brokerpak_updates due to bug - https://www.pivotaltracker.com/story/show/180586187
+			helpers.BrokerWithEnv(apps.EnvVar{Name: "BROKERPAK_UPDATES_ENABLED", Value: false}),
 		)
 		defer serviceBroker.Delete()
 
