@@ -52,6 +52,8 @@ var _ = Describe("MSSQL DB Subsume", func() {
 		serviceBroker := helpers.CreateBroker(
 			helpers.BrokerWithPrefix("csb-mssql-db"),
 			helpers.BrokerWithEnv(apps.EnvVar{Name: "MSSQL_DB_SERVER_CREDS", Value: creds}),
+			// Disable brokerpak_updates due to bug - https://www.pivotaltracker.com/story/show/180586187
+			helpers.BrokerWithEnv(apps.EnvVar{Name: "BROKERPAK_UPDATES_ENABLED", Value: false}),
 		)
 		defer serviceBroker.Delete()
 
