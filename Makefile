@@ -96,7 +96,7 @@ cloud-service-broker:
 	mv ./cloud-service-broker.linux ./cloud-service-broker
 	chmod +x ./cloud-service-broker
 
-local-cloud-service-broker:
+local-cloud-service-broker: ## Copy linux CSB from local repo
 	cp ../cloud-service-broker/build/cloud-service-broker.linux ./cloud-service-broker
 	chmod +x cloud-service-broker
 
