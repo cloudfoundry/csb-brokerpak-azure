@@ -3,6 +3,7 @@ package mssql_db_test
 import (
 	"acceptancetests/helpers"
 	"acceptancetests/helpers/apps"
+	"acceptancetests/helpers/brokers"
 	"acceptancetests/helpers/cf"
 	"acceptancetests/helpers/matchers"
 	"acceptancetests/helpers/random"
@@ -49,10 +50,10 @@ var _ = Describe("MSSQL DB Subsume", func() {
 		serverTag := random.Name(random.WithMaxLength(10))
 		creds := getMASBServerDetails(serverTag)
 
-		serviceBroker := helpers.CreateBroker(
-			helpers.BrokerWithPrefix("csb-mssql-db"),
+		serviceBroker := brokers.Create(
+			brokers.WithPrefix("csb-mssql-db"),
 			// Disable brokerpak_updates due to bug - https://www.pivotaltracker.com/story/show/180586187
-			helpers.BrokerWithEnv(apps.EnvVar{Name: "MSSQL_DB_SERVER_CREDS", Value: creds}, apps.EnvVar{Name: "BROKERPAK_UPDATES_ENABLED", Value: false}),
+			brokers.WithEnv(apps.EnvVar{Name: "MSSQL_DB_SERVER_CREDS", Value: creds}, apps.EnvVar{Name: "BROKERPAK_UPDATES_ENABLED", Value: false}),
 		)
 		defer serviceBroker.Delete()
 

@@ -13,112 +13,104 @@ import (
 
 const pushWaitTime = 20 * time.Minute
 
-type config struct {
-	name      string
-	start     bool
-	buildpack string
-	memory    string
-	manifest  string
-	variables map[string]string
-	dir       dir
+type Option func(*App)
+
+func Push(opts ...Option) *App {
+	defaults := []Option{WithName(random.Name(random.WithPrefix("app")))}
+	app := App{}
+	app.Push(append(defaults, opts...)...)
+	return &app
 }
 
-type Option func(*config)
-
-func Push(opts ...Option) App {
-	var c config
-	defaults := []Option{WithName(random.Name(random.WithPrefix("app")))}
-	WithOptions(append(defaults, opts...)...)(&c)
+func (a *App) Push(opts ...Option) {
+	WithOptions(opts...)(a)
 
 	cmd := []string{"push"}
-	if !c.start {
+	if !a.start {
 		cmd = append(cmd, "--no-start")
 	}
-	if c.buildpack != "" {
-		cmd = append(cmd, "-b", c.buildpack)
+	if a.buildpack != "" {
+		cmd = append(cmd, "-b", a.buildpack)
 	}
-	if c.memory != "" {
-		cmd = append(cmd, "-m", c.memory)
+	if a.memory != "" {
+		cmd = append(cmd, "-m", a.memory)
 	}
-	if c.manifest != "" {
-		cmd = append(cmd, "-f", c.manifest)
+	if a.manifest != "" {
+		cmd = append(cmd, "-f", a.manifest)
 	}
 
-	for k, v := range c.variables {
+	for k, v := range a.variables {
 		cmd = append(cmd, "--var", fmt.Sprintf("%s=%s", k, v))
 	}
 
-	if c.dir.path() == "" {
+	if a.dir.path() == "" {
 		Fail("App directory must be specified")
 	}
-	cmd = append(cmd, "-p", c.dir.path())
-	defer c.dir.cleanup()
+	cmd = append(cmd, "-p", a.dir.path())
+	defer a.dir.cleanup()
 
-	if c.name == "" {
+	if a.Name == "" {
 		Fail("App name must be specified")
 	}
-	cmd = append(cmd, c.name)
+	cmd = append(cmd, a.Name)
 
 	session := cf.Start(cmd...)
 	Eventually(session, pushWaitTime).Should(gexec.Exit())
-	checkSuccess(session.ExitCode(), c.name)
+	checkSuccess(session.ExitCode(), a.Name)
 
 	if session.ExitCode() != 0 {
 		fmt.Fprintf(GinkgoWriter, "FAILED to push app. Getting logs...")
-		cf.Run("logs", c.name, "--recent")
+		cf.Run("logs", a.Name, "--recent")
 		Fail("App failed to push")
 	}
 
-	return App{
-		Name: c.name,
-		URL:  url(c.name),
-	}
+	a.URL = url(a.Name)
 }
 
 func WithBinaryBuildpack() Option {
-	return func(c *config) {
-		c.buildpack = "binary_buildpack"
-		c.memory = "50MB"
+	return func(a *App) {
+		a.buildpack = "binary_buildpack"
+		a.memory = "50MB"
 	}
 }
 
 func WithName(name string) Option {
-	return func(c *config) {
-		c.name = name
+	return func(a *App) {
+		a.Name = name
 	}
 }
 
 func WithDir(dir string) Option {
-	return func(c *config) {
-		c.dir = staticDir(dir)
+	return func(a *App) {
+		a.dir = staticDir(dir)
 	}
 }
 
 func WithManifest(manifest string) Option {
-	return func(c *config) {
-		c.manifest = manifest
+	return func(a *App) {
+		a.manifest = manifest
 	}
 }
 
 func WithVariable(key, value string) Option {
-	return func(c *config) {
-		if c.variables == nil {
-			c.variables = make(map[string]string)
+	return func(a *App) {
+		if a.variables == nil {
+			a.variables = make(map[string]string)
 		}
-		c.variables[key] = value
+		a.variables[key] = value
 	}
 }
 
 func WithStartedState() Option {
-	return func(c *config) {
-		c.start = true
+	return func(a *App) {
+		a.start = true
 	}
 }
 
 func WithOptions(opts ...Option) Option {
-	return func(c *config) {
+	return func(a *App) {
 		for _, o := range opts {
-			o(c)
+			o(a)
 		}
 	}
 }

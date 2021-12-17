@@ -8,11 +8,11 @@ import (
 	"github.com/onsi/gomega/gexec"
 )
 
-func (a App) Restart() {
+func (a *App) Restart() {
 	Restart(a)
 }
 
-func Restart(apps ...App) {
+func Restart(apps ...*App) {
 	for _, app := range apps {
 		session := cf.Start("restart", app.Name)
 		Eventually(session, 5*time.Minute).Should(gexec.Exit())

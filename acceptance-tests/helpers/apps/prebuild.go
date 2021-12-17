@@ -28,8 +28,8 @@ func WithPreBuild(source string) Option {
 
 	return WithOptions(
 		WithBinaryBuildpack(),
-		func(c *config) {
-			c.dir = dir
+		func(a *App) {
+			a.dir = dir
 		},
 	)
 }

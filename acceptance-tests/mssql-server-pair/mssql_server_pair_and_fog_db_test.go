@@ -3,6 +3,7 @@ package mssql_server_pair_test
 import (
 	"acceptancetests/helpers"
 	"acceptancetests/helpers/apps"
+	"acceptancetests/helpers/brokers"
 	"acceptancetests/helpers/matchers"
 	"acceptancetests/helpers/random"
 
@@ -15,9 +16,9 @@ var _ = Describe("MSSQL Server Pair and Failover Group DB", func() {
 		serversConfig := newDatabaseServerPair()
 
 		By("Create CSB with server details")
-		serviceBroker := helpers.CreateBroker(
-			helpers.BrokerWithPrefix("csb-mssql-db"),
-			helpers.BrokerWithEnv(apps.EnvVar{Name: "MSSQL_DB_FOG_SERVER_PAIR_CREDS", Value: serversConfig.ServerPairsConfig()}),
+		serviceBroker := brokers.Create(
+			brokers.WithPrefix("csb-mssql-db"),
+			brokers.WithEnv(apps.EnvVar{Name: "MSSQL_DB_FOG_SERVER_PAIR_CREDS", Value: serversConfig.ServerPairsConfig()}),
 		)
 		defer serviceBroker.Delete()
 

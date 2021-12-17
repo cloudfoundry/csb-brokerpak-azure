@@ -3,6 +3,7 @@ package mssql_failover_group_test
 import (
 	"acceptancetests/helpers"
 	"acceptancetests/helpers/apps"
+	"acceptancetests/helpers/brokers"
 	"acceptancetests/helpers/cf"
 	"acceptancetests/helpers/matchers"
 	"acceptancetests/helpers/random"
@@ -16,9 +17,9 @@ var _ = Describe("MSSQL Failover Group Existing", func() {
 		By("deploying the CSB")
 		rgConfig := resourceGroupConfig()
 		serversConfig := newServerPair(rgConfig.Name)
-		serviceBroker := helpers.CreateBroker(
-			helpers.BrokerWithPrefix("csb-mssql-db-fog"),
-			helpers.BrokerWithEnv(apps.EnvVar{Name: "MSSQL_DB_FOG_SERVER_PAIR_CREDS", Value: serversConfig.ServerPairsConfig()}),
+		serviceBroker := brokers.Create(
+			brokers.WithPrefix("csb-mssql-db-fog"),
+			brokers.WithEnv(apps.EnvVar{Name: "MSSQL_DB_FOG_SERVER_PAIR_CREDS", Value: serversConfig.ServerPairsConfig()}),
 		)
 		defer serviceBroker.Delete()
 

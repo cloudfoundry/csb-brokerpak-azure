@@ -3,6 +3,7 @@ package upgrade_test
 import (
 	"acceptancetests/helpers"
 	"acceptancetests/helpers/apps"
+	"acceptancetests/helpers/brokers"
 	"acceptancetests/helpers/random"
 
 	. "github.com/onsi/ginkgo"
@@ -13,9 +14,9 @@ var _ = Describe("UpgradeRedisTest", func() {
 	When("upgrading broker version", func() {
 		It("should continue to work", func() {
 			By("pushing latest released broker version")
-			serviceBroker := helpers.CreateBroker(
-				helpers.BrokerWithPrefix("csb-redis"),
-				helpers.BrokerFromDir(releasedBuildDir),
+			serviceBroker := brokers.Create(
+				brokers.WithPrefix("csb-redis"),
+				brokers.WithSourceDir(releasedBuildDir),
 			)
 			defer serviceBroker.Delete()
 
@@ -43,7 +44,7 @@ var _ = Describe("UpgradeRedisTest", func() {
 			Expect(got).To(Equal(value1))
 
 			By("pushing the development version of the broker")
-			serviceBroker.Update(developmentBuildDir)
+			serviceBroker.UpdateSourceDir(developmentBuildDir)
 
 			By("deleting bindings created before the upgrade")
 			serviceInstance.Unbind(appOne)

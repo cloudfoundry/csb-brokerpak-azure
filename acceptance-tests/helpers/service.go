@@ -134,7 +134,7 @@ func (s ServiceInstance) Delete() {
 	}, time.Hour, 30*time.Second).ShouldNot(ContainSubstring(s.name))
 }
 
-func (s ServiceInstance) Bind(app apps.App, parameters ...interface{}) Binding {
+func (s ServiceInstance) Bind(app *apps.App, parameters ...interface{}) Binding {
 	name := random.Name()
 	args := []string{"bind-service", app.Name, s.name, "--binding-name", name}
 	args = append(args, serviceParameters(parameters)...)
@@ -147,7 +147,7 @@ func (s ServiceInstance) Bind(app apps.App, parameters ...interface{}) Binding {
 	}
 }
 
-func (s ServiceInstance) Unbind(app apps.App) {
+func (s ServiceInstance) Unbind(app *apps.App) {
 	args := []string{"unbind-service", app.Name, s.name}
 	cf.Run(args...)
 }

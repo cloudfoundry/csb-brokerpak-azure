@@ -3,6 +3,7 @@ package upgrade_test
 import (
 	"acceptancetests/helpers"
 	"acceptancetests/helpers/apps"
+	"acceptancetests/helpers/brokers"
 	"acceptancetests/helpers/random"
 
 	. "github.com/onsi/ginkgo"
@@ -13,9 +14,9 @@ var _ = Describe("UpgradeMssqlDBTest", func() {
 	When("upgrading broker version", func() {
 		It("should continue to work", func() {
 			By("pushing latest released broker version")
-			serviceBroker := helpers.CreateBroker(
-				helpers.BrokerWithPrefix("csb-mssql-srvdb"),
-				helpers.BrokerFromDir(releasedBuildDir),
+			serviceBroker := brokers.Create(
+				brokers.WithPrefix("csb-srvdb"),
+				brokers.WithSourceDir(releasedBuildDir),
 			)
 			defer serviceBroker.Delete()
 
@@ -25,7 +26,7 @@ var _ = Describe("UpgradeMssqlDBTest", func() {
 			defer serverInstance.Delete()
 
 			By("reconfiguring the CSB with DB server details")
-			serverTag := serverConfig.reconfigureCSBWithServerDetails(serviceBroker.Name)
+			serverTag := serverConfig.reconfigureCSBWithServerDetails(serviceBroker)
 
 			By("creating a database in the server")
 			dbInstance := helpers.CreateServiceFromBroker("csb-azure-mssql-db", "small", serviceBroker.Name, map[string]string{"server": serverTag})
@@ -57,7 +58,7 @@ var _ = Describe("UpgradeMssqlDBTest", func() {
 			Expect(got).To(Equal(valueOne))
 
 			By("pushing the development version of the broker")
-			serviceBroker.Update(developmentBuildDir)
+			serviceBroker.UpdateSourceDir(developmentBuildDir)
 
 			By("updating the instance plan")
 			dbInstance.UpdateService("-p", "medium")
@@ -110,7 +111,7 @@ type databaseServer struct {
 	Password string `json:"admin_password"`
 }
 
-func (d databaseServer) reconfigureCSBWithServerDetails(broker string) string {
+func (d databaseServer) reconfigureCSBWithServerDetails(broker *brokers.Broker) string {
 	serverTag := random.Name(random.WithMaxLength(10))
 
 	creds := map[string]interface{}{
@@ -122,9 +123,7 @@ func (d databaseServer) reconfigureCSBWithServerDetails(broker string) string {
 		},
 	}
 
-	helpers.SetBrokerEnv(broker, apps.EnvVar{Name: "MSSQL_DB_SERVER_CREDS", Value: creds})
-
-	helpers.RestartBroker(broker)
+	broker.UpdateEnv(apps.EnvVar{Name: "MSSQL_DB_SERVER_CREDS", Value: creds})
 
 	return serverTag
 }
