@@ -14,7 +14,7 @@ import (
 type Binding struct {
 	serviceInstance ServiceInstance
 	bindingName     string
-	appInstance     apps.App
+	appInstance     *apps.App
 }
 
 func (b Binding) Credential() interface{} {

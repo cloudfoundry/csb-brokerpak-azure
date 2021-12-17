@@ -3,6 +3,7 @@ package upgrade_test
 import (
 	"acceptancetests/helpers"
 	"acceptancetests/helpers/apps"
+	"acceptancetests/helpers/brokers"
 	"acceptancetests/helpers/cf"
 	"acceptancetests/helpers/random"
 
@@ -17,13 +18,11 @@ var _ = Describe("UpgradeMssqlDBFailoverTest", func() {
 			rgConfig := resourceGroupConfig()
 			serversConfig := newServerPair(rgConfig.Name)
 
-			serviceBroker := helpers.CreateBroker(
-				helpers.BrokerWithPrefix("csb-db-fo"),
-				helpers.BrokerFromDir(releasedBuildDir),
-				helpers.BrokerWithEnv(
-					apps.EnvVar{Name: "MSSQL_DB_FOG_SERVER_PAIR_CREDS", Value: serversConfig.ServerPairsConfig()},
-				))
-
+			serviceBroker := brokers.Create(
+				brokers.WithPrefix("csb-db-fo"),
+				brokers.WithSourceDir(releasedBuildDir),
+				brokers.WithEnv(apps.EnvVar{Name: "MSSQL_DB_FOG_SERVER_PAIR_CREDS", Value: serversConfig.ServerPairsConfig()}),
+			)
 			defer serviceBroker.Delete()
 
 			By("creating a new resource group")
@@ -68,7 +67,7 @@ var _ = Describe("UpgradeMssqlDBFailoverTest", func() {
 			Expect(got).To(Equal(valueOne))
 
 			By("pushing the development version of the broker")
-			serviceBroker.Update(developmentBuildDir)
+			serviceBroker.UpdateSourceDir(developmentBuildDir)
 
 			By("updating the instance plan")
 			initialFogInstance.UpdateService("-p", "medium")

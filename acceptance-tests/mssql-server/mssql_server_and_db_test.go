@@ -3,6 +3,7 @@ package mssql_server_test
 import (
 	"acceptancetests/helpers"
 	"acceptancetests/helpers/apps"
+	"acceptancetests/helpers/brokers"
 	"acceptancetests/helpers/matchers"
 	"acceptancetests/helpers/random"
 
@@ -18,9 +19,9 @@ var _ = Describe("MSSQL Server and DB", func() {
 		serverTag := random.Name(random.WithMaxLength(10))
 		creds := serverConfig.getMASBServerDetails(serverTag)
 
-		serviceBroker := helpers.CreateBroker(
-			helpers.BrokerWithPrefix("csb-mssql-db"),
-			helpers.BrokerWithEnv(apps.EnvVar{Name: "MSSQL_DB_SERVER_CREDS", Value: creds}),
+		serviceBroker := brokers.Create(
+			brokers.WithPrefix("csb-mssql-db"),
+			brokers.WithEnv(apps.EnvVar{Name: "MSSQL_DB_SERVER_CREDS", Value: creds}),
 		)
 		defer serviceBroker.Delete()
 

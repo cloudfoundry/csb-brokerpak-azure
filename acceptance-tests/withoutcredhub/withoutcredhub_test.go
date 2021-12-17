@@ -3,6 +3,7 @@ package withoutcredhub_test
 import (
 	"acceptancetests/helpers"
 	"acceptancetests/helpers/apps"
+	"acceptancetests/helpers/brokers"
 	"acceptancetests/helpers/matchers"
 	"acceptancetests/helpers/random"
 
@@ -13,7 +14,10 @@ import (
 var _ = Describe("Without CredHub", func() {
 	It("can be accessed by an app", func() {
 		env := apps.EnvVar{Name: "CH_CRED_HUB_URL", Value: ""}
-		broker := helpers.CreateBroker(helpers.BrokerWithPrefix("csb-storage"), helpers.BrokerWithEnv(env))
+		broker := brokers.Create(
+			brokers.WithPrefix("csb-storage"),
+			brokers.WithEnv(env),
+		)
 		defer broker.Delete()
 
 		By("creating a service instance")

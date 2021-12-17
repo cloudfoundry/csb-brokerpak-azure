@@ -14,7 +14,7 @@ var _ = Describe("Storage", func() {
 	It("can be accessed by an app", func() {
 		By("creating a service instance")
 		collectionName := random.Name(random.WithPrefix("collection"))
-		serviceInstance := helpers.CreateServiceFromBroker("csb-azure-storage-account", "standard", helpers.DefaultBroker().Name)
+		serviceInstance := helpers.CreateServiceFromBroker("csb-azure-storage-account", "standard", helpers.DefaultBrokerName())
 		defer serviceInstance.Delete()
 
 		By("pushing the unstarted app twice")

@@ -3,6 +3,7 @@ package upgrade_test
 import (
 	"acceptancetests/helpers"
 	"acceptancetests/helpers/apps"
+	"acceptancetests/helpers/brokers"
 	"acceptancetests/helpers/random"
 
 	. "github.com/onsi/ginkgo"
@@ -13,9 +14,9 @@ var _ = Describe("UpgradeMongoTest", func() {
 	When("upgrading broker version", func() {
 		It("should continue to work", func() {
 			By("pushing latest released broker version")
-			serviceBroker := helpers.CreateBroker(
-				helpers.BrokerWithPrefix("csb-mongodb"),
-				helpers.BrokerFromDir(releasedBuildDir),
+			serviceBroker := brokers.Create(
+				brokers.WithPrefix("csb-mongodb"),
+				brokers.WithSourceDir(releasedBuildDir),
 			)
 			defer serviceBroker.Delete()
 
@@ -51,7 +52,7 @@ var _ = Describe("UpgradeMongoTest", func() {
 			Expect(got).To(Equal(documentDataOne))
 
 			By("pushing the development version of the broker")
-			serviceBroker.Update(developmentBuildDir)
+			serviceBroker.UpdateSourceDir(developmentBuildDir)
 
 			By("updating the instance plan")
 			serviceInstance.UpdateService("-p", "medium")

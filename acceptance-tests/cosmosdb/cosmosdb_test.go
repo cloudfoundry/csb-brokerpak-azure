@@ -18,7 +18,7 @@ var _ = Describe("CosmosDB", func() {
 		serviceInstance := helpers.CreateServiceFromBroker(
 			"csb-azure-cosmosdb-sql",
 			"small",
-			helpers.DefaultBroker().Name,
+			helpers.DefaultBrokerName(),
 			map[string]interface{}{"db_name": databaseName})
 		defer serviceInstance.Delete()
 

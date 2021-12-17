@@ -2,61 +2,60 @@ package passwordrotation_test
 
 import (
 	"acceptancetests/helpers"
-	"acceptancetests/helpers/apps"
+	"acceptancetests/helpers/brokers"
+	"acceptancetests/helpers/random"
 
 	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
 )
 
 var _ = Describe("Password Rotation", func() {
 	It("should reencrypt the DB when keys are rotated", func() {
-		serviceBroker := helpers.CreateBroker(helpers.BrokerWithPrefix("csb-rotation"))
+		By("creating a service broker with an encryption secret")
+		firstEncryptionSecret := random.Password()
+		serviceBroker := brokers.Create(
+			brokers.WithPrefix("csb-rotation"),
+			brokers.WithEncryptionSecrets(brokers.EncryptionSecret{
+				Password: firstEncryptionSecret,
+				Label:    "default",
+				Primary:  true,
+			}),
+		)
 		defer serviceBroker.Delete()
 
 		By("creating a service")
-		serviceInstance := helpers.CreateServiceFromBroker("csb-azure-postgresql", "small", serviceBroker.Name)
+		serviceInstance := helpers.CreateServiceFromBroker("csb-azure-storage-account", "standard", serviceBroker.Name)
 		defer serviceInstance.Delete()
 
-		By("getting current passwords")
-		encryptionPasswords := helpers.GetBrokerEncryptionEnv(serviceBroker.Name)
-
-		By("rotating the keys")
-		Expect(encryptionPasswords.EncryptionEnabled).To(BeTrue())
-		Expect(encryptionPasswords.EncryptionPasswords).To(HaveLen(1))
-
-		oldPass := encryptionPasswords.EncryptionPasswords[0]
-		oldPass.Primary = false
-		newPass := helpers.EncryptionPassword{
-			Password: helpers.Password{
-				Secret: "someVerySecretPa88wOrd",
+		By("adding a new encryption secret")
+		secondEncryptionSecret := random.Password()
+		serviceBroker.UpdateEncryptionSecrets(
+			brokers.EncryptionSecret{
+				Password: firstEncryptionSecret,
+				Label:    "default",
+				Primary:  false,
 			},
-			Label:   "second-password",
-			Primary: true,
-		}
-		helpers.SetBrokerEncryptionEnv(serviceBroker.Name, helpers.BrokerEnvVars{
-			EncryptionEnabled: encryptionPasswords.EncryptionEnabled,
-			EncryptionPasswords: helpers.EncryptionPasswords{
-				oldPass,
-				newPass,
+			brokers.EncryptionSecret{
+				Password: secondEncryptionSecret,
+				Label:    "second-password",
+				Primary:  true,
 			},
-		})
+		)
 
-		By("pushing the unstarted app")
-		app := apps.Push(apps.WithApp(apps.PostgreSQL))
-		defer apps.Delete(app)
+		By("creating a service key")
+		sk1 := serviceInstance.CreateKey()
+		defer sk1.Delete()
 
-		By("creating a binding")
-		serviceInstance.Bind(app)
-
-		By("starting the app")
-		apps.Start(app)
-
-		By("restarting the broker with new keys only")
-		helpers.SetBrokerEncryptionEnv(serviceBroker.Name, helpers.BrokerEnvVars{
-			EncryptionEnabled: encryptionPasswords.EncryptionEnabled,
-			EncryptionPasswords: helpers.EncryptionPasswords{
-				newPass,
+		By("removing the original encryption secret")
+		serviceBroker.UpdateEncryptionSecrets(
+			brokers.EncryptionSecret{
+				Password: secondEncryptionSecret,
+				Label:    "second-password",
+				Primary:  true,
 			},
-		})
+		)
+
+		By("creating a new service key")
+		sk2 := serviceInstance.CreateKey()
+		defer sk2.Delete()
 	})
 })

@@ -3,6 +3,7 @@ package upgrade_test
 import (
 	"acceptancetests/helpers"
 	"acceptancetests/helpers/apps"
+	"acceptancetests/helpers/brokers"
 	"acceptancetests/helpers/random"
 
 	. "github.com/onsi/ginkgo"
@@ -11,11 +12,11 @@ import (
 
 var _ = Describe("UpgradeStorageTest", func() {
 	When("upgrading broker version", func() {
-		It("should continue to work", func() {
+		FIt("should continue to work", func() {
 			By("pushing latest released broker version")
-			serviceBroker := helpers.CreateBroker(
-				helpers.BrokerWithPrefix("csb-storage"),
-				helpers.BrokerFromDir(releasedBuildDir),
+			serviceBroker := brokers.Create(
+				brokers.WithPrefix("csb-storage"),
+				brokers.WithSourceDir(releasedBuildDir),
 			)
 			defer serviceBroker.Delete()
 
@@ -47,7 +48,7 @@ var _ = Describe("UpgradeStorageTest", func() {
 			Expect(got).To(Equal(blobDataOne))
 
 			By("pushing the development version of the broker")
-			serviceBroker.Update(developmentBuildDir)
+			serviceBroker.UpdateSourceDir(developmentBuildDir)
 
 			By("re-applying the terraform for service instance")
 			serviceInstance.UpdateService("-c", "{\"replication_type\":\"GRS\"}")

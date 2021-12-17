@@ -13,7 +13,7 @@ import (
 var _ = Describe("PostgreSQL", func() {
 	It("can be accessed by an app", func() {
 		By("creating a service instance")
-		serviceInstance := helpers.CreateServiceFromBroker("csb-azure-postgresql", "small", helpers.DefaultBroker().Name)
+		serviceInstance := helpers.CreateServiceFromBroker("csb-azure-postgresql", "small", helpers.DefaultBrokerName())
 		defer serviceInstance.Delete()
 
 		By("pushing the unstarted app twice")

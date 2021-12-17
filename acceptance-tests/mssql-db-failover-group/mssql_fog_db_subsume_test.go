@@ -3,6 +3,7 @@ package mssql_db_failover_group_test
 import (
 	"acceptancetests/helpers"
 	"acceptancetests/helpers/apps"
+	"acceptancetests/helpers/brokers"
 	"acceptancetests/helpers/cf"
 	"acceptancetests/helpers/matchers"
 	"acceptancetests/helpers/random"
@@ -53,10 +54,10 @@ var _ = Describe("MSSQL Failover Group DB Subsume", func() {
 
 		By("Create the CSB with DB server details")
 		serverPairTag := random.Name(random.WithMaxLength(10))
-		serviceBroker := helpers.CreateBroker(
-			helpers.BrokerWithPrefix("csb-mssql-fog-db"),
+		serviceBroker := brokers.Create(
+			brokers.WithPrefix("csb-mssql-fog-db"),
 			// Disable brokerpak_updates due to bug - https://www.pivotaltracker.com/story/show/180586187
-			helpers.BrokerWithEnv(apps.EnvVar{Name: "MSSQL_DB_FOG_SERVER_PAIR_CREDS", Value: serverPairsConfig(serverPairTag)}, apps.EnvVar{Name: "BROKERPAK_UPDATES_ENABLED", Value: false}),
+			brokers.WithEnv(apps.EnvVar{Name: "MSSQL_DB_FOG_SERVER_PAIR_CREDS", Value: serverPairsConfig(serverPairTag)}, apps.EnvVar{Name: "BROKERPAK_UPDATES_ENABLED", Value: false}),
 		)
 		defer serviceBroker.Delete()
 

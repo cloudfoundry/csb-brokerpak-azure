@@ -12,7 +12,7 @@ type EnvVar struct {
 	Value interface{}
 }
 
-func (a App) SetEnv(env ...EnvVar) {
+func (a *App) SetEnv(env ...EnvVar) {
 	SetEnv(a.Name, env...)
 }
 
