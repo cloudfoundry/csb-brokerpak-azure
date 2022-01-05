@@ -1,10 +1,10 @@
 package upgrade_test
 
 import (
-	"acceptancetests/helpers"
 	"acceptancetests/helpers/apps"
 	"acceptancetests/helpers/brokers"
 	"acceptancetests/helpers/random"
+	"acceptancetests/helpers/services"
 	"fmt"
 	"regexp"
 
@@ -23,7 +23,11 @@ var _ = Describe("UpgradeMssqlFailoverGroupTest", func() {
 			defer serviceBroker.Delete()
 
 			By("creating a service")
-			serviceInstance := helpers.CreateServiceFromBroker("csb-azure-mssql-failover-group", "small-v2", serviceBroker.Name)
+			serviceInstance := services.CreateInstance(
+				"csb-azure-mssql-failover-group",
+				"small-v2",
+				services.WithBroker(serviceBroker),
+			)
 			defer serviceInstance.Delete()
 
 			By("pushing the unstarted app twice")
@@ -32,8 +36,8 @@ var _ = Describe("UpgradeMssqlFailoverGroupTest", func() {
 			defer apps.Delete(appOne, appTwo)
 
 			By("binding to the apps")
-			serviceInstance.Bind(appOne)
-			serviceInstance.Bind(appTwo)
+			bindingOne := serviceInstance.Bind(appOne)
+			bindingTwo := serviceInstance.Bind(appTwo)
 
 			By("starting the apps")
 			apps.Start(appOne, appTwo)
@@ -55,14 +59,19 @@ var _ = Describe("UpgradeMssqlFailoverGroupTest", func() {
 			serviceBroker.UpdateSourceDir(developmentBuildDir)
 
 			By("updating the instance plan")
-			serviceInstance.UpdateService("-p", "medium")
+			serviceInstance.Update("-p", "medium")
 
 			By("getting the previously set value using the second app")
 			got = appTwo.GET("%s/%s", schema, keyOne)
 			Expect(got).To(Equal(valueOne))
 
 			By("triggering failover")
-			failoverServiceInstance := helpers.CreateServiceFromBroker("csb-azure-mssql-fog-run-failover", "standard", serviceBroker.Name, failoverParameters(serviceInstance))
+			failoverServiceInstance := services.CreateInstance(
+				"csb-azure-mssql-fog-run-failover",
+				"standard",
+				services.WithBroker(serviceBroker),
+				services.WithParameters(failoverParameters(serviceInstance)),
+			)
 			defer failoverServiceInstance.Delete()
 
 			By("getting the previously set values")
@@ -72,8 +81,8 @@ var _ = Describe("UpgradeMssqlFailoverGroupTest", func() {
 			appOne.DELETE(schema)
 
 			By("deleting bindings created before the upgrade")
-			serviceInstance.Unbind(appOne)
-			serviceInstance.Unbind(appTwo)
+			bindingOne.Unbind()
+			bindingTwo.Unbind()
 
 			By("creating new bindings and testing they still work")
 			serviceInstance.Bind(appOne)
@@ -97,8 +106,8 @@ var _ = Describe("UpgradeMssqlFailoverGroupTest", func() {
 	})
 })
 
-func failoverParameters(instance helpers.ServiceInstance) interface{} {
-	key := instance.CreateKey()
+func failoverParameters(instance *services.ServiceInstance) interface{} {
+	key := instance.CreateServiceKey()
 	defer key.Delete()
 
 	var input struct {

@@ -1,4 +1,4 @@
-package helpers
+package servicekeys
 
 import (
 	"acceptancetests/helpers/cf"
@@ -9,14 +9,9 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-type ServiceKey struct {
-	name            string
-	serviceInstance ServiceInstance
-}
-
-func (k ServiceKey) Get(receiver interface{}) {
+func (s *ServiceKey) Get(receiver interface{}) {
 	Expect(reflect.ValueOf(receiver).Kind()).To(Equal(reflect.Ptr), "receiver must be a pointer")
-	out, _ := cf.Run("service-key", k.serviceInstance.name, k.name)
+	out, _ := cf.Run("service-key", s.serviceInstanceName, s.name)
 	start := strings.Index(out, "{")
 	Expect(start).To(BeNumerically(">", 0), "could not find start of JSON")
 	data := []byte(out[start:])
@@ -31,10 +26,5 @@ func (k ServiceKey) Get(receiver interface{}) {
 		Expect(err).NotTo(HaveOccurred())
 	}
 
-	err := json.Unmarshal(data, receiver)
-	Expect(err).NotTo(HaveOccurred())
-}
-
-func (k ServiceKey) Delete() {
-	cf.Run("delete-service-key", "-f", k.serviceInstance.name, k.name)
+	Expect(json.Unmarshal(data, receiver)).NotTo(HaveOccurred())
 }

@@ -1,10 +1,10 @@
 package upgrade_test
 
 import (
-	"acceptancetests/helpers"
 	"acceptancetests/helpers/apps"
 	"acceptancetests/helpers/brokers"
 	"acceptancetests/helpers/random"
+	"acceptancetests/helpers/services"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -12,7 +12,7 @@ import (
 
 var _ = Describe("UpgradeStorageTest", func() {
 	When("upgrading broker version", func() {
-		FIt("should continue to work", func() {
+		It("should continue to work", func() {
 			By("pushing latest released broker version")
 			serviceBroker := brokers.Create(
 				brokers.WithPrefix("csb-storage"),
@@ -21,7 +21,11 @@ var _ = Describe("UpgradeStorageTest", func() {
 			defer serviceBroker.Delete()
 
 			By("creating a service")
-			serviceInstance := helpers.CreateServiceFromBroker("csb-azure-storage-account", "standard", serviceBroker.Name)
+			serviceInstance := services.CreateInstance(
+				"csb-azure-storage-account",
+				"standard",
+				services.WithBroker(serviceBroker),
+			)
 			defer serviceInstance.Delete()
 
 			By("pushing the unstarted app twice")
@@ -30,8 +34,8 @@ var _ = Describe("UpgradeStorageTest", func() {
 			defer apps.Delete(appOne, appTwo)
 
 			By("binding to the apps")
-			serviceInstance.Bind(appOne)
-			serviceInstance.Bind(appTwo)
+			bindingOne := serviceInstance.Bind(appOne)
+			bindingTwo := serviceInstance.Bind(appTwo)
 			apps.Start(appOne, appTwo)
 
 			By("creating a collection")
@@ -51,11 +55,11 @@ var _ = Describe("UpgradeStorageTest", func() {
 			serviceBroker.UpdateSourceDir(developmentBuildDir)
 
 			By("re-applying the terraform for service instance")
-			serviceInstance.UpdateService("-c", "{\"replication_type\":\"GRS\"}")
+			serviceInstance.Update("-c", "{\"replication_type\":\"GRS\"}")
 
 			By("deleting bindings created before the upgrade")
-			serviceInstance.Unbind(appOne)
-			serviceInstance.Unbind(appTwo)
+			bindingOne.Unbind()
+			bindingTwo.Unbind()
 
 			By("creating new bindings and testing they still work")
 			serviceInstance.Bind(appOne)

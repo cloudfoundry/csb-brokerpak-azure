@@ -1,10 +1,10 @@
 package storage_test
 
 import (
-	"acceptancetests/helpers"
 	"acceptancetests/helpers/apps"
 	"acceptancetests/helpers/matchers"
 	"acceptancetests/helpers/random"
+	"acceptancetests/helpers/services"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -14,7 +14,7 @@ var _ = Describe("Storage", func() {
 	It("can be accessed by an app", func() {
 		By("creating a service instance")
 		collectionName := random.Name(random.WithPrefix("collection"))
-		serviceInstance := helpers.CreateServiceFromBroker("csb-azure-storage-account", "standard", helpers.DefaultBrokerName())
+		serviceInstance := services.CreateInstance("csb-azure-storage-account", "standard")
 		defer serviceInstance.Delete()
 
 		By("pushing the unstarted app twice")

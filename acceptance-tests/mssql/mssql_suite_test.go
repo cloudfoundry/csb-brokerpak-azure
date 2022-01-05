@@ -1,8 +1,8 @@
 package mssql_test
 
 import (
-	"acceptancetests/helpers"
 	"acceptancetests/helpers/random"
+	"acceptancetests/helpers/services"
 	"fmt"
 	"regexp"
 	"testing"
@@ -16,8 +16,8 @@ func TestMSSQL(t *testing.T) {
 	RunSpecs(t, "MSSQL Suite")
 }
 
-func failoverParameters(instance helpers.ServiceInstance) interface{} {
-	key := instance.CreateKey()
+func failoverParameters(instance *services.ServiceInstance) interface{} {
+	key := instance.CreateServiceKey()
 	defer key.Delete()
 
 	var input struct {

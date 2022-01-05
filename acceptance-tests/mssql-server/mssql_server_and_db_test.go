@@ -1,11 +1,11 @@
 package mssql_server_test
 
 import (
-	"acceptancetests/helpers"
 	"acceptancetests/helpers/apps"
 	"acceptancetests/helpers/brokers"
 	"acceptancetests/helpers/matchers"
 	"acceptancetests/helpers/random"
+	"acceptancetests/helpers/services"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -26,11 +26,21 @@ var _ = Describe("MSSQL Server and DB", func() {
 		defer serviceBroker.Delete()
 
 		By("creating a server")
-		serverInstance := helpers.CreateServiceFromBroker("csb-azure-mssql-server", "standard", serviceBroker.Name, serverConfig)
+		serverInstance := services.CreateInstance(
+			"csb-azure-mssql-server",
+			"standard",
+			services.WithBroker(serviceBroker),
+			services.WithParameters(serverConfig),
+		)
 		defer serverInstance.Delete()
 
 		By("creating a database in the server")
-		dbInstance := helpers.CreateServiceFromBroker("csb-azure-mssql-db", "small", serviceBroker.Name, map[string]string{"server": serverTag})
+		dbInstance := services.CreateInstance(
+			"csb-azure-mssql-db",
+			"small",
+			services.WithBroker(serviceBroker),
+			services.WithParameters(map[string]string{"server": serverTag}),
+		)
 		defer dbInstance.Delete()
 
 		By("pushing the unstarted app twice")

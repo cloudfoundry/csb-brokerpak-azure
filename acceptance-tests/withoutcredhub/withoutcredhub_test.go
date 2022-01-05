@@ -1,11 +1,11 @@
 package withoutcredhub_test
 
 import (
-	"acceptancetests/helpers"
 	"acceptancetests/helpers/apps"
 	"acceptancetests/helpers/brokers"
 	"acceptancetests/helpers/matchers"
 	"acceptancetests/helpers/random"
+	"acceptancetests/helpers/services"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -21,7 +21,11 @@ var _ = Describe("Without CredHub", func() {
 		defer broker.Delete()
 
 		By("creating a service instance")
-		serviceInstance := helpers.CreateServiceFromBroker("csb-azure-storage-account", "standard", broker.Name)
+		serviceInstance := services.CreateInstance(
+			"csb-azure-storage-account",
+			"standard",
+			services.WithBroker(broker),
+		)
 		defer serviceInstance.Delete()
 
 		By("pushing the unstarted app")
