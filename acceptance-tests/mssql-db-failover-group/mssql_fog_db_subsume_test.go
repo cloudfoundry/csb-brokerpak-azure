@@ -24,6 +24,7 @@ var _ = Describe("MSSQL Failover Group DB Subsume", func() {
 		masbDBInstance := services.CreateInstance(
 			"azure-sqldb",
 			"StandardS0",
+			services.WithMASBBroker(),
 			services.WithParameters(masbServerConfig(masbDBName)),
 		)
 		defer masbDBInstance.Delete()
@@ -33,6 +34,7 @@ var _ = Describe("MSSQL Failover Group DB Subsume", func() {
 		masbFOGInstance := services.CreateInstance(
 			"azure-sqldb-failover-group",
 			"SecondaryDatabaseWithFailoverGroup",
+			services.WithMASBBroker(),
 			services.WithParameters(masbFOGConfig(masbDBName, fogName)),
 		)
 		defer masbFOGInstance.Delete()
