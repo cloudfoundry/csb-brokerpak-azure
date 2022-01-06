@@ -74,6 +74,12 @@ func WithDefaultBroker() Option {
 	}
 }
 
+func WithMASBBroker() Option {
+	return func(c *config) {
+		c.serviceBrokerName = "azure-service-broker"
+	}
+}
+
 func WithBroker(broker *brokers.Broker) Option {
 	return func(c *config) {
 		c.serviceBrokerName = broker.Name
