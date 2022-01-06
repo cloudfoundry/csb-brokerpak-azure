@@ -24,6 +24,7 @@ var _ = Describe("MSSQL DB Subsume", func() {
 		masbServiceInstance := services.CreateInstance(
 			"azure-sqldb",
 			"basic",
+			services.WithMASBBroker(),
 			services.WithParameters(masbServerConfig(masbDBName)),
 		)
 		defer masbServiceInstance.Delete()
