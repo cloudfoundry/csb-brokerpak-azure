@@ -1,11 +1,11 @@
 package upgrade_test
 
 import (
-	"acceptancetests/helpers"
 	"acceptancetests/helpers/apps"
 	"acceptancetests/helpers/brokers"
 	"acceptancetests/helpers/cf"
 	"acceptancetests/helpers/random"
+	"acceptancetests/helpers/services"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -26,19 +26,39 @@ var _ = Describe("UpgradeMssqlDBFailoverTest", func() {
 			defer serviceBroker.Delete()
 
 			By("creating a new resource group")
-			resourceGroupInstance := helpers.CreateServiceFromBroker("csb-azure-resource-group", "standard", serviceBroker.Name, rgConfig)
+			resourceGroupInstance := services.CreateInstance(
+				"csb-azure-resource-group",
+				"standard",
+				services.WithBroker(serviceBroker),
+				services.WithParameters(rgConfig),
+			)
 			defer resourceGroupInstance.Delete()
 
 			By("creating primary and secondary DB servers in the resource group")
-			serverInstancePrimary := helpers.CreateServiceFromBroker("csb-azure-mssql-server", "standard", serviceBroker.Name, serversConfig.PrimaryConfig())
+			serverInstancePrimary := services.CreateInstance(
+				"csb-azure-mssql-server",
+				"standard",
+				services.WithBroker(serviceBroker),
+				services.WithParameters(serversConfig.PrimaryConfig()),
+			)
 			defer serverInstancePrimary.Delete()
 
-			serverInstanceSecondary := helpers.CreateServiceFromBroker("csb-azure-mssql-server", "standard", serviceBroker.Name, serversConfig.SecondaryConfig())
+			serverInstanceSecondary := services.CreateInstance(
+				"csb-azure-mssql-server",
+				"standard",
+				services.WithBroker(serviceBroker),
+				services.WithParameters(serversConfig.SecondaryConfig()),
+			)
 			defer serverInstanceSecondary.Delete()
 
 			By("creating a failover group service instance")
 			fogConfig := failoverGroupConfig(serversConfig.ServerPairTag)
-			initialFogInstance := helpers.CreateServiceFromBroker("csb-azure-mssql-db-failover-group", "small", serviceBroker.Name, fogConfig)
+			initialFogInstance := services.CreateInstance(
+				"csb-azure-mssql-db-failover-group",
+				"small",
+				services.WithBroker(serviceBroker),
+				services.WithParameters(fogConfig),
+			)
 			defer initialFogInstance.Delete()
 
 			By("pushing the unstarted app twice")
@@ -70,25 +90,30 @@ var _ = Describe("UpgradeMssqlDBFailoverTest", func() {
 			serviceBroker.UpdateSourceDir(developmentBuildDir)
 
 			By("updating the instance plan")
-			initialFogInstance.UpdateService("-p", "medium")
+			initialFogInstance.Update("-p", "medium")
 
 			By("getting the previously set value using the second app")
 			got = appTwo.GET("%s/%s", schema, keyOne)
 			Expect(got).To(Equal(valueOne))
 
 			By("connecting to the existing failover group")
-			dbFogInstance := helpers.CreateServiceFromBroker("csb-azure-mssql-db-failover-group", "existing", serviceBroker.Name, fogConfig)
+			dbFogInstance := services.CreateInstance(
+				"csb-azure-mssql-db-failover-group",
+				"existing",
+				services.WithBroker(serviceBroker),
+				services.WithParameters(fogConfig),
+			)
 			defer dbFogInstance.Delete()
 
 			By("purging the initial FOG instance")
-			cf.Run("purge-service-instance", "-f", initialFogInstance.Name())
+			cf.Run("purge-service-instance", "-f", initialFogInstance.Name)
 
 			By("creating new bindings and testing they still work")
-			dbFogInstance.Bind(appOne)
-			dbFogInstance.Bind(appTwo)
+			bindingOne := dbFogInstance.Bind(appOne)
+			bindingTwo := dbFogInstance.Bind(appTwo)
 			apps.Restage(appOne, appTwo)
-			defer dbFogInstance.Unbind(appOne)
-			defer dbFogInstance.Unbind(appTwo)
+			defer bindingOne.Unbind()
+			defer bindingTwo.Unbind()
 
 			By("getting the previously set values")
 			Expect(appTwo.GET("%s/%s", schema, keyOne)).To(Equal(valueOne))

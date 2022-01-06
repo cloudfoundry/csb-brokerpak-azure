@@ -1,10 +1,10 @@
 package upgrade_test
 
 import (
-	"acceptancetests/helpers"
 	"acceptancetests/helpers/apps"
 	"acceptancetests/helpers/brokers"
 	"acceptancetests/helpers/random"
+	"acceptancetests/helpers/services"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -22,14 +22,24 @@ var _ = Describe("UpgradeMssqlDBTest", func() {
 
 			By("creating a service")
 			serverConfig := newDatabaseServer()
-			serverInstance := helpers.CreateServiceFromBroker("csb-azure-mssql-server", "standard", serviceBroker.Name, serverConfig)
+			serverInstance := services.CreateInstance(
+				"csb-azure-mssql-server",
+				"standard",
+				services.WithBroker(serviceBroker),
+				services.WithParameters(serverConfig),
+			)
 			defer serverInstance.Delete()
 
 			By("reconfiguring the CSB with DB server details")
 			serverTag := serverConfig.reconfigureCSBWithServerDetails(serviceBroker)
 
 			By("creating a database in the server")
-			dbInstance := helpers.CreateServiceFromBroker("csb-azure-mssql-db", "small", serviceBroker.Name, map[string]string{"server": serverTag})
+			dbInstance := services.CreateInstance(
+				"csb-azure-mssql-db",
+				"small",
+				services.WithBroker(serviceBroker),
+				services.WithParameters(map[string]string{"server": serverTag}),
+			)
 			defer dbInstance.Delete()
 
 			By("pushing the unstarted app twice")
@@ -38,8 +48,8 @@ var _ = Describe("UpgradeMssqlDBTest", func() {
 			defer apps.Delete(appOne, appTwo)
 
 			By("binding to the apps")
-			dbInstance.Bind(appOne)
-			dbInstance.Bind(appTwo)
+			bindingOne := dbInstance.Bind(appOne)
+			bindingTwo := dbInstance.Bind(appTwo)
 
 			By("starting the apps")
 			apps.Start(appOne, appTwo)
@@ -61,7 +71,7 @@ var _ = Describe("UpgradeMssqlDBTest", func() {
 			serviceBroker.UpdateSourceDir(developmentBuildDir)
 
 			By("updating the instance plan")
-			dbInstance.UpdateService("-p", "medium")
+			dbInstance.Update("-p", "medium")
 
 			By("checking previously created data still accessible")
 			got = appTwo.GET("%s/%s", schema, keyOne)
@@ -71,8 +81,8 @@ var _ = Describe("UpgradeMssqlDBTest", func() {
 			appOne.DELETE(schema)
 
 			By("deleting bindings created before the upgrade")
-			dbInstance.Unbind(appOne)
-			dbInstance.Unbind(appTwo)
+			bindingOne.Unbind()
+			bindingTwo.Unbind()
 
 			By("creating new bindings")
 			dbInstance.Bind(appOne)

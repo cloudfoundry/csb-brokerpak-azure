@@ -1,4 +1,4 @@
-package helpers
+package brokers
 
 import (
 	"acceptancetests/helpers/cf"

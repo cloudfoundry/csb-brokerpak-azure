@@ -1,10 +1,10 @@
 package upgrade_test
 
 import (
-	"acceptancetests/helpers"
 	"acceptancetests/helpers/apps"
 	"acceptancetests/helpers/brokers"
 	"acceptancetests/helpers/random"
+	"acceptancetests/helpers/services"
 	"fmt"
 
 	. "github.com/onsi/ginkgo"
@@ -23,11 +23,12 @@ var _ = Describe("UpgradeCosmosTest", func() {
 
 			By("creating a service")
 			databaseName := random.Name(random.WithPrefix("database"))
-			serviceInstance := helpers.CreateServiceFromBroker(
+			serviceInstance := services.CreateInstance(
 				"csb-azure-cosmosdb-sql",
 				"small",
-				serviceBroker.Name,
-				map[string]interface{}{"db_name": databaseName})
+				services.WithBroker(serviceBroker),
+				services.WithParameters(map[string]interface{}{"db_name": databaseName}),
+			)
 			defer serviceInstance.Delete()
 
 			By("pushing the unstarted app twice")
@@ -36,8 +37,8 @@ var _ = Describe("UpgradeCosmosTest", func() {
 			defer apps.Delete(appOne, appTwo)
 
 			By("binding to the apps")
-			serviceInstance.Bind(appOne)
-			serviceInstance.Bind(appTwo)
+			bindingOne := serviceInstance.Bind(appOne)
+			bindingTwo := serviceInstance.Bind(appTwo)
 
 			By("starting the apps")
 			apps.Start(appOne, appTwo)
@@ -65,15 +66,15 @@ var _ = Describe("UpgradeCosmosTest", func() {
 			serviceBroker.UpdateSourceDir(developmentBuildDir)
 
 			By("updating the instance plan")
-			serviceInstance.UpdateService("-p", "medium")
+			serviceInstance.Update("-p", "medium")
 
 			By("checking previous data still accessible")
 			got = appTwo.GET("%s/%s/%s", databaseName, collectionName, documentNameOne)
 			Expect(got).To(Equal(documentDataOne))
 
 			By("deleting bindings created before the upgrade")
-			serviceInstance.Unbind(appOne)
-			serviceInstance.Unbind(appTwo)
+			bindingOne.Unbind()
+			bindingTwo.Unbind()
 
 			By("creating new bindings and testing they still work")
 			serviceInstance.Bind(appOne)

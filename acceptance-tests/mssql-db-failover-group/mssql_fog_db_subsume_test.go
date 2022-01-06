@@ -1,12 +1,12 @@
 package mssql_db_failover_group_test
 
 import (
-	"acceptancetests/helpers"
 	"acceptancetests/helpers/apps"
 	"acceptancetests/helpers/brokers"
 	"acceptancetests/helpers/cf"
 	"acceptancetests/helpers/matchers"
 	"acceptancetests/helpers/random"
+	"acceptancetests/helpers/services"
 	"os/exec"
 	"strings"
 	"time"
@@ -21,12 +21,20 @@ var _ = Describe("MSSQL Failover Group DB Subsume", func() {
 	It("can be accessed by an app", func() {
 		By("creating a service instance using the MASB broker")
 		masbDBName := random.Name(random.WithPrefix("db"))
-		masbDBInstance := helpers.CreateService("azure-sqldb", "StandardS0", masbServerConfig(masbDBName))
+		masbDBInstance := services.CreateInstance(
+			"azure-sqldb",
+			"StandardS0",
+			services.WithParameters(masbServerConfig(masbDBName)),
+		)
 		defer masbDBInstance.Delete()
 
 		By("creating a failover group using the MASB broker")
 		fogName := random.Name(random.WithPrefix("fog"))
-		masbFOGInstance := helpers.CreateService("azure-sqldb-failover-group", "SecondaryDatabaseWithFailoverGroup", masbFOGConfig(masbDBName, fogName))
+		masbFOGInstance := services.CreateInstance(
+			"azure-sqldb-failover-group",
+			"SecondaryDatabaseWithFailoverGroup",
+			services.WithParameters(masbFOGConfig(masbDBName, fogName)),
+		)
 		defer masbFOGInstance.Delete()
 
 		By("pushing the unstarted app twice")
@@ -62,19 +70,24 @@ var _ = Describe("MSSQL Failover Group DB Subsume", func() {
 		defer serviceBroker.Delete()
 
 		By("subsuming the database failover group")
-		dbFogInstance := helpers.CreateServiceFromBroker("csb-azure-mssql-db-failover-group", "subsume", serviceBroker.Name, map[string]string{
-			"azure_primary_db_id":   fetchResourceID("db", masbDBName, metadata.PreProvisionedSQLServer),
-			"azure_secondary_db_id": fetchResourceID("db", masbDBName, metadata.PreProvisionedFOGServer),
-			"azure_fog_id":          fetchResourceID("failover-group", fogName, metadata.PreProvisionedSQLServer),
-			"server_pair":           serverPairTag,
-		})
+		dbFogInstance := services.CreateInstance(
+			"csb-azure-mssql-db-failover-group",
+			"subsume",
+			services.WithBroker(serviceBroker),
+			services.WithParameters(map[string]string{
+				"azure_primary_db_id":   fetchResourceID("db", masbDBName, metadata.PreProvisionedSQLServer),
+				"azure_secondary_db_id": fetchResourceID("db", masbDBName, metadata.PreProvisionedFOGServer),
+				"azure_fog_id":          fetchResourceID("failover-group", fogName, metadata.PreProvisionedSQLServer),
+				"server_pair":           serverPairTag,
+			}),
+		)
 		defer dbFogInstance.Delete()
 
 		By("purging the MASB FOG instance")
-		cf.Run("purge-service-instance", "-f", masbFOGInstance.Name())
+		cf.Run("purge-service-instance", "-f", masbFOGInstance.Name)
 
 		By("updating to another plan")
-		dbFogInstance.UpdateService("-p", "small")
+		dbFogInstance.Update("-p", "small")
 
 		By("binding the app to the CSB service instance")
 		binding := dbFogInstance.Bind(app)

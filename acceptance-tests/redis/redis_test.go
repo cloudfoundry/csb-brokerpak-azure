@@ -1,10 +1,10 @@
 package redis_test
 
 import (
-	"acceptancetests/helpers"
 	"acceptancetests/helpers/apps"
 	"acceptancetests/helpers/matchers"
 	"acceptancetests/helpers/random"
+	"acceptancetests/helpers/services"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -13,7 +13,7 @@ import (
 var _ = Describe("Redis", func() {
 	It("can be accessed by an app", func() {
 		By("creating a service instance")
-		serviceInstance := helpers.CreateServiceFromBroker("csb-azure-redis", "small", helpers.DefaultBrokerName())
+		serviceInstance := services.CreateInstance("csb-azure-redis", "small")
 		defer serviceInstance.Delete()
 
 		By("pushing the unstarted app twice")

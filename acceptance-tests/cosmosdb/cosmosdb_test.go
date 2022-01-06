@@ -1,10 +1,10 @@
 package cosmosdb_test
 
 import (
-	"acceptancetests/helpers"
 	"acceptancetests/helpers/apps"
 	"acceptancetests/helpers/matchers"
 	"acceptancetests/helpers/random"
+	"acceptancetests/helpers/services"
 	"fmt"
 
 	. "github.com/onsi/ginkgo"
@@ -15,11 +15,11 @@ var _ = Describe("CosmosDB", func() {
 	It("can be accessed by an app", func() {
 		By("creating a service instance")
 		databaseName := random.Name(random.WithPrefix("database"))
-		serviceInstance := helpers.CreateServiceFromBroker(
+		serviceInstance := services.CreateInstance(
 			"csb-azure-cosmosdb-sql",
 			"small",
-			helpers.DefaultBrokerName(),
-			map[string]interface{}{"db_name": databaseName})
+			services.WithParameters(map[string]interface{}{"db_name": databaseName}),
+		)
 		defer serviceInstance.Delete()
 
 		By("pushing the unstarted app twice")

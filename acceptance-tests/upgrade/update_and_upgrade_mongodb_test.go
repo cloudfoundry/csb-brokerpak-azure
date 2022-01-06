@@ -1,10 +1,10 @@
 package upgrade_test
 
 import (
-	"acceptancetests/helpers"
 	"acceptancetests/helpers/apps"
 	"acceptancetests/helpers/brokers"
 	"acceptancetests/helpers/random"
+	"acceptancetests/helpers/services"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -23,11 +23,16 @@ var _ = Describe("UpgradeMongoTest", func() {
 			By("creating a service instance")
 			databaseName := random.Name(random.WithPrefix("database"))
 			collectionName := random.Name(random.WithPrefix("collection"))
-			serviceInstance := helpers.CreateServiceFromBroker("csb-azure-mongodb", "small", serviceBroker.Name, map[string]interface{}{
-				"db_name":         databaseName,
-				"collection_name": collectionName,
-				"shard_key":       "_id",
-			})
+			serviceInstance := services.CreateInstance(
+				"csb-azure-mongodb",
+				"small",
+				services.WithBroker(serviceBroker),
+				services.WithParameters(map[string]interface{}{
+					"db_name":         databaseName,
+					"collection_name": collectionName,
+					"shard_key":       "_id",
+				}),
+			)
 			defer serviceInstance.Delete()
 
 			By("pushing the unstarted app twice")
@@ -36,8 +41,8 @@ var _ = Describe("UpgradeMongoTest", func() {
 			defer apps.Delete(appOne, appTwo)
 
 			By("binding the apps to the MongoDB service instance")
-			serviceInstance.Bind(appOne)
-			serviceInstance.Bind(appTwo)
+			bindingOne := serviceInstance.Bind(appOne)
+			bindingTwo := serviceInstance.Bind(appTwo)
 
 			By("starting the apps")
 			apps.Start(appOne, appTwo)
@@ -55,15 +60,15 @@ var _ = Describe("UpgradeMongoTest", func() {
 			serviceBroker.UpdateSourceDir(developmentBuildDir)
 
 			By("updating the instance plan")
-			serviceInstance.UpdateService("-p", "medium")
+			serviceInstance.Update("-p", "medium")
 
 			By("checking previous data still accessible")
 			got = appTwo.GET("%s/%s/%s", databaseName, collectionName, documentNameOne)
 			Expect(got).To(Equal(documentDataOne))
 
 			By("deleting bindings created before the upgrade")
-			serviceInstance.Unbind(appOne)
-			serviceInstance.Unbind(appTwo)
+			bindingOne.Unbind()
+			bindingTwo.Unbind()
 
 			By("creating new bindings")
 			serviceInstance.Bind(appOne)

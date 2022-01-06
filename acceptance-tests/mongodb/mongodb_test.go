@@ -1,10 +1,10 @@
 package mongodb_test
 
 import (
-	"acceptancetests/helpers"
 	"acceptancetests/helpers/apps"
 	"acceptancetests/helpers/matchers"
 	"acceptancetests/helpers/random"
+	"acceptancetests/helpers/services"
 	"fmt"
 
 	. "github.com/onsi/ginkgo"
@@ -16,11 +16,14 @@ var _ = Describe("MongoDB", func() {
 		By("creating a service instance")
 		databaseName := random.Name(random.WithPrefix("database"))
 		collectionName := random.Name(random.WithPrefix("collection"))
-		serviceInstance := helpers.CreateServiceFromBroker("csb-azure-mongodb", "small", helpers.DefaultBrokerName(), map[string]interface{}{
-			"db_name":         databaseName,
-			"collection_name": collectionName,
-			"shard_key":       "_id",
-		})
+		serviceInstance := services.CreateInstance(
+			"csb-azure-mongodb",
+			"small", services.WithParameters(map[string]interface{}{
+				"db_name":         databaseName,
+				"collection_name": collectionName,
+				"shard_key":       "_id",
+			}),
+		)
 		defer serviceInstance.Delete()
 
 		By("pushing the unstarted app twice")
