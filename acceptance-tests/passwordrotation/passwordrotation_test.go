@@ -1,9 +1,9 @@
 package passwordrotation_test
 
 import (
-	"acceptancetests/helpers"
 	"acceptancetests/helpers/brokers"
 	"acceptancetests/helpers/random"
+	"acceptancetests/helpers/services"
 
 	. "github.com/onsi/ginkgo"
 )
@@ -23,7 +23,11 @@ var _ = Describe("Password Rotation", func() {
 		defer serviceBroker.Delete()
 
 		By("creating a service")
-		serviceInstance := helpers.CreateServiceFromBroker("csb-azure-storage-account", "standard", serviceBroker.Name)
+		serviceInstance := services.CreateInstance(
+			"csb-azure-storage-account",
+			"standard",
+			services.WithBroker(serviceBroker),
+		)
 		defer serviceInstance.Delete()
 
 		By("adding a new encryption secret")
@@ -42,7 +46,7 @@ var _ = Describe("Password Rotation", func() {
 		)
 
 		By("creating a service key")
-		sk1 := serviceInstance.CreateKey()
+		sk1 := serviceInstance.CreateServiceKey()
 		defer sk1.Delete()
 
 		By("removing the original encryption secret")
@@ -55,7 +59,7 @@ var _ = Describe("Password Rotation", func() {
 		)
 
 		By("creating a new service key")
-		sk2 := serviceInstance.CreateKey()
+		sk2 := serviceInstance.CreateServiceKey()
 		defer sk2.Delete()
 	})
 })

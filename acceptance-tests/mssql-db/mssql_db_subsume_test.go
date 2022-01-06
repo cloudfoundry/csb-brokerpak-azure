@@ -1,12 +1,12 @@
 package mssql_db_test
 
 import (
-	"acceptancetests/helpers"
 	"acceptancetests/helpers/apps"
 	"acceptancetests/helpers/brokers"
 	"acceptancetests/helpers/cf"
 	"acceptancetests/helpers/matchers"
 	"acceptancetests/helpers/random"
+	"acceptancetests/helpers/services"
 	"os/exec"
 	"strings"
 	"time"
@@ -21,7 +21,11 @@ var _ = Describe("MSSQL DB Subsume", func() {
 	It("can be accessed by an app", func() {
 		By("creating a service instance using the MASB broker")
 		masbDBName := random.Name(random.WithPrefix("db"))
-		masbServiceInstance := helpers.CreateService("azure-sqldb", "basic", masbServerConfig(masbDBName))
+		masbServiceInstance := services.CreateInstance(
+			"azure-sqldb",
+			"basic",
+			services.WithParameters(masbServerConfig(masbDBName)),
+		)
 		defer masbServiceInstance.Delete()
 
 		By("pushing the unstarted app")
@@ -58,14 +62,19 @@ var _ = Describe("MSSQL DB Subsume", func() {
 		defer serviceBroker.Delete()
 
 		By("subsuming the database")
-		csbServiceInstance := helpers.CreateServiceFromBroker("csb-azure-mssql-db", "subsume", serviceBroker.Name, subsumeDBParams(resource, serverTag))
+		csbServiceInstance := services.CreateInstance(
+			"csb-azure-mssql-db",
+			"subsume",
+			services.WithBroker(serviceBroker),
+			services.WithParameters(subsumeDBParams(resource, serverTag)),
+		)
 		defer csbServiceInstance.Delete()
 
 		By("purging the MASB service instance")
-		cf.Run("purge-service-instance", "-f", masbServiceInstance.Name())
+		cf.Run("purge-service-instance", "-f", masbServiceInstance.Name)
 
 		By("updating to another plan")
-		csbServiceInstance.UpdateService("-p", "small")
+		csbServiceInstance.Update("-p", "small")
 
 		By("binding the app to the CSB service instance")
 		binding := csbServiceInstance.Bind(app)

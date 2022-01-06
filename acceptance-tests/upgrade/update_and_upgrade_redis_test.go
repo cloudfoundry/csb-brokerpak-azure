@@ -1,10 +1,10 @@
 package upgrade_test
 
 import (
-	"acceptancetests/helpers"
 	"acceptancetests/helpers/apps"
 	"acceptancetests/helpers/brokers"
 	"acceptancetests/helpers/random"
+	"acceptancetests/helpers/services"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -21,7 +21,11 @@ var _ = Describe("UpgradeRedisTest", func() {
 			defer serviceBroker.Delete()
 
 			By("creating a service")
-			serviceInstance := helpers.CreateServiceFromBroker("csb-azure-redis", "small", serviceBroker.Name)
+			serviceInstance := services.CreateInstance(
+				"csb-azure-redis",
+				"small",
+				services.WithBroker(serviceBroker),
+			)
 			defer serviceInstance.Delete()
 
 			By("pushing the unstarted app twice")
@@ -30,8 +34,8 @@ var _ = Describe("UpgradeRedisTest", func() {
 			defer apps.Delete(appOne, appTwo)
 
 			By("binding to the apps")
-			serviceInstance.Bind(appOne)
-			serviceInstance.Bind(appTwo)
+			bindingOne := serviceInstance.Bind(appOne)
+			bindingTwo := serviceInstance.Bind(appTwo)
 			apps.Start(appOne, appTwo)
 
 			By("setting a key-value using the first app")
@@ -47,8 +51,8 @@ var _ = Describe("UpgradeRedisTest", func() {
 			serviceBroker.UpdateSourceDir(developmentBuildDir)
 
 			By("deleting bindings created before the upgrade")
-			serviceInstance.Unbind(appOne)
-			serviceInstance.Unbind(appTwo)
+			bindingOne.Unbind()
+			bindingTwo.Unbind()
 
 			By("creating new bindings and testing they still work")
 			serviceInstance.Bind(appOne)
@@ -63,7 +67,7 @@ var _ = Describe("UpgradeRedisTest", func() {
 			Expect(appTwo.GET(key1)).To(Equal(value1))
 
 			By("updating the instance plan")
-			serviceInstance.UpdateService("-p", "medium")
+			serviceInstance.Update("-p", "medium")
 
 			By("checking it still works")
 			key3 := random.Hexadecimal()
