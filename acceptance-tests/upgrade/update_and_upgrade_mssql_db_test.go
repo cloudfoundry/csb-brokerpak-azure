@@ -137,15 +137,3 @@ func (d databaseServer) reconfigureCSBWithServerDetails(broker *brokers.Broker) 
 
 	return serverTag
 }
-
-var metadata struct {
-	ResourceGroup             string `jsonry:"name"`
-	PreProvisionedSQLUsername string `jsonry:"masb_config.pre_provisioned_sql.username"`
-	PreProvisionedSQLPassword string `jsonry:"masb_config.pre_provisioned_sql.password"`
-	PreProvisionedSQLServer   string `jsonry:"masb_config.pre_provisioned_sql.server_name"`
-	PreProvisionedSQLLocation string `jsonry:"masb_config.location"`
-	PreProvisionedFOGUsername string `jsonry:"masb_config.pre_provisioned_fog_sql.username"`
-	PreProvisionedFOGPassword string `jsonry:"masb_config.pre_provisioned_fog_sql.password"`
-	PreProvisionedFOGServer   string `jsonry:"masb_config.pre_provisioned_fog_sql.server_name"`
-	PreProvisionedFOGLocation string `jsonry:"masb_config.pre_provisioned_fog_sql.location"`
-}

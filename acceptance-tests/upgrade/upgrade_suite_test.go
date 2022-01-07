@@ -1,17 +1,19 @@
 package upgrade_test
 
 import (
-	"code.cloudfoundry.org/jsonry"
+	"acceptancetests/helpers/environment"
 	"flag"
-	"os"
 	"testing"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
 
-var developmentBuildDir string
-var releasedBuildDir string
+var (
+	developmentBuildDir string
+	releasedBuildDir    string
+	metadata            environment.Metadata
+)
 
 func init() {
 	flag.StringVar(&releasedBuildDir, "releasedBuildDir", "../../../azure-released", "location of released version of built broker and brokerpak")
@@ -19,22 +21,7 @@ func init() {
 }
 
 var _ = BeforeSuite(func() {
-	file := os.Getenv("ENVIRONMENT_LOCK_METADATA")
-	Expect(file).NotTo(BeEmpty(), "You must set the ENVIRONMENT_LOCK_METADATA environment variable")
-
-	contents, err := os.ReadFile(file)
-	Expect(err).NotTo(HaveOccurred())
-
-	Expect(jsonry.Unmarshal(contents, &metadata)).NotTo(HaveOccurred())
-	Expect(metadata.ResourceGroup).NotTo(BeEmpty())
-	Expect(metadata.PreProvisionedSQLUsername).NotTo(BeEmpty())
-	Expect(metadata.PreProvisionedSQLPassword).NotTo(BeEmpty())
-	Expect(metadata.PreProvisionedSQLServer).NotTo(BeEmpty())
-	Expect(metadata.PreProvisionedSQLLocation).NotTo(BeEmpty())
-	Expect(metadata.PreProvisionedFOGUsername).NotTo(BeEmpty())
-	Expect(metadata.PreProvisionedFOGPassword).NotTo(BeEmpty())
-	Expect(metadata.PreProvisionedFOGServer).NotTo(BeEmpty())
-	Expect(metadata.PreProvisionedFOGLocation).NotTo(BeEmpty())
+	metadata = environment.ReadMetadata()
 })
 
 func TestUpgrade(t *testing.T) {
