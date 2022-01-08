@@ -22,9 +22,9 @@ dependencies:
       source: https://github.com/terraform-providers/terraform-provider-azurerm/archive/v2.33.0.zip
       source_sha256: 35c0a627bda77f40c34b69def0e83b2fcd67a82716a787dd42a714101ce61795
     - name: terraform-provider-azurerm
-      version: 2.90.0
-      source: https://github.com/terraform-providers/terraform-provider-azurerm/archive/v2.90.0.zip
-      source_sha256: 3a34b8d38e1f53d2238c85e8bcc1c89937c2c33b17ac028f5ad394b044c39281
+      version: 2.91.0
+      source: https://github.com/terraform-providers/terraform-provider-azurerm/archive/v2.91.0.zip
+      source_sha256: 40341589f15f0cfafde884e048d253ef2ad6fc865727457886c24f625a255fab
     - name: terraform-provider-mysql
       version: 1.9.0
       source: https://releases.hashicorp.com/terraform-provider-mysql/1.9.0/terraform-provider-mysql_1.9.0_linux_amd64.zip
