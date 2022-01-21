@@ -15,7 +15,7 @@ func Password(opts ...Option) string {
 		buf := make([]byte, 1)
 		_, err := rand.Read(buf)
 		Expect(err).NotTo(HaveOccurred())
-		if regexp.MustCompile(`[-~_.a-zA-Z0-9]`).MatchString(string(buf)) {
+		if regexp.MustCompile(`[~_.a-zA-Z0-9]`).MatchString(string(buf)) {
 			s.WriteString(string(buf))
 		}
 	}
