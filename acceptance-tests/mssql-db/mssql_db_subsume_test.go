@@ -99,7 +99,6 @@ var _ = Describe("MSSQL DB Subsume", func() {
 func subsumeDBParams(resource, serverTag string) interface{} {
 	return map[string]interface{}{
 		"azure_db_id": resource,
-		"server_name": metadata.PreProvisionedSQLServer,
 		"server":      serverTag,
 	}
 }
