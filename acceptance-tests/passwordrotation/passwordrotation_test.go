@@ -5,7 +5,7 @@ import (
 	"acceptancetests/helpers/random"
 	"acceptancetests/helpers/services"
 
-	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/v2"
 )
 
 var _ = Describe("Password Rotation", func() {
