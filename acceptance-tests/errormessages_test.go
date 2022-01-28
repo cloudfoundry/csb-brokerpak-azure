@@ -1,4 +1,4 @@
-package errormessages_test
+package acceptance_test
 
 import (
 	"acceptancetests/helpers/brokers"
@@ -6,13 +6,13 @@ import (
 	"acceptancetests/helpers/random"
 	"time"
 
-	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	. "github.com/onsi/gomega/gbytes"
 	. "github.com/onsi/gomega/gexec"
 )
 
-var _ = Describe("Error Messages", func() {
+var _ = Describe("Error Messages", Label("errormessages"), func() {
 	When("the create-service command fails immediately", func() {
 		It("prints a useful error message", func() {
 			name := random.Name(random.WithPrefix("error"))
