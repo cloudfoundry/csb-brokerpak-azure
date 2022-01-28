@@ -1,4 +1,4 @@
-package mysql_test
+package acceptance_test
 
 import (
 	"acceptancetests/helpers/apps"
@@ -6,11 +6,11 @@ import (
 	"acceptancetests/helpers/random"
 	"acceptancetests/helpers/services"
 
-	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("MySQL", func() {
+var _ = Describe("MySQL", Label("mysql"), func() {
 	It("can be accessed by an app", func() {
 		By("creating a service instance")
 		serviceInstance := services.CreateInstance("csb-azure-mysql", "small")

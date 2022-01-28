@@ -1,16 +1,18 @@
-package mssql_test
+package acceptance_test
 
 import (
 	"acceptancetests/helpers/apps"
 	"acceptancetests/helpers/matchers"
 	"acceptancetests/helpers/random"
 	"acceptancetests/helpers/services"
+	"fmt"
+	"regexp"
 
-	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("MSSQL Failover Group", func() {
+var _ = Describe("MSSQL Failover Group", Label("mssql"), func() {
 	It("can be accessed by an app before and after failover", func() {
 		By("creating a service instance")
 		serviceInstance := services.CreateInstance("csb-azure-mssql-failover-group", "small-v2")
@@ -67,3 +69,59 @@ var _ = Describe("MSSQL Failover Group", func() {
 		appOne.DELETE(schema)
 	})
 })
+
+func failoverParameters(instance *services.ServiceInstance) interface{} {
+	key := instance.CreateServiceKey()
+	defer key.Delete()
+
+	var input struct {
+		ServerName string `json:"sqlServerName"`
+		Status     string `json:"status"`
+	}
+	key.Get(&input)
+
+	resourceGroup := extractResourceGroup(input.Status)
+	pairName := random.Name(random.WithPrefix("server-pair"))
+
+	type failoverServer struct {
+		Name          string `json:"server_name"`
+		ResourceGroup string `json:"resource_group"`
+	}
+
+	type failoverServerPair struct {
+		Primary   failoverServer `json:"primary"`
+		Secondary failoverServer `json:"secondary"`
+	}
+
+	type failoverServerPairs map[string]failoverServerPair
+
+	type output struct {
+		FOGInstanceName string              `json:"fog_instance_name"`
+		ServerPairName  string              `json:"server_pair_name"`
+		ServerPairs     failoverServerPairs `json:"server_pairs"`
+	}
+
+	return output{
+		FOGInstanceName: input.ServerName,
+		ServerPairName:  pairName,
+		ServerPairs: failoverServerPairs{
+			pairName: failoverServerPair{
+				Primary: failoverServer{
+					Name:          fmt.Sprintf("%s-primary", input.ServerName),
+					ResourceGroup: resourceGroup,
+				},
+				Secondary: failoverServer{
+					Name:          fmt.Sprintf("%s-secondary", input.ServerName),
+					ResourceGroup: resourceGroup,
+				},
+			},
+		},
+	}
+}
+
+func extractResourceGroup(status string) string {
+	matches := regexp.MustCompile(`resourceGroups/(.+?)/`).FindStringSubmatch(status)
+	Expect(matches).NotTo(BeNil())
+	Expect(len(matches)).To(BeNumerically(">=", 2))
+	return matches[1]
+}

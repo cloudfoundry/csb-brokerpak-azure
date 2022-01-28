@@ -1,16 +1,16 @@
-package mssql_server_test
+package acceptance_test
 
 import (
 	"acceptancetests/helpers/environment"
 	"testing"
 
-	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 )
 
-func TestMssqlServer(t *testing.T) {
+func TestAcceptanceTests(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "MssqlServer Suite")
+	RunSpecs(t, "Acceptance Tests Suite")
 }
 
 var metadata environment.Metadata

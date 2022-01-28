@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/onsi/ginkgo"
+	"github.com/onsi/ginkgo/v2"
 )
 
 func (b Broker) env() []apps.EnvVar {

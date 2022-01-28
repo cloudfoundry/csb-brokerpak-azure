@@ -1,4 +1,4 @@
-package mssql_db_test
+package acceptance_test
 
 import (
 	"acceptancetests/helpers/apps"
@@ -7,17 +7,12 @@ import (
 	"acceptancetests/helpers/matchers"
 	"acceptancetests/helpers/random"
 	"acceptancetests/helpers/services"
-	"os/exec"
-	"strings"
-	"time"
 
-	"github.com/onsi/gomega/gexec"
-
-	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("MSSQL DB Subsume", func() {
+var _ = Describe("MSSQL DB Subsume", Label("mssql-db"), func() {
 	It("can be accessed by an app", func() {
 		By("creating a service instance using the MASB broker")
 		masbDBName := random.Name(random.WithPrefix("db"))
@@ -25,7 +20,11 @@ var _ = Describe("MSSQL DB Subsume", func() {
 			"azure-sqldb",
 			"basic",
 			services.WithMASBBroker(),
-			services.WithParameters(masbServerConfig(masbDBName)),
+			services.WithParameters(map[string]string{
+				"sqlServerName": metadata.PreProvisionedSQLServer,
+				"sqldbName":     masbDBName,
+				"resourceGroup": metadata.ResourceGroup,
+			}),
 		)
 		defer masbServiceInstance.Delete()
 
@@ -112,20 +111,4 @@ func getMASBServerDetails(tag string) map[string]interface{} {
 			"admin_password":        metadata.PreProvisionedSQLPassword,
 		},
 	}
-}
-
-func masbServerConfig(dbName string) interface{} {
-	return map[string]string{
-		"sqlServerName": metadata.PreProvisionedSQLServer,
-		"sqldbName":     dbName,
-		"resourceGroup": metadata.ResourceGroup,
-	}
-}
-
-func fetchResourceID(kind, name, server string) string {
-	command := exec.Command("az", "sql", kind, "show", "--name", name, "--server", server, "--resource-group", metadata.ResourceGroup, "--query", "id", "-o", "tsv")
-	session, err := gexec.Start(command, GinkgoWriter, GinkgoWriter)
-	Expect(err).NotTo(HaveOccurred())
-	Eventually(session, time.Minute).Should(gexec.Exit(0))
-	return strings.TrimSpace(string(session.Out.Contents()))
 }

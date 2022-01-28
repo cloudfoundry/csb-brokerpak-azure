@@ -7,11 +7,11 @@ import (
 	"acceptancetests/helpers/random"
 	"acceptancetests/helpers/services"
 
-	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("UpgradeMssqlDBFailoverTest", func() {
+var _ = Describe("UpgradeMssqlDBFailoverTest", Label("mssql-db-failover"), func() {
 	When("upgrading broker version", func() {
 		It("should continue to work", func() {
 			By("pushing latest released broker version")

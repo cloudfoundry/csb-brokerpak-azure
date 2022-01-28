@@ -1,4 +1,4 @@
-package mssql_db_failover_group_test
+package acceptance_test
 
 import (
 	"acceptancetests/helpers/apps"
@@ -13,11 +13,11 @@ import (
 
 	"github.com/onsi/gomega/gexec"
 
-	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("MSSQL Failover Group DB Subsume", func() {
+var _ = Describe("MSSQL Failover Group DB Subsume", Label("mssql-db-failover-group"), func() {
 	It("can be accessed by an app", func() {
 		By("creating a service instance using the MASB broker")
 		masbDBName := random.Name(random.WithPrefix("db"))
@@ -25,7 +25,11 @@ var _ = Describe("MSSQL Failover Group DB Subsume", func() {
 			"azure-sqldb",
 			"StandardS0",
 			services.WithMASBBroker(),
-			services.WithParameters(masbServerConfig(masbDBName)),
+			services.WithParameters(map[string]string{
+				"sqlServerName": metadata.PreProvisionedSQLServer,
+				"sqldbName":     masbDBName,
+				"resourceGroup": metadata.ResourceGroup,
+			}),
 		)
 		defer masbDBInstance.Delete()
 
@@ -134,14 +138,6 @@ func serverPairsConfig(serverPairTag string) interface{} {
 				"resource_group": metadata.ResourceGroup,
 			},
 		},
-	}
-}
-
-func masbServerConfig(dbName string) interface{} {
-	return map[string]string{
-		"sqlServerName": metadata.PreProvisionedSQLServer,
-		"sqldbName":     dbName,
-		"resourceGroup": metadata.ResourceGroup,
 	}
 }
 

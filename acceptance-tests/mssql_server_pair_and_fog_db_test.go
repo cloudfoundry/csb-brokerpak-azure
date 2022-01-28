@@ -1,19 +1,20 @@
-package mssql_server_pair_test
+package acceptance_test
 
 import (
 	"acceptancetests/helpers/apps"
 	"acceptancetests/helpers/brokers"
 	"acceptancetests/helpers/matchers"
 	"acceptancetests/helpers/random"
+	"acceptancetests/helpers/serverpairs"
 	"acceptancetests/helpers/services"
 
-	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("MSSQL Server Pair and Failover Group DB", func() {
+var _ = Describe("MSSQL Server Pair and Failover Group DB", Label("mssql-server-pair"), func() {
 	It("can be accessed by an app", func() {
-		serversConfig := newDatabaseServerPair()
+		serversConfig := serverpairs.NewDatabaseServerPair(metadata)
 
 		By("Create CSB with server details")
 		serviceBroker := brokers.Create(
@@ -119,73 +120,3 @@ var _ = Describe("MSSQL Server Pair and Failover Group DB", func() {
 		appOne.DELETE(schema)
 	})
 })
-
-type DatabaseServerPair struct {
-	ServerPairTag          string
-	Username               string                   `json:"admin_username"`
-	Password               string                   `json:"admin_password"`
-	PrimaryServer          DatabaseServerPairMember `json:"primary"`
-	SecondaryServer        DatabaseServerPairMember `json:"secondary"`
-	SecondaryResourceGroup string                   `json:"-"`
-}
-
-type DatabaseServerPairMember struct {
-	Name          string `json:"server_name"`
-	ResourceGroup string `json:"resource_group"`
-}
-
-func newDatabaseServerPair() DatabaseServerPair {
-	secondaryResourceGroup := random.Name(random.WithPrefix(metadata.ResourceGroup))
-	return DatabaseServerPair{
-		ServerPairTag: random.Name(random.WithMaxLength(10)),
-		Username:      random.Name(random.WithMaxLength(10)),
-		Password:      random.Password(),
-		PrimaryServer: DatabaseServerPairMember{
-			Name:          random.Name(random.WithPrefix("server")),
-			ResourceGroup: metadata.ResourceGroup,
-		},
-		SecondaryServer: DatabaseServerPairMember{
-			Name:          random.Name(random.WithPrefix("server")),
-			ResourceGroup: secondaryResourceGroup,
-		},
-		SecondaryResourceGroup: secondaryResourceGroup,
-	}
-}
-
-func (d DatabaseServerPair) PrimaryConfig() interface{} {
-	return d.memberConfig(d.PrimaryServer.Name, "westus", d.PrimaryServer.ResourceGroup)
-}
-
-func (d DatabaseServerPair) SecondaryConfig() interface{} {
-	return d.memberConfig(d.SecondaryServer.Name, "eastus", d.SecondaryServer.ResourceGroup)
-}
-
-func (d DatabaseServerPair) memberConfig(name, location, rg string) interface{} {
-	return struct {
-		Name          string `json:"instance_name"`
-		Username      string `json:"admin_username"`
-		Password      string `json:"admin_password"`
-		Location      string `json:"location"`
-		ResourceGroup string `json:"resource_group"`
-	}{
-		Name:          name,
-		Username:      d.Username,
-		Password:      d.Password,
-		Location:      location,
-		ResourceGroup: rg,
-	}
-}
-
-func (d DatabaseServerPair) SecondaryResourceGroupConfig() interface{} {
-	return struct {
-		InstanceName string `json:"instance_name"`
-		Location     string `json:"location"`
-	}{
-		InstanceName: d.SecondaryResourceGroup,
-		Location:     "eastus",
-	}
-}
-
-func (d DatabaseServerPair) ServerPairsConfig() interface{} {
-	return map[string]interface{}{d.ServerPairTag: d}
-}
