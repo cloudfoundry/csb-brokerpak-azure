@@ -1,4 +1,4 @@
-package mongodb_test
+package acceptance_test
 
 import (
 	"acceptancetests/helpers/apps"
@@ -11,27 +11,23 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("MongoDB", func() {
+var _ = Describe("CosmosDB", Label("cosmosdb"), func() {
 	It("can be accessed by an app", func() {
 		By("creating a service instance")
 		databaseName := random.Name(random.WithPrefix("database"))
-		collectionName := random.Name(random.WithPrefix("collection"))
 		serviceInstance := services.CreateInstance(
-			"csb-azure-mongodb",
-			"small", services.WithParameters(map[string]interface{}{
-				"db_name":         databaseName,
-				"collection_name": collectionName,
-				"shard_key":       "_id",
-			}),
+			"csb-azure-cosmosdb-sql",
+			"small",
+			services.WithParameters(map[string]interface{}{"db_name": databaseName}),
 		)
 		defer serviceInstance.Delete()
 
 		By("pushing the unstarted app twice")
-		appOne := apps.Push(apps.WithApp(apps.MongoDB))
-		appTwo := apps.Push(apps.WithApp(apps.MongoDB))
+		appOne := apps.Push(apps.WithApp(apps.Cosmos))
+		appTwo := apps.Push(apps.WithApp(apps.Cosmos))
 		defer apps.Delete(appOne, appTwo)
 
-		By("binding the apps to the MongoDB service instance")
+		By("binding the apps to the CosmosDB service instance")
 		binding := serviceInstance.Bind(appOne)
 		serviceInstance.Bind(appTwo)
 
@@ -42,12 +38,12 @@ var _ = Describe("MongoDB", func() {
 		Expect(binding.Credential()).To(matchers.HaveCredHubRef)
 
 		By("checking that the specified database has been created")
-		databases := appOne.GET("")
+		databases := appOne.GET("/")
 		Expect(databases).To(MatchJSON(fmt.Sprintf(`["%s"]`, databaseName)))
 
-		By("checking that the specified collection has been created")
-		collections := appOne.GET(databaseName)
-		Expect(collections).To(MatchJSON(fmt.Sprintf(`["%s"]`, collectionName)))
+		By("creating a collection")
+		collectionName := random.Name(random.WithPrefix("collection"))
+		appOne.PUT("", "%s/%s", databaseName, collectionName)
 
 		By("creating a document using the first app")
 		documentName := random.Hexadecimal()

@@ -12,7 +12,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("UpgradeMssqlFailoverGroupTest", func() {
+var _ = Describe("UpgradeMssqlFailoverGroupTest", Label("mssql-failover-group"), func() {
 	When("upgrading broker version", func() {
 		It("should continue to work", func() {
 			By("pushing latest released broker version")

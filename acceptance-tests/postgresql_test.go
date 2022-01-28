@@ -1,4 +1,4 @@
-package mssql_test
+package acceptance_test
 
 import (
 	"acceptancetests/helpers/apps"
@@ -10,15 +10,15 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("MSSQL", func() {
+var _ = Describe("PostgreSQL", Label("postgresql"), func() {
 	It("can be accessed by an app", func() {
 		By("creating a service instance")
-		serviceInstance := services.CreateInstance("csb-azure-mssql", "small-v2")
+		serviceInstance := services.CreateInstance("csb-azure-postgresql", "small")
 		defer serviceInstance.Delete()
 
 		By("pushing the unstarted app twice")
-		appOne := apps.Push(apps.WithApp(apps.MSSQL))
-		appTwo := apps.Push(apps.WithApp(apps.MSSQL))
+		appOne := apps.Push(apps.WithApp(apps.PostgreSQL))
+		appTwo := apps.Push(apps.WithApp(apps.PostgreSQL))
 		defer apps.Delete(appOne, appTwo)
 
 		By("binding the apps to the service instance")

@@ -1,4 +1,4 @@
-package passwordrotation_test
+package acceptance_test
 
 import (
 	"acceptancetests/helpers/brokers"
@@ -8,7 +8,7 @@ import (
 	. "github.com/onsi/ginkgo/v2"
 )
 
-var _ = Describe("Password Rotation", func() {
+var _ = Describe("Password Rotation", Label("passwordrotation"), func() {
 	It("should reencrypt the DB when keys are rotated", func() {
 		By("creating a service broker with an encryption secret")
 		firstEncryptionSecret := random.Password()

@@ -1,4 +1,4 @@
-package mssql_db_failover_group_test
+package acceptance_test
 
 import (
 	"acceptancetests/helpers/environment"
@@ -8,9 +8,9 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-func TestMssqlDbFailoverGroup(t *testing.T) {
+func TestAcceptanceTests(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "MssqlDbFailoverGroup Suite")
+	RunSpecs(t, "Acceptance Tests Suite")
 }
 
 var metadata environment.Metadata

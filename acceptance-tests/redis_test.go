@@ -1,4 +1,4 @@
-package mysql_test
+package acceptance_test
 
 import (
 	"acceptancetests/helpers/apps"
@@ -10,18 +10,18 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("MySQL", func() {
+var _ = Describe("Redis", Label("redis"), func() {
 	It("can be accessed by an app", func() {
 		By("creating a service instance")
-		serviceInstance := services.CreateInstance("csb-azure-mysql", "small")
+		serviceInstance := services.CreateInstance("csb-azure-redis", "small")
 		defer serviceInstance.Delete()
 
 		By("pushing the unstarted app twice")
-		appOne := apps.Push(apps.WithApp(apps.MySQL))
-		appTwo := apps.Push(apps.WithApp(apps.MySQL))
+		appOne := apps.Push(apps.WithApp(apps.Redis))
+		appTwo := apps.Push(apps.WithApp(apps.Redis))
 		defer apps.Delete(appOne, appTwo)
 
-		By("binding the apps to the service instance")
+		By("binding the apps to the Redis service instance")
 		binding := serviceInstance.Bind(appOne)
 		serviceInstance.Bind(appTwo)
 

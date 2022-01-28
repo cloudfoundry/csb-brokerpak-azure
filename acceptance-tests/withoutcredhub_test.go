@@ -1,4 +1,4 @@
-package withoutcredhub_test
+package acceptance_test
 
 import (
 	"acceptancetests/helpers/apps"
@@ -11,7 +11,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("Without CredHub", func() {
+var _ = Describe("Without CredHub", Label("withoutcredhub"), func() {
 	It("can be accessed by an app", func() {
 		env := apps.EnvVar{Name: "CH_CRED_HUB_URL", Value: ""}
 		broker := brokers.Create(

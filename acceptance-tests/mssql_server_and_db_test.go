@@ -1,4 +1,4 @@
-package mssql_server_test
+package acceptance_test
 
 import (
 	"acceptancetests/helpers/apps"
@@ -11,7 +11,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("MSSQL Server and DB", func() {
+var _ = Describe("MSSQL Server and DB", Label("mssql-server"), func() {
 	It("can be accessed by an app", func() {
 		serverConfig := newDatabaseServer()
 

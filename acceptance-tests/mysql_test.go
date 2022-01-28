@@ -1,4 +1,4 @@
-package postgresql_test
+package acceptance_test
 
 import (
 	"acceptancetests/helpers/apps"
@@ -10,15 +10,15 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("PostgreSQL", func() {
+var _ = Describe("MySQL", Label("mysql"), func() {
 	It("can be accessed by an app", func() {
 		By("creating a service instance")
-		serviceInstance := services.CreateInstance("csb-azure-postgresql", "small")
+		serviceInstance := services.CreateInstance("csb-azure-mysql", "small")
 		defer serviceInstance.Delete()
 
 		By("pushing the unstarted app twice")
-		appOne := apps.Push(apps.WithApp(apps.PostgreSQL))
-		appTwo := apps.Push(apps.WithApp(apps.PostgreSQL))
+		appOne := apps.Push(apps.WithApp(apps.MySQL))
+		appTwo := apps.Push(apps.WithApp(apps.MySQL))
 		defer apps.Delete(appOne, appTwo)
 
 		By("binding the apps to the service instance")
@@ -31,20 +31,13 @@ var _ = Describe("PostgreSQL", func() {
 		By("checking that the app environment has a credhub reference for credentials")
 		Expect(binding.Credential()).To(matchers.HaveCredHubRef)
 
-		By("creating a schema using the first app")
-		schema := random.Name(random.WithMaxLength(10))
-		appOne.PUT("", schema)
-
 		By("setting a key-value using the first app")
 		key := random.Hexadecimal()
 		value := random.Hexadecimal()
-		appOne.PUT(value, "%s/%s", schema, key)
+		appOne.PUT(value, key)
 
 		By("getting the value using the second app")
-		got := appTwo.GET("%s/%s", schema, key)
+		got := appTwo.GET(key)
 		Expect(got).To(Equal(value))
-
-		By("dropping the schema using the first app")
-		appOne.DELETE(schema)
 	})
 })
