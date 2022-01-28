@@ -5,6 +5,7 @@ import (
 	"acceptancetests/helpers/cf"
 	"acceptancetests/helpers/random"
 	"fmt"
+	"os"
 	"strings"
 )
 
@@ -79,11 +80,23 @@ func WithPassword(password string) Option {
 func defaultConfig(opts ...Option) (broker Broker) {
 	defaults := []Option{
 		WithName(random.Name(random.WithPrefix("broker"))),
-		WithSourceDir("../.."),
+		WithSourceDir(defaultSourceDir()),
 		WithUsername(random.Name()),
 		WithPassword(random.Password()),
 		WithEncryptionSecret(random.Password()),
 	}
 	WithOptions(append(defaults, opts...)...)(&broker)
 	return broker
+}
+
+func defaultSourceDir() string {
+	for _, d := range []string{"..", "../.."} {
+		p := fmt.Sprintf("%s/%s", d, "cf-manifest.yml")
+		_, err := os.Stat(p)
+		if err == nil {
+			return d
+		}
+	}
+
+	panic("could not find source for broker app")
 }
