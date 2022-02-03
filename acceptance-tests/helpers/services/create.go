@@ -5,7 +5,6 @@ import (
 	"acceptancetests/helpers/cf"
 	"acceptancetests/helpers/random"
 	"encoding/json"
-	"time"
 
 	. "github.com/onsi/gomega"
 	. "github.com/onsi/gomega/gexec"
@@ -51,7 +50,7 @@ func CreateInstance(offering, plan string, opts ...Option) *ServiceInstance {
 func createInstanceWithWait(name string, args []string) {
 	args = append(args, "--wait")
 	session := cf.Start(args...)
-	Eventually(session, time.Hour).Should(Exit(0), func() string {
+	Eventually(session).WithTimeout(operationTimeout).Should(Exit(0), func() string {
 		out, _ := cf.Run("service", name)
 		return out
 	})
@@ -59,13 +58,13 @@ func createInstanceWithWait(name string, args []string) {
 
 func createInstanceWithPoll(name string, args []string) {
 	session := cf.Start(args...)
-	Eventually(session, 5*time.Minute).Should(Exit(0))
+	Eventually(session).WithTimeout(asyncCommandTimeout).Should(Exit(0))
 
 	Eventually(func() string {
 		out, _ := cf.Run("service", name)
 		Expect(out).NotTo(MatchRegexp(`status:\s+create failed`))
 		return out
-	}, time.Hour, 30*time.Second).Should(MatchRegexp(`status:\s+create succeeded`))
+	}).WithTimeout(operationTimeout).WithPolling(pollingInterval).Should(MatchRegexp(`status:\s+create succeeded`))
 }
 
 func WithDefaultBroker() Option {

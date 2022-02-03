@@ -3,7 +3,13 @@ package servicekeys
 import (
 	"acceptancetests/helpers/cf"
 	"acceptancetests/helpers/random"
+	"time"
+
+	. "github.com/onsi/gomega"
+	. "github.com/onsi/gomega/gexec"
 )
+
+const timeout = 10 * time.Minute
 
 type ServiceKey struct {
 	name                string
@@ -12,7 +18,8 @@ type ServiceKey struct {
 
 func Create(serviceInstanceName string) *ServiceKey {
 	name := random.Name()
-	cf.Run("create-service-key", serviceInstanceName, name)
+	session := cf.Start("create-service-key", serviceInstanceName, name)
+	Eventually(session).WithTimeout(timeout).Should(Exit(0))
 
 	return &ServiceKey{
 		name:                name,
