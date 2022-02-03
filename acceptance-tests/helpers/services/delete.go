@@ -2,7 +2,6 @@ package services
 
 import (
 	"acceptancetests/helpers/cf"
-	"time"
 
 	. "github.com/onsi/gomega"
 	. "github.com/onsi/gomega/gexec"
@@ -19,7 +18,7 @@ func (s *ServiceInstance) Delete() {
 
 func deleteWithWait(name string) {
 	session := cf.Start("delete-service", "-f", name, "--wait")
-	Eventually(session, time.Hour).Should(Exit(0))
+	Eventually(session).WithTimeout(operationTimeout).Should(Exit(0))
 }
 
 func deleteWithPoll(name string) {
@@ -28,5 +27,5 @@ func deleteWithPoll(name string) {
 	Eventually(func() string {
 		out, _ := cf.Run("services")
 		return out
-	}, time.Hour, 30*time.Second).ShouldNot(ContainSubstring(name))
+	}).WithTimeout(operationTimeout).WithPolling(pollingInterval).ShouldNot(ContainSubstring(name))
 }
