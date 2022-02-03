@@ -5,6 +5,7 @@ import (
 	"io"
 	"net/http"
 	"strings"
+	"time"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -12,16 +13,24 @@ import (
 
 func (a *App) GET(format string, s ...interface{}) string {
 	url := a.urlf(format, s...)
-	fmt.Fprintf(GinkgoWriter, "HTTP GET: %s\n", url)
-	response, err := http.Get(url)
-	Expect(err).NotTo(HaveOccurred())
-	Expect(response).To(HaveHTTPStatus(http.StatusOK))
+	var data []byte
 
-	defer response.Body.Close()
-	data, err := io.ReadAll(response.Body)
-	Expect(err).NotTo(HaveOccurred())
+	Eventually(func(g Gomega) *http.Response {
+		fmt.Fprintf(GinkgoWriter, "HTTP GET: %s\n", url)
+		response, err := http.Get(url)
+		g.Expect(err).NotTo(HaveOccurred())
 
-	fmt.Fprintf(GinkgoWriter, "Recieved: %s\n", string(data))
+		fmt.Fprintf(GinkgoWriter, "HTTP Status: %s\n", response.Status)
+
+		defer response.Body.Close()
+		data, err = io.ReadAll(response.Body)
+		g.Expect(err).NotTo(HaveOccurred())
+
+		fmt.Fprintf(GinkgoWriter, "Recieved: %s\n", string(data))
+
+		return response
+	}).WithPolling(5 * time.Second).WithTimeout(time.Minute).Should(HaveHTTPStatus(http.StatusOK))
+
 	return string(data)
 }
 
