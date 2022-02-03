@@ -240,7 +240,7 @@ examples:
 - name: small-v9.6-50gb
   description: Create a small PostgreSQL v9.6 instance with 50gb storage
   plan_id: aa1cf0f0-79fe-4132-a112-859fef9bf7cc
-  provision_params: { "mysql_version": "9.6", "storage_gb": 50 }
+  provision_params: { "postgres_version": "9.6", "storage_gb": 50 }
   bind_params: {}
   bind_can_fail: true
 - name: medium
