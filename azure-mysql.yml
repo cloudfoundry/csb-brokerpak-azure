@@ -284,12 +284,6 @@ examples:
     provision_params: {}
     bind_params: {}
     bind_can_fail: true
-  - name: small-no-tls
-    description: Create a small mysql instance with tls disabled
-    plan_id: 828e324e-6b34-4f50-b224-9b956dd2d1b7
-    provision_params: { "use_tls": false }
-    bind_params: {}
-    bind_can_fail: true
   - name: small-v8.0-50gb-storage
     description: Create a small mysql v8.0 instance with 50gb storage
     plan_id: 828e324e-6b34-4f50-b224-9b956dd2d1b7
