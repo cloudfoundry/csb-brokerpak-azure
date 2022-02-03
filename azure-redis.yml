@@ -137,7 +137,7 @@ provision:
   user_inputs:
   - field_name: instance_name
     type: string
-    details: Name for your mysql instance
+    details: Name for your redis instance
     default: csb-redis-${request.instance_id}
     constraints:
       maxLength: 98
@@ -159,7 +159,7 @@ provision:
     prohibit_update: true
   - field_name: location
     type: string
-    details: The region of the mysql instance.
+    details: The region of the redis instance.
     default: westus
     enum:
       eastasia: East Asia
@@ -257,7 +257,7 @@ examples:
 - name: redis-cache-medium
   description: Medium redis cache in centralus region
   plan_id: 6b272c43-2116-4483-9a99-de9262c0a7d6
-  provision_params: { "region": "centralus" }
+  provision_params: { "location": "centralus" }
   bind_params: {}
 - name: redis-cache-large
   description: Large redis cache
