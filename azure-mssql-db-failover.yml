@@ -136,6 +136,7 @@ provision:
     default: csb-fog-db-${request.instance_id}
     constraints:
       maxLength: 64
+    tf_attribute: azurerm_mssql_database.primary_db.name
   - field_name: server_pair
     type: string
     details: Name of server pair from server_credential_pairs to create database upon
