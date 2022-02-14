@@ -70,8 +70,7 @@ var _ = Describe("MSSQL Failover Group DB Subsume", Label("mssql-db-failover-gro
 		serverPairTag := random.Name(random.WithMaxLength(10))
 		serviceBroker := brokers.Create(
 			brokers.WithPrefix("csb-mssql-fog-db"),
-			// Disable brokerpak_updates due to bug - https://www.pivotaltracker.com/story/show/180586187
-			brokers.WithEnv(apps.EnvVar{Name: "MSSQL_DB_FOG_SERVER_PAIR_CREDS", Value: serverPairsConfig(serverPairTag)}, apps.EnvVar{Name: "BROKERPAK_UPDATES_ENABLED", Value: false}),
+			brokers.WithEnv(apps.EnvVar{Name: "MSSQL_DB_FOG_SERVER_PAIR_CREDS", Value: serverPairsConfig(serverPairTag)}),
 		)
 		defer serviceBroker.Delete()
 
