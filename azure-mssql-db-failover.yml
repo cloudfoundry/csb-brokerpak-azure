@@ -130,6 +130,7 @@ provision:
       maxLength: 63
       minLength: 6
       pattern: ^[a-z][a-z0-9-]+$
+    tf_attribute: azurerm_sql_failover_group.failover_group.name
   - field_name: db_name
     type: string
     details: Name for your database
