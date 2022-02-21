@@ -1,7 +1,7 @@
 package services
 
 import (
-	"acceptancetests/helpers/cf"
+	"csbbrokerpakazure/acceptance-tests/helpers/cf"
 
 	. "github.com/onsi/gomega"
 	. "github.com/onsi/gomega/gexec"

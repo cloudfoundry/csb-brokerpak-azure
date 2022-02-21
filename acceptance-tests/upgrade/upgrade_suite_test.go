@@ -1,7 +1,7 @@
 package upgrade_test
 
 import (
-	"acceptancetests/helpers/environment"
+	"csbbrokerpakazure/acceptance-tests/helpers/environment"
 	"flag"
 	"testing"
 

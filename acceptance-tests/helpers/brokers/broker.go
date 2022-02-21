@@ -1,6 +1,6 @@
 package brokers
 
-import "acceptancetests/helpers/apps"
+import "csbbrokerpakazure/acceptance-tests/helpers/apps"
 
 type Broker struct {
 	Name      string
