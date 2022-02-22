@@ -1,9 +1,9 @@
 package acceptance_test
 
 import (
-	"acceptancetests/helpers/brokers"
-	"acceptancetests/helpers/random"
-	"acceptancetests/helpers/services"
+	"csbbrokerpakazure/acceptance-tests/helpers/brokers"
+	"csbbrokerpakazure/acceptance-tests/helpers/random"
+	"csbbrokerpakazure/acceptance-tests/helpers/services"
 
 	. "github.com/onsi/ginkgo/v2"
 )

@@ -1,7 +1,7 @@
 package bindings
 
 import (
-	"acceptancetests/helpers/cf"
+	"csbbrokerpakazure/acceptance-tests/helpers/cf"
 
 	. "github.com/onsi/gomega"
 	gexec "github.com/onsi/gomega/gexec"

@@ -1,8 +1,8 @@
 package apps
 
 import (
-	"acceptancetests/helpers/cf"
-	"acceptancetests/helpers/random"
+	"csbbrokerpakazure/acceptance-tests/helpers/cf"
+	"csbbrokerpakazure/acceptance-tests/helpers/random"
 	"fmt"
 	"time"
 

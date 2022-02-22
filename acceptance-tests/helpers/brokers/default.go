@@ -1,7 +1,7 @@
 package brokers
 
 import (
-	"acceptancetests/helpers/cf"
+	"csbbrokerpakazure/acceptance-tests/helpers/cf"
 	"fmt"
 	"os"
 

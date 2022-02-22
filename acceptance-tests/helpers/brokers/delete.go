@@ -1,6 +1,6 @@
 package brokers
 
-import "acceptancetests/helpers/cf"
+import "csbbrokerpakazure/acceptance-tests/helpers/cf"
 
 func (b *Broker) Delete() {
 	cf.Run("delete-service-broker", b.Name, "-f")

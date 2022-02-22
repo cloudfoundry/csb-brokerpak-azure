@@ -1,9 +1,9 @@
 package services
 
 import (
-	"acceptancetests/helpers/brokers"
-	"acceptancetests/helpers/cf"
-	"acceptancetests/helpers/random"
+	"csbbrokerpakazure/acceptance-tests/helpers/brokers"
+	"csbbrokerpakazure/acceptance-tests/helpers/cf"
+	"csbbrokerpakazure/acceptance-tests/helpers/random"
 	"encoding/json"
 
 	. "github.com/onsi/gomega"

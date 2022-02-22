@@ -1,12 +1,12 @@
 package acceptance_test
 
 import (
-	"acceptancetests/helpers/apps"
-	"acceptancetests/helpers/brokers"
-	"acceptancetests/helpers/cf"
-	"acceptancetests/helpers/matchers"
-	"acceptancetests/helpers/random"
-	"acceptancetests/helpers/services"
+	"csbbrokerpakazure/acceptance-tests/helpers/apps"
+	"csbbrokerpakazure/acceptance-tests/helpers/brokers"
+	"csbbrokerpakazure/acceptance-tests/helpers/cf"
+	"csbbrokerpakazure/acceptance-tests/helpers/matchers"
+	"csbbrokerpakazure/acceptance-tests/helpers/random"
+	"csbbrokerpakazure/acceptance-tests/helpers/services"
 	"os/exec"
 	"strings"
 	"time"

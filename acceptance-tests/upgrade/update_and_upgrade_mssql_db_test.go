@@ -1,10 +1,10 @@
 package upgrade_test
 
 import (
-	"acceptancetests/helpers/apps"
-	"acceptancetests/helpers/brokers"
-	"acceptancetests/helpers/random"
-	"acceptancetests/helpers/services"
+	"csbbrokerpakazure/acceptance-tests/helpers/apps"
+	"csbbrokerpakazure/acceptance-tests/helpers/brokers"
+	"csbbrokerpakazure/acceptance-tests/helpers/random"
+	"csbbrokerpakazure/acceptance-tests/helpers/services"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"

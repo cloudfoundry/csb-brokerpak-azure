@@ -1,8 +1,8 @@
 package serverpairs
 
 import (
-	"acceptancetests/helpers/environment"
-	"acceptancetests/helpers/random"
+	"csbbrokerpakazure/acceptance-tests/helpers/environment"
+	"csbbrokerpakazure/acceptance-tests/helpers/random"
 )
 
 type DatabaseServerPair struct {
