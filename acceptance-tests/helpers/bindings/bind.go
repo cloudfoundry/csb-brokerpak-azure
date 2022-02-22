@@ -1,8 +1,8 @@
 package bindings
 
 import (
-	"acceptancetests/helpers/cf"
-	"acceptancetests/helpers/random"
+	"csbbrokerpakazure/acceptance-tests/helpers/cf"
+	"csbbrokerpakazure/acceptance-tests/helpers/random"
 	"time"
 
 	. "github.com/onsi/gomega"

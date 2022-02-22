@@ -1,10 +1,10 @@
 package acceptance_test
 
 import (
-	"acceptancetests/helpers/apps"
-	"acceptancetests/helpers/matchers"
-	"acceptancetests/helpers/random"
-	"acceptancetests/helpers/services"
+	"csbbrokerpakazure/acceptance-tests/helpers/apps"
+	"csbbrokerpakazure/acceptance-tests/helpers/matchers"
+	"csbbrokerpakazure/acceptance-tests/helpers/random"
+	"csbbrokerpakazure/acceptance-tests/helpers/services"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"

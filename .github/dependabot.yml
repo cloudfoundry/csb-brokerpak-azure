@@ -13,7 +13,7 @@ updates:
     day: "saturday"
     time: "06:00"
 - package-ecosystem: gomod
-  directory: "/acceptance-tests"
+  directory: "/"
   schedule:
     interval: "weekly"
     day: "saturday"

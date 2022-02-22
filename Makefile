@@ -1,28 +1,31 @@
 ###### Help ###################################################################
-
 .DEFAULT_GOAL = help
 
 .PHONY: help
 help: ## list Makefile targets
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
-###### Targets ################################################################
-
+###### Setup ##################################################################
 IAAS=azure
+CSB_VERSION := $(or $(CSB_VERSION), $(shell grep 'github.com/cloudfoundry/cloud-service-broker' go.mod | grep -v replace | awk '{print $$NF}' | sed -e 's/v//'))
+CSB := $(or $(CSB), cfplatformeng/csb:$(CSB_VERSION))
+GO_OK := $(shell which go 1>/dev/null 2>/dev/null; echo $$?)
+DOCKER_OK := $(shell which docker 1>/dev/null 2>/dev/null; echo $$?)
+ifeq ($(GO_OK), 0)
+GO=go
+BUILDER=go run github.com/cloudfoundry/cloud-service-broker
+LDFLAGS="-X github.com/cloudfoundry/cloud-service-broker/utils.Version=$(CSB_VERSION)"
+GET_CSB="env CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags $(LDFLAGS) github.com/cloudfoundry/cloud-service-broker"
+else ifeq ($(DOCKER_OK), 0)
 DOCKER_OPTS=--rm -v $(PWD):/brokerpak -w /brokerpak --network=host
-CSB := $(or $(CSB), cfplatformeng/csb)
-USE_GO_CONTAINERS := $(or $(USE_GO_CONTAINERS), 1)
-
-ifeq ($(USE_GO_CONTAINERS), 0)
-BUILDER=./cloud-service-broker
-else
+GO=docker run $(DOCKER_OPTS) golang:$(GOVERSION) go
 BUILDER=docker run $(DOCKER_OPTS) $(CSB)
+GET_CSB="wget -O cloud-service-broker https://github.com/cloudfoundry/cloud-service-broker/releases/download/v$(CSB_VERSION)/cloud-service-broker.linux && chmod +x cloud-service-broker"
+else
+$(error either Go or Docker must be installed)
 endif
 
-.PHONY: acceptance-tests
-acceptance-tests:
-	BROKER_NAME=broker-cf-test push-broker
-	ginkgo -v -r -p --stream acceptance-tests
+###### Targets ################################################################
 
 .PHONY: build
 build: $(IAAS)-services-*.brokerpak
@@ -58,7 +61,7 @@ catalog: build
 		$(CSB) client catalog
 
 .PHONY: docs
-docs: build brokerpak-user-docs.md
+docs: build brokerpak-user-docs.md ## build docs
 
 brokerpak-user-docs.md: *.yml
 	docker run $(DOCKER_OPTS) \
@@ -91,14 +94,8 @@ validate: build
 	$(CSB) pak validate /brokerpak/$(shell ls *.brokerpak)
 
 # fetching bits for cf push broker
-cloud-service-broker:
-	wget $(shell curl -sL https://api.github.com/repos/cloudfoundry-incubator/cloud-service-broker/releases/latest | jq -r '.assets[] | select(.name == "cloud-service-broker.linux") | .browser_download_url')
-	mv ./cloud-service-broker.linux ./cloud-service-broker
-	chmod +x ./cloud-service-broker
-
-local-cloud-service-broker: ## Copy linux CSB from local repo
-	cp ../cloud-service-broker/build/cloud-service-broker.linux ./cloud-service-broker
-	chmod +x cloud-service-broker
+cloud-service-broker: go.mod ## build or fetch CSB binary
+	$(shell "$(GET_CSB)")
 
 APP_NAME := $(or $(APP_NAME), cloud-service-broker)
 DB_TLS := $(or $(DB_TLS), skip-verify)
@@ -108,25 +105,11 @@ GSB_PROVISION_DEFAULTS := $(or $(GSB_PROVISION_DEFAULTS), {"resource_group": "br
 push-broker: cloud-service-broker build arm-subscription-id arm-tenant-id arm-client-id arm-client-secret ## push the broker to targetted Cloud Foundry
 	MANIFEST=cf-manifest.yml APP_NAME=$(APP_NAME) DB_TLS=$(DB_TLS) GSB_PROVISION_DEFAULTS='$(GSB_PROVISION_DEFAULTS)' ./scripts/push-broker.sh
 
-.PHONY: push-local-broker
-push-local-broker: local-cloud-service-broker build arm-subscription-id arm-tenant-id arm-client-id arm-client-secret ## push the broker with this brokerpak
-	MANIFEST=cf-manifest.yml APP_NAME=$(APP_NAME) DB_TLS=$(DB_TLS) GSB_PROVISION_DEFAULTS='$(GSB_PROVISION_DEFAULTS)' GSB_SERVICE_CSB_AZURE_MSSQL_FAILOVER_GROUP_PLANS='$(GSB_SERVICE_CSB_AZURE_MSSQL_FAILOVER_GROUP_PLANS)' ./scripts/push-broker.sh
-
-.PHONY: collect-released
-collect-released:
-	mkdir -p ../azure-released
-	wget $(shell curl -sL https://api.github.com/repos/cloudfoundry-incubator/cloud-service-broker/releases/latest | jq -r '.assets[] | select(.name == "cloud-service-broker.linux") | .browser_download_url') -P ../azure-released
-	mv ./../azure-released/cloud-service-broker.linux ./../azure-released/cloud-service-broker
-	chmod +x ./../azure-released/cloud-service-broker
-	wget $(shell curl -sL https://api.github.com/repos/cloudfoundry-incubator/csb-brokerpak-azure/releases/latest | jq -r '.assets[0].browser_download_url') -P ../azure-released
-	cp cf-manifest.yml ../azure-released
-
 .PHONY: clean
 clean: ## clean up build artifacts
-	- rm $(IAAS)-services-*.brokerpak
-	- rm ./cloud-service-broker
-	- rm -rf released
-	- rm ./brokerpak-user-docs.md
+	- rm -f $(IAAS)-services-*.brokerpak
+	- rm -f ./cloud-service-broker
+	- rm -f ./brokerpak-user-docs.md
 	- cd tools/psqlcmd; $(MAKE) clean
 	- cd tools/sqlfailover; $(MAKE) clean
 
@@ -162,3 +145,11 @@ arm-client-secret:
 ifndef ARM_CLIENT_SECRET
 	$(error variable ARM_CLIENT_SECRET not defined)
 endif
+
+.PHONY: latest-csb
+latest-csb: ## point to the very latest CSB on GitHub
+	$(GO) get -d github.com/cloudfoundry/cloud-service-broker@main
+
+.PHONY: local-csb
+local-csb: ## point to a local CSB repo
+	echo "replace \"github.com/cloudfoundry/cloud-service-broker\" => \"$$PWD/../cloud-service-broker\"" >>go.mod
