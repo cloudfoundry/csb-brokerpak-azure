@@ -27,8 +27,8 @@ dependencies:
       source_sha256: dda90a94f94387bac5266958af98563b64abf863217db8ee667625bbae6faccd
     - name: terraform-provider-mysql
       version: 1.9.0
-      source: https://releases.hashicorp.com/terraform-provider-mysql/1.9.0/terraform-provider-mysql_1.9.0_linux_amd64.zip
-      source_sha256: 58011051a7ec9274225d92876aff2967b8469189682f22f528f2b152a5da8aba
+      source: https://github.com/terraform-providers/terraform-provider-mysql/archive/v1.9.0.zip
+      source_sha256: 8cd135baba86b5568f7685152201b3f73300aa1fe455c6873da05bff1418b707
     - name: terraform-provider-null
       version: 3.1.0
       source: https://github.com/terraform-providers/terraform-provider-null/archive/v3.1.0.zip
