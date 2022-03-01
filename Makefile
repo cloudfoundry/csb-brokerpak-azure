@@ -13,7 +13,7 @@ GO_OK := $(shell which go 1>/dev/null 2>/dev/null; echo $$?)
 DOCKER_OK := $(shell which docker 1>/dev/null 2>/dev/null; echo $$?)
 ifeq ($(GO_OK), 0)
 GO=go
-BUILDER=go run github.com/cloudfoundry/cloud-service-broker
+BUILDER=go run -ldflags $(LDFLAGS) github.com/cloudfoundry/cloud-service-broker
 LDFLAGS="-X github.com/cloudfoundry/cloud-service-broker/utils.Version=$(CSB_VERSION)"
 GET_CSB="env CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags $(LDFLAGS) github.com/cloudfoundry/cloud-service-broker"
 else ifeq ($(DOCKER_OK), 0)
@@ -117,10 +117,10 @@ clean: ## clean up build artifacts
 rebuild: clean build
 
 ./tools/psqlcmd/build/psqlcmd_*.zip: tools/psqlcmd/*.go
-	cd tools/psqlcmd; USE_GO_CONTAINERS=$(USE_GO_CONTAINERS) $(MAKE) build
+	cd tools/psqlcmd; $(MAKE) build
 
 ./tools/sqlfailover/build/sqlfailover_*.zip: tools/sqlfailover/*.go
-	cd tools/sqlfailover; USE_GO_CONTAINERS=$(USE_GO_CONTAINERS) $(MAKE) build
+	cd tools/sqlfailover; $(MAKE) build
 
 .PHONY: arm-subscription-id
 arm-subscription-id:
