@@ -18,7 +18,7 @@ LDFLAGS="-X github.com/cloudfoundry/cloud-service-broker/utils.Version=$(CSB_VER
 GET_CSB="env CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags $(LDFLAGS) github.com/cloudfoundry/cloud-service-broker"
 else ifeq ($(DOCKER_OK), 0)
 DOCKER_OPTS=--rm -v $(PWD):/brokerpak -w /brokerpak --network=host
-GO=docker run $(DOCKER_OPTS) golang:$(GOVERSION) go
+GO=docker run $(DOCKER_OPTS) golang:latest go
 BUILDER=docker run $(DOCKER_OPTS) $(CSB)
 GET_CSB="wget -O cloud-service-broker https://github.com/cloudfoundry/cloud-service-broker/releases/download/v$(CSB_VERSION)/cloud-service-broker.linux && chmod +x cloud-service-broker"
 else
