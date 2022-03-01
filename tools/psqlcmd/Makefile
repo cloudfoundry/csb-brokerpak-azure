@@ -4,16 +4,21 @@ GO-VER = go$(GO-VERSION)
 
 SRC = $(shell find . -name "*.go" | grep -v "_test\." )
 VERSION=0.1.0
-ifeq ($(USE_GO_CONTAINERS), 0)
+
+GO_OK := $(shell which go 1>/dev/null 2>/dev/null; echo $$?)
+DOCKER_OK := $(shell which docker 1>/dev/null 2>/dev/null; echo $$?)
+ifeq ($(GO_OK), 0)
 GO=go
 GOIMPORTS=goimports
-else
+else ifeq ($(DOCKER_OK), 0)
 UID:=$(shell id -u)
 DOCKER_OPTS=--rm -v $(PWD):/src -w /src
 GO=docker run $(DOCKER_OPTS) -e GOARCH -e GOOS golang:$(GO-VERSION) go
 GOTOOLS=docker run $(DOCKER_OPTS) jare/go-tools
 GOIMPORTS=$(GOTOOLS) goimports
 HAS_GO_IMPORTS=true
+else
+$(error either Go or Docker must be installed)
 endif
 
 EXE_NAME=psqlcmd
