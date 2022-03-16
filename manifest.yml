@@ -33,14 +33,14 @@ terraform_binaries:
   version: 2.99.0
   source: https://github.com/terraform-providers/terraform-provider-azurerm/archive/v2.99.0.zip
 - name: terraform-provider-random
-  version: 3.1.0
-  source: https://github.com/terraform-providers/terraform-provider-random/archive/v3.1.0.zip
+  version: 3.1.1
+  source: https://github.com/terraform-providers/terraform-provider-random/archive/v3.1.1.zip
 - name: terraform-provider-mysql
   version: 1.9.0
   source: https://github.com/terraform-providers/terraform-provider-mysql/archive/v1.9.0.zip
 - name: terraform-provider-null
-  version: 3.1.0
-  source: https://github.com/terraform-providers/terraform-provider-null/archive/v3.1.0.zip
+  version: 3.1.1
+  source: https://github.com/terraform-providers/terraform-provider-null/archive/v3.1.1.zip
 - name: psqlcmd
   version: 0.1.0
   url_template: ./tools/${name}/build/${name}_${version}_${os}_${arch}.zip
