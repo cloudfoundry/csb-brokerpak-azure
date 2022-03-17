@@ -38,6 +38,6 @@ dependencies:
       source: https://github.com/cyrilgdn/terraform-provider-postgresql/archive/v1.15.0.zip
       source_sha256: 9352e24581a87ad9a2aea3e228fa3a2fac13ffe3dcb0bff8cc6f4171a6b48a94
     - name: terraform-provider-random
-      version: 3.1.1
-      source: https://github.com/terraform-providers/terraform-provider-random/archive/v3.1.1.zip
-      source_sha256: cc73c5efe14d748f2e0732c72791619ef09e94065128fc02ace52607a3620a7f
+      version: 3.1.2
+      source: https://github.com/terraform-providers/terraform-provider-random/archive/v3.1.2.zip
+      source_sha256: 4ad56093c772d031498a5c2699b07eebf5ce56c07383414750c519d3b63cc0e6
