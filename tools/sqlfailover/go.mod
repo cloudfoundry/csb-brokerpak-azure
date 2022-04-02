@@ -3,7 +3,7 @@ module github.com/cloudfoundry-incubator/csb-brokerpak-azure/tools/sqlfailover
 go 1.18
 
 require (
-	github.com/Azure/azure-sdk-for-go v62.3.0+incompatible
+	github.com/Azure/azure-sdk-for-go v63.0.0+incompatible
 	github.com/Azure/go-autorest/autorest/azure/auth v0.5.11
 	github.com/jinzhu/gorm v1.9.16
 )
