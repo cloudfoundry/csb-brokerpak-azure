@@ -25,19 +25,19 @@ plan_updateable: true
 plans:
 - name: small
   id: aa1cf0f0-79fe-4132-a112-859fef9bf7cc
-  description: 'PostgreSQL 11, minumum 2 cores, minumum 4GB ram, 5GB storage'
+  description: 'PostgreSQL 11, minimum 2 cores, minimum 4GB ram, 5GB storage'
   display_name: "small"
   properties:
 - name: medium
   id: d83c74b9-0bb9-409e-bd26-8424ea908462
-  description: 'PostgreSQL 11, minumum 4 cores, minumum 8GB ram, 10GB storage'
+  description: 'PostgreSQL 11, minimum 4 cores, minimum 8GB ram, 10GB storage'
   display_name: "medium"
   properties:
     cores: 4
     storage_gb: 10
 - name: large
   id: 945b0ca1-5b5e-49b0-884a-20809103907e
-  description: 'PostgreSQL 11, minumum 8 cores, minumum 16GB ram, 20GB storage'
+  description: 'PostgreSQL 11, minimum 8 cores, minimum 16GB ram, 20GB storage'
   display_name: "large"
   properties:
     cores: 8
@@ -68,7 +68,7 @@ provision:
     default: 5
     constraints:
       maximum: 4096
-      minumum: 5
+      minimum: 5
   - field_name: use_tls
     type: boolean
     details: Use TLS for connection
