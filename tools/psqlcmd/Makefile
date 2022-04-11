@@ -5,7 +5,7 @@ GO-VER = go$(GO-VERSION)
 SRC = $(shell find . -name "*.go" | grep -v "_test\." )
 VERSION=0.1.0
 
-GO_OK := $(shell which go 1>/dev/null 2>/dev/null; echo $$?)
+GO_OK :=  $(or $(USE_GO_CONTAINERS), $(shell which go 1>/dev/null 2>/dev/null; echo $$?))
 DOCKER_OK := $(shell which docker 1>/dev/null 2>/dev/null; echo $$?)
 ifeq ($(GO_OK), 0)
 GO=go
