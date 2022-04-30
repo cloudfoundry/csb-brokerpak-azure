@@ -6,7 +6,7 @@ require (
 	code.cloudfoundry.org/jsonry v1.1.3
 	github.com/Pallinder/go-randomdata v1.2.0
 	github.com/cloudfoundry/cloud-service-broker v0.10.0
-	github.com/onsi/ginkgo/v2 v2.1.3
+	github.com/onsi/ginkgo/v2 v2.1.4
 	github.com/onsi/gomega v1.19.0
 )
 
@@ -82,7 +82,7 @@ require (
 	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 // indirect
 	golang.org/x/net v0.0.0-20220225172249-27dd8689420f // indirect
 	golang.org/x/oauth2 v0.0.0-20211104180415-d3ed0bb246c8 // indirect
-	golang.org/x/sys v0.0.0-20220315194320-039c03cc5b86 // indirect
+	golang.org/x/sys v0.0.0-20220319134239-a9b59b0215f8 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/tools v0.1.10 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
