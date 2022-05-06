@@ -27,9 +27,12 @@ EXE_NAME=psqlcmd
 
 .PHONY: deps-go-binary
 deps-go-binary:
-	echo "Expect: $(GO-VER)" && \
-		echo "Actual: $$($(GO) version)" && \
-	 	$(GO) version | grep $(GO-VER) > /dev/null
+ifeq ($(SKIP_GO_VERSION_CHECK),)
+	@@if [ "$$($(GO) version | awk '{print $$3}')" != "${GO-VER}" ]; then \
+		echo "Go version does not match: expected: ${GO-VER}, got $$($(GO) version | awk '{print $$3}')"; \
+		exit 1; \
+	fi
+endif
 
 HAS_GO_IMPORTS := $(shell command -v goimports;)
 
@@ -39,7 +42,7 @@ ifndef HAS_GO_IMPORTS
 endif
 
 .PHONY: build
-build: ./build/$(EXE_NAME)_$(VERSION)_linux_amd64.zip ./build/$(EXE_NAME)_$(VERSION)_darwin_amd64.zip
+build: deps-go-binary ./build/$(EXE_NAME)_$(VERSION)_linux_amd64.zip ./build/$(EXE_NAME)_$(VERSION)_darwin_amd64.zip
 
 # ./build:
 # 	mkdir -p ./build

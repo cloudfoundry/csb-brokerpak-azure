@@ -7,6 +7,8 @@ help: ## list Makefile targets
 
 ###### Setup ##################################################################
 IAAS=azure
+GO-VERSION = 1.18.1
+GO-VER = go$(GO-VERSION)
 CSB_VERSION := $(or $(CSB_VERSION), $(shell grep 'github.com/cloudfoundry/cloud-service-broker' go.mod | grep -v replace | awk '{print $$NF}' | sed -e 's/v//'))
 CSB_RELEASE_VERSION := $(CSB_VERSION)
 
@@ -71,8 +73,17 @@ endif
 
 ###### Targets ################################################################
 
+.PHONY: deps-go-binary
+deps-go-binary:
+ifeq ($(SKIP_GO_VERSION_CHECK),)
+	@@if [ "$$($(GO) version | awk '{print $$3}')" != "${GO-VER}" ]; then \
+		echo "Go version does not match: expected: ${GO-VER}, got $$($(GO) version | awk '{print $$3}')"; \
+		exit 1; \
+	fi
+endif
+
 .PHONY: build
-build: $(IAAS)-services-*.brokerpak
+build: deps-go-binary $(IAAS)-services-*.brokerpak
 
 $(IAAS)-services-*.brokerpak: *.yml terraform/*/*.tf ./tools/psqlcmd/build/psqlcmd_*.zip ./tools/sqlfailover/build/sqlfailover_*.zip | $(PAK_CACHE)
 	$(RUN_CSB) pak build
