@@ -12,22 +12,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-variable cores { type = number }
-variable instance_name { type = string }
-variable db_name { type = string }
-variable location { type = string }
-variable labels { type = map }
-variable storage_gb { type = number }
-variable resource_group { type = string }
-variable azure_tenant_id { type = string }
-variable azure_subscription_id { type = string }
-variable azure_client_id { type = string }
-variable azure_client_secret { type = string }
-variable postgres_version { type = string }
-variable sku_name { type = string }
-variable authorized_network {type = string}
-variable use_tls { type = bool }
-variable skip_provider_registration { type = bool }
+variable "cores" { type = number }
+variable "instance_name" { type = string }
+variable "db_name" { type = string }
+variable "location" { type = string }
+variable "labels" { type = map(any) }
+variable "storage_gb" { type = number }
+variable "resource_group" { type = string }
+variable "azure_tenant_id" { type = string }
+variable "azure_subscription_id" { type = string }
+variable "azure_client_id" { type = string }
+variable "azure_client_secret" { type = string }
+variable "postgres_version" { type = string }
+variable "sku_name" { type = string }
+variable "authorized_network" { type = string }
+variable "use_tls" { type = bool }
+variable "skip_provider_registration" { type = bool }
 
 provider "azurerm" {
   version = ">= 2.33.0"
@@ -36,23 +36,23 @@ provider "azurerm" {
   subscription_id = var.azure_subscription_id
   client_id       = var.azure_client_id
   client_secret   = var.azure_client_secret
-  tenant_id       = var.azure_tenant_id  
+  tenant_id       = var.azure_tenant_id
 
   skip_provider_registration = var.skip_provider_registration
 }
 
 locals {
   instance_types = {
-    1 = "GP_Gen5_1"
-    2 = "GP_Gen5_2"
-    4 = "GP_Gen5_4"
-    8 = "GP_Gen5_8"
+    1  = "GP_Gen5_1"
+    2  = "GP_Gen5_2"
+    4  = "GP_Gen5_4"
+    8  = "GP_Gen5_8"
     16 = "GP_Gen5_16"
     32 = "GP_Gen5_32"
     64 = "GP_Gen5_64"
-  }       
+  }
   resource_group = length(var.resource_group) == 0 ? format("rg-%s", var.instance_name) : var.resource_group
-  sku_name = length(var.sku_name) == 0 ? local.instance_types[var.cores] : var.sku_name
+  sku_name       = length(var.sku_name) == 0 ? local.instance_types[var.cores] : var.sku_name
 }
 
 resource "azurerm_resource_group" "azure-postgres" {
@@ -67,21 +67,21 @@ resource "azurerm_resource_group" "azure-postgres" {
 }
 
 resource "random_string" "username" {
-  length = 16
+  length  = 16
   special = false
-  number = false
+  number  = false
 }
 
 resource "random_password" "password" {
-  length = 31
+  length           = 31
   override_special = "~_-."
-  min_upper = 2
-  min_lower = 2
-  min_special = 2
+  min_upper        = 2
+  min_lower        = 2
+  min_special      = 2
 }
 
 resource "azurerm_postgresql_server" "instance" {
-  depends_on                   = [ azurerm_resource_group.azure-postgres ]    
+  depends_on                   = [azurerm_resource_group.azure-postgres]
   name                         = var.instance_name
   location                     = var.location
   resource_group_name          = local.resource_group
@@ -115,7 +115,7 @@ resource "azurerm_postgresql_virtual_network_rule" "allow_subnet_id" {
   resource_group_name = local.resource_group
   server_name         = azurerm_postgresql_server.instance.name
   subnet_id           = var.authorized_network
-  count = var.authorized_network != "default" ? 1 : 0      
+  count               = var.authorized_network != "default" ? 1 : 0
 }
 
 resource "azurerm_postgresql_firewall_rule" "allow_azure" {
@@ -124,19 +124,19 @@ resource "azurerm_postgresql_firewall_rule" "allow_azure" {
   server_name         = azurerm_postgresql_server.instance.name
   start_ip_address    = "0.0.0.0"
   end_ip_address      = "0.0.0.0"
-  count = var.authorized_network == "default" ? 1 : 0
-} 
+  count               = var.authorized_network == "default" ? 1 : 0
+}
 
-output name { value = azurerm_postgresql_database.instance-db.name }
-output hostname { value = azurerm_postgresql_server.instance.fqdn }
-output port { value = 5432 }
-output username { value = format("%s@%s", random_string.username.result, azurerm_postgresql_server.instance.name) }
-output password { value = random_password.password.result }
-output use_tls { value = var.use_tls }
-output status {value = format("created db %s (id: %s) on server %s (id: %s) URL: https://portal.azure.com/#@%s/resource%s", 
-                               azurerm_postgresql_database.instance-db.name, 
-                               azurerm_postgresql_database.instance-db.id, 
-                               azurerm_postgresql_server.instance.name, 
-                               azurerm_postgresql_server.instance.id,
-                               var.azure_tenant_id,
-                               azurerm_postgresql_server.instance.id)}
+output "name" { value = azurerm_postgresql_database.instance-db.name }
+output "hostname" { value = azurerm_postgresql_server.instance.fqdn }
+output "port" { value = 5432 }
+output "username" { value = format("%s@%s", random_string.username.result, azurerm_postgresql_server.instance.name) }
+output "password" { value = random_password.password.result }
+output "use_tls" { value = var.use_tls }
+output "status" { value = format("created db %s (id: %s) on server %s (id: %s) URL: https://portal.azure.com/#@%s/resource%s",
+  azurerm_postgresql_database.instance-db.name,
+  azurerm_postgresql_database.instance-db.id,
+  azurerm_postgresql_server.instance.name,
+  azurerm_postgresql_server.instance.id,
+  var.azure_tenant_id,
+azurerm_postgresql_server.instance.id) }
