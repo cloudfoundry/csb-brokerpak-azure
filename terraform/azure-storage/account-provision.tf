@@ -53,6 +53,10 @@ resource "azurerm_resource_group" "azure-storage" {
   location = var.location
   tags     = var.labels
   count    = length(var.resource_group) == 0 ? 1 : 0
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "azurerm_storage_account" "account" {
@@ -65,6 +69,10 @@ resource "azurerm_storage_account" "account" {
   account_kind = var.storage_account_type
 
   tags = var.labels
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "azurerm_storage_account_network_rules" "account_network_rule" {

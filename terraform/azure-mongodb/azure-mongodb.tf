@@ -67,6 +67,10 @@ resource "azurerm_resource_group" "rg" {
 	location = var.location
 	tags     = var.labels
 	count    = length(var.resource_group) == 0 ? 1 : 0
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "azurerm_cosmosdb_account" "mongo-account" {
@@ -119,6 +123,10 @@ resource "azurerm_cosmosdb_mongo_database" "mongo-db" {
 	resource_group_name = azurerm_cosmosdb_account.mongo-account.resource_group_name
 	account_name        = azurerm_cosmosdb_account.mongo-account.name
 	throughput          = var.request_units
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "azurerm_cosmosdb_mongo_collection" "mongo-collection" {

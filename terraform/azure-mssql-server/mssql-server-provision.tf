@@ -46,6 +46,10 @@ resource "azurerm_resource_group" "azure_sql" {
   location = var.location
   tags     = var.labels
   count    = length(var.resource_group) == 0 ? 1 : 0
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "random_string" "username" {
@@ -76,6 +80,10 @@ resource "azurerm_sql_server" "azure_sql_db_server" {
   administrator_login          = local.admin_username
   administrator_login_password = local.admin_password
   tags = var.labels
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "azurerm_sql_virtual_network_rule" "allow_subnet_id" {

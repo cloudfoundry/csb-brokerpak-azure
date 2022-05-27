@@ -55,6 +55,10 @@ resource "azurerm_resource_group" "rg" {
 	location = var.location
 	tags     = var.labels
 	count    = length(var.resource_group) == 0 ? 1 : 0
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "azurerm_cosmosdb_account" "cosmosdb-account" {
@@ -99,6 +103,10 @@ resource "azurerm_cosmosdb_sql_database" "db" {
   resource_group_name = azurerm_cosmosdb_account.cosmosdb-account.resource_group_name
   account_name        = azurerm_cosmosdb_account.cosmosdb-account.name
   throughput          = var.request_units
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 output cosmosdb_host_endpoint {value = azurerm_cosmosdb_account.cosmosdb-account.endpoint }

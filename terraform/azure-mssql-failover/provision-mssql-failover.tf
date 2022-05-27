@@ -63,6 +63,10 @@ resource "azurerm_resource_group" "azure-sql-fog" {
   location = var.location
   tags     = var.labels
   count    = length(var.resource_group) == 0 ? 1 : 0
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "random_string" "username" {
@@ -88,6 +92,10 @@ resource "azurerm_sql_server" "primary_azure_sql_db_server" {
   administrator_login          = random_string.username.result
   administrator_login_password = random_password.password.result
   tags = var.labels
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 locals {
@@ -141,6 +149,10 @@ resource "azurerm_sql_server" "secondary_sql_db_server" {
   administrator_login          = random_string.username.result
   administrator_login_password = random_password.password.result
   tags                         = var.labels
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "azurerm_mssql_database" "azure_sql_db" {
@@ -151,6 +163,10 @@ resource "azurerm_mssql_database" "azure_sql_db" {
   tags                = var.labels
   min_capacity        = var.min_capacity
   auto_pause_delay_in_minutes = var.auto_pause_delay
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "azurerm_mssql_database" "secondary_azure_sql_db" {
@@ -160,6 +176,10 @@ resource "azurerm_mssql_database" "secondary_azure_sql_db" {
   tags                = var.labels
   create_mode         = "Secondary"
   creation_source_database_id  = azurerm_mssql_database.azure_sql_db.id
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "azurerm_sql_failover_group" "failover_group" {

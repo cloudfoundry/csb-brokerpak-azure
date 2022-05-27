@@ -51,6 +51,10 @@ resource "azurerm_resource_group" "rg" {
 	location = var.location
 	tags     = var.labels
 	count    = length(var.resource_group) == 0 ? 1 : 0
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "azurerm_eventhub_namespace" "rg-namespace" {
@@ -70,6 +74,10 @@ resource "azurerm_eventhub" "eventhub" {
 	resource_group_name = local.resource_group
 	partition_count     = var.partition_count
 	message_retention   = var.message_retention
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 output eventhub_rg_name {value=local.resource_group}

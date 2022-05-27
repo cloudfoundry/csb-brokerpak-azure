@@ -60,6 +60,10 @@ resource "azurerm_resource_group" "azure-postgres" {
   location = var.location
   tags     = var.labels
   count    = length(var.resource_group) == 0 ? 1 : 0
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "random_string" "username" {
@@ -87,7 +91,11 @@ resource "azurerm_postgresql_server" "instance" {
   administrator_login_password = random_password.password.result
   version                      = var.postgres_version
   ssl_enforcement_enabled      = var.use_tls
-  tags                         = var.labels  
+  tags                         = var.labels
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "azurerm_postgresql_database" "instance-db" {
@@ -96,6 +104,10 @@ resource "azurerm_postgresql_database" "instance-db" {
   server_name         = azurerm_postgresql_server.instance.name
   charset             = "UTF8"
   collation           = "en-US"
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "azurerm_postgresql_virtual_network_rule" "allow_subnet_id" {

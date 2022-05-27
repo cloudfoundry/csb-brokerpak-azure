@@ -37,6 +37,10 @@ resource "azurerm_resource_group" "rg" {
   name     = var.instance_name
   location = var.location
   tags     = var.labels
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 output "resource-group-name" { value = azurerm_resource_group.rg.name }

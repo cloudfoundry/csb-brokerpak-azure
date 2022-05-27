@@ -58,6 +58,10 @@ resource "azurerm_resource_group" "azure_sql" {
   location = var.location
   tags     = var.labels
   count    = length(var.resource_group) == 0 ? 1 : 0
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "random_string" "username" {
@@ -83,6 +87,10 @@ resource "azurerm_sql_server" "azure_sql_db_server" {
   administrator_login          = random_string.username.result
   administrator_login_password = random_password.password.result
   tags = var.labels
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "azurerm_sql_database" "azure_sql_db" {
@@ -93,6 +101,10 @@ resource "azurerm_sql_database" "azure_sql_db" {
   requested_service_objective_name = local.sku_name
   max_size_bytes      = var.max_storage_gb * 1024 * 1024 * 1024
   tags = var.labels
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "azurerm_sql_virtual_network_rule" "allow_subnet_id" {

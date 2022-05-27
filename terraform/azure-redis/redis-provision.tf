@@ -59,6 +59,10 @@ resource "azurerm_resource_group" "azure-redis" {
   location = var.location
   tags     = var.labels
   count    = length(var.resource_group) == 0 ? 1 : 0
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "azurerm_redis_cache" "redis" {
@@ -76,6 +80,10 @@ resource "azurerm_redis_cache" "redis" {
     maxmemory_policy   = length(var.maxmemory_policy) == 0 ? "allkeys-lru" : var.maxmemory_policy
   }
   subnet_id = lower(var.sku_name) == "premium" && length(var.subnet_id) > 0 ? var.subnet_id : null
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "azurerm_redis_firewall_rule" "allow_azure" {

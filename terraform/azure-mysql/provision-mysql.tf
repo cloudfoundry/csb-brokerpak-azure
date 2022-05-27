@@ -72,6 +72,10 @@ resource "azurerm_resource_group" "azure-msyql" {
   location = var.location
   tags     = var.labels
   count    = length(var.resource_group) == 0 ? 1 : 0
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "random_string" "username" {
@@ -125,6 +129,10 @@ resource "azurerm_mysql_server" "instance" {
   }
 
   tags = var.labels
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "azurerm_mysql_database" "instance-db" {
@@ -133,6 +141,10 @@ resource "azurerm_mysql_database" "instance-db" {
   server_name         = azurerm_mysql_server.instance.name
   charset             = "utf8"
   collation           = "utf8_unicode_ci"
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "azurerm_mysql_virtual_network_rule" "allow_subnet_id" {
