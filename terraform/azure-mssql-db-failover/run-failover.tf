@@ -12,40 +12,40 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-variable fog_instance_name { type = string }
-variable server_pair_name { type = string }
-variable server_pairs { type = map }
-variable azure_tenant_id { type = string }
-variable azure_subscription_id { type = string }
-variable azure_client_id { type = string }
-variable azure_client_secret { type = string }
+variable "fog_instance_name" { type = string }
+variable "server_pair_name" { type = string }
+variable "server_pairs" { type = map(any) }
+variable "azure_tenant_id" { type = string }
+variable "azure_subscription_id" { type = string }
+variable "azure_client_id" { type = string }
+variable "azure_client_secret" { type = string }
 
 resource "null_resource" "run-failover" {
 
   provisioner "local-exec" {
     command = format("sqlfailover %s %s %s",
-                     var.server_pairs[var.server_pair_name].secondary.resource_group,
-                     var.server_pairs[var.server_pair_name].secondary.server_name,
-                     var.fog_instance_name)
+      var.server_pairs[var.server_pair_name].secondary.resource_group,
+      var.server_pairs[var.server_pair_name].secondary.server_name,
+    var.fog_instance_name)
     environment = {
       ARM_SUBSCRIPTION_ID = var.azure_subscription_id
-      ARM_TENANT_ID = var.azure_tenant_id
-      ARM_CLIENT_ID = var.azure_client_id
-      ARM_CLIENT_SECRET = var.azure_client_secret
+      ARM_TENANT_ID       = var.azure_tenant_id
+      ARM_CLIENT_ID       = var.azure_client_id
+      ARM_CLIENT_SECRET   = var.azure_client_secret
     }
   }
 
   provisioner "local-exec" {
-	when = destroy
+    when = destroy
     command = format("sqlfailover %s %s %s",
-                     var.server_pairs[var.server_pair_name].primary.resource_group,
-                     var.server_pairs[var.server_pair_name].primary.server_name,
-                     var.fog_instance_name)
+      var.server_pairs[var.server_pair_name].primary.resource_group,
+      var.server_pairs[var.server_pair_name].primary.server_name,
+    var.fog_instance_name)
     environment = {
       ARM_SUBSCRIPTION_ID = var.azure_subscription_id
-      ARM_TENANT_ID = var.azure_tenant_id
-      ARM_CLIENT_ID = var.azure_client_id
-      ARM_CLIENT_SECRET = var.azure_client_secret
+      ARM_TENANT_ID       = var.azure_tenant_id
+      ARM_CLIENT_ID       = var.azure_client_id
+      ARM_CLIENT_SECRET   = var.azure_client_secret
     }
   }
 }

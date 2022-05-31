@@ -12,14 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-variable eventhub_rg_name { type = string }
-variable namespace_name { type = string }
-variable eventhub_name { type = string }
-variable azure_tenant_id { type = string }
-variable azure_subscription_id { type = string }
-variable azure_client_id { type = string }
-variable azure_client_secret { type = string }
-variable skip_provider_registration { type = bool }
+variable "eventhub_rg_name" { type = string }
+variable "namespace_name" { type = string }
+variable "eventhub_name" { type = string }
+variable "azure_tenant_id" { type = string }
+variable "azure_subscription_id" { type = string }
+variable "azure_client_id" { type = string }
+variable "azure_client_secret" { type = string }
+variable "skip_provider_registration" { type = bool }
 
 provider "azurerm" {
   version = ">= 2.33.0"
@@ -28,7 +28,7 @@ provider "azurerm" {
   subscription_id = var.azure_subscription_id
   client_id       = var.azure_client_id
   client_secret   = var.azure_client_secret
-  tenant_id       = var.azure_tenant_id  
+  tenant_id       = var.azure_tenant_id
 
   skip_provider_registration = var.skip_provider_registration
 }

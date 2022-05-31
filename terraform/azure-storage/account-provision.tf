@@ -12,19 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-variable storage_account_type { type = string }
-variable tier { type = string }
-variable replication_type { type = string }
-variable location { type = string }
-variable labels { type = map }
-variable resource_group { type = string }
-variable azure_tenant_id { type = string }
-variable azure_subscription_id { type = string }
-variable azure_client_id { type = string }
-variable azure_client_secret { type = string }
+variable "storage_account_type" { type = string }
+variable "tier" { type = string }
+variable "replication_type" { type = string }
+variable "location" { type = string }
+variable "labels" { type = map(any) }
+variable "resource_group" { type = string }
+variable "azure_tenant_id" { type = string }
+variable "azure_subscription_id" { type = string }
+variable "azure_client_id" { type = string }
+variable "azure_client_secret" { type = string }
 # variable authorized_network {type = string}
-variable skip_provider_registration { type = bool }
-variable authorized_networks { type = list(string) }
+variable "skip_provider_registration" { type = bool }
+variable "authorized_networks" { type = list(string) }
 
 provider "azurerm" {
   version = ">= 2.33.0"
@@ -33,15 +33,15 @@ provider "azurerm" {
   subscription_id = var.azure_subscription_id
   client_id       = var.azure_client_id
   client_secret   = var.azure_client_secret
-  tenant_id       = var.azure_tenant_id  
+  tenant_id       = var.azure_tenant_id
 
   skip_provider_registration = var.skip_provider_registration
 }
 
 resource "random_string" "account_name" {
-  length = 24
+  length  = 24
   special = false
-  upper = false
+  upper   = false
 }
 
 locals {
@@ -53,18 +53,26 @@ resource "azurerm_resource_group" "azure-storage" {
   location = var.location
   tags     = var.labels
   count    = length(var.resource_group) == 0 ? 1 : 0
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "azurerm_storage_account" "account" {
-  depends_on = [ azurerm_resource_group.azure-storage ]
+  depends_on               = [azurerm_resource_group.azure-storage]
   name                     = random_string.account_name.result
   resource_group_name      = local.resource_group
   location                 = var.location
   account_tier             = var.tier
   account_replication_type = var.replication_type
-  account_kind = var.storage_account_type
+  account_kind             = var.storage_account_type
 
   tags = var.labels
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "azurerm_storage_account_network_rules" "account_network_rule" {
@@ -77,11 +85,11 @@ resource "azurerm_storage_account_network_rules" "account_network_rule" {
   virtual_network_subnet_ids = var.authorized_networks[*]
 }
 
-output primary_access_key { value = azurerm_storage_account.account.primary_access_key }
-output secondary_access_key { value = azurerm_storage_account.account.secondary_access_key }
-output storage_account_name { value = azurerm_storage_account.account.name }
-output status { value = format("created storage account %s (id: %s) URL:  https://portal.azure.com/#@%s/resource%s",
-                               azurerm_storage_account.account.name,
-                               azurerm_storage_account.account.id,
-                               var.azure_tenant_id,
-                               azurerm_storage_account.account.id)}
+output "primary_access_key" { value = azurerm_storage_account.account.primary_access_key }
+output "secondary_access_key" { value = azurerm_storage_account.account.secondary_access_key }
+output "storage_account_name" { value = azurerm_storage_account.account.name }
+output "status" { value = format("created storage account %s (id: %s) URL:  https://portal.azure.com/#@%s/resource%s",
+  azurerm_storage_account.account.name,
+  azurerm_storage_account.account.id,
+  var.azure_tenant_id,
+azurerm_storage_account.account.id) }

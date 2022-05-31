@@ -12,25 +12,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-variable mssql_db_name { type = string }
-variable mssql_hostname { type = string }
-variable mssql_port { type = number }
-variable admin_username { type = string }
-variable admin_password { type = string }
+variable "mssql_db_name" { type = string }
+variable "mssql_hostname" { type = string }
+variable "mssql_port" { type = number }
+variable "admin_username" { type = string }
+variable "admin_password" { type = string }
 
 resource "random_string" "username" {
-  length = 16
+  length  = 16
   special = false
-  number = false
+  number  = false
 }
 
 resource "random_password" "password" {
-  length = 64
+  length           = 64
   override_special = "~_-."
-  min_upper = 2
-  min_lower = 2
-  min_special = 2
-  depends_on = [random_string.username]
+  min_upper        = 2
+  min_lower        = 2
+  min_special      = 2
+  depends_on       = [random_string.username]
 }
 
 resource "null_resource" "create-sql-login" {
@@ -38,12 +38,12 @@ resource "null_resource" "create-sql-login" {
   # to remove logins created with older versions when we unbind. We ignore failures
   # as current version does not create logins and so this would fail.
   provisioner "local-exec" {
-	  when = destroy
+    when = destroy
     command = format("psqlcmd %s %d %s master \"DROP LOGIN [%s]\"",
-                     var.mssql_hostname,
-                     var.mssql_port,
-                     var.admin_username,
-                     random_string.username.result)
+      var.mssql_hostname,
+      var.mssql_port,
+      var.admin_username,
+    random_string.username.result)
     on_failure = continue
     environment = {
       MSSQL_PASSWORD = var.admin_password
@@ -55,12 +55,12 @@ resource "null_resource" "create-sql-login" {
 resource "null_resource" "create-sql-user" {
   provisioner "local-exec" {
     command = format("psqlcmd %s %d %s %s \"CREATE USER [%s] with PASSWORD='%s';\"",
-                     var.mssql_hostname,
-                     var.mssql_port,
-                     var.admin_username,
-                     var.mssql_db_name,
-                     random_string.username.result,
-                     random_password.password.result)
+      var.mssql_hostname,
+      var.mssql_port,
+      var.admin_username,
+      var.mssql_db_name,
+      random_string.username.result,
+    random_password.password.result)
     environment = {
       MSSQL_PASSWORD = var.admin_password
     }
@@ -69,11 +69,11 @@ resource "null_resource" "create-sql-user" {
   provisioner "local-exec" {
     when = destroy
     command = format("psqlcmd %s %d %s %s \"DROP USER [%s];\"",
-                     var.mssql_hostname,
-                     var.mssql_port,
-                     var.admin_username,
-                     var.mssql_db_name,
-                     random_string.username.result)
+      var.mssql_hostname,
+      var.mssql_port,
+      var.admin_username,
+      var.mssql_db_name,
+    random_string.username.result)
     environment = {
       MSSQL_PASSWORD = var.admin_password
     }
@@ -86,9 +86,9 @@ resource "null_resource" "create-sql-user" {
 
 locals {
   roles = { "db_ddladmin" = "db_ddladmin"
-            "db_datareader" = "db_datareader"
-            "db_datawriter" = "db_datawriter"
-            "db_accessadmin" = "db_accessadmin"
+    "db_datareader"  = "db_datareader"
+    "db_datawriter"  = "db_datawriter"
+    "db_accessadmin" = "db_accessadmin"
   }
 }
 
@@ -98,27 +98,27 @@ resource "null_resource" "add-user-roles" {
 
   provisioner "local-exec" {
     command = format("psqlcmd %s %d %s %s \"ALTER ROLE %s ADD MEMBER [%s];\"",
-                     var.mssql_hostname,
-                     var.mssql_port,
-                     var.admin_username,
-                     var.mssql_db_name,
-                     each.key,
-                     random_string.username.result)
+      var.mssql_hostname,
+      var.mssql_port,
+      var.admin_username,
+      var.mssql_db_name,
+      each.key,
+    random_string.username.result)
     environment = {
       MSSQL_PASSWORD = var.admin_password
     }
   }
 
   provisioner "local-exec" {
-	when = destroy
+    when = destroy
 
     command = format("psqlcmd %s %d %s %s \"ALTER ROLE %s DROP MEMBER [%s]\"",
-                     var.mssql_hostname,
-                     var.mssql_port,
-                     var.admin_username,
-                     var.mssql_db_name,
-                     each.key,
-                     random_string.username.result)
+      var.mssql_hostname,
+      var.mssql_port,
+      var.admin_username,
+      var.mssql_db_name,
+      each.key,
+    random_string.username.result)
     environment = {
       MSSQL_PASSWORD = var.admin_password
     }
@@ -131,11 +131,11 @@ resource "null_resource" "add-user-roles" {
 resource "null_resource" "add-execute-permission" {
   provisioner "local-exec" {
     command = format("psqlcmd %s %d %s %s \"GRANT EXEC TO [%s];\"",
-                     var.mssql_hostname,
-                     var.mssql_port,
-                     var.admin_username,
-                     var.mssql_db_name,
-                     random_string.username.result)
+      var.mssql_hostname,
+      var.mssql_port,
+      var.admin_username,
+      var.mssql_db_name,
+    random_string.username.result)
     environment = {
       MSSQL_PASSWORD = var.admin_password
     }
@@ -145,11 +145,11 @@ resource "null_resource" "add-execute-permission" {
     when = destroy
 
     command = format("psqlcmd %s %d %s %s \"DENY EXEC TO [%s]\"",
-                     var.mssql_hostname,
-                     var.mssql_port,
-                     var.admin_username,
-                     var.mssql_db_name,
-                     random_string.username.result)
+      var.mssql_hostname,
+      var.mssql_port,
+      var.admin_username,
+      var.mssql_db_name,
+    random_string.username.result)
     environment = {
       MSSQL_PASSWORD = var.admin_password
     }
@@ -159,29 +159,29 @@ resource "null_resource" "add-execute-permission" {
 }
 
 
-output username { value = random_string.username.result }
-output password { value = random_password.password.result }
+output "username" { value = random_string.username.result }
+output "password" { value = random_password.password.result }
 output "jdbcUrl" {
   value = format("jdbc:sqlserver://%s:%d;database=%s;user=%s;password=%s;Encrypt=true;TrustServerCertificate=false;HostNameInCertificate=*.database.windows.net;loginTimeout=30",
-                 var.mssql_hostname,
-                 var.mssql_port,
-                 var.mssql_db_name,
-                 random_string.username.result,
-                 random_password.password.result)
+    var.mssql_hostname,
+    var.mssql_port,
+    var.mssql_db_name,
+    random_string.username.result,
+  random_password.password.result)
 }
 output "jdbcUrlForAuditingEnabled" {
   value = format("jdbc:sqlserver://%s:%d;database=%s;user=%s;password=%s;Encrypt=true;TrustServerCertificate=false;HostNameInCertificate=*.database.windows.net;loginTimeout=30",
-                 var.mssql_hostname,
-                 var.mssql_port,
-                 var.mssql_db_name,
-                 random_string.username.result,
-                 random_password.password.result)
+    var.mssql_hostname,
+    var.mssql_port,
+    var.mssql_db_name,
+    random_string.username.result,
+  random_password.password.result)
 }
 output "uri" {
   value = format("mssql://%s:%d/%s?encrypt=true&TrustServerCertificate=false&HostNameInCertificate=*.database.windows.net",
-                 var.mssql_hostname,
-                 var.mssql_port,
-                 var.mssql_db_name)
+    var.mssql_hostname,
+    var.mssql_port,
+  var.mssql_db_name)
 }
-output "databaseLogin" {value = random_string.username.result}
-output "databaseLoginPassword" {value = random_password.password.result}
+output "databaseLogin" { value = random_string.username.result }
+output "databaseLoginPassword" { value = random_password.password.result }

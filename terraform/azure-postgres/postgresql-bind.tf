@@ -12,47 +12,47 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-variable db_name { type = string }
-variable hostname { type = string }
-variable port { type = number }
-variable admin_username { type = string }
-variable admin_password { type = string }
-variable use_tls { type = bool }
+variable "db_name" { type = string }
+variable "hostname" { type = string }
+variable "port" { type = number }
+variable "admin_username" { type = string }
+variable "admin_password" { type = string }
+variable "use_tls" { type = bool }
 
 provider "postgresql" {
-  host            = var.hostname
-  port            = var.port
-  username        = var.admin_username
-  password        = var.admin_password
-  superuser       = false
-  database        = var.db_name
-  sslmode         = var.use_tls ? "require" : "disable"
+  host      = var.hostname
+  port      = var.port
+  username  = var.admin_username
+  password  = var.admin_password
+  superuser = false
+  database  = var.db_name
+  sslmode   = var.use_tls ? "require" : "disable"
 }
 
 resource "random_string" "username" {
-  length = 16
+  length  = 16
   special = false
-  number = false  
+  number  = false
 }
 
 resource "random_password" "password" {
-  length = 64
+  length           = 64
   override_special = "~_-."
-  min_upper = 2
-  min_lower = 2
-  min_special = 2
-}    
+  min_upper        = 2
+  min_lower        = 2
+  min_special      = 2
+}
 
 resource "postgresql_role" "new_user" {
-  name     = random_string.username.result
-  login    = true
-  password = random_password.password.result
+  name                = random_string.username.result
+  login               = true
+  password            = random_password.password.result
   skip_reassign_owned = true
-  skip_drop_role = true
+  skip_drop_role      = true
 }
 
 resource "postgresql_grant" "all_access" {
-  depends_on  = [ postgresql_role.new_user ]
+  depends_on  = [postgresql_role.new_user]
   database    = var.db_name
   role        = random_string.username.result
   object_type = "database"
@@ -60,7 +60,7 @@ resource "postgresql_grant" "all_access" {
 }
 
 resource "postgresql_grant" "table_access" {
-  depends_on  = [ postgresql_role.new_user ]
+  depends_on  = [postgresql_role.new_user]
   database    = var.db_name
   role        = postgresql_role.new_user.name
   schema      = "public"
@@ -71,24 +71,24 @@ resource "postgresql_grant" "table_access" {
 locals {
   username = format("%s@%s", random_string.username.result, var.hostname)
 }
-output username { value = local.username }
-output password { value = random_password.password.result }
-output uri { 
-  value = format("%s://%s:%s@%s:%d/%s", 
-                  "postgresql",
-                  local.username, 
-                  random_password.password.result, 
-                  var.hostname, 
-                  var.port,
-                  var.db_name) 
+output "username" { value = local.username }
+output "password" { value = random_password.password.result }
+output "uri" {
+  value = format("%s://%s:%s@%s:%d/%s",
+    "postgresql",
+    local.username,
+    random_password.password.result,
+    var.hostname,
+    var.port,
+  var.db_name)
 }
-output jdbcUrl { 
-  value = format("jdbc:%s://%s:%s/%s?user=%s\u0026password=%s\u0026verifyServerCertificate=true\u0026useSSL=%v\u0026requireSSL=false\u0026serverTimezone=GMT", 
-                  "postgresql",
-                  var.hostname, 
-                  var.port,
-                  var.db_name, 
-                  local.username, 
-                  random_password.password.result,
-                  var.use_tls) 
+output "jdbcUrl" {
+  value = format("jdbc:%s://%s:%s/%s?user=%s\u0026password=%s\u0026verifyServerCertificate=true\u0026useSSL=%v\u0026requireSSL=false\u0026serverTimezone=GMT",
+    "postgresql",
+    var.hostname,
+    var.port,
+    var.db_name,
+    local.username,
+    random_password.password.result,
+  var.use_tls)
 }
