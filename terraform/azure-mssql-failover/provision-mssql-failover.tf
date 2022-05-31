@@ -12,25 +12,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-variable instance_name { type = string }
-variable azure_tenant_id { type = string }
-variable azure_subscription_id { type = string }
-variable azure_client_id { type = string }
-variable azure_client_secret { type = string }
-variable resource_group { type = string }
-variable db_name { type = string }
-variable location { type = string }
-variable failover_location { type = string }
-variable labels { type = map }
-variable sku_name { type = string }
-variable cores { type = number }
-variable max_storage_gb { type = number }
-variable min_capacity { type = number }
-variable auto_pause_delay { type = number }
-variable authorized_network {type = string}
-variable skip_provider_registration { type = bool }
-variable read_write_endpoint_failover_policy { type = string }
-variable failover_grace_minutes { type = number }
+variable "instance_name" { type = string }
+variable "azure_tenant_id" { type = string }
+variable "azure_subscription_id" { type = string }
+variable "azure_client_id" { type = string }
+variable "azure_client_secret" { type = string }
+variable "resource_group" { type = string }
+variable "db_name" { type = string }
+variable "location" { type = string }
+variable "failover_location" { type = string }
+variable "labels" { type = map(any) }
+variable "sku_name" { type = string }
+variable "cores" { type = number }
+variable "max_storage_gb" { type = number }
+variable "min_capacity" { type = number }
+variable "auto_pause_delay" { type = number }
+variable "authorized_network" { type = string }
+variable "skip_provider_registration" { type = bool }
+variable "read_write_endpoint_failover_policy" { type = string }
+variable "failover_grace_minutes" { type = number }
 
 provider "azurerm" {
   version = ">= 2.53.0"
@@ -46,15 +46,15 @@ provider "azurerm" {
 
 locals {
   instance_types = {
-    1 = "GP_Gen5_1"
-    2 = "GP_Gen5_2"
-    4 = "GP_Gen5_4"
-    8 = "GP_Gen5_8"
+    1  = "GP_Gen5_1"
+    2  = "GP_Gen5_2"
+    4  = "GP_Gen5_4"
+    8  = "GP_Gen5_8"
     16 = "GP_Gen5_16"
     32 = "GP_Gen5_32"
     80 = "GP_Gen5_80"
   }
-  sku_name = length(var.sku_name) == 0 ? local.instance_types[var.cores] : var.sku_name
+  sku_name       = length(var.sku_name) == 0 ? local.instance_types[var.cores] : var.sku_name
   resource_group = length(var.resource_group) == 0 ? format("rg-%s", var.instance_name) : var.resource_group
 }
 
@@ -63,77 +63,85 @@ resource "azurerm_resource_group" "azure-sql-fog" {
   location = var.location
   tags     = var.labels
   count    = length(var.resource_group) == 0 ? 1 : 0
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "random_string" "username" {
-  length = 16
+  length  = 16
   special = false
-  number = false
+  number  = false
 }
 
 resource "random_password" "password" {
-  length = 64
+  length           = 64
   override_special = "~_-."
-  min_upper = 2
-  min_lower = 2
-  min_special = 2
+  min_upper        = 2
+  min_lower        = 2
+  min_special      = 2
 }
 
 resource "azurerm_sql_server" "primary_azure_sql_db_server" {
-  depends_on = [ azurerm_resource_group.azure-sql-fog ]
+  depends_on                   = [azurerm_resource_group.azure-sql-fog]
   name                         = format("%s-primary", var.instance_name)
   resource_group_name          = local.resource_group
   location                     = var.location
   version                      = "12.0"
   administrator_login          = random_string.username.result
   administrator_login_password = random_password.password.result
-  tags = var.labels
+  tags                         = var.labels
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 locals {
   default_pair = {
     // https://docs.microsoft.com/en-us/azure/best-practices-availability-paired-regions
-    "eastasia" = "southeastasia"
-    "southeastasia" = "eastasia"
-    "centralus" = "eastus2"
-    "eastus" = "westus"
-    "eastus2" = "centralus"
-    "westus" = "eastus"
-    "northcentralus" = "southcentralus"
-    "southcentralus" = "northcentralus"
-    "northeurope" = "westeurope"
-    "westeurope" = "northeurope"
-    "japanwest" = "japaneast"
-    "japaneast" = "japanwest"
-    "brazilsouth" = "southcentralus"
-    "australiaeast" = "australiasoutheast"
+    "eastasia"           = "southeastasia"
+    "southeastasia"      = "eastasia"
+    "centralus"          = "eastus2"
+    "eastus"             = "westus"
+    "eastus2"            = "centralus"
+    "westus"             = "eastus"
+    "northcentralus"     = "southcentralus"
+    "southcentralus"     = "northcentralus"
+    "northeurope"        = "westeurope"
+    "westeurope"         = "northeurope"
+    "japanwest"          = "japaneast"
+    "japaneast"          = "japanwest"
+    "brazilsouth"        = "southcentralus"
+    "australiaeast"      = "australiasoutheast"
     "australiasoutheast" = "australiaeast"
-    "australiacentral" = "australiacentral2"
-    "australiacentral2" = "australiacentral"
-    "southindia" = "centralindia"
-    "centralindia" = "southindia"
-    "westindia" = "southindia"
-    "canadacentral" = "canadaeast"
-    "canadaeast" = "canadacentral"
-    "uksouth" = "ukwest"
-    "ukwest" = "uksouth"
-    "westcentralus" = "westus2"
-    "westus2" = "westcentralus"
-    "koreacentral" = "koreasouth"
-    "koreasouth" = "koreacentral"
-    "francecentral" = "francesouth"
-    "francesouth" = "francecentral"
-    "uaenorth" = "uaecentral"
-    "uaecentral" = "uaenorth"
-    "southafricanorth" = "southafricawest"
-    "southafricawest" = "southafricanorth"
-    "germanycentral" = "germanynortheast"
-    "germanynortheast" = "germanycentral"
+    "australiacentral"   = "australiacentral2"
+    "australiacentral2"  = "australiacentral"
+    "southindia"         = "centralindia"
+    "centralindia"       = "southindia"
+    "westindia"          = "southindia"
+    "canadacentral"      = "canadaeast"
+    "canadaeast"         = "canadacentral"
+    "uksouth"            = "ukwest"
+    "ukwest"             = "uksouth"
+    "westcentralus"      = "westus2"
+    "westus2"            = "westcentralus"
+    "koreacentral"       = "koreasouth"
+    "koreasouth"         = "koreacentral"
+    "francecentral"      = "francesouth"
+    "francesouth"        = "francecentral"
+    "uaenorth"           = "uaecentral"
+    "uaecentral"         = "uaenorth"
+    "southafricanorth"   = "southafricawest"
+    "southafricawest"    = "southafricanorth"
+    "germanycentral"     = "germanynortheast"
+    "germanynortheast"   = "germanycentral"
   }
 }
 
 resource "azurerm_sql_server" "secondary_sql_db_server" {
-  depends_on = [ azurerm_resource_group.azure-sql-fog ]
+  depends_on                   = [azurerm_resource_group.azure-sql-fog]
   name                         = format("%s-secondary", var.instance_name)
   resource_group_name          = local.resource_group
   location                     = var.failover_location != "default" ? var.location : local.default_pair[var.location]
@@ -141,29 +149,41 @@ resource "azurerm_sql_server" "secondary_sql_db_server" {
   administrator_login          = random_string.username.result
   administrator_login_password = random_password.password.result
   tags                         = var.labels
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "azurerm_mssql_database" "azure_sql_db" {
-  name                = var.db_name
-  server_id           = azurerm_sql_server.primary_azure_sql_db_server.id
-  sku_name            = local.sku_name
-  max_size_gb         = var.max_storage_gb
-  tags                = var.labels
-  min_capacity        = var.min_capacity
+  name                        = var.db_name
+  server_id                   = azurerm_sql_server.primary_azure_sql_db_server.id
+  sku_name                    = local.sku_name
+  max_size_gb                 = var.max_storage_gb
+  tags                        = var.labels
+  min_capacity                = var.min_capacity
   auto_pause_delay_in_minutes = var.auto_pause_delay
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "azurerm_mssql_database" "secondary_azure_sql_db" {
-  name                = var.db_name
-  server_id           = azurerm_sql_server.secondary_sql_db_server.id
-  sku_name            = local.sku_name
-  tags                = var.labels
-  create_mode         = "Secondary"
-  creation_source_database_id  = azurerm_mssql_database.azure_sql_db.id
+  name                        = var.db_name
+  server_id                   = azurerm_sql_server.secondary_sql_db_server.id
+  sku_name                    = local.sku_name
+  tags                        = var.labels
+  create_mode                 = "Secondary"
+  creation_source_database_id = azurerm_mssql_database.azure_sql_db.id
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "azurerm_sql_failover_group" "failover_group" {
-  depends_on = [ azurerm_resource_group.azure-sql-fog ]
+  depends_on          = [azurerm_resource_group.azure-sql-fog]
   name                = var.instance_name
   resource_group_name = local.resource_group
   server_name         = azurerm_sql_server.primary_azure_sql_db_server.name
@@ -183,7 +203,7 @@ resource "azurerm_sql_virtual_network_rule" "allow_subnet_id1" {
   resource_group_name = local.resource_group
   server_name         = azurerm_sql_server.primary_azure_sql_db_server.name
   subnet_id           = var.authorized_network
-  count = var.authorized_network != "default" ? 1 : 0
+  count               = var.authorized_network != "default" ? 1 : 0
 }
 
 resource "azurerm_sql_virtual_network_rule" "allow_subnet_id2" {
@@ -191,45 +211,45 @@ resource "azurerm_sql_virtual_network_rule" "allow_subnet_id2" {
   resource_group_name = local.resource_group
   server_name         = azurerm_sql_server.secondary_sql_db_server.name
   subnet_id           = var.authorized_network
-  count = var.authorized_network != "default" ? 1 : 0
+  count               = var.authorized_network != "default" ? 1 : 0
 }
 
 resource "azurerm_sql_firewall_rule" "server1" {
-  depends_on = [ azurerm_resource_group.azure-sql-fog ]
+  depends_on          = [azurerm_resource_group.azure-sql-fog]
   name                = format("firewallrule1-%s", lower(var.instance_name))
   resource_group_name = local.resource_group
   server_name         = azurerm_sql_server.primary_azure_sql_db_server.name
   start_ip_address    = "0.0.0.0"
   end_ip_address      = "0.0.0.0"
-  count = var.authorized_network == "default" ? 1 : 0
+  count               = var.authorized_network == "default" ? 1 : 0
 }
 
 resource "azurerm_sql_firewall_rule" "server2" {
-  depends_on = [ azurerm_resource_group.azure-sql-fog ]
+  depends_on          = [azurerm_resource_group.azure-sql-fog]
   name                = format("firewallrule2-%s", lower(var.instance_name))
   resource_group_name = local.resource_group
   server_name         = azurerm_sql_server.secondary_sql_db_server.name
   start_ip_address    = "0.0.0.0"
   end_ip_address      = "0.0.0.0"
-  count = var.authorized_network == "default" ? 1 : 0
+  count               = var.authorized_network == "default" ? 1 : 0
 }
 
 locals {
-    serverFQDN = format("%s.database.windows.net", azurerm_sql_failover_group.failover_group.name)
+  serverFQDN = format("%s.database.windows.net", azurerm_sql_failover_group.failover_group.name)
 }
-output sqldbName {value = azurerm_mssql_database.azure_sql_db.name}
-output sqlServerName {value = azurerm_sql_failover_group.failover_group.name}
-output sqlServerFullyQualifiedDomainName {value = local.serverFQDN}
-output hostname {value = local.serverFQDN}
-output port {value = 1433}
-output name {value = azurerm_mssql_database.azure_sql_db.name}
-output username {value = random_string.username.result}
-output password {value = random_password.password.result}
-output status {value = format("created failover group %s (id: %s), primary db %s (id: %s) on server %s (id: %s), secondary db %s (id: %s/databases/%s) on server %s (id: %s) URL: https://portal.azure.com/#@%s/resource%s/failoverGroup",
-                              azurerm_sql_failover_group.failover_group.name, azurerm_sql_failover_group.failover_group.id,
-                              azurerm_mssql_database.azure_sql_db.name, azurerm_mssql_database.azure_sql_db.id,
-                              azurerm_sql_server.primary_azure_sql_db_server.name, azurerm_sql_server.primary_azure_sql_db_server.id,
-                              azurerm_mssql_database.azure_sql_db.name, azurerm_sql_server.secondary_sql_db_server.id, azurerm_mssql_database.azure_sql_db.name,
-                              azurerm_sql_server.secondary_sql_db_server.name, azurerm_sql_server.secondary_sql_db_server.id,
-                              var.azure_tenant_id,
-                              azurerm_sql_server.primary_azure_sql_db_server.id)}
+output "sqldbName" { value = azurerm_mssql_database.azure_sql_db.name }
+output "sqlServerName" { value = azurerm_sql_failover_group.failover_group.name }
+output "sqlServerFullyQualifiedDomainName" { value = local.serverFQDN }
+output "hostname" { value = local.serverFQDN }
+output "port" { value = 1433 }
+output "name" { value = azurerm_mssql_database.azure_sql_db.name }
+output "username" { value = random_string.username.result }
+output "password" { value = random_password.password.result }
+output "status" { value = format("created failover group %s (id: %s), primary db %s (id: %s) on server %s (id: %s), secondary db %s (id: %s/databases/%s) on server %s (id: %s) URL: https://portal.azure.com/#@%s/resource%s/failoverGroup",
+  azurerm_sql_failover_group.failover_group.name, azurerm_sql_failover_group.failover_group.id,
+  azurerm_mssql_database.azure_sql_db.name, azurerm_mssql_database.azure_sql_db.id,
+  azurerm_sql_server.primary_azure_sql_db_server.name, azurerm_sql_server.primary_azure_sql_db_server.id,
+  azurerm_mssql_database.azure_sql_db.name, azurerm_sql_server.secondary_sql_db_server.id, azurerm_mssql_database.azure_sql_db.name,
+  azurerm_sql_server.secondary_sql_db_server.name, azurerm_sql_server.secondary_sql_db_server.id,
+  var.azure_tenant_id,
+azurerm_sql_server.primary_azure_sql_db_server.id) }

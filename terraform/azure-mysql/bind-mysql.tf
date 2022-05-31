@@ -12,68 +12,68 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-variable mysql_db_name { type = string }
-variable mysql_hostname { type = string }
-variable mysql_port { type = number }
-variable admin_username { type = string }
-variable admin_password { type = string }
-variable use_tls { type = bool }
+variable "mysql_db_name" { type = string }
+variable "mysql_hostname" { type = string }
+variable "mysql_port" { type = number }
+variable "admin_username" { type = string }
+variable "admin_password" { type = string }
+variable "use_tls" { type = bool }
 
 provider "mysql" {
   endpoint = format("%s:%d", var.mysql_hostname, var.mysql_port)
   username = var.admin_username
   password = var.admin_password
-  tls = var.use_tls
+  tls      = var.use_tls
 }
 
 resource "random_string" "username" {
-  length = 16
+  length  = 16
   special = false
 }
 
 resource "random_password" "password" {
-  length = 31
+  length           = 31
   override_special = "~_-."
-  min_upper = 2
-  min_lower = 2
-  min_special = 2
-}    
+  min_upper        = 2
+  min_lower        = 2
+  min_special      = 2
+}
 
 resource "mysql_user" "newuser" {
   user               = random_string.username.result
   plaintext_password = random_password.password.result
-  host = "%"
+  host               = "%"
 }
 
 resource "mysql_grant" "newuser" {
   user       = mysql_user.newuser.user
   database   = var.mysql_db_name
-  host = mysql_user.newuser.host
+  host       = mysql_user.newuser.host
   privileges = ["ALL"]
 }
 
 locals {
   username = format("%s@%s", random_string.username.result, var.mysql_hostname)
 }
-output username { value = local.username }
-output password { value = random_password.password.result }
-output uri { 
-  value = format("%s://%s:%s@%s:%d/%s", 
-                  "mysql",
-                  local.username, 
-                  random_password.password.result, 
-                  var.mysql_hostname, 
-                  var.mysql_port,
-                  var.mysql_db_name) 
+output "username" { value = local.username }
+output "password" { value = random_password.password.result }
+output "uri" {
+  value = format("%s://%s:%s@%s:%d/%s",
+    "mysql",
+    local.username,
+    random_password.password.result,
+    var.mysql_hostname,
+    var.mysql_port,
+  var.mysql_db_name)
 }
-output jdbcUrl { 
-  value = format("jdbc:%s://%s:%s/%s?user=%s\u0026password=%s\u0026verifyServerCertificate=true\u0026useSSL=%v\u0026requireSSL=%v\u0026serverTimezone=GMT", 
-                  "mysql",
-                  var.mysql_hostname, 
-                  var.mysql_port,
-                  var.mysql_db_name, 
-                  local.username, 
-                  random_password.password.result,
-                  var.use_tls,
-                  var.use_tls) 
+output "jdbcUrl" {
+  value = format("jdbc:%s://%s:%s/%s?user=%s\u0026password=%s\u0026verifyServerCertificate=true\u0026useSSL=%v\u0026requireSSL=%v\u0026serverTimezone=GMT",
+    "mysql",
+    var.mysql_hostname,
+    var.mysql_port,
+    var.mysql_db_name,
+    local.username,
+    random_password.password.result,
+    var.use_tls,
+  var.use_tls)
 }  

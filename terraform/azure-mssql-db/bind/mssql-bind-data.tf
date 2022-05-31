@@ -13,6 +13,6 @@
 # limitations under the License.
 
 locals {
-    admin_username = length(var.server_credentials) > 0 ? var.server_credentials[var.server].admin_username : var.admin_username
-    admin_password = length(var.server_credentials) > 0 ? var.server_credentials[var.server].admin_password : var.admin_password
+  admin_username = length(var.server_credentials) > 0 ? var.server_credentials[var.server].admin_username : var.admin_username
+  admin_password = length(var.server_credentials) > 0 ? var.server_credentials[var.server].admin_password : var.admin_password
 }

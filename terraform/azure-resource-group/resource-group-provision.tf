@@ -12,14 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-variable instance_name { type = string }
-variable azure_tenant_id { type = string }
-variable azure_subscription_id { type = string }
-variable azure_client_id { type = string }
-variable azure_client_secret { type = string }
-variable location { type = string }
-variable labels { type = map }
-variable skip_provider_registration { type = bool }
+variable "instance_name" { type = string }
+variable "azure_tenant_id" { type = string }
+variable "azure_subscription_id" { type = string }
+variable "azure_client_id" { type = string }
+variable "azure_client_secret" { type = string }
+variable "location" { type = string }
+variable "labels" { type = map(any) }
+variable "skip_provider_registration" { type = bool }
 
 provider "azurerm" {
   version = ">= 2.33.0"
@@ -28,7 +28,7 @@ provider "azurerm" {
   subscription_id = var.azure_subscription_id
   client_id       = var.azure_client_id
   client_secret   = var.azure_client_secret
-  tenant_id       = var.azure_tenant_id  
+  tenant_id       = var.azure_tenant_id
 
   skip_provider_registration = var.skip_provider_registration
 }
@@ -37,6 +37,10 @@ resource "azurerm_resource_group" "rg" {
   name     = var.instance_name
   location = var.location
   tags     = var.labels
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 output "resource-group-name" { value = azurerm_resource_group.rg.name }

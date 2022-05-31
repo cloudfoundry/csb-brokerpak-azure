@@ -12,20 +12,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-variable instance_name { type = string }
-variable resource_group { type = string }
-variable db_name { type = string }
-variable location { type = string }
-variable azure_tenant_id { type = string }
-variable azure_subscription_id { type = string }
-variable azure_client_id { type = string }
-variable azure_client_secret { type = string }
-variable labels { type = map }
-variable sku_name { type = string }
-variable cores { type = number }
-variable max_storage_gb { type = number }
-variable authorized_network {type = string}
-variable skip_provider_registration { type = bool }
+variable "instance_name" { type = string }
+variable "resource_group" { type = string }
+variable "db_name" { type = string }
+variable "location" { type = string }
+variable "azure_tenant_id" { type = string }
+variable "azure_subscription_id" { type = string }
+variable "azure_client_id" { type = string }
+variable "azure_client_secret" { type = string }
+variable "labels" { type = map(any) }
+variable "sku_name" { type = string }
+variable "cores" { type = number }
+variable "max_storage_gb" { type = number }
+variable "authorized_network" { type = string }
+variable "skip_provider_registration" { type = bool }
 
 provider "azurerm" {
   version = "~> 2.33.0"
@@ -41,15 +41,15 @@ provider "azurerm" {
 
 locals {
   instance_types = {
-    1 = "GP_Gen5_1"
-    2 = "GP_Gen5_2"
-    4 = "GP_Gen5_4"
-    8 = "GP_Gen5_8"
+    1  = "GP_Gen5_1"
+    2  = "GP_Gen5_2"
+    4  = "GP_Gen5_4"
+    8  = "GP_Gen5_8"
     16 = "GP_Gen5_16"
     32 = "GP_Gen5_32"
     80 = "GP_Gen5_80"
   }
-  sku_name = length(var.sku_name) == 0 ? local.instance_types[var.cores] : var.sku_name
+  sku_name       = length(var.sku_name) == 0 ? local.instance_types[var.cores] : var.sku_name
   resource_group = length(var.resource_group) == 0 ? format("rg-%s", var.instance_name) : var.resource_group
 }
 
@@ -58,41 +58,53 @@ resource "azurerm_resource_group" "azure_sql" {
   location = var.location
   tags     = var.labels
   count    = length(var.resource_group) == 0 ? 1 : 0
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "random_string" "username" {
-  length = 16
+  length  = 16
   special = false
-  number = false
+  number  = false
 }
 
 resource "random_password" "password" {
-  length = 64
+  length           = 64
   override_special = "~_-."
-  min_upper = 2
-  min_lower = 2
-  min_special = 2
+  min_upper        = 2
+  min_lower        = 2
+  min_special      = 2
 }
 
 resource "azurerm_sql_server" "azure_sql_db_server" {
-  depends_on = [ azurerm_resource_group.azure_sql ]
+  depends_on                   = [azurerm_resource_group.azure_sql]
   name                         = var.instance_name
   resource_group_name          = local.resource_group
   location                     = var.location
   version                      = "12.0"
   administrator_login          = random_string.username.result
   administrator_login_password = random_password.password.result
-  tags = var.labels
+  tags                         = var.labels
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "azurerm_sql_database" "azure_sql_db" {
-  name                = var.db_name
-  resource_group_name = azurerm_sql_server.azure_sql_db_server.resource_group_name
-  location            = var.location
-  server_name         = azurerm_sql_server.azure_sql_db_server.name
+  name                             = var.db_name
+  resource_group_name              = azurerm_sql_server.azure_sql_db_server.resource_group_name
+  location                         = var.location
+  server_name                      = azurerm_sql_server.azure_sql_db_server.name
   requested_service_objective_name = local.sku_name
-  max_size_bytes      = var.max_storage_gb * 1024 * 1024 * 1024
-  tags = var.labels
+  max_size_bytes                   = var.max_storage_gb * 1024 * 1024 * 1024
+  tags                             = var.labels
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "azurerm_sql_virtual_network_rule" "allow_subnet_id" {
@@ -100,7 +112,7 @@ resource "azurerm_sql_virtual_network_rule" "allow_subnet_id" {
   resource_group_name = local.resource_group
   server_name         = azurerm_sql_server.azure_sql_db_server.name
   subnet_id           = var.authorized_network
-  count = var.authorized_network != "default" ? 1 : 0
+  count               = var.authorized_network != "default" ? 1 : 0
 }
 
 resource "azurerm_sql_firewall_rule" "sql_firewall_rule" {
@@ -109,22 +121,22 @@ resource "azurerm_sql_firewall_rule" "sql_firewall_rule" {
   server_name         = azurerm_sql_server.azure_sql_db_server.name
   start_ip_address    = "0.0.0.0"
   end_ip_address      = "0.0.0.0"
-  count = var.authorized_network == "default" ? 1 : 0
+  count               = var.authorized_network == "default" ? 1 : 0
 }
 
-output sqldbResourceGroup {value = azurerm_sql_server.azure_sql_db_server.resource_group_name}
-output sqldbName {value = azurerm_sql_database.azure_sql_db.name}
-output sqlServerName {value = azurerm_sql_server.azure_sql_db_server.name}
-output sqlServerFullyQualifiedDomainName {value = azurerm_sql_server.azure_sql_db_server.fully_qualified_domain_name}
-output hostname {value = azurerm_sql_server.azure_sql_db_server.fully_qualified_domain_name}
-output port {value = 1433}
-output name {value = azurerm_sql_database.azure_sql_db.name}
-output username {value = random_string.username.result}
-output password {value = random_password.password.result}
-output status {value = format("created db %s (id: %s) on server %s (id: %s) URL: https://portal.azure.com/#@%s/resource%s",
-                               azurerm_sql_database.azure_sql_db.name,
-                               azurerm_sql_database.azure_sql_db.id,
-                               azurerm_sql_server.azure_sql_db_server.name,
-                               azurerm_sql_server.azure_sql_db_server.id,
-                               var.azure_tenant_id,
-                               azurerm_sql_database.azure_sql_db.id)}
+output "sqldbResourceGroup" { value = azurerm_sql_server.azure_sql_db_server.resource_group_name }
+output "sqldbName" { value = azurerm_sql_database.azure_sql_db.name }
+output "sqlServerName" { value = azurerm_sql_server.azure_sql_db_server.name }
+output "sqlServerFullyQualifiedDomainName" { value = azurerm_sql_server.azure_sql_db_server.fully_qualified_domain_name }
+output "hostname" { value = azurerm_sql_server.azure_sql_db_server.fully_qualified_domain_name }
+output "port" { value = 1433 }
+output "name" { value = azurerm_sql_database.azure_sql_db.name }
+output "username" { value = random_string.username.result }
+output "password" { value = random_password.password.result }
+output "status" { value = format("created db %s (id: %s) on server %s (id: %s) URL: https://portal.azure.com/#@%s/resource%s",
+  azurerm_sql_database.azure_sql_db.name,
+  azurerm_sql_database.azure_sql_db.id,
+  azurerm_sql_server.azure_sql_db_server.name,
+  azurerm_sql_server.azure_sql_db_server.id,
+  var.azure_tenant_id,
+azurerm_sql_database.azure_sql_db.id) }
