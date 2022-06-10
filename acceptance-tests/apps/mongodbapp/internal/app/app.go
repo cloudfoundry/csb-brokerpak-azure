@@ -15,6 +15,7 @@ import (
 const (
 	documentNameKey = "name"
 	documentDataKey = "data"
+	documentTTLKey  = "ttl"
 )
 
 func App(uri string) *mux.Router {
