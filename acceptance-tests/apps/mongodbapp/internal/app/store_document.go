@@ -24,7 +24,7 @@ func handleStoreDocument(client *mongo.Client) func(w http.ResponseWriter, r *ht
 		}
 
 		data := string(rawData)
-		document := bson.M{documentNameKey: documentName, documentDataKey: data}
+		document := bson.M{documentNameKey: documentName, documentDataKey: data, documentTTLKey: int32(-1)}
 
 		result, err := client.Database(databaseName).Collection(collectionName).InsertOne(r.Context(), document)
 		if err != nil {
