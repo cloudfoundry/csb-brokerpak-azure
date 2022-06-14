@@ -1,12 +1,11 @@
 package serverpairs
 
 import (
-	"csbbrokerpakazure/acceptance-tests/helpers/environment"
 	"csbbrokerpakazure/acceptance-tests/helpers/random"
 )
 
 type DatabaseServerPair struct {
-	ServerPairTag          string
+	ServerPairTag          string                   `json:"-"`
 	Username               string                   `json:"admin_username"`
 	Password               string                   `json:"admin_password"`
 	PrimaryServer          DatabaseServerPairMember `json:"primary"`
@@ -19,15 +18,15 @@ type DatabaseServerPairMember struct {
 	ResourceGroup string `json:"resource_group"`
 }
 
-func NewDatabaseServerPair(metadata environment.Metadata) DatabaseServerPair {
-	secondaryResourceGroup := random.Name(random.WithPrefix(metadata.ResourceGroup))
+func NewDatabaseServerPair(resourceGroup string) DatabaseServerPair {
+	secondaryResourceGroup := random.Name(random.WithPrefix(resourceGroup))
 	return DatabaseServerPair{
 		ServerPairTag: random.Name(random.WithMaxLength(10)),
 		Username:      random.Name(random.WithMaxLength(10)),
 		Password:      random.Password(),
 		PrimaryServer: DatabaseServerPairMember{
 			Name:          random.Name(random.WithPrefix("server")),
-			ResourceGroup: metadata.ResourceGroup,
+			ResourceGroup: resourceGroup,
 		},
 		SecondaryServer: DatabaseServerPairMember{
 			Name:          random.Name(random.WithPrefix("server")),
@@ -71,6 +70,7 @@ func (d DatabaseServerPair) SecondaryResourceGroupConfig() interface{} {
 	}
 }
 
+// ServerPairsConfig is for setting MSSQL_DB_FOG_SERVER_PAIR_CREDS
 func (d DatabaseServerPair) ServerPairsConfig() interface{} {
 	return map[string]interface{}{d.ServerPairTag: d}
 }

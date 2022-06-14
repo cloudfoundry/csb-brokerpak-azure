@@ -2,16 +2,13 @@ package acceptance_test
 
 import (
 	"csbbrokerpakazure/acceptance-tests/helpers/apps"
+	"csbbrokerpakazure/acceptance-tests/helpers/azure"
 	"csbbrokerpakazure/acceptance-tests/helpers/brokers"
 	"csbbrokerpakazure/acceptance-tests/helpers/cf"
 	"csbbrokerpakazure/acceptance-tests/helpers/matchers"
 	"csbbrokerpakazure/acceptance-tests/helpers/random"
+	"csbbrokerpakazure/acceptance-tests/helpers/serverpairs"
 	"csbbrokerpakazure/acceptance-tests/helpers/services"
-	"os/exec"
-	"strings"
-	"time"
-
-	"github.com/onsi/gomega/gexec"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -39,7 +36,16 @@ var _ = Describe("MSSQL Failover Group DB Subsume", Label("mssql-db-failover-gro
 			"azure-sqldb-failover-group",
 			"SecondaryDatabaseWithFailoverGroup",
 			services.WithMASBBroker(),
-			services.WithParameters(masbFOGConfig(masbDBName, fogName)),
+			services.WithParameters(map[string]interface{}{
+				"primaryServerName":   metadata.PreProvisionedSQLServer,
+				"primaryDbName":       masbDBName,
+				"secondaryServerName": metadata.PreProvisionedFOGServer,
+				"failoverGroupName":   fogName,
+				"readWriteEndpoint": map[string]interface{}{
+					"failoverPolicy":                         "Automatic",
+					"failoverWithDataLossGracePeriodMinutes": 60,
+				},
+			}),
 		)
 		defer masbFOGInstance.Delete()
 
@@ -67,10 +73,10 @@ var _ = Describe("MSSQL Failover Group DB Subsume", Label("mssql-db-failover-gro
 		Expect(got).To(Equal(value))
 
 		By("Create the CSB with DB server details")
-		serverPairTag := random.Name(random.WithMaxLength(10))
+		serversConfig := serverpairs.NewDatabaseServerPair(metadata.ResourceGroup)
 		serviceBroker := brokers.Create(
 			brokers.WithPrefix("csb-mssql-fog-db"),
-			brokers.WithEnv(apps.EnvVar{Name: "MSSQL_DB_FOG_SERVER_PAIR_CREDS", Value: serverPairsConfig(serverPairTag)}),
+			brokers.WithEnv(apps.EnvVar{Name: "MSSQL_DB_FOG_SERVER_PAIR_CREDS", Value: serversConfig.ServerPairsConfig()}),
 		)
 		defer serviceBroker.Delete()
 
@@ -80,10 +86,10 @@ var _ = Describe("MSSQL Failover Group DB Subsume", Label("mssql-db-failover-gro
 			"subsume",
 			services.WithBroker(serviceBroker),
 			services.WithParameters(map[string]string{
-				"azure_primary_db_id":   fetchResourceID("db", masbDBName, metadata.PreProvisionedSQLServer),
-				"azure_secondary_db_id": fetchResourceID("db", masbDBName, metadata.PreProvisionedFOGServer),
-				"azure_fog_id":          fetchResourceID("failover-group", fogName, metadata.PreProvisionedSQLServer),
-				"server_pair":           serverPairTag,
+				"azure_primary_db_id":   azure.FetchResourceID("db", masbDBName, metadata.PreProvisionedSQLServer, metadata.ResourceGroup),
+				"azure_secondary_db_id": azure.FetchResourceID("db", masbDBName, metadata.PreProvisionedFOGServer, metadata.ResourceGroup),
+				"azure_fog_id":          azure.FetchResourceID("failover-group", fogName, metadata.PreProvisionedSQLServer, metadata.ResourceGroup),
+				"server_pair":           serversConfig.ServerPairTag,
 			}),
 		)
 		defer dbFogInstance.Delete()
@@ -109,41 +115,3 @@ var _ = Describe("MSSQL Failover Group DB Subsume", Label("mssql-db-failover-gro
 		app.DELETE(schema)
 	})
 })
-
-func masbFOGConfig(masbDBName, fogName string) interface{} {
-	return map[string]interface{}{
-		"primaryServerName":   metadata.PreProvisionedSQLServer,
-		"primaryDbName":       masbDBName,
-		"secondaryServerName": metadata.PreProvisionedFOGServer,
-		"failoverGroupName":   fogName,
-		"readWriteEndpoint": map[string]interface{}{
-			"failoverPolicy":                         "Automatic",
-			"failoverWithDataLossGracePeriodMinutes": 60,
-		},
-	}
-}
-
-func serverPairsConfig(serverPairTag string) interface{} {
-	return map[string]interface{}{
-		serverPairTag: map[string]interface{}{
-			"admin_username": metadata.PreProvisionedSQLUsername,
-			"admin_password": metadata.PreProvisionedSQLPassword,
-			"primary": map[string]string{
-				"server_name":    metadata.PreProvisionedSQLServer,
-				"resource_group": metadata.ResourceGroup,
-			},
-			"secondary": map[string]string{
-				"server_name":    metadata.PreProvisionedFOGServer,
-				"resource_group": metadata.ResourceGroup,
-			},
-		},
-	}
-}
-
-func fetchResourceID(kind, name, server string) string {
-	command := exec.Command("az", "sql", kind, "show", "--name", name, "--server", server, "--resource-group", metadata.ResourceGroup, "--query", "id", "-o", "tsv")
-	session, err := gexec.Start(command, GinkgoWriter, GinkgoWriter)
-	Expect(err).NotTo(HaveOccurred())
-	Eventually(session, time.Minute).Should(gexec.Exit(0))
-	return strings.TrimSpace(string(session.Out.Contents()))
-}
