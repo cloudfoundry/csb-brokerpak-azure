@@ -68,10 +68,10 @@ var _ = Describe("UpgradeMssqlDBTest", Label("mssql-db"), func() {
 			Expect(got).To(Equal(valueOne))
 
 			By("pushing the development version of the broker")
-			serviceBroker.UpdateSourceDir(developmentBuildDir)
+			serviceBroker.UpgradeBroker(developmentBuildDir)
 
-			By("updating the instance plan")
-			dbInstance.Update("-p", "medium")
+			By("upgrading service instance")
+			dbInstance.Upgrade()
 
 			By("checking previously created data still accessible")
 			got = appTwo.GET("%s/%s", schema, keyOne)

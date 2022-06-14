@@ -27,8 +27,20 @@ variable "max_storage_gb" { type = number }
 variable "authorized_network" { type = string }
 variable "skip_provider_registration" { type = bool }
 
+terraform {
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = ">=2.33.0"
+    }
+    random = {
+      source  = "hashicorp/random"
+      version = ">=3.3.1"
+    }
+  }
+}
+
 provider "azurerm" {
-  version = "~> 2.33.0"
   features {}
 
   subscription_id = var.azure_subscription_id
@@ -132,7 +144,10 @@ output "hostname" { value = azurerm_sql_server.azure_sql_db_server.fully_qualifi
 output "port" { value = 1433 }
 output "name" { value = azurerm_sql_database.azure_sql_db.name }
 output "username" { value = random_string.username.result }
-output "password" { value = random_password.password.result }
+output "password" {
+  value     = random_password.password.result
+  sensitive = true
+}
 output "status" { value = format("created db %s (id: %s) on server %s (id: %s) URL: https://portal.azure.com/#@%s/resource%s",
   azurerm_sql_database.azure_sql_db.name,
   azurerm_sql_database.azure_sql_db.id,

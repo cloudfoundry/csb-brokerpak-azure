@@ -54,10 +54,10 @@ var _ = Describe("UpgradePostgreSQLTest", Label("postgresql"), func() {
 			Expect(got).To(Equal(valueOne))
 
 			By("pushing the development version of the broker")
-			serviceBroker.UpdateSourceDir(developmentBuildDir)
+			serviceBroker.UpgradeBroker(developmentBuildDir)
 
-			By("updating the instance plan")
-			serviceInstance.Update("-p", "medium")
+			By("upgrading service instance")
+			serviceInstance.Upgrade()
 
 			By("checking previously written data still accessible")
 			got = appTwo.GET("%s/%s", schema, keyOne)

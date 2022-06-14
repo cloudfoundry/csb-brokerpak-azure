@@ -87,10 +87,10 @@ var _ = Describe("UpgradeMssqlDBFailoverTest", Label("mssql-db-failover"), func(
 			Expect(got).To(Equal(valueOne))
 
 			By("pushing the development version of the broker")
-			serviceBroker.UpdateSourceDir(developmentBuildDir)
+			serviceBroker.UpgradeBroker(developmentBuildDir)
 
-			By("updating the instance plan")
-			initialFogInstance.Update("-p", "medium")
+			By("upgrading service instance")
+			initialFogInstance.Upgrade()
 
 			By("getting the previously set value using the second app")
 			got = appTwo.GET("%s/%s", schema, keyOne)

@@ -26,8 +26,20 @@ variable "azure_client_secret" { type = string }
 variable "skip_provider_registration" { type = bool }
 variable "authorized_networks" { type = list(string) }
 
+terraform {
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = ">=2.33.0"
+    }
+    random = {
+      source  = "hashicorp/random"
+      version = ">=3.3.1"
+    }
+  }
+}
+
 provider "azurerm" {
-  version = ">= 2.33.0"
   features {}
 
   subscription_id = var.azure_subscription_id
@@ -85,8 +97,14 @@ resource "azurerm_storage_account_network_rules" "account_network_rule" {
   virtual_network_subnet_ids = var.authorized_networks[*]
 }
 
-output "primary_access_key" { value = azurerm_storage_account.account.primary_access_key }
-output "secondary_access_key" { value = azurerm_storage_account.account.secondary_access_key }
+output "primary_access_key" {
+  value     = azurerm_storage_account.account.primary_access_key
+  sensitive = true
+}
+output "secondary_access_key" {
+  value     = azurerm_storage_account.account.secondary_access_key
+  sensitive = true
+}
 output "storage_account_name" { value = azurerm_storage_account.account.name }
 output "status" { value = format("created storage account %s (id: %s) URL:  https://portal.azure.com/#@%s/resource%s",
   azurerm_storage_account.account.name,

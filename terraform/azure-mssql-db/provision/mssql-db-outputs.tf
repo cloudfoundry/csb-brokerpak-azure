@@ -9,7 +9,10 @@ output "hostname" { value = local.serverFQDN }
 output "port" { value = 1433 }
 output "name" { value = azurerm_mssql_database.azure_sql_db.name }
 output "username" { value = var.server_credentials[var.server].admin_username }
-output "password" { value = var.server_credentials[var.server].admin_password }
+output "password" {
+  value     = var.server_credentials[var.server].admin_password
+  sensitive = true
+}
 output "status" { value = format("created db %s (id: %s) URL: URL: https://portal.azure.com/#@%s/resource%s",
   azurerm_mssql_database.azure_sql_db.name,
   azurerm_mssql_database.azure_sql_db.id,

@@ -18,6 +18,19 @@ variable "mssql_port" { type = number }
 variable "admin_username" { type = string }
 variable "admin_password" { type = string }
 
+terraform {
+  required_providers {
+    random = {
+      source  = "hashicorp/random"
+      version = ">=3.3.1"
+    }
+    null = {
+      source  = "hashicorp/null"
+      version = ">=3.1.1"
+    }
+  }
+}
+
 resource "random_string" "username" {
   length  = 16
   special = false
@@ -160,28 +173,43 @@ resource "null_resource" "add-execute-permission" {
 
 
 output "username" { value = random_string.username.result }
-output "password" { value = random_password.password.result }
+output "password" {
+  value     = random_password.password.result
+  sensitive = true
+}
 output "jdbcUrl" {
-  value = format("jdbc:sqlserver://%s:%d;database=%s;user=%s;password=%s;Encrypt=true;TrustServerCertificate=false;HostNameInCertificate=*.database.windows.net;loginTimeout=30",
+  value = format(
+    "jdbc:sqlserver://%s:%d;database=%s;user=%s;password=%s;Encrypt=true;TrustServerCertificate=false;HostNameInCertificate=*.database.windows.net;loginTimeout=30",
     var.mssql_hostname,
     var.mssql_port,
     var.mssql_db_name,
     random_string.username.result,
-  random_password.password.result)
+    random_password.password.result,
+  )
+  sensitive = true
 }
 output "jdbcUrlForAuditingEnabled" {
-  value = format("jdbc:sqlserver://%s:%d;database=%s;user=%s;password=%s;Encrypt=true;TrustServerCertificate=false;HostNameInCertificate=*.database.windows.net;loginTimeout=30",
+  value = format(
+    "jdbc:sqlserver://%s:%d;database=%s;user=%s;password=%s;Encrypt=true;TrustServerCertificate=false;HostNameInCertificate=*.database.windows.net;loginTimeout=30",
     var.mssql_hostname,
     var.mssql_port,
     var.mssql_db_name,
     random_string.username.result,
-  random_password.password.result)
+    random_password.password.result,
+  )
+  sensitive = true
 }
 output "uri" {
-  value = format("mssql://%s:%d/%s?encrypt=true&TrustServerCertificate=false&HostNameInCertificate=*.database.windows.net",
+  value = format(
+    "mssql://%s:%d/%s?encrypt=true&TrustServerCertificate=false&HostNameInCertificate=*.database.windows.net",
     var.mssql_hostname,
     var.mssql_port,
-  var.mssql_db_name)
+    var.mssql_db_name,
+  )
+  sensitive = true
 }
 output "databaseLogin" { value = random_string.username.result }
-output "databaseLoginPassword" { value = random_password.password.result }
+output "databaseLoginPassword" {
+  value     = random_password.password.result
+  sensitive = true
+}

@@ -29,8 +29,20 @@ variable "authorized_network" { type = string }
 variable "use_tls" { type = bool }
 variable "skip_provider_registration" { type = bool }
 
+terraform {
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = ">=2.33.0"
+    }
+    random = {
+      source  = "hashicorp/random"
+      version = ">=3.3.1"
+    }
+  }
+}
+
 provider "azurerm" {
-  version = ">= 2.33.0"
   features {}
 
   subscription_id = var.azure_subscription_id
@@ -131,7 +143,10 @@ output "name" { value = azurerm_postgresql_database.instance-db.name }
 output "hostname" { value = azurerm_postgresql_server.instance.fqdn }
 output "port" { value = 5432 }
 output "username" { value = format("%s@%s", random_string.username.result, azurerm_postgresql_server.instance.name) }
-output "password" { value = random_password.password.result }
+output "password" {
+  value     = random_password.password.result
+  sensitive = true
+}
 output "use_tls" { value = var.use_tls }
 output "status" { value = format("created db %s (id: %s) on server %s (id: %s) URL: https://portal.azure.com/#@%s/resource%s",
   azurerm_postgresql_database.instance-db.name,
