@@ -14,7 +14,7 @@ import (
 
 var _ = Describe("MSSQL Server Pair and Failover Group DB", Label("mssql-server-pair"), func() {
 	It("can be accessed by an app", func() {
-		serversConfig := serverpairs.NewDatabaseServerPair(metadata)
+		serversConfig := serverpairs.NewDatabaseServerPair(metadata.ResourceGroup)
 
 		By("Create CSB with server details")
 		serviceBroker := brokers.Create(
