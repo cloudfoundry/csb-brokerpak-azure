@@ -2,7 +2,6 @@ package acceptance_test
 
 import (
 	"csbbrokerpakazure/acceptance-tests/helpers/apps"
-	"csbbrokerpakazure/acceptance-tests/helpers/azure"
 	"csbbrokerpakazure/acceptance-tests/helpers/brokers"
 	"csbbrokerpakazure/acceptance-tests/helpers/cf"
 	"csbbrokerpakazure/acceptance-tests/helpers/matchers"
@@ -49,14 +48,15 @@ var _ = Describe("MSSQL DB Subsume", Label("mssql-db"), func() {
 		app.PUT(value, "%s/%s", schema, key)
 
 		By("fetching the Azure resource ID of the database")
-		resource := azure.FetchResourceID("db", masbDBName, metadata.PreProvisionedSQLServer, metadata.ResourceGroup)
+		resource := fetchResourceID("db", masbDBName, metadata.PreProvisionedSQLServer)
 
 		By("Create CSB with DB server details")
-		server := metadata.Server()
+		serverTag := random.Name(random.WithMaxLength(10))
+		creds := getMASBServerDetails(serverTag)
 
 		serviceBroker := brokers.Create(
 			brokers.WithPrefix("csb-mssql-db"),
-			brokers.WithEnv(apps.EnvVar{Name: "MSSQL_DB_SERVER_CREDS", Value: server}),
+			brokers.WithEnv(apps.EnvVar{Name: "MSSQL_DB_SERVER_CREDS", Value: creds}),
 		)
 		defer serviceBroker.Delete()
 
@@ -65,10 +65,7 @@ var _ = Describe("MSSQL DB Subsume", Label("mssql-db"), func() {
 			"csb-azure-mssql-db",
 			"subsume",
 			services.WithBroker(serviceBroker),
-			services.WithParameters(map[string]interface{}{
-				"azure_db_id": resource,
-				"server":      server.Tag,
-			}),
+			services.WithParameters(subsumeDBParams(resource, serverTag)),
 		)
 		defer csbServiceInstance.Delete()
 
@@ -96,3 +93,21 @@ var _ = Describe("MSSQL DB Subsume", Label("mssql-db"), func() {
 		app.DELETE(schema)
 	})
 })
+
+func subsumeDBParams(resource, serverTag string) interface{} {
+	return map[string]interface{}{
+		"azure_db_id": resource,
+		"server":      serverTag,
+	}
+}
+
+func getMASBServerDetails(tag string) map[string]interface{} {
+	return map[string]interface{}{
+		tag: map[string]string{
+			"server_name":           metadata.PreProvisionedSQLServer,
+			"server_resource_group": metadata.ResourceGroup,
+			"admin_username":        metadata.PreProvisionedSQLUsername,
+			"admin_password":        metadata.PreProvisionedSQLPassword,
+		},
+	}
+}
