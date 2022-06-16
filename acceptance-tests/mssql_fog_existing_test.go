@@ -16,7 +16,7 @@ import (
 var _ = Describe("MSSQL Failover Group Existing", Label("mssql-failover-group"), func() {
 	It("can be accessed by an app", func() {
 		By("deploying the CSB")
-		serversConfig := serverpairs.NewDatabaseServerPair(metadata.ResourceGroup)
+		serversConfig := serverpairs.NewDatabaseServerPair(metadata)
 		serviceBroker := brokers.Create(
 			brokers.WithPrefix("csb-mssql-db-fog"),
 			brokers.WithEnv(apps.EnvVar{Name: "MSSQL_DB_FOG_SERVER_PAIR_CREDS", Value: serversConfig.ServerPairsConfig()}),
