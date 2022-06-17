@@ -72,6 +72,13 @@ var _ = Describe("UpgradeCosmosTest", Label("cosmosdb"), func() {
 			got = appTwo.GET("%s/%s/%s", databaseName, collectionName, documentNameOne)
 			Expect(got).To(Equal(documentDataOne))
 
+			By("updating the instance plan")
+			serviceInstance.Update("-p", "medium")
+
+			By("checking previous data still accessible")
+			got = appTwo.GET("%s/%s/%s", databaseName, collectionName, documentNameOne)
+			Expect(got).To(Equal(documentDataOne))
+
 			By("deleting bindings created before the upgrade")
 			bindingOne.Unbind()
 			bindingTwo.Unbind()

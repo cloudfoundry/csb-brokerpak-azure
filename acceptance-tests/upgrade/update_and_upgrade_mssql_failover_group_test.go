@@ -65,6 +65,13 @@ var _ = Describe("UpgradeMssqlFailoverGroupTest", Label("mssql-failover-group"),
 			got = appTwo.GET("%s/%s", schema, keyOne)
 			Expect(got).To(Equal(valueOne))
 
+			By("updating the instance plan")
+			serviceInstance.Update("-p", "medium")
+
+			By("getting the previously set value using the second app")
+			got = appTwo.GET("%s/%s", schema, keyOne)
+			Expect(got).To(Equal(valueOne))
+
 			By("triggering failover")
 			failoverServiceInstance := services.CreateInstance(
 				"csb-azure-mssql-fog-run-failover",

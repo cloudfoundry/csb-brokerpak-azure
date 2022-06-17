@@ -77,6 +77,13 @@ var _ = Describe("UpgradeMssqlDBTest", Label("mssql-db"), func() {
 			got = appTwo.GET("%s/%s", schema, keyOne)
 			Expect(got).To(Equal(valueOne))
 
+			By("updating the instance plan")
+			dbInstance.Update("-p", "medium")
+
+			By("checking previously created data still accessible")
+			got = appTwo.GET("%s/%s", schema, keyOne)
+			Expect(got).To(Equal(valueOne))
+
 			By("dropping the schema used to allow us to unbind")
 			appOne.DELETE(schema)
 

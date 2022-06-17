@@ -96,6 +96,13 @@ var _ = Describe("UpgradeMssqlDBFailoverTest", Label("mssql-db-failover"), func(
 			got = appTwo.GET("%s/%s", schema, keyOne)
 			Expect(got).To(Equal(valueOne))
 
+			By("updating the instance plan")
+			initialFogInstance.Update("-p", "medium")
+
+			By("getting the previously set value using the second app")
+			got = appTwo.GET("%s/%s", schema, keyOne)
+			Expect(got).To(Equal(valueOne))
+
 			By("connecting to the existing failover group")
 			dbFogInstance := services.CreateInstance(
 				"csb-azure-mssql-db-failover-group",

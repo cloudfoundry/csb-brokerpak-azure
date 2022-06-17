@@ -63,6 +63,13 @@ var _ = Describe("UpgradePostgreSQLTest", Label("postgresql"), func() {
 			got = appTwo.GET("%s/%s", schema, keyOne)
 			Expect(got).To(Equal(valueOne))
 
+			By("updating the instance plan")
+			serviceInstance.Update("-p", "medium")
+
+			By("checking previously written data still accessible")
+			got = appTwo.GET("%s/%s", schema, keyOne)
+			Expect(got).To(Equal(valueOne))
+
 			By("deleting bindings created before the upgrade")
 			bindingOne.Unbind()
 			bindingTwo.Unbind()

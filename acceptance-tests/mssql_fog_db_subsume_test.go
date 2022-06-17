@@ -17,7 +17,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("MSSQL Failover Group DB Subsume", Label("mssql-db-failover-group"), func() {
+var _ = Describe("MSSQL Failover Group DB Subsume", Label("mssql-db-failover-group", "subsume"), func() {
 	It("can be accessed by an app", func() {
 		By("creating a service instance using the MASB broker")
 		masbDBName := random.Name(random.WithPrefix("db"))

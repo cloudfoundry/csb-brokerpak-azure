@@ -53,6 +53,15 @@ var _ = Describe("UpgradeRedisTest", Label("redis"), func() {
 			By("upgrading service instance")
 			serviceInstance.Upgrade()
 
+			By("checking previously written data still accessible")
+			Expect(appTwo.GET(key1)).To(Equal(value1))
+
+			By("updating the instance plan")
+			serviceInstance.Update("-p", "medium")
+
+			By("checking previously written data still accessible")
+			Expect(appTwo.GET(key1)).To(Equal(value1))
+
 			By("deleting bindings created before the upgrade")
 			bindingOne.Unbind()
 			bindingTwo.Unbind()
