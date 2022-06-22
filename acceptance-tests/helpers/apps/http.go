@@ -39,6 +39,7 @@ func (a *App) PUT(data, format string, s ...interface{}) {
 	fmt.Fprintf(GinkgoWriter, "HTTP PUT: %s\n", url)
 	fmt.Fprintf(GinkgoWriter, "Sending data: %s\n", data)
 	request, err := http.NewRequest(http.MethodPut, url, strings.NewReader(data))
+	Expect(err).NotTo(HaveOccurred())
 	request.Header.Set("Content-Type", "text/html")
 	response, err := http.DefaultClient.Do(request)
 	Expect(err).NotTo(HaveOccurred())
