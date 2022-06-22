@@ -65,42 +65,13 @@ provision:
     prohibit_update: true  
   - field_name: location
     type: string
-    details: The region for this instance.
+    details: The region for the associated Azure Storage data object.
     default: westus
-    enum:
-      eastasia: East Asia
-      southeastasia: South East Asia
-      centralus: Central US
-      eastus: East US
-      eastus2: East US 2
-      westus: West US
-      northcentralus: North Central US
-      southcentralus: South Central US
-      northeurope: North Europe
-      westeurope: West Europe
-      japanwest: Japan West
-      japaneast: Japan East
-      brazilsouth: Brazil South
-      australiaeast: Australia East
-      australiasoutheast: Australia South East
-      australiacentral: Australia Central
-      australiacentral2: Australia Central 2
-      southindia: South India
-      centralindia: Central India
-      westindia: West India
-      canadacentral: Canada Central
-      canadaeast: Canada East
-      uksouth: UK South
-      ukwest: UK West
-      westcentralus: West Central US
-      westus2: West US 2
-      koreacentral: Korea Central
-      koreasouth: Korea South
-      francecentral: France Central
-      uaenorth: UAE North
-      southafricanorth: South Africa North
-      southafricawest: South Africa West
-      germanycentral: Germany Central
+    constraints:
+      examples:
+        - westus2
+        - uksouth
+      pattern: ^[a-z][a-z0-9]+$
     prohibit_update: true  
   - field_name: azure_tenant_id
     type: string
