@@ -1,6 +1,7 @@
 ## Release notes for next release:
 
 ### New feature:
+- Use text field in the location property
 
 ### Fix:
 - minimum constraint on PostreSQL storage_gb is now enforced
