@@ -1,3 +1,4 @@
+// Package cf wraps the CF CLI
 package cf
 
 import (
