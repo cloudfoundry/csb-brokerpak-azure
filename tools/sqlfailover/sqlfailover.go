@@ -18,11 +18,12 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
+	"os"
+
 	sqlsdk "github.com/Azure/azure-sdk-for-go/services/preview/sql/mgmt/v3.0/sql"
 	"github.com/Azure/go-autorest/autorest/azure/auth"
 	_ "github.com/jinzhu/gorm/dialects/mssql"
-	"log"
-	"os"
 )
 
 // https://godoc.org/github.com/Azure/azure-sdk-for-go/services/preview/sql/mgmt/v3.0/sql#DatabasesClient.Failover
@@ -30,30 +31,30 @@ import (
 func main() {
 
 	var err error
-	if (len(os.Args) < 4) {
+	if len(os.Args) < 4 {
 		log.Fatal("Usage: sqlfailover <resource-group> <server> <failover-group>")
 	}
 	temp := os.Getenv("ARM_SUBSCRIPTION_ID")
 	if len(temp) == 0 {
 		log.Fatal("Environment variable ARM_SUBSCRIPTION_ID not found")
-	}	
-	os.Setenv("AZURE_SUBSCRIPTION_ID", temp)	
+	}
+	os.Setenv("AZURE_SUBSCRIPTION_ID", temp)
 
 	subid := temp
 	temp = os.Getenv("ARM_TENANT_ID")
 	if len(temp) == 0 {
 		log.Fatal("Environment variable ARM_TENANT_ID not found")
-	}	
-	os.Setenv("AZURE_TENANT_ID", temp)	
+	}
+	os.Setenv("AZURE_TENANT_ID", temp)
 	temp = os.Getenv("ARM_CLIENT_ID")
 	if len(temp) == 0 {
 		log.Fatal("Environment variable ARM_CLIENT_ID not found")
-	}	
+	}
 	os.Setenv("AZURE_CLIENT_ID", temp)
 	temp = os.Getenv("ARM_CLIENT_SECRET")
 	if len(temp) == 0 {
 		log.Fatal("Environment variable ARM_CLIENT_SECRET not found")
-	}	
+	}
 	os.Setenv("AZURE_CLIENT_SECRET", temp)
 
 	resgroup := os.Args[1]
@@ -81,5 +82,5 @@ func main() {
 			fmt.Println("Failed waiting for failover command")
 			log.Fatal(err)
 		}
-	}			
+	}
 }
