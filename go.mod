@@ -106,5 +106,3 @@ require (
 	gorm.io/driver/sqlite v1.3.4 // indirect
 	gorm.io/gorm v1.23.6 // indirect
 )
-
-replace github.com/cloudfoundry/cloud-service-broker => /home/andrea/workspace/csb/csb-brokerpak-azure/../cloud-service-broker

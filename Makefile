@@ -118,7 +118,7 @@ run-examples: build ## run examples against CSB on localhost (run "make run" to 
 test: latest-csb lint run-integration-tests ## run the tests
 
 .PHONY: run-integration-tests
-run-integration-tests: ./tools/psqlcmd/build/psqlcmd_*.zip ./tools/sqlfailover/build/sqlfailover_*.zip local-csb ## run integration tests for this brokerpak
+run-integration-tests: ./tools/psqlcmd/build/psqlcmd_*.zip ./tools/sqlfailover/build/sqlfailover_*.zip latest-csb ## run integration tests for this brokerpak
 	cd ./integration-tests && go run github.com/onsi/ginkgo/v2/ginkgo -r .
 
 .PHONY: info
