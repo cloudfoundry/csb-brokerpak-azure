@@ -112,12 +112,21 @@ examples: build ## display available examples
 run-examples: build ## run examples against CSB on localhost (run "make run" to start it), set service_name and example_name to run specific example
 	$(RUN_CSB) client run-examples --service-name="$(service_name)" --example-name="$(example_name)" -j $(PARALLEL_JOB_COUNT)
 
+###### test ###################################################################
+
+.PHONY: test
+test: latest-csb lint run-integration-tests ## run the tests
+
+.PHONY: run-integration-tests
+run-integration-tests: ./tools/psqlcmd/build/psqlcmd_*.zip ./tools/sqlfailover/build/sqlfailover_*.zip latest-csb ## run integration tests for this brokerpak
+	cd ./integration-tests && go run github.com/onsi/ginkgo/v2/ginkgo -r .
+
 .PHONY: info
 info: build ## show brokerpak info
 	$(RUN_CSB) pak info $(PAK_PATH)/$(shell ls *.brokerpak)
 
-.PHONY: validate ## validate pak syntax
-validate: build
+.PHONY: validate
+validate: build  ## validate pak syntax
 	$(RUN_CSB) pak validate $(PAK_PATH)/$(shell ls *.brokerpak)
 
 # fetching bits for cf push broker
