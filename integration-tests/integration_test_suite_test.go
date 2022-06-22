@@ -1,7 +1,6 @@
 package integration_test
 
 import (
-	"encoding/json"
 	"testing"
 
 	testframework "github.com/cloudfoundry/cloud-service-broker/brokerpaktestframework"
@@ -15,18 +14,15 @@ func TestIntegrationTests(t *testing.T) {
 }
 
 const (
-	armClientId       = "arm-client-id"
+	armClientID       = "arm-client-id"
 	armClientSecret   = "arm-client-secret"
-	armSubscriptionId = "arm-subscription-id"
-	armTenantId       = "arm-tenant-id"
+	armSubscriptionID = "arm-subscription-id"
+	armTenantID       = "arm-tenant-id"
 )
 
 var (
-	mockTerraform     testframework.TerraformMock
-	broker            *testframework.TestInstance
-	provisionDefaults = map[string]any{
-		"location": "az",
-	}
+	mockTerraform testframework.TerraformMock
+	broker        *testframework.TestInstance
 )
 
 var _ = BeforeSuite(func() {
@@ -44,10 +40,10 @@ var _ = BeforeSuite(func() {
 	Expect(err).NotTo(HaveOccurred())
 	Expect(broker.Start(GinkgoWriter, []string{
 		"GSB_COMPATIBILITY_ENABLE_PREVIEW_SERVICES=true",
-		"ARM_CLIENT_ID=" + armClientId,
+		"ARM_CLIENT_ID=" + armClientID,
 		"ARM_CLIENT_SECRET=" + armClientSecret,
-		"ARM_SUBSCRIPTION_ID=" + armSubscriptionId,
-		"ARM_TENANT_ID=" + armTenantId,
+		"ARM_SUBSCRIPTION_ID=" + armSubscriptionID,
+		"ARM_TENANT_ID=" + armTenantID,
 		"CSB_LISTENER_HOST=localhost",
 	})).To(Succeed())
 })
@@ -57,9 +53,3 @@ var _ = AfterSuite(func() {
 		Expect(broker.Cleanup()).To(Succeed())
 	}
 })
-
-func marshall(element any) string {
-	b, err := json.Marshal(element)
-	Expect(err).NotTo(HaveOccurred())
-	return string(b)
-}
