@@ -69,3 +69,12 @@ terminal 2
 ## Acceptance tests
 
 See [acceptance tests](acceptance-tests/README.md)
+
+## Integration tests
+
+Integration tests can be run with the following command:
+
+```bash
+make run-integration-tests
+```
+
