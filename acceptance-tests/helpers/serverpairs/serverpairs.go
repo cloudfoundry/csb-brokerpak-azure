@@ -1,3 +1,4 @@
+// Package serverpairs manages database server pair configuration
 package serverpairs
 
 import (

@@ -1,3 +1,4 @@
+// Package apps manages the test app lifecycle
 package apps
 
 type App struct {

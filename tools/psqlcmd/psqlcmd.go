@@ -16,13 +16,14 @@
 package main
 
 import (
-    _ "github.com/denisenkom/go-mssqldb"
-    "database/sql"
-    "context"
-    "log"
+	"context"
+	"database/sql"
 	"fmt"
+	"log"
 	"os"
 	"strconv"
+
+	_ "github.com/denisenkom/go-mssqldb"
 )
 
 var db *sql.DB
@@ -34,9 +35,10 @@ var password string
 var database string
 var query string
 var err error
+
 func main() {
 	if len(os.Args) < 5 {
-		log.Fatal("Usage: psqlcmd <hostname> <port> <username> [password] <database> <query>");
+		log.Fatal("Usage: psqlcmd <hostname> <port> <username> [password] <database> <query>")
 	}
 
 	server = os.Args[1]
@@ -51,28 +53,28 @@ func main() {
 		ok := false
 		password, ok = os.LookupEnv("MSSQL_PASSWORD")
 		if !ok {
-			log.Fatal("Usage: psqlcmd <hostname> <port> <username> [password] <database> <query> - no password provided on command line or in environment variable MSSQL_PASSWORD");
+			log.Fatal("Usage: psqlcmd <hostname> <port> <username> [password] <database> <query> - no password provided on command line or in environment variable MSSQL_PASSWORD")
 		}
 		database = os.Args[4]
-		query = os.Args[5]	
+		query = os.Args[5]
 	}
 
-    // Build connection string
-    connString := fmt.Sprintf("server=%s;user id=%s;password=%s;port=%d;database=%s;",
-        server, user, password, port, database)
+	// Build connection string
+	connString := fmt.Sprintf("server=%s;user id=%s;password=%s;port=%d;database=%s;",
+		server, user, password, port, database)
 
-    var err error
+	var err error
 
-    // Create connection pool
-    db, err = sql.Open("sqlserver", connString)
-    if err != nil {
-        log.Fatal("Error creating connection pool: ", err.Error())
-    }
-    ctx := context.Background()
-    err = db.PingContext(ctx)
-    if err != nil {
-        log.Fatal(err.Error())
-    }
+	// Create connection pool
+	db, err = sql.Open("sqlserver", connString)
+	if err != nil {
+		log.Fatal("Error creating connection pool: ", err.Error())
+	}
+	ctx := context.Background()
+	err = db.PingContext(ctx)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
 	tsql := fmt.Sprintf(query)
 
 	_, err = db.ExecContext(ctx, tsql)

@@ -1,3 +1,4 @@
+// Package environment manages environment variables
 package environment
 
 import (

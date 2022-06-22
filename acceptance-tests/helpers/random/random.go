@@ -1,3 +1,4 @@
+// Package random manages random test data
 package random
 
 type config struct {

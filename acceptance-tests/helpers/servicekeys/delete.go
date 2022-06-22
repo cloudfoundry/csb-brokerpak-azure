@@ -1,3 +1,4 @@
+// Package servicekeys manages service keys
 package servicekeys
 
 import (

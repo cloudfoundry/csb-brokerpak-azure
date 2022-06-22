@@ -1,3 +1,4 @@
+// Package brokers manages service brokers
 package brokers
 
 import "csbbrokerpakazure/acceptance-tests/helpers/apps"
