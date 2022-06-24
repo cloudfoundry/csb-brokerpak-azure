@@ -24,11 +24,18 @@ platforms:
 #   arch: amd64
 terraform_binaries:
 - name: terraform
-  version: 0.12.30
-  source: https://github.com/hashicorp/terraform/archive/v0.12.30.zip  
-- name: terraform-provider-azurerm
-  version: 2.33.0
-  source: https://github.com/terraform-providers/terraform-provider-azurerm/archive/v2.33.0.zip
+  version: 0.13.7
+  source: https://github.com/hashicorp/terraform/archive/v0.13.7.zip
+- name: terraform
+  version: 0.14.11
+  source: https://github.com/hashicorp/terraform/archive/v0.14.11.zip
+- name: terraform
+  version: 1.0.11
+  source: https://github.com/hashicorp/terraform/archive/v1.0.11.zip
+- name: terraform
+  version: 1.1.9
+  source: https://github.com/hashicorp/terraform/archive/v1.1.9.zip
+  default: true
 - name: terraform-provider-azurerm
   version: 2.99.0
   source: https://github.com/terraform-providers/terraform-provider-azurerm/archive/v2.99.0.zip
@@ -51,6 +58,17 @@ terraform_binaries:
   version: 1.16.0
   source: https://github.com/cyrilgdn/terraform-provider-postgresql/archive/v1.16.0.zip
   url_template: https://github.com/cyrilgdn/${name}/releases/download/v${version}/terraform-provider-postgresql_${version}_${os}_${arch}.zip
+terraform_state_provider_replacements:
+  registry.terraform.io/-/azurerm: "registry.terraform.io/hashicorp/azurerm"
+  registry.terraform.io/-/random: "registry.terraform.io/hashicorp/random"
+  registry.terraform.io/-/mysql: "registry.terraform.io/hashicorp/mysql"
+  registry.terraform.io/-/null: "registry.terraform.io/hashicorp/null"
+  registry.terraform.io/-/postgresql: "registry.terraform.io/cyrilgdn/postgresql"
+terraform_upgrade_path:
+  - version: 0.13.7
+  - version: 0.14.11
+  - version: 1.0.11
+  - version: 1.1.9
 env_config_mapping:
   ARM_SUBSCRIPTION_ID: azure.subscription_id
   ARM_TENANT_ID: azure.tenant_id

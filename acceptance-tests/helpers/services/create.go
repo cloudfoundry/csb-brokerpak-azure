@@ -14,6 +14,7 @@ import (
 
 type ServiceInstance struct {
 	Name string
+	guid string
 }
 
 type config struct {

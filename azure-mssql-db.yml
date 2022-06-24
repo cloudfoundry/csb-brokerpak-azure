@@ -140,6 +140,7 @@ provision:
   template_refs:
     outputs: terraform/azure-mssql-db/provision/mssql-db-outputs.tf
     provider: terraform/azure-mssql-db/azure-provider.tf
+    versions: terraform/azure-mssql-db/provision/mssql-db-versions.tf
     variables: terraform/azure-mssql-db/provision/mssql-db-variables.tf
     main: terraform/azure-mssql-db/provision/mssql-db-main.tf
     data: terraform/azure-mssql-db/provision/mssql-db-data.tf
@@ -215,7 +216,8 @@ bind:
     type: string
     default: ${instance.details["password"]}
     overwrite: true
-  template_refs:    
+  template_refs:
+    versions: terraform/azure-mssql-db/bind/mssql-bind-versions.tf
     outputs: terraform/azure-mssql-db/bind/mssql-bind-outputs.tf
     variables: terraform/azure-mssql-db/bind/mssql-bind-variables.tf
     main: terraform/azure-mssql-db/bind/mssql-bind-main.tf

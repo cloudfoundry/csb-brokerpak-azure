@@ -31,8 +31,20 @@ variable "subnet_id" { type = string }
 variable "private_endpoint_subnet_id" { type = string }
 variable "private_dns_zone_ids" { type = list(string) }
 
+terraform {
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = ">=2.33.0"
+    }
+    random = {
+      source  = "hashicorp/random"
+      version = ">=3.3.1"
+    }
+  }
+}
+
 provider "azurerm" {
-  version = ">= 2.33.0"
   features {}
 
   subscription_id = var.azure_subscription_id
@@ -123,7 +135,10 @@ resource "azurerm_private_endpoint" "private_endpoint" {
 output "name" { value = azurerm_redis_cache.redis.name }
 output "host" { value = azurerm_redis_cache.redis.hostname }
 # output port { value = azurerm_redis_cache.redis.port }
-output "password" { value = azurerm_redis_cache.redis.primary_access_key }
+output "password" {
+  value     = azurerm_redis_cache.redis.primary_access_key
+  sensitive = true
+}
 output "tls_port" { value = azurerm_redis_cache.redis.ssl_port }
 output "status" { value = format("created cache %s (id: %s) URL: URL: https://portal.azure.com/#@%s/resource%s",
   azurerm_redis_cache.redis.name,

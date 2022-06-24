@@ -21,8 +21,16 @@ variable "azure_client_id" { type = string }
 variable "azure_client_secret" { type = string }
 variable "skip_provider_registration" { type = bool }
 
+terraform {
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = ">=2.33.0"
+    }
+  }
+}
+
 provider "azurerm" {
-  version = ">= 2.33.0"
   features {}
 
   subscription_id = var.azure_subscription_id
@@ -55,10 +63,12 @@ output "namespace_name" {
 }
 
 output "shared_access_key_name" {
-  value = "RootManageSharedAccessKey"
+  value     = "RootManageSharedAccessKey"
+  sensitive = true
 }
 
 output "shared_access_key_value" {
-  value = data.azurerm_eventhub_namespace.ns.default_primary_key
+  value     = data.azurerm_eventhub_namespace.ns.default_primary_key
+  sensitive = true
 }
 
