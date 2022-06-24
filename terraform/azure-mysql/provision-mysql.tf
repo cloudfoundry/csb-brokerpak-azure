@@ -38,9 +38,20 @@ variable "firewall_rules" { type = list(list(string)) }
 variable "private_endpoint_subnet_id" { type = string }
 variable "private_dns_zone_ids" { type = list(string) }
 
+terraform {
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = ">=2.33.0"
+    }
+    random = {
+      source  = "hashicorp/random"
+      version = ">=3.3.1"
+    }
+  }
+}
 
 provider "azurerm" {
-  version = ">= 2.33.0"
   features {}
 
   subscription_id = var.azure_subscription_id
@@ -213,7 +224,10 @@ output "name" { value = azurerm_mysql_database.instance-db.name }
 output "hostname" { value = azurerm_mysql_server.instance.fqdn }
 output "port" { value = 3306 }
 output "username" { value = format("%s@%s", azurerm_mysql_server.instance.administrator_login, azurerm_mysql_server.instance.name) }
-output "password" { value = azurerm_mysql_server.instance.administrator_login_password }
+output "password" {
+  value     = azurerm_mysql_server.instance.administrator_login_password
+  sensitive = true
+}
 output "use_tls" { value = var.use_tls }
 output "status" { value = format("created db %s (id: %s) on server %s (id: %s) URL: https://portal.azure.com/#@%s/resource%s",
   azurerm_mysql_database.instance-db.name,

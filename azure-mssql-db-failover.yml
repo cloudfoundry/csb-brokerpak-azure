@@ -186,6 +186,7 @@ provision:
   template_refs:
     outputs: terraform/azure-mssql-db-failover/mssql-db-fog-outputs.tf
     provider: terraform/azure-mssql-db-failover/azure-provider.tf
+    versions: terraform/azure-mssql-db-failover/azure-versions.tf
     variables: terraform/azure-mssql-db-failover/mssql-db-fog-variables.tf
     main: terraform/azure-mssql-db-failover/mssql-db-fog-main.tf
     data: terraform/azure-mssql-db-failover/mssql-db-fog-data.tf

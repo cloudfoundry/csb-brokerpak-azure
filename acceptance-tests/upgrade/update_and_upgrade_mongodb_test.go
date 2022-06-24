@@ -57,7 +57,14 @@ var _ = Describe("UpgradeMongoTest", Label("mongodb"), func() {
 			Expect(got).To(Equal(documentDataOne))
 
 			By("pushing the development version of the broker")
-			serviceBroker.UpdateSourceDir(developmentBuildDir)
+			serviceBroker.UpgradeBroker(developmentBuildDir)
+
+			By("upgrading service instance")
+			serviceInstance.Upgrade()
+
+			By("checking previous data still accessible")
+			got = appTwo.GET("%s/%s/%s", databaseName, collectionName, documentNameOne)
+			Expect(got).To(Equal(documentDataOne))
 
 			By("updating the instance plan")
 			serviceInstance.Update("-p", "medium")

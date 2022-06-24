@@ -48,7 +48,19 @@ var _ = Describe("UpgradeMysqlTest", Label("mysql"), func() {
 			Expect(got).To(Equal(valueOne))
 
 			By("pushing the development version of the broker")
-			serviceBroker.UpdateSourceDir(developmentBuildDir)
+			serviceBroker.UpgradeBroker(developmentBuildDir)
+
+			By("upgrading service instance")
+			serviceInstance.Upgrade()
+
+			By("checking data inserted before broker upgrade")
+			Expect(appTwo.GET(keyOne)).To(Equal(valueOne))
+
+			By("updating the instance plan")
+			serviceInstance.Update("-p", "medium")
+
+			By("checking data inserted before broker upgrade")
+			Expect(appTwo.GET(keyOne)).To(Equal(valueOne))
 
 			By("deleting bindings created before the upgrade")
 			bindingOne.Unbind()

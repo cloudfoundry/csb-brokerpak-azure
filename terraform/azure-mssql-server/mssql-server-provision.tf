@@ -25,8 +25,20 @@ variable "labels" { type = map(any) }
 variable "authorized_network" { type = string }
 variable "skip_provider_registration" { type = bool }
 
+terraform {
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = ">=2.33.0"
+    }
+    random = {
+      source  = "hashicorp/random"
+      version = ">=3.3.1"
+    }
+  }
+}
+
 provider "azurerm" {
-  version = ">= 2.33.0"
   features {}
 
   subscription_id = var.azure_subscription_id
@@ -109,6 +121,9 @@ output "sqlServerFullyQualifiedDomainName" { value = azurerm_sql_server.azure_sq
 output "hostname" { value = azurerm_sql_server.azure_sql_db_server.fully_qualified_domain_name }
 output "port" { value = 1433 }
 output "username" { value = local.admin_username }
-output "password" { value = local.admin_password }
+output "password" {
+  value     = local.admin_password
+  sensitive = true
+}
 output "databaseLogin" { value = local.admin_username }
 output "databaseLoginPassword" { value = local.admin_password }

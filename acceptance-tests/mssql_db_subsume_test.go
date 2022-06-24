@@ -12,7 +12,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("MSSQL DB Subsume", Label("mssql-db"), func() {
+var _ = Describe("MSSQL DB Subsume", Label("mssql-db", "subsume"), func() {
 	It("can be accessed by an app", func() {
 		By("creating a service instance using the MASB broker")
 		masbDBName := random.Name(random.WithPrefix("db"))

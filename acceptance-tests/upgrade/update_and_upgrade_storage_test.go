@@ -52,10 +52,21 @@ var _ = Describe("UpgradeStorageTest", Label("storage"), func() {
 			Expect(got).To(Equal(blobDataOne))
 
 			By("pushing the development version of the broker")
-			serviceBroker.UpdateSourceDir(developmentBuildDir)
+			serviceBroker.UpgradeBroker(developmentBuildDir)
 
-			By("re-applying the terraform for service instance")
-			serviceInstance.Update("-c", "{\"replication_type\":\"GRS\"}")
+			By("upgrading service instance")
+			serviceInstance.Upgrade()
+
+			By("checking that previously written data is accessible")
+			got = appTwo.GET("%s/%s", collectionName, blobNameOne)
+			Expect(got).To(Equal(blobDataOne))
+
+			By("triggering an update to the service instance")
+			serviceInstance.Update("-c", `{"replication_type":"GRS"}`)
+
+			By("checking that previously written data is accessible")
+			got = appTwo.GET("%s/%s", collectionName, blobNameOne)
+			Expect(got).To(Equal(blobDataOne))
 
 			By("deleting bindings created before the upgrade")
 			bindingOne.Unbind()

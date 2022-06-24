@@ -38,8 +38,16 @@ variable "private_endpoint_subnet_id" { type = string }
 variable "private_dns_zone_ids" { type = list(string) }
 variable "public_network_access_enabled" { type = bool }
 
+terraform {
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = ">=2.33.0"
+    }
+  }
+}
+
 provider "azurerm" {
-  version = ">= 2.33.0"
   features {}
 
   subscription_id = var.azure_subscription_id
@@ -173,7 +181,10 @@ resource "azurerm_private_endpoint" "private_endpoint" {
   }
 }
 
-output "uri" { value = replace(azurerm_cosmosdb_account.mongo-account.connection_strings[0], "/?", "/${azurerm_cosmosdb_mongo_database.mongo-db.name}?") }
+output "uri" {
+  value     = replace(azurerm_cosmosdb_account.mongo-account.connection_strings[0], "/?", "/${azurerm_cosmosdb_mongo_database.mongo-db.name}?")
+  sensitive = true
+}
 output "status" { value = format("created db %s (id: %s) URL:  https://portal.azure.com/#@%s/resource%s",
   azurerm_cosmosdb_mongo_database.mongo-db.name,
   azurerm_cosmosdb_mongo_database.mongo-db.id,

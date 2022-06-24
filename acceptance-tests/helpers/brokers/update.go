@@ -5,12 +5,20 @@ import (
 	"csbbrokerpakazure/acceptance-tests/helpers/cf"
 )
 
-func (b *Broker) UpdateSourceDir(dir string) {
+func (b *Broker) UpgradeBroker(dir string, env ...apps.EnvVar) {
 	b.app.Push(
 		apps.WithName(b.Name),
 		apps.WithDir(dir),
-		apps.WithStartedState(),
 	)
+
+	env = append(env,
+		apps.EnvVar{Name: "BROKERPAK_UPDATES_ENABLED", Value: true},
+		apps.EnvVar{Name: "TERRAFORM_UPGRADES_ENABLED", Value: true},
+	)
+
+	WithEnv(env...)(b)
+	b.app.SetEnv(b.env()...)
+	b.app.Restart()
 
 	cf.Run("update-service-broker", b.Name, b.username, b.password, b.app.URL)
 }
