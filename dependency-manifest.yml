@@ -14,13 +14,21 @@
 
 dependencies:
     - name: terraform
-      version: 0.12.30
-      source: https://github.com/hashicorp/terraform/archive/v0.12.30.zip
-      source_sha256: d93afe75708f706f416a7968f65af8302ac9c492a21aa958ffb2202bd9390e4d
-    - name: terraform-provider-azurerm
-      version: 2.33.0
-      source: https://github.com/terraform-providers/terraform-provider-azurerm/archive/v2.33.0.zip
-      source_sha256: 35c0a627bda77f40c34b69def0e83b2fcd67a82716a787dd42a714101ce61795
+      version: 0.13.7
+      source: https://github.com/hashicorp/terraform/archive/v0.13.7.zip
+      source_sha256: 88ab5b2da31fc44dfd5fb0356b3a10e4b7a7bc2dd8cc1e212ae584a42aa13bd5
+    - name: terraform
+      version: 0.14.11
+      source: https://github.com/hashicorp/terraform/archive/v0.14.11.zip
+      source_sha256: 473db90326f53d99403783ef897b36378f3edea748825986126311cb2ba140ae
+    - name: terraform
+      version: 1.0.11
+      source: https://github.com/hashicorp/terraform/archive/v1.0.11.zip
+      source_sha256: 1b75df24c49d0839ad1ea35215ab5ad1d44b365bae7079a578a030b04da9281b
+    - name: terraform
+      version: 1.1.9
+      source: https://github.com/hashicorp/terraform/archive/v1.1.9.zip
+      source_sha256: 98e4d48e2703cff237d64a865bffba56dec597d72e40e8c978e1beccbe49c27b
     - name: terraform-provider-azurerm
       version: 2.99.0
       source: https://github.com/terraform-providers/terraform-provider-azurerm/archive/v2.99.0.zip
