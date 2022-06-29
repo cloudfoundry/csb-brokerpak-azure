@@ -24,11 +24,20 @@ terraform {
       source  = "hashicorp/random"
       version = ">=3.3.1"
     }
-    null = {
-      source  = "hashicorp/null"
-      version = ">=3.1.1"
+    csbsqlserver = {
+      source  = "cloud-service-broker/csbsqlserver"
+      version = "1.0.0"
     }
   }
+}
+
+provider "csbsqlserver" {
+  server   = var.mssql_hostname
+  port     = var.mssql_port
+  username = var.admin_username
+  password = var.admin_password
+  database = var.mssql_db_name
+  encrypt  = "false" # Not ideal, but this matches what happened with the psqlcmd tool
 }
 
 resource "random_string" "username" {
@@ -43,134 +52,13 @@ resource "random_password" "password" {
   min_upper        = 2
   min_lower        = 2
   min_special      = 2
-  depends_on       = [random_string.username]
 }
 
-resource "null_resource" "create-sql-login" {
-  # we now create users instead of logins (see tracker story #179168006). We still want
-  # to remove logins created with older versions when we unbind. We ignore failures
-  # as current version does not create logins and so this would fail.
-  provisioner "local-exec" {
-    when = destroy
-    command = format("psqlcmd %s %d %s master \"DROP LOGIN [%s]\"",
-      var.mssql_hostname,
-      var.mssql_port,
-      var.admin_username,
-    random_string.username.result)
-    on_failure = continue
-    environment = {
-      MSSQL_PASSWORD = var.admin_password
-    }
-  }
-  depends_on = [random_password.password]
+resource "csbsqlserver_binding" "binding" {
+  username = random_string.username.result
+  password = random_password.password.result
+  roles    = ["db_ddladmin", "db_datareader", "db_datawriter", "db_accessadmin"]
 }
-
-resource "null_resource" "create-sql-user" {
-  provisioner "local-exec" {
-    command = format("psqlcmd %s %d %s %s \"CREATE USER [%s] with PASSWORD='%s';\"",
-      var.mssql_hostname,
-      var.mssql_port,
-      var.admin_username,
-      var.mssql_db_name,
-      random_string.username.result,
-    random_password.password.result)
-    environment = {
-      MSSQL_PASSWORD = var.admin_password
-    }
-  }
-
-  provisioner "local-exec" {
-    when = destroy
-    command = format("psqlcmd %s %d %s %s \"DROP USER [%s];\"",
-      var.mssql_hostname,
-      var.mssql_port,
-      var.admin_username,
-      var.mssql_db_name,
-    random_string.username.result)
-    environment = {
-      MSSQL_PASSWORD = var.admin_password
-    }
-  }
-
-  # We used to create a login first, and although we no longer do that, we
-  # keep the dependency order for successful deletion
-  depends_on = [null_resource.create-sql-login]
-}
-
-locals {
-  roles = { "db_ddladmin" = "db_ddladmin"
-    "db_datareader"  = "db_datareader"
-    "db_datawriter"  = "db_datawriter"
-    "db_accessadmin" = "db_accessadmin"
-  }
-}
-
-resource "null_resource" "add-user-roles" {
-  # https://docs.microsoft.com/en-us/sql/relational-databases/security/authentication-access/database-level-roles?view=sql-server-ver15
-  for_each = local.roles
-
-  provisioner "local-exec" {
-    command = format("psqlcmd %s %d %s %s \"ALTER ROLE %s ADD MEMBER [%s];\"",
-      var.mssql_hostname,
-      var.mssql_port,
-      var.admin_username,
-      var.mssql_db_name,
-      each.key,
-    random_string.username.result)
-    environment = {
-      MSSQL_PASSWORD = var.admin_password
-    }
-  }
-
-  provisioner "local-exec" {
-    when = destroy
-
-    command = format("psqlcmd %s %d %s %s \"ALTER ROLE %s DROP MEMBER [%s]\"",
-      var.mssql_hostname,
-      var.mssql_port,
-      var.admin_username,
-      var.mssql_db_name,
-      each.key,
-    random_string.username.result)
-    environment = {
-      MSSQL_PASSWORD = var.admin_password
-    }
-  }
-
-  depends_on = [null_resource.create-sql-user]
-}
-
-# For execute permissions on stored procedures
-resource "null_resource" "add-execute-permission" {
-  provisioner "local-exec" {
-    command = format("psqlcmd %s %d %s %s \"GRANT EXEC TO [%s];\"",
-      var.mssql_hostname,
-      var.mssql_port,
-      var.admin_username,
-      var.mssql_db_name,
-    random_string.username.result)
-    environment = {
-      MSSQL_PASSWORD = var.admin_password
-    }
-  }
-
-  provisioner "local-exec" {
-    when = destroy
-
-    command = format("psqlcmd %s %d %s %s \"DENY EXEC TO [%s]\"",
-      var.mssql_hostname,
-      var.mssql_port,
-      var.admin_username,
-      var.mssql_db_name,
-    random_string.username.result)
-    environment = {
-      MSSQL_PASSWORD = var.admin_password
-    }
-  }
-
-  depends_on = [null_resource.create-sql-user]
-}
-
 
 output "username" { value = random_string.username.result }
 output "password" {
