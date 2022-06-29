@@ -104,15 +104,6 @@ func checkUser(ctx context.Context, db *sql.DB, username string) (bool, error) {
 	return rows.Next(), nil
 }
 
-func checkLogin(ctx context.Context, db *sql.DB, username string) (bool, error) {
-	rows, err := db.QueryContext(ctx, `SELECT NAME FROM sys.sql_logins WHERE NAME = @p1`, username)
-	if err != nil {
-		return false, fmt.Errorf("error querying existence of login %q: %w", username, err)
-	}
-	defer rows.Close()
-	return rows.Next(), nil
-}
-
 func dropUser(ctx context.Context, db *sql.DB, username string) error {
 	statement := fmt.Sprintf(`DROP USER IF EXISTS [%s]`, username)
 	if _, err := db.ExecContext(ctx, statement); err != nil {
@@ -125,21 +116,12 @@ func dropUser(ctx context.Context, db *sql.DB, username string) error {
 // dropLogin drops a legacy login. In the past the brokerpak created a login and
 // then created a user from the login, but this was problematic in a failover because
 // the login did not exist on the replica. See: https://www.pivotaltracker.com/story/show/179168006
-// In order to clean up any legacy login, we check to see if one exists and
-// drop it if it does.
 func dropLogin(ctx context.Context, db *sql.DB, username string) error {
-	exists, err := checkLogin(ctx, db, username)
-	switch {
-	case err != nil:
-		return err
-	case !exists:
-		return nil
-	}
-
-	statement := fmt.Sprintf(`DROP LOGIN [%s]`, username)
-	if _, err := db.ExecContext(ctx, statement); err != nil {
-		return fmt.Errorf("error deleting login %q: %w", username, err)
-	}
+	// Unfortunately there's no "DROP LOGIN IF EXISTS" and checking for the existence of the login (via sys.sql_logins)
+	// proved unreliable as it worked on the database fake, but not on an Azure database. So we just attempt the operation
+	// and ignore any error. The issue with checking for the "right" error is that any check would be fragile if there were
+	// future changes to the message, SQLState, etc... and the benefit was not considered to be worth the risk
+	_, _ = db.ExecContext(ctx, fmt.Sprintf(`DROP LOGIN [%s]`, username))
 
 	return nil
 }
