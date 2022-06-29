@@ -31,11 +31,20 @@ func StartServer(password string, port int) *gexec.Session {
 	session, err := gexec.Start(cmd, ginkgo.GinkgoWriter, ginkgo.GinkgoWriter)
 	gomega.Expect(err).NotTo(gomega.HaveOccurred())
 
-	gomega.Eventually(func(g gomega.Gomega) {
+	for ready, started := false, time.Now(); !ready; {
 		db, err := sql.Open("sqlserver", ConnectionString(AdminUser, password, defaultDatabase, port))
-		g.Expect(err).NotTo(gomega.HaveOccurred())
-		g.Expect(db.Ping()).NotTo(gomega.HaveOccurred())
-	}).WithTimeout(time.Minute).Should(gomega.Succeed())
+		gomega.Expect(err).NotTo(gomega.HaveOccurred())
+		switch {
+		case db.Ping() == nil: // successful ping
+			ready = true
+		case session.ExitCode() != -1: // docker image no longer running
+			ginkgo.Fail("server running in docker has exited")
+		case time.Since(started) > 10*time.Minute:
+			ginkgo.Fail("timed out waiting for the server to start")
+		default:
+			time.Sleep(time.Second)
+		}
+	}
 
 	db := Connect(AdminUser, password, defaultDatabase, port)
 	execf(db, `EXEC sp_configure 'contained database authentication', 1 RECONFIGURE`)
