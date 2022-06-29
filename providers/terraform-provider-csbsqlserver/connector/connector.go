@@ -66,7 +66,7 @@ func (c *Connector) ReadBinding(ctx context.Context, username string) (result bo
 	})
 }
 
-func (c *Connector) withConnection(cb func(db *sql.DB) error) error {
+func (c *Connector) withConnection(callback func(db *sql.DB) error) error {
 	db, err := sql.Open("sqlserver", c.connStr())
 	if err != nil {
 		return fmt.Errorf("error connecting to database %q on %q port %d with user %q: %w", c.database, c.server, c.port, c.username, err)
@@ -76,18 +76,19 @@ func (c *Connector) withConnection(cb func(db *sql.DB) error) error {
 		return fmt.Errorf("error pinging database %q on %q port %d with user %q: %w", c.database, c.server, c.port, c.username, err)
 	}
 
-	return cb(db)
+	return callback(db)
 }
 
 func (c *Connector) connStr() string {
-	return strings.Join([]string{
-		fmt.Sprintf("server=%s", c.server),
-		fmt.Sprintf("user id=%s", c.username),
-		fmt.Sprintf("password=%s", c.password),
-		fmt.Sprintf("port=%d", c.port),
-		fmt.Sprintf("database=%s", c.database),
-		fmt.Sprintf("encrypt=%s", c.encrypt),
-	},
+	return strings.Join(
+		[]string{
+			fmt.Sprintf("server=%s", c.server),
+			fmt.Sprintf("user id=%s", c.username),
+			fmt.Sprintf("password=%s", c.password),
+			fmt.Sprintf("port=%d", c.port),
+			fmt.Sprintf("database=%s", c.database),
+			fmt.Sprintf("encrypt=%s", c.encrypt),
+		},
 		";",
 	)
 }
