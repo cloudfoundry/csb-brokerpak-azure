@@ -19,6 +19,19 @@ variable "admin_username" { type = string }
 variable "admin_password" { type = string }
 variable "use_tls" { type = bool }
 
+terraform {
+  required_providers {
+    postgresql = {
+      source  = "cyrilgdn/postgresql"
+      version = ">=1.16.0"
+    }
+    random = {
+      source  = "hashicorp/random"
+      version = ">=3.3.1"
+    }
+  }
+}
+
 provider "postgresql" {
   host      = var.hostname
   port      = var.port
