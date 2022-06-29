@@ -218,6 +218,7 @@ bind:
     overwrite: true
   template_refs:
     versions: terraform/azure-mssql-db/bind/mssql-bind-versions.tf
+    providers: terraform/azure-mssql-db/bind/mssql-bind-providers.tf
     outputs: terraform/azure-mssql-db/bind/mssql-bind-outputs.tf
     variables: terraform/azure-mssql-db/bind/mssql-bind-variables.tf
     main: terraform/azure-mssql-db/bind/mssql-bind-main.tf

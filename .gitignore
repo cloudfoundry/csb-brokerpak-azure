@@ -1,5 +1,5 @@
 *.brokerpak
+providers/terraform-provider-csbsqlserver/cloudfoundry.org
 tools/sqlfailover/build/
-tools/psqlcmd/build/
 cloud-service-broker
 .idea

@@ -48,9 +48,10 @@ terraform_binaries:
 - name: terraform-provider-null
   version: 3.1.1
   source: https://github.com/terraform-providers/terraform-provider-null/archive/v3.1.1.zip
-- name: psqlcmd
-  version: 0.1.0
-  url_template: ./tools/${name}/build/${name}_${version}_${os}_${arch}.zip
+- name: terraform-provider-csbsqlserver
+  version: 1.0.0
+  provider: cloud-service-broker/csbsqlserver
+  url_template: ./providers/${name}/cloudfoundry.org/cloud-service-broker/csbsqlserver/${version}/${os}_${arch}/terraform-provider-csbsqlserver_v${version}
 - name: sqlfailover
   version: 0.1.0
   url_template: ./tools/${name}/build/${name}_${version}_${os}_${arch}.zip  

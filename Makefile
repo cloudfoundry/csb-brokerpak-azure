@@ -87,7 +87,7 @@ endif
 .PHONY: build
 build: deps-go-binary $(IAAS)-services-*.brokerpak ## build brokerpak
 
-$(IAAS)-services-*.brokerpak: *.yml terraform/*/*.tf ./tools/psqlcmd/build/psqlcmd_*.zip ./tools/sqlfailover/build/sqlfailover_*.zip | $(PAK_CACHE)
+$(IAAS)-services-*.brokerpak: *.yml terraform/*/*.tf ./tools/sqlfailover/build/sqlfailover_*.zip ./providers/terraform-provider-csbsqlserver/cloudfoundry.org/cloud-service-broker/csbsqlserver | $(PAK_CACHE)
 	$(RUN_CSB) pak build
 
 .PHONY: run
@@ -118,8 +118,12 @@ run-examples: build ## run examples against CSB on localhost (run "make run" to 
 test: latest-csb lint run-integration-tests ## run the tests
 
 .PHONY: run-integration-tests
-run-integration-tests: ./tools/psqlcmd/build/psqlcmd_*.zip ./tools/sqlfailover/build/sqlfailover_*.zip latest-csb ## run integration tests for this brokerpak
+run-integration-tests: ./tools/sqlfailover/build/sqlfailover_*.zip latest-csb provider-tests ## run integration tests for this brokerpak
 	cd ./integration-tests && go run github.com/onsi/ginkgo/v2/ginkgo -r .
+
+.PHONY: provider-tests
+provider-tests:
+	cd providers/terraform-provider-csbsqlserver; $(MAKE) test
 
 .PHONY: info
 info: build ## show brokerpak info
@@ -145,15 +149,12 @@ clean: ## clean up build artifacts
 	- rm -f $(IAAS)-services-*.brokerpak
 	- rm -f ./cloud-service-broker
 	- rm -f ./brokerpak-user-docs.md
-	- cd tools/psqlcmd; $(MAKE) clean
 	- cd tools/sqlfailover; $(MAKE) clean
+	- cd providers/terraform-provider-csbsqlserver; $(MAKE) clean
 	- rm -rf $(PAK_CACHE)
 
 .PHONY: rebuild
 rebuild: clean build
-
-./tools/psqlcmd/build/psqlcmd_*.zip: tools/psqlcmd/*.go
-	cd tools/psqlcmd; $(MAKE) build
 
 ./tools/sqlfailover/build/sqlfailover_*.zip: tools/sqlfailover/*.go
 	cd tools/sqlfailover; $(MAKE) build
@@ -223,3 +224,6 @@ staticcheck: ## runs staticcheck
 format: ## format the source
 	${GOFMT} -s -e -l -w .
 	${GO} run golang.org/x/tools/cmd/goimports -l -w .
+
+./providers/terraform-provider-csbsqlserver/cloudfoundry.org/cloud-service-broker/csbsqlserver:
+	cd providers/terraform-provider-csbsqlserver; $(MAKE) build
