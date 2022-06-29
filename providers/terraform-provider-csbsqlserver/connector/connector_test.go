@@ -3,6 +3,7 @@ package connector_test
 import (
 	"context"
 	"csbbrokerpakazure/providers/terraform-provider-csbsqlserver/testhelpers"
+	"fmt"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -74,6 +75,27 @@ var _ = Describe("Connector", func() {
 			By("deleting a binding that does not exist")
 			err := conn.DeleteBinding(context.TODO(), bindingUsername)
 			Expect(err).NotTo(HaveOccurred())
+		})
+
+		It("removes legacy logins", func() {
+			bindingUsername := uuid.New()
+			bindingPassword := testhelpers.RandomPassword()
+
+			By("creating a legacy login")
+			_, err := db.Exec(fmt.Sprintf(`CREATE LOGIN [%s] with PASSWORD='%s'`, bindingUsername, bindingPassword))
+			Expect(err).NotTo(HaveOccurred())
+			db.Exec(fmt.Sprintf(`CREATE USER [%s] from LOGIN %s`, bindingUsername, bindingUsername))
+			Expect(err).NotTo(HaveOccurred())
+
+			By("deleting the binding")
+			err = conn.DeleteBinding(context.TODO(), bindingUsername)
+			Expect(err).NotTo(HaveOccurred())
+
+			By("checking the login does not exist")
+			rows, err := db.Query(`SELECT NAME FROM sys.sql_logins WHERE NAME = @p1`, bindingUsername)
+			Expect(err).NotTo(HaveOccurred())
+			defer rows.Close()
+			Expect(rows.Next()).To(BeFalse(), "login still exists")
 		})
 	})
 
