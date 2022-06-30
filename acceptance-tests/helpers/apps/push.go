@@ -16,7 +16,10 @@ const pushWaitTime = 20 * time.Minute
 type Option func(*App)
 
 func Push(opts ...Option) *App {
-	defaults := []Option{WithName(random.Name(random.WithPrefix("app")))}
+	defaults := []Option{
+		WithName(random.Name(random.WithPrefix("app"))),
+		WithMemory("100MB"),
+	}
 	app := App{}
 	app.Push(append(defaults, opts...)...)
 	return &app
@@ -104,6 +107,12 @@ func WithVariable(key, value string) Option {
 func WithStartedState() Option {
 	return func(a *App) {
 		a.start = true
+	}
+}
+
+func WithMemory(memory string) Option {
+	return func(a *App) {
+		a.memory = memory
 	}
 }
 
