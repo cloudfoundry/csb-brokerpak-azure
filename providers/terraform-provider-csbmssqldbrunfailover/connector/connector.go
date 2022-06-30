@@ -1,24 +1,21 @@
 // Package connector manages the creating and deletion of service bindings to MS SQL Server
-package iaas
+package connector
 
 import (
 	"context"
 	"fmt"
 	"os"
 
-	"terraform-provider-csbmssqldbrunfailover/internal/failover"
-
-	"github.com/Azure/azure-sdk-for-go/sdk/azcore/to"
 	"github.com/Azure/azure-sdk-for-go/sdk/azidentity"
 	"github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/sql/armsql"
 )
 
-type Client struct {
+type Connector struct {
 	azureTenantID, azureClientID, azureClientSecret, azureSubscriptionID string
 }
 
-func NewClient(azureTenantID, azureClientID, azureClientSecret, azureSubscriptionID string) *Client {
-	return &Client{
+func NewConnector(azureTenantID, azureClientID, azureClientSecret, azureSubscriptionID string) *Connector {
+	return &Connector{
 		azureTenantID:       azureTenantID,
 		azureClientID:       azureClientID,
 		azureClientSecret:   azureClientSecret,
@@ -26,78 +23,37 @@ func NewClient(azureTenantID, azureClientID, azureClientSecret, azureSubscriptio
 	}
 }
 
-func (c *Client) CreateRunFailover(ctx context.Context, f failover.Failover) (string, error) {
-	var failoverGroupID string
-	partnerServer := &armsql.PartnerInfo{ID: to.Ptr(f.PartnerServerID())}
+func (c *Connector) CreateRunFailover(ctx context.Context, resourceGroup, serverName, failoverGroup string) error {
 
-	readWriteEndpoint := &armsql.FailoverGroupReadWriteEndpoint{
-		FailoverPolicy:                         to.Ptr(armsql.ReadWriteEndpointFailoverPolicyAutomatic),
-		FailoverWithDataLossGracePeriodMinutes: to.Ptr[int32](int32(f.FailoverWithDataLossGracePeriodMinutes())),
-	}
-
-	err := c.withConnection(func(failoverGroupsClient *armsql.FailoverGroupsClient) error {
-
-		pollerResp, err := failoverGroupsClient.BeginCreateOrUpdate(
-			ctx,
-			f.ResourceGroup(),
-			f.ServerName(),
-			f.FailoverGroup(),
-			armsql.FailoverGroup{
-				Properties: &armsql.FailoverGroupProperties{
-					PartnerServers:    []*armsql.PartnerInfo{partnerServer},
-					ReadWriteEndpoint: readWriteEndpoint,
-					// TODO
-					Databases:        []*string{},
-					ReadOnlyEndpoint: nil,
-					ReplicationRole:  nil,
-					ReplicationState: nil,
-				},
-				Tags:     nil,
-				ID:       nil,
-				Location: nil,
-				Name:     nil,
-				Type:     nil,
-			},
-			nil,
-		)
+	return c.withConnection(func(failoverGroupsClient *armsql.FailoverGroupsClient) error {
+		pollerResp, err := failoverGroupsClient.BeginFailover(ctx, resourceGroup, serverName, failoverGroup, nil)
 		if err != nil {
-			return fmt.Errorf("error initiating the failover group creation operation %w", err)
+			return fmt.Errorf("error initiating failover action %w", err)
 		}
 
-		resp, err := pollerResp.PollUntilDone(ctx, nil)
+		_, err = pollerResp.PollUntilDone(ctx, nil)
 		if err != nil {
-			return fmt.Errorf("error creating the failover group %w", err)
+			return fmt.Errorf("error activating failover %w", err)
 		}
 
-		if resp.FailoverGroup.ID == nil {
-			return fmt.Errorf("invalid fail over group id")
-		}
-
-		failoverGroupID = *resp.FailoverGroup.ID
 		return nil
 	})
-	if err != nil {
-		return "", err
-	}
-
-	return failoverGroupID, nil
 }
 
-func (c *Client) DeleteRunFailover(ctx context.Context, resourceGroup, serverName, failoverGroup string) error {
+func (c *Connector) DeleteRunFailover(ctx context.Context, resourceGroup, serverName, failoverGroup string) error {
 	return nil
 }
 
-func (c *Client) ReadRunFailover(ctx context.Context, resourceGroup, serverName, failoverGroup string) (result bool, err error) {
+func (c *Connector) ReadRunFailover(ctx context.Context, resourceGroup, serverName, failoverGroup string) (result bool, err error) {
 	return false, nil
 }
 
-func (c *Client) UpdateRunFailover(ctx context.Context, resourceGroup, serverName, failoverGroup string) (result bool, err error) {
+func (c *Connector) UpdateRunFailover(ctx context.Context, resourceGroup, serverName, failoverGroup string) (result bool, err error) {
 	return false, nil
 }
 
-// TODO: see if we can avoid setting environment variables
-// TODO: sql2.NewFailoverGroupsClient dependency was forced in go.mod, see if can use a newer one.
-func (c *Client) withConnection(callback func(failoverGroupsClient *armsql.FailoverGroupsClient) error) error {
+// TODO check client options
+func (c *Connector) withConnection(callback func(failoverGroupsClient *armsql.FailoverGroupsClient) error) error {
 	_ = os.Setenv("AZURE_SUBSCRIPTION_ID", c.azureSubscriptionID)
 	_ = os.Setenv("AZURE_TENANT_ID", c.azureTenantID)
 	_ = os.Setenv("AZURE_CLIENT_ID", c.azureClientID)

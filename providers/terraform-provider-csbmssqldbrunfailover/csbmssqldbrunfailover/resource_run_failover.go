@@ -46,11 +46,7 @@ func createRunFailover(ctx context.Context, d *schema.ResourceData, m any) diag.
 		failoverGroup string
 	)
 
-	client, ok := m.(*connector.Client)
-	if !ok {
-		// TODO define error
-		return diag.Errorf("")
-	}
+	client := m.(*connector.Connector)
 
 	for _, f := range []func() diag.Diagnostics{
 		func() (diags diag.Diagnostics) {
