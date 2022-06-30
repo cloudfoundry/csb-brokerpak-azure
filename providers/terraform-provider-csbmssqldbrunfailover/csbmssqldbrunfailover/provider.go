@@ -1,23 +1,19 @@
 package csbmssqldbrunfailover
 
 import (
-"context"
-	"csbbrokerpakazure/providers/terraform-provider-csbsqlserver/connector"
+	"context"
 
-	//"csbbrokerpakazure/providers/terraform-provider-csbmssqldbrunfailover/connector"
+	"csbbrokerpakazure/providers/terraform-provider-csbmssqldbrunfailover/connector"
 
-"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
-"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
 const (
-	azureTenantIDKey = "azureTenantID"
-	azureClientIDKey     = "azureClientID"
+	azureTenantIDKey       = "azureTenantID"
+	azureClientIDKey       = "azureClientID"
 	azureClientSecretKey   = "azureClientSecret"
 	azureSubscriptionIDKey = "azureSubscriptionID"
-	resourceGroupKey    = "resourceGroup"
-	serverNameKey          = "serverName"
-	failoverGroupKey = "failoverGroup"
 )
 
 func Provider() *schema.Provider {
@@ -39,22 +35,10 @@ func Provider() *schema.Provider {
 				Type:     schema.TypeString,
 				Required: true,
 			},
-			//resourceGroupKey: {
-			//	Type:     schema.TypeString,
-			//	Required: true,
-			//},
-			//serverNameKey: {
-			//	Type:     schema.TypeString,
-			//	Required: true,
-			//},
-			//failoverGroupKey: {
-			//	Type:     schema.TypeString,
-			//	Required: true,
-			//},
 		},
 		ConfigureContextFunc: configure,
 		ResourcesMap: map[string]*schema.Resource{
-			"csbmssqldbrunfailover": runFailoverResource(),
+			"csbmssqldbrunfailover": resourceRunFailover(),
 		},
 	}
 }
@@ -81,21 +65,21 @@ func configure(ctx context.Context, d *schema.ResourceData) (any, diag.Diagnosti
 			return
 		},
 		func() (diags diag.Diagnostics) {
-				azureSubscriptionID, diags = getIdentifier(d, azureSubscriptionIDKey)
+			azureSubscriptionID, diags = getIdentifier(d, azureSubscriptionIDKey)
 			return
 		},
-		//func() (diags diag.Diagnostics) {
+		// func() (diags diag.Diagnostics) {
 		//	serverName, diags = getIdentifier(d, serverNameKey)
 		//	return
-		//},
-		//func() (diags diag.Diagnostics) {
+		// },
+		// func() (diags diag.Diagnostics) {
 		//		failoverGroup, diags = getIdentifier(d, failoverGroupKey)
 		//	return
-		//},
-		//func() (diags diag.Diagnostics) {
+		// },
+		// func() (diags diag.Diagnostics) {
 		//		resourceGroup, diags = getIdentifier(d, resourceGroupKey)
 		//	return
-		//},
+		// },
 
 	} {
 		if d := f(); d != nil {
@@ -103,6 +87,5 @@ func configure(ctx context.Context, d *schema.ResourceData) (any, diag.Diagnosti
 		}
 	}
 
-	return connector.New(azureTenantID, azureClientID, azureClientSecret, azureSubscriptionID), nil
+	return connector.NewConnector(azureTenantID, azureClientID, azureClientSecret, azureSubscriptionID), nil
 }
-
