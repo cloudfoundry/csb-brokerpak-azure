@@ -267,6 +267,8 @@ bind:
     variables: terraform/azure-mssql-db/bind/mssql-bind-variables.tf
     main: terraform/azure-mssql-db/bind/mssql-bind-main.tf
     data: terraform/azure-mssql-db/bind/mssql-bind-data.tf
+    providers: terraform/azure-mssql-db/bind/mssql-bind-providers.tf
+    versions: terraform/azure-mssql-db/bind/mssql-bind-versions.tf
   outputs:
   - field_name: username
     type: string
