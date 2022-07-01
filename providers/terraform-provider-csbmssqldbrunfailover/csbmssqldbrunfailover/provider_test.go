@@ -1,9 +1,10 @@
 package csbmssqldbrunfailover_test
 
 import (
-	"csbbrokerpakazure/providers/terraform-provider-csbmssqldbrunfailover/csbmssqldbrunfailover"
 	"fmt"
 	"regexp"
+
+	"csbbrokerpakazure/providers/terraform-provider-csbmssqldbrunfailover/csbmssqldbrunfailover"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -21,14 +22,13 @@ var _ = Describe("Provider Configuration", func() {
 		failoverGroup string
 	)
 
-
 	BeforeEach(func() {
 
 		azureTenantID = "some-tenant-id"
 		azureClientID = "some-client-id"
 		azureClientSecret = "client-secret"
 		azureSubscriptionID = "subscription-id"
-	resourceGroup = "resource-group"
+		resourceGroup = "resource-group"
 		serverName = "server-name"
 		failoverGroup = "failover-group"
 
