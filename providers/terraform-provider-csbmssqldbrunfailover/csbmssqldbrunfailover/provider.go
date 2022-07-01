@@ -10,10 +10,10 @@ import (
 )
 
 const (
-	azureTenantIDKey       = "azureTenantID"
-	azureClientIDKey       = "azureClientID"
-	azureClientSecretKey   = "azureClientSecret"
-	azureSubscriptionIDKey = "azureSubscriptionID"
+	azureTenantIDKey       = "azure_tenant_id"
+	azureClientIDKey       = "azure_client_id"
+	azureClientSecretKey   = "azure_client_secret"
+	azureSubscriptionIDKey = "azure_subscription_id"
 )
 
 func Provider() *schema.Provider {
@@ -38,7 +38,7 @@ func Provider() *schema.Provider {
 		},
 		ConfigureContextFunc: configure,
 		ResourcesMap: map[string]*schema.Resource{
-			"csbmssqldbrunfailover": resourceRunFailover(),
+			"csbmssqldbrunfailover_failover": resourceRunFailover(),
 		},
 	}
 }

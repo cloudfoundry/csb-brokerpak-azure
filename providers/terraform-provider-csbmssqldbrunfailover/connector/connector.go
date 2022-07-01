@@ -1,4 +1,4 @@
-// Package connector manages the creating and deletion of service bindings to MS SQL Server
+// Package connector manages the failover state in MSSQL DB
 package connector
 
 import (

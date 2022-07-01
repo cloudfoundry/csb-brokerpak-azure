@@ -2,6 +2,7 @@ package csbmssqldbrunfailover
 
 import (
 	"context"
+	"fmt"
 
 	"csbbrokerpakazure/providers/terraform-provider-csbmssqldbrunfailover/connector"
 
@@ -10,9 +11,9 @@ import (
 )
 
 const (
-	resourceGroupKey = "resourceGroup"
-	serverNameKey    = "serverName"
-	failoverGroupKey = "failoverGroup"
+	resourceGroupKey = "resource_group"
+	serverNameKey    = "server_name"
+	failoverGroupKey = "failover_group"
 )
 
 func resourceRunFailover() *schema.Resource {
@@ -31,15 +32,15 @@ func resourceRunFailover() *schema.Resource {
 				Required: true,
 			},
 		},
-		CreateContext: createRunFailover,
-		ReadContext:   nil,
-		UpdateContext: nil,
-		DeleteContext: nil,
+		CreateContext: create,
+		ReadContext:   read,
+		UpdateContext: update,
+		DeleteContext: delete,
 		Description:   "Failover to the secondary database.",
 	}
 }
 
-func createRunFailover(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
+func create(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	var (
 		resourceGroup,
 		serverName,
@@ -71,4 +72,16 @@ func createRunFailover(ctx context.Context, d *schema.ResourceData, m any) diag.
 		return diag.FromErr(err)
 	}
 	return nil
+}
+
+func update(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
+	return diag.FromErr(fmt.Errorf("update lifecycle not implemented"))
+}
+
+func read(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
+	return diag.FromErr(fmt.Errorf("update lifecycle not implemented"))
+}
+
+func delete(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
+	return diag.FromErr(fmt.Errorf("update lifecycle not implemented"))
 }
