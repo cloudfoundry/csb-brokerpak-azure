@@ -72,6 +72,7 @@ var _ = Describe("UpgradeMssqlDBTest", Label("mssql-db"), func() {
 
 			By("upgrading service instance")
 			dbInstance.Upgrade()
+			serverInstance.Upgrade()
 
 			By("checking previously created data still accessible")
 			got = appTwo.GET("%s/%s", schema, keyOne)
