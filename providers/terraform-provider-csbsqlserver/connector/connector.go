@@ -5,7 +5,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"strings"
+	"net/url"
 
 	_ "github.com/denisenkom/go-mssqldb"
 )
@@ -82,17 +82,18 @@ func (c *Connector) withConnection(callback func(db *sql.DB) error) error {
 }
 
 func (c *Connector) connStr() string {
-	return strings.Join(
-		[]string{
-			fmt.Sprintf("server=%s", c.server),
-			fmt.Sprintf("user id=%s", c.username),
-			fmt.Sprintf("password=%s", c.password),
-			fmt.Sprintf("port=%d", c.port),
-			fmt.Sprintf("database=%s", c.database),
-			fmt.Sprintf("encrypt=%s", c.encrypt),
-		},
-		";",
-	)
+	query := url.Values{}
+	query.Add("database", c.database)
+	query.Add("encrypt", c.encrypt)
+
+	u := &url.URL{
+		Scheme:   "sqlserver",
+		User:     url.UserPassword(c.username, c.password),
+		Host:     fmt.Sprintf("%s:%d", c.server, c.port),
+		RawQuery: query.Encode(),
+	}
+
+	return u.String()
 }
 
 func checkUser(ctx context.Context, db *sql.DB, username string) (bool, error) {
