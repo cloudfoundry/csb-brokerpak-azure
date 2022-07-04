@@ -8,9 +8,16 @@ import (
 )
 
 var (
+	// These validations are for things created by this provider, so we can
+	// be stricter than SQL Server
 	identifierRegexp = regexp.MustCompile(`^[\w_.-]{1,64}$`)
-	passwordRegexp   = regexp.MustCompile(`^[\w~_.-]{1,64}$`)
+	passwordRegexp   = regexp.MustCompile(`^[\w~_.-]{8,128}$`)
 	validURL         = regexp.MustCompile(`^[\w.-]{1,253}$`)
+
+	// This validation is for things that are passed to the provider,
+	// and we rely on the escaping of the connection URL to protect
+	// against injection attacks
+	serverPropertyRegexp = regexp.MustCompile(`.{1,128}`)
 )
 
 // getIdentifier gets a string configuration value and validates that it's
@@ -23,6 +30,23 @@ func getIdentifier(d *schema.ResourceData, key string) (string, diag.Diagnostics
 	}
 
 	return s, nil
+}
+
+// getRoles gets a configuration value and casts to a string slice
+// We rely on Terraform to supply the correct types, and it's to panic if this contract is broken
+func getRoles(d *schema.ResourceData, key string) ([]string, diag.Diagnostics) {
+	var result []string
+	// We rely on Terraform to supply the correct types, and it's ok panic if this contract is broken
+	for i, e := range d.Get(key).([]any) {
+		s := e.(string)
+		if !identifierRegexp.MatchString(s) {
+			return nil, diag.Errorf("invalid value %q for element %d of %q, validation expression is: %s", s, i, key, identifierRegexp.String())
+		}
+
+		result = append(result, e.(string))
+	}
+
+	return result, nil
 }
 
 // getIdentifierDefault gets an encrypt string configuration value and validates that it's
@@ -79,19 +103,26 @@ func getURL(d *schema.ResourceData, key string) (string, diag.Diagnostics) {
 	return u, nil
 }
 
-// getRoles gets a configuration value and casts to a string slice
-// We rely on Terraform to supply the correct types, and it's to panic if this contract is broken
-func getRoles(d *schema.ResourceData, key string) ([]string, diag.Diagnostics) {
-	var result []string
+// getServerIdentifier gets a string configuration value and validates that it's
+// a valid password
+func getServerIdentifier(d *schema.ResourceData, key string) (string, diag.Diagnostics) {
 	// We rely on Terraform to supply the correct types, and it's ok panic if this contract is broken
-	for i, e := range d.Get(key).([]any) {
-		s := e.(string)
-		if !identifierRegexp.MatchString(s) {
-			return nil, diag.Errorf("invalid value %q for element %d of %q, validation expression is: %s", s, i, key, identifierRegexp.String())
-		}
-
-		result = append(result, e.(string))
+	s := d.Get(key).(string)
+	if !serverPropertyRegexp.MatchString(s) {
+		return "", diag.Errorf("invalid value %q for server identifier %q, validation expression is: %s", s, key, serverPropertyRegexp.String())
 	}
 
-	return result, nil
+	return s, nil
+}
+
+// getServerPassword gets a string configuration value and validates that it's
+// a valid password
+func getServerPassword(d *schema.ResourceData, key string) (string, diag.Diagnostics) {
+	// We rely on Terraform to supply the correct types, and it's ok panic if this contract is broken
+	s := d.Get(key).(string)
+	if !serverPropertyRegexp.MatchString(s) {
+		return "", diag.Errorf("invalid server password value for %q, validation expression is: %s", key, serverPropertyRegexp.String())
+	}
+
+	return s, nil
 }

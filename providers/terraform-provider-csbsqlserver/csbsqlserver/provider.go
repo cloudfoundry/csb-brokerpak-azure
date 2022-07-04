@@ -73,15 +73,15 @@ func configure(ctx context.Context, d *schema.ResourceData) (any, diag.Diagnosti
 			return
 		},
 		func() (diags diag.Diagnostics) {
-			username, diags = getIdentifier(d, providerUsernameKey)
+			username, diags = getServerIdentifier(d, providerUsernameKey)
 			return
 		},
 		func() (diags diag.Diagnostics) {
-			password, diags = getPassword(d, providerPasswordKey)
+			password, diags = getServerPassword(d, providerPasswordKey)
 			return
 		},
 		func() (diags diag.Diagnostics) {
-			database, diags = getIdentifier(d, databaseKey)
+			database, diags = getServerIdentifier(d, databaseKey)
 			return
 		},
 		func() (diags diag.Diagnostics) {
