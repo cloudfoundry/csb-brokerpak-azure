@@ -61,7 +61,10 @@ provision:
     type: boolean
     details: Skip automatic Azure provider registration, set to true if service principal being used does not have rights to register providers
     default: false    
-  template_ref: terraform/azure-mssql-db-failover/run-failover.tf 
+  template_refs:
+    versions: terraform/azure-mssql-db-failover/run-failover/run-failover-versions.tf
+    providers: terraform/azure-mssql-db-failover/run-failover/run-failover-providers.tf
+    main: terraform/azure-mssql-db-failover/run-failover/run-failover.tf
   computed_inputs: []
   outputs: []
 bind:
