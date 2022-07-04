@@ -61,26 +61,13 @@ func configure(ctx context.Context, d *schema.ResourceData) (any, diag.Diagnosti
 			return
 		},
 		func() (diags diag.Diagnostics) {
-			azureClientSecret, diags = getIdentifier(d, azureClientSecretKey)
+			azureClientSecret, diags = getClientSecret(d)
 			return
 		},
 		func() (diags diag.Diagnostics) {
 			azureSubscriptionID, diags = getIdentifier(d, azureSubscriptionIDKey)
 			return
 		},
-		// func() (diags diag.Diagnostics) {
-		//	serverName, diags = getIdentifier(d, serverNameKey)
-		//	return
-		// },
-		// func() (diags diag.Diagnostics) {
-		//		failoverGroup, diags = getIdentifier(d, failoverGroupKey)
-		//	return
-		// },
-		// func() (diags diag.Diagnostics) {
-		//		resourceGroup, diags = getIdentifier(d, resourceGroupKey)
-		//	return
-		// },
-
 	} {
 		if d := f(); d != nil {
 			return nil, d

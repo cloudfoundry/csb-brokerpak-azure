@@ -11,6 +11,7 @@ import (
 	"github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/resources/armresources"
 	"github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/sql/armsql"
 	"github.com/onsi/ginkgo/v2"
+	"github.com/onsi/ginkgo/v2/dsl/core"
 )
 
 type FailoverData struct {
@@ -35,23 +36,25 @@ func CreateFailoverGroup(cnf FailoverConfig) FailoverData {
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Println("resources group:", *resourceGroup.ID)
+	core.GinkgoWriter.Printf("resources group name: %s", *resourceGroup.Name)
 
 	server, err := createServer(ctx, cred, cnf.ResourceGroupName, cnf.ServerName, cnf.Location, cnf.SubscriptionID)
 	if err != nil {
 		ginkgo.Fail(fmt.Sprintf("error creating server %s", err))
 	}
+	core.GinkgoWriter.Printf("server name: %s", *server.Name)
 
 	partnerServer, err := createPartnerServer(ctx, cred, cnf.ResourceGroupName, cnf.PartnerServerName, cnf.SubscriptionID)
 	if err != nil {
 		ginkgo.Fail(fmt.Sprintf("error creating partner server %s", err))
 	}
+	core.GinkgoWriter.Printf("partner server name: %s", *partnerServer.Name)
 
 	failoverGroup, err := createFailoverGroup(ctx, cred, *partnerServer.ID, cnf.ResourceGroupName, cnf.ServerName, cnf.FailoverGroupName, cnf.SubscriptionID)
 	if err != nil {
 		ginkgo.Fail(fmt.Sprintf("error creating failover %s", err))
 	}
-	log.Println("failover group:", *failoverGroup.ID)
+	core.GinkgoWriter.Printf("failover group name: %s", *failoverGroup.Name)
 
 	return FailoverData{
 		ResourceGroup: resourceGroup,

@@ -6,7 +6,8 @@ provider "csbmssqldbrunfailover" {
 }
 
 resource "csbmssqldbrunfailover" "run_failover" {
-  resource_group = "resource-group"
-  server_name    = "server-name"
-  failover_group = "failover-group"
+  resource_group      = "resource-group"
+  server_name         = "server-name"
+  partner_server_name = "partner-server-name"
+  failover_group      = "failover-group"
 }

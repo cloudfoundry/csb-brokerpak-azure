@@ -44,8 +44,23 @@ func (c *Connector) DeleteRunFailover(ctx context.Context, resourceGroup, server
 	return nil
 }
 
-func (c *Connector) ReadRunFailover(ctx context.Context, resourceGroup, serverName, failoverGroup string) (result bool, err error) {
-	return false, nil
+func (c *Connector) ReadRunFailover(ctx context.Context, resourceGroup, serverName, failoverGroup string) (bool, error) {
+	var existFailover bool
+	err := c.withConnection(func(failoverGroupsClient *armsql.FailoverGroupsClient) error {
+		f, err := failoverGroupsClient.Get(ctx, resourceGroup, serverName, failoverGroup, nil)
+		if err != nil {
+			return fmt.Errorf("error getting failover %w", err)
+		}
+
+		existFailover = *f.Name == "failovergroupname2"
+
+		return nil
+	})
+	if err != nil {
+		return false, err
+	}
+
+	return existFailover, nil
 }
 
 func (c *Connector) UpdateRunFailover(ctx context.Context, resourceGroup, serverName, failoverGroup string) (result bool, err error) {

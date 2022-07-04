@@ -8,7 +8,8 @@ import (
 )
 
 var (
-	identifierRegexp = regexp.MustCompile(`^[\w_.-]{1,64}$`)
+	identifierRegexp   = regexp.MustCompile(`^[\w_.-]{1,64}$`)
+	clientSecretRegexp = regexp.MustCompile(`^[\w_.-]{1,96}$`)
 )
 
 // getIdentifier gets a string configuration value and validates that it's
@@ -18,6 +19,15 @@ func getIdentifier(d *schema.ResourceData, key string) (string, diag.Diagnostics
 	s := d.Get(key).(string)
 	if !identifierRegexp.MatchString(s) {
 		return "", diag.Errorf("invalid value %q for identifier %q, validation expression is: %s", s, key, identifierRegexp.String())
+	}
+
+	return s, nil
+}
+
+func getClientSecret(d *schema.ResourceData) (string, diag.Diagnostics) {
+	s := d.Get(azureClientSecretKey).(string)
+	if !clientSecretRegexp.MatchString(s) {
+		return "", diag.Errorf("invalid value %q for identifier %q, validation expression is: %s", s, azureClientSecretKey, clientSecretRegexp.String())
 	}
 
 	return s, nil
