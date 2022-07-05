@@ -1,6 +1,5 @@
 *.brokerpak
 providers/terraform-provider-csbsqlserver/cloudfoundry.org
 providers/terraform-provider-csbmssqldbrunfailover/cloudfoundry.org
-tools/sqlfailover/build/
 cloud-service-broker
 .idea
