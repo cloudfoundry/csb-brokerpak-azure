@@ -87,7 +87,7 @@ endif
 .PHONY: build
 build: deps-go-binary $(IAAS)-services-*.brokerpak ## build brokerpak
 
-$(IAAS)-services-*.brokerpak: *.yml terraform/*/*.tf ./tools/sqlfailover/build/sqlfailover_*.zip ./providers/terraform-provider-csbsqlserver/cloudfoundry.org/cloud-service-broker/csbsqlserver ./providers/terraform-provider-csbmssqldbrunfailover/cloudfoundry.org/cloud-service-broker/csbmssqldbrunfailover | $(PAK_CACHE)
+$(IAAS)-services-*.brokerpak: *.yml terraform/*/*.tf ./providers/terraform-provider-csbsqlserver/cloudfoundry.org/cloud-service-broker/csbsqlserver ./providers/terraform-provider-csbmssqldbrunfailover/cloudfoundry.org/cloud-service-broker/csbmssqldbrunfailover | $(PAK_CACHE)
 	$(RUN_CSB) pak build
 
 .PHONY: run
@@ -118,7 +118,7 @@ run-examples: build ## run examples against CSB on localhost (run "make run" to 
 test: latest-csb lint run-integration-tests ## run the tests
 
 .PHONY: run-integration-tests
-run-integration-tests: ./tools/sqlfailover/build/sqlfailover_*.zip latest-csb provider-tests ## run integration tests for this brokerpak
+run-integration-tests: latest-csb provider-tests ## run integration tests for this brokerpak
 	cd ./integration-tests && go run github.com/onsi/ginkgo/v2/ginkgo -r .
 
 .PHONY: provider-tests
@@ -154,15 +154,12 @@ clean: ## clean up build artifacts
 	- rm -f $(IAAS)-services-*.brokerpak
 	- rm -f ./cloud-service-broker
 	- rm -f ./brokerpak-user-docs.md
-	- cd tools/sqlfailover; $(MAKE) clean
 	- cd providers/terraform-provider-csbsqlserver; $(MAKE) clean
+	- cd providers/terraform-provider-csbmssqldbrunfailover; $(MAKE) clean
 	- rm -rf $(PAK_CACHE)
 
 .PHONY: rebuild
 rebuild: clean build
-
-./tools/sqlfailover/build/sqlfailover_*.zip: tools/sqlfailover/*.go
-	cd tools/sqlfailover; $(MAKE) build
 
 .PHONY: arm-subscription-id
 arm-subscription-id:
