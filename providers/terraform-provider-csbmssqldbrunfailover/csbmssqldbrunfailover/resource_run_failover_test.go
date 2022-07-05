@@ -76,6 +76,7 @@ var _ = Describe("resource_run_failover resource", func() {
 				ResourceName: "csbmssqldbrunfailover_failover",
 				Config:       hcl,
 				Check: func(state *terraform.State) error {
+					core.GinkgoWriter.Println("*******************Check Step*******************")
 					// group, err := testhelpers.GetFailoverGroup(
 					// 	*failoverData.ResourceGroup.Name,
 					// 	*failoverData.Server.Name,
@@ -103,8 +104,7 @@ var _ = Describe("resource_run_failover resource", func() {
 				},
 			}},
 			CheckDestroy: func(state *terraform.State) error {
-				core.GinkgoWriter.Printf("state %+v", state)
-				core.GinkgoWriter.Println()
+				core.GinkgoWriter.Println("*******************Check Destroy Step*******************")
 				// group, err := testhelpers.GetFailoverGroup(
 				// 	*failoverData.ResourceGroup.Name,
 				// 	*failoverData.Server.Name,

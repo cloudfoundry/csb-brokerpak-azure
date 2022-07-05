@@ -48,7 +48,8 @@ func resourceRunFailover() *schema.Resource {
 func create(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	var (
 		resourceGroup,
-		serverName,
+		// serverName,
+		partnerServerName,
 		failoverGroup string
 	)
 
@@ -60,11 +61,11 @@ func create(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics
 			return
 		},
 		func() (diags diag.Diagnostics) {
-			serverName, diags = getIdentifier(d, serverNameKey)
+			_, diags = getIdentifier(d, serverNameKey)
 			return
 		},
 		func() (diags diag.Diagnostics) {
-			_, diags = getIdentifier(d, partnerServerNameKey)
+			partnerServerName, diags = getIdentifier(d, partnerServerNameKey)
 			return
 		},
 		func() (diags diag.Diagnostics) {
@@ -77,7 +78,7 @@ func create(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics
 		}
 	}
 
-	if err := client.CreateRunFailover(ctx, resourceGroup, serverName, failoverGroup); err != nil {
+	if err := client.CreateRunFailover(ctx, resourceGroup, partnerServerName, failoverGroup); err != nil {
 		return diag.FromErr(err)
 	}
 
@@ -140,7 +141,7 @@ func read(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 func delete(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	var (
 		resourceGroup,
-		partnerServerName,
+		serverName,
 		failoverGroup string
 	)
 
@@ -152,11 +153,11 @@ func delete(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics
 			return
 		},
 		func() (diags diag.Diagnostics) {
-			_, diags = getIdentifier(d, serverNameKey)
+			serverName, diags = getIdentifier(d, serverNameKey)
 			return
 		},
 		func() (diags diag.Diagnostics) {
-			partnerServerName, diags = getIdentifier(d, partnerServerNameKey)
+			_, diags = getIdentifier(d, partnerServerNameKey)
 			return
 		},
 		func() (diags diag.Diagnostics) {
@@ -169,7 +170,7 @@ func delete(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics
 		}
 	}
 
-	if err := client.CreateRunFailover(ctx, resourceGroup, partnerServerName, failoverGroup); err != nil {
+	if err := client.CreateRunFailover(ctx, resourceGroup, serverName, failoverGroup); err != nil {
 		return diag.FromErr(err)
 	}
 
