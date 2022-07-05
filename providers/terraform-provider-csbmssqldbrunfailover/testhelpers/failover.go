@@ -91,8 +91,8 @@ func createServer(ctx context.Context, cred azcore.TokenCredential, resourceGrou
 		armsql.Server{
 			Location: to.Ptr(location),
 			Properties: &armsql.ServerProperties{
-				AdministratorLogin:         to.Ptr(fmt.Sprint("dummylogin-%s", uuid.New())),
-				AdministratorLoginPassword: to.Ptr(fmt.Sprint("dummyPassword-%s", uuid.New())),
+				AdministratorLogin:         to.Ptr(fmt.Sprintf("dummylogin-%s", uuid.New())),
+				AdministratorLoginPassword: to.Ptr(fmt.Sprintf("dummyPassword-%s", uuid.New())),
 			},
 		},
 		nil,
