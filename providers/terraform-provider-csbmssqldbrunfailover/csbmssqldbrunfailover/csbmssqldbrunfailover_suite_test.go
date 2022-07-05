@@ -42,7 +42,7 @@ var _ = BeforeSuite(func() {
 	creds[tenantIDKey] = os.Getenv("ARM_TENANT_ID")
 	creds[clientIDKey] = os.Getenv("ARM_CLIENT_ID")
 	creds[clientSecretKey] = os.Getenv("ARM_CLIENT_SECRET")
-	Expect(creds.getSubscriptionID()).NotTo(BeEmpty())
+	Expect(creds.getSubscriptionID()).NotTo(BeEmpty(), "ARM_SUBSCRIPTION_ID environment variable does not have to be empty")
 
 	_ = os.Setenv("AZURE_SUBSCRIPTION_ID", creds.getSubscriptionID())
 	_ = os.Setenv("AZURE_TENANT_ID", creds.getTenantID())
