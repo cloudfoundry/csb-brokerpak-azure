@@ -89,7 +89,10 @@ var _ = Describe("UpgradeMssqlDBFailoverTest", Label("mssql-db-failover"), func(
 			By("pushing the development version of the broker")
 			serviceBroker.UpgradeBroker(developmentBuildDir)
 
-			By("upgrading service instance")
+			By("upgrading previous services")
+			resourceGroupInstance.Upgrade()
+			serverInstancePrimary.Upgrade()
+			serverInstanceSecondary.Upgrade()
 			initialFogInstance.Upgrade()
 
 			By("getting the previously set value using the second app")
