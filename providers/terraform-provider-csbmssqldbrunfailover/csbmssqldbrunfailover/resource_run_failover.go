@@ -11,10 +11,11 @@ import (
 )
 
 const (
-	resourceGroupKey     = "resource_group"
-	serverNameKey        = "server_name"
-	partnerServerNameKey = "partner_server_name"
-	failoverGroupKey     = "failover_group"
+	resourceGroupKey              = "resource_group"
+	serverNameKey                 = "server_name"
+	partnerServerNameKey          = "partner_server_name"
+	failoverGroupKey              = "failover_group"
+	partnerServerResourceGroupKey = "partner_server_resource_group"
 )
 
 func resourceRunFailover() *schema.Resource {
@@ -36,6 +37,10 @@ func resourceRunFailover() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 			},
+			partnerServerResourceGroupKey: {
+				Type:     schema.TypeString,
+				Required: true,
+			},
 		},
 		CreateContext: create,
 		ReadContext:   read,
@@ -47,9 +52,8 @@ func resourceRunFailover() *schema.Resource {
 
 func create(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	var (
-		resourceGroup,
-		// serverName,
 		partnerServerName,
+		partnerServerResourceGroupName,
 		failoverGroup string
 	)
 
@@ -57,7 +61,7 @@ func create(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics
 
 	for _, f := range []func() diag.Diagnostics{
 		func() (diags diag.Diagnostics) {
-			resourceGroup, diags = getIdentifier(d, resourceGroupKey)
+			_, diags = getIdentifier(d, resourceGroupKey)
 			return
 		},
 		func() (diags diag.Diagnostics) {
@@ -72,13 +76,17 @@ func create(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics
 			failoverGroup, diags = getIdentifier(d, failoverGroupKey)
 			return
 		},
+		func() (diags diag.Diagnostics) {
+			partnerServerResourceGroupName, diags = getIdentifier(d, partnerServerResourceGroupKey)
+			return
+		},
 	} {
 		if d := f(); d != nil {
 			return d
 		}
 	}
 
-	if err := client.CreateRunFailover(ctx, resourceGroup, partnerServerName, failoverGroup); err != nil {
+	if err := client.CreateRunFailover(ctx, partnerServerResourceGroupName, partnerServerName, failoverGroup); err != nil {
 		return diag.FromErr(err)
 	}
 

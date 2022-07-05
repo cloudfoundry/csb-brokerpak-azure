@@ -18,6 +18,7 @@ var _ = Describe("Provider Configuration", func() {
 		azureClientSecret,
 		azureSubscriptionID,
 		resourceGroup,
+		partnerServerResourceGroup,
 		serverName,
 		partnerServerName,
 		failoverGroup string
@@ -30,6 +31,7 @@ var _ = Describe("Provider Configuration", func() {
 		azureClientSecret = "client-secret"
 		azureSubscriptionID = "subscription-id"
 		resourceGroup = "resource-group"
+		partnerServerResourceGroup = "partner-resource-group"
 		serverName = "server-name"
 		partnerServerName = "partner-server-name"
 		failoverGroup = "failover-group"
@@ -50,16 +52,18 @@ var _ = Describe("Provider Configuration", func() {
 				}
 				
 				resource "csbmssqldbrunfailover_failover" "failover" {
-				  resource_group      = "%s"
-				  server_name         = "%s"
-				  partner_server_name = "%s"
-				  failover_group      = "%s"
+				  resource_group                = "%s"
+				  partner_server_resource_group = "%s"
+				  server_name                   = "%s"
+				  partner_server_name           = "%s"
+				  failover_group                = "%s"
 				}`,
 				azureTenantID,
 				azureClientID,
 				azureClientSecret,
 				azureSubscriptionID,
 				resourceGroup,
+				partnerServerResourceGroup,
 				serverName,
 				partnerServerName,
 				failoverGroup,
@@ -82,6 +86,7 @@ var _ = Describe("Provider Configuration", func() {
 		Entry("client secret", func() { azureClientSecret = "invalid value" }, `invalid value "invalid value" for identifier "azure_client_secret"`),
 		Entry("subscription id", func() { azureSubscriptionID = "&&" }, `invalid value "&&" for identifier "azure_subscription_id"`),
 		Entry("resource group", func() { resourceGroup = "not valid" }, `invalid value "not valid" for identifier "resource_group"`),
+		Entry("partner server resource group", func() { partnerServerResourceGroup = "not valid" }, `invalid value "not valid" for identifier "partner_server_resource_group"`),
 		Entry("server name", func() { serverName = "&&" }, `invalid value "&&" for identifier "server_name"`),
 		Entry("partner server name", func() { partnerServerName = "&&" }, `invalid value "&&" for identifier "partner_server_name"`),
 		Entry("failover group", func() { failoverGroup = "&&" }, `invalid value "&&" for identifier "failover_group"`),

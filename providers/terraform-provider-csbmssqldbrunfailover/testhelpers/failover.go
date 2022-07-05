@@ -13,14 +13,15 @@ import (
 )
 
 type FailoverData struct {
-	ResourceGroup *armresources.ResourceGroup
-	Server        *armsql.Server
-	PartnerServer *armsql.Server
-	FailoverGroup *armsql.FailoverGroup
+	ResourceGroup              *armresources.ResourceGroup
+	PartnerServerResourceGroup *armresources.ResourceGroup
+	Server                     *armsql.Server
+	PartnerServer              *armsql.Server
+	FailoverGroup              *armsql.FailoverGroup
 }
 
 type FailoverConfig struct {
-	ResourceGroupName, ServerName, MainLocation, PartnerServerName, SubscriptionID, FailoverGroupName, SecondaryLocation string
+	ResourceGroupName, PartnerResourceGroupName, ServerName, MainLocation, PartnerServerName, SubscriptionID, FailoverGroupName, PartnerServerLocation string
 }
 
 func CreateFailoverGroup(cnf FailoverConfig) (FailoverData, error) {
@@ -40,7 +41,7 @@ func CreateFailoverGroup(cnf FailoverConfig) (FailoverData, error) {
 		return FailoverData{}, err
 	}
 
-	partnerServer, err := createServer(ctx, cred, cnf.ResourceGroupName, cnf.PartnerServerName, cnf.SecondaryLocation, cnf.SubscriptionID)
+	partnerServer, err := createServer(ctx, cred, cnf.ResourceGroupName, cnf.PartnerServerName, cnf.PartnerServerLocation, cnf.SubscriptionID)
 	if err != nil {
 		return FailoverData{}, err
 	}
@@ -51,10 +52,11 @@ func CreateFailoverGroup(cnf FailoverConfig) (FailoverData, error) {
 	}
 
 	return FailoverData{
-		ResourceGroup: resourceGroup,
-		Server:        server,
-		PartnerServer: partnerServer,
-		FailoverGroup: failoverGroup,
+		ResourceGroup:              resourceGroup,
+		PartnerServerResourceGroup: resourceGroup,
+		Server:                     server,
+		PartnerServer:              partnerServer,
+		FailoverGroup:              failoverGroup,
 	}, nil
 }
 

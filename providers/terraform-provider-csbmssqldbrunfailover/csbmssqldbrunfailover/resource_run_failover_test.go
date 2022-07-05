@@ -34,13 +34,13 @@ var _ = Describe("resource_run_failover resource", Ordered, func() {
 		azureSubscriptionID = creds.getSubscriptionID()
 
 		config = testhelpers.FailoverConfig{
-			ResourceGroupName: fmt.Sprintf("resourcegroupname-%s", uuid.New()),
-			ServerName:        fmt.Sprintf("servername-%s", uuid.New()),
-			MainLocation:      "eastus",
-			SecondaryLocation: "eastus2",
-			PartnerServerName: fmt.Sprintf("partnerservername-%s", uuid.New()),
-			SubscriptionID:    azureSubscriptionID,
-			FailoverGroupName: fmt.Sprintf("failovergroupname-%s", uuid.New()),
+			ResourceGroupName:     fmt.Sprintf("resourcegroupname-%s", uuid.New()),
+			ServerName:            fmt.Sprintf("servername-%s", uuid.New()),
+			MainLocation:          "eastus",
+			PartnerServerLocation: "eastus2",
+			PartnerServerName:     fmt.Sprintf("partnerservername-%s", uuid.New()),
+			SubscriptionID:        azureSubscriptionID,
+			FailoverGroupName:     fmt.Sprintf("failovergroupname-%s", uuid.New()),
 		}
 
 		failoverData, err = testhelpers.CreateFailoverGroup(config)
@@ -62,16 +62,18 @@ var _ = Describe("resource_run_failover resource", Ordered, func() {
 				}
 				
 				resource "csbmssqldbrunfailover_failover" "failover" {
-				  resource_group      = "%s"
-				  server_name         = "%s"
-				  partner_server_name = "%s"	
-				  failover_group      = "%s"
+				  resource_group                = "%s"
+				  partner_server_resource_group = "%s"
+				  server_name                   = "%s"
+				  partner_server_name           = "%s"
+				  failover_group                = "%s"
 				}`,
 			azureTenantID,
 			azureClientID,
 			azureClientSecret,
 			azureSubscriptionID,
 			*failoverData.ResourceGroup.Name,
+			*failoverData.PartnerServerResourceGroup.Name,
 			*failoverData.Server.Name,
 			*failoverData.PartnerServer.Name,
 			*failoverData.FailoverGroup.Name,

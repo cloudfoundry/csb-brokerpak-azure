@@ -5,9 +5,10 @@ provider "csbmssqldbrunfailover" {
   azure_subscription_id = "subscription-id"
 }
 
-resource "csbmssqldbrunfailover" "run_failover" {
-  resource_group      = "resource-group"
-  server_name         = "server-name"
-  partner_server_name = "partner-server-name"
-  failover_group      = "failover-group"
+resource "csbmssqldbrunfailover_failover" "failover" {
+  resource_group                = "resource-group"
+  partner_server_resource_group = "partner-server-resource-group"
+  server_name                   = "server-name"
+  partner_server_name           = "partner-server-name"
+  failover_group                = "failover-group"
 }
