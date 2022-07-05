@@ -1,6 +1,6 @@
 terraform {
   required_providers {
-    csbsqlserver = {
+    csbmssqldbrunfailover = {
       source  = "cloud-service-broker/csbmssqldbrunfailover"
       version = "1.0.0"
     }
