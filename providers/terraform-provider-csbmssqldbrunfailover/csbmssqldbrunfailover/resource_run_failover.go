@@ -95,7 +95,7 @@ func create(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics
 	return nil
 }
 
-func update(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
+func update(_ context.Context, _ *schema.ResourceData, _ any) diag.Diagnostics {
 	return diag.FromErr(fmt.Errorf("update lifecycle not implemented"))
 }
 
