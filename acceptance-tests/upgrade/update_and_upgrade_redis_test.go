@@ -56,12 +56,6 @@ var _ = Describe("UpgradeRedisTest", Label("redis"), func() {
 			By("checking previously written data still accessible")
 			Expect(appTwo.GET(key1)).To(Equal(value1))
 
-			By("updating the instance plan")
-			serviceInstance.Update("-p", "medium")
-
-			By("checking previously written data still accessible")
-			Expect(appTwo.GET(key1)).To(Equal(value1))
-
 			By("deleting bindings created before the upgrade")
 			bindingOne.Unbind()
 			bindingTwo.Unbind()
@@ -75,7 +69,7 @@ var _ = Describe("UpgradeRedisTest", Label("redis"), func() {
 			appOne.PUT(value2, key2)
 			Expect(appTwo.GET(key2)).To(Equal(value2))
 
-			By("getting the value using the second app")
+			By("checking previously written data still accessible")
 			Expect(appTwo.GET(key1)).To(Equal(value1))
 
 			By("updating the instance plan")
