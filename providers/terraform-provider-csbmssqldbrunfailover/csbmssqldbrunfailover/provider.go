@@ -1,3 +1,4 @@
+// Package csbmssqldbrunfailover will contain the logic needed to create a provider to handle the failover
 package csbmssqldbrunfailover
 
 import (

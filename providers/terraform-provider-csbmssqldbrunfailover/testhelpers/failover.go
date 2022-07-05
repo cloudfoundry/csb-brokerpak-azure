@@ -3,15 +3,13 @@ package testhelpers
 import (
 	"context"
 	"fmt"
-	"log"
 
 	"github.com/Azure/azure-sdk-for-go/sdk/azcore"
 	"github.com/Azure/azure-sdk-for-go/sdk/azcore/to"
 	"github.com/Azure/azure-sdk-for-go/sdk/azidentity"
 	"github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/resources/armresources"
 	"github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/sql/armsql"
-	"github.com/onsi/ginkgo/v2"
-	"github.com/onsi/ginkgo/v2/dsl/core"
+	"github.com/pborman/uuid"
 )
 
 type FailoverData struct {
@@ -22,52 +20,57 @@ type FailoverData struct {
 }
 
 type FailoverConfig struct {
-	ResourceGroupName, ServerName, Location, PartnerServerName, SubscriptionID, FailoverGroupName string
+	ResourceGroupName, ServerName, MainLocation, PartnerServerName, SubscriptionID, FailoverGroupName, SecondaryLocation string
 }
 
-func CreateFailoverGroup(cnf FailoverConfig) FailoverData {
+func CreateFailoverGroup(cnf FailoverConfig) (FailoverData, error) {
 	cred, err := azidentity.NewDefaultAzureCredential(nil)
 	if err != nil {
-		log.Fatal(err)
+		return FailoverData{}, err
 	}
 	ctx := context.Background()
 
-	resourceGroup, err := createResourceGroup(ctx, cred, cnf.ResourceGroupName, cnf.Location, cnf.SubscriptionID)
+	resourceGroup, err := createResourceGroup(ctx, cred, cnf.ResourceGroupName, cnf.MainLocation, cnf.SubscriptionID)
 	if err != nil {
-		log.Fatal(err)
+		return FailoverData{}, err
 	}
-	core.GinkgoWriter.Printf("resources group name: %s", *resourceGroup.Name)
 
-	server, err := createServer(ctx, cred, cnf.ResourceGroupName, cnf.ServerName, cnf.Location, cnf.SubscriptionID)
+	server, err := createServer(ctx, cred, cnf.ResourceGroupName, cnf.ServerName, cnf.MainLocation, cnf.SubscriptionID)
 	if err != nil {
-		ginkgo.Fail(fmt.Sprintf("error creating server %s", err))
+		return FailoverData{}, err
 	}
-	core.GinkgoWriter.Printf("server name: %s", *server.Name)
 
-	partnerServer, err := createPartnerServer(ctx, cred, cnf.ResourceGroupName, cnf.PartnerServerName, cnf.SubscriptionID)
+	partnerServer, err := createServer(ctx, cred, cnf.ResourceGroupName, cnf.PartnerServerName, cnf.SecondaryLocation, cnf.SubscriptionID)
 	if err != nil {
-		ginkgo.Fail(fmt.Sprintf("error creating partner server %s", err))
+		return FailoverData{}, err
 	}
-	core.GinkgoWriter.Printf("partner server name: %s", *partnerServer.Name)
 
 	failoverGroup, err := createFailoverGroup(ctx, cred, *partnerServer.ID, cnf.ResourceGroupName, cnf.ServerName, cnf.FailoverGroupName, cnf.SubscriptionID)
 	if err != nil {
-		ginkgo.Fail(fmt.Sprintf("error creating failover %s", err))
+		return FailoverData{}, err
 	}
-	core.GinkgoWriter.Printf("failover group name: %s", *failoverGroup.Name)
 
 	return FailoverData{
 		ResourceGroup: resourceGroup,
 		Server:        server,
 		PartnerServer: partnerServer,
 		FailoverGroup: failoverGroup,
+	}, nil
+}
+
+func Cleanup(cnf FailoverConfig) error {
+	cred, err := azidentity.NewDefaultAzureCredential(nil)
+	if err != nil {
+		return err
 	}
+	ctx := context.Background()
+	return cleanup(ctx, cred, cnf.ResourceGroupName, cnf.SubscriptionID)
 }
 
 func GetFailoverGroup(resourceGroupName, serverName, failoverGroupName, subscriptionID string) (*armsql.FailoverGroup, error) {
 	cred, err := azidentity.NewDefaultAzureCredential(nil)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 	ctx := context.Background()
 	return getFailoverGroup(ctx, cred, resourceGroupName, serverName, failoverGroupName, subscriptionID)
@@ -86,8 +89,8 @@ func createServer(ctx context.Context, cred azcore.TokenCredential, resourceGrou
 		armsql.Server{
 			Location: to.Ptr(location),
 			Properties: &armsql.ServerProperties{
-				AdministratorLogin:         to.Ptr("dummylogin"),
-				AdministratorLoginPassword: to.Ptr("QWE123!@#"),
+				AdministratorLogin:         to.Ptr(fmt.Sprint("dummylogin-%s", uuid.New())),
+				AdministratorLoginPassword: to.Ptr(fmt.Sprint("dummyPassword-%s", uuid.New())),
 			},
 		},
 		nil,
@@ -95,39 +98,12 @@ func createServer(ctx context.Context, cred azcore.TokenCredential, resourceGrou
 	if err != nil {
 		return nil, err
 	}
+
 	resp, err := pollerResp.PollUntilDone(ctx, nil)
 	if err != nil {
 		return nil, err
 	}
-	return &resp.Server, nil
-}
 
-func createPartnerServer(ctx context.Context, cred azcore.TokenCredential, resourceGroupName, partnerServerName, subscriptionID string) (*armsql.Server, error) {
-	serversClient, err := armsql.NewServersClient(subscriptionID, cred, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	pollerResp, err := serversClient.BeginCreateOrUpdate(
-		ctx,
-		resourceGroupName,
-		partnerServerName,
-		armsql.Server{
-			Location: to.Ptr("eastus2"),
-			Properties: &armsql.ServerProperties{
-				AdministratorLogin:         to.Ptr("dummylogin"),
-				AdministratorLoginPassword: to.Ptr("QWE123!@#"),
-			},
-		},
-		nil,
-	)
-	if err != nil {
-		return nil, err
-	}
-	resp, err := pollerResp.PollUntilDone(ctx, nil)
-	if err != nil {
-		return nil, err
-	}
 	return &resp.Server, nil
 }
 
@@ -150,8 +126,7 @@ func createFailoverGroup(ctx context.Context, cred azcore.TokenCredential, partn
 					},
 				},
 				ReadWriteEndpoint: &armsql.FailoverGroupReadWriteEndpoint{
-					FailoverPolicy:                         to.Ptr(armsql.ReadWriteEndpointFailoverPolicyAutomatic),
-					FailoverWithDataLossGracePeriodMinutes: to.Ptr[int32](480),
+					FailoverPolicy: to.Ptr(armsql.ReadWriteEndpointFailoverPolicyManual),
 				},
 				Databases: []*string{},
 			},
@@ -161,10 +136,12 @@ func createFailoverGroup(ctx context.Context, cred azcore.TokenCredential, partn
 	if err != nil {
 		return nil, err
 	}
+
 	resp, err := pollerResp.PollUntilDone(ctx, nil)
 	if err != nil {
 		return nil, err
 	}
+
 	return &resp.FailoverGroup, nil
 }
 
@@ -200,7 +177,7 @@ func createResourceGroup(ctx context.Context, cred azcore.TokenCredential, resou
 	return &resourceGroupResp.ResourceGroup, nil
 }
 
-func Cleanup(ctx context.Context, cred azcore.TokenCredential, resourceGroupName, subscriptionID string) error {
+func cleanup(ctx context.Context, cred azcore.TokenCredential, resourceGroupName, subscriptionID string) error {
 	resourceGroupClient, err := armresources.NewResourceGroupsClient(subscriptionID, cred, nil)
 	if err != nil {
 		return err

@@ -30,8 +30,11 @@ clean: ## clean up build artifacts
 
 .PHONY: test
 test: ## run the tests
-	## runs docker, so tricky to make it work inside docker
 	go run github.com/onsi/ginkgo/v2/ginkgo -r
+
+.PHONY: run-acceptance-tests
+run-acceptance-tests: ## run the tests that are related to infrastructure
+	TF_ACC=1; go run github.com/onsi/ginkgo/v2/ginkgo -r
 
 
 .PHONY: deps-go-binary

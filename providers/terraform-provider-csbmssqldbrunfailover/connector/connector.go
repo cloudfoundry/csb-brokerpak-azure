@@ -40,10 +40,6 @@ func (c *Connector) CreateRunFailover(ctx context.Context, resourceGroup, server
 	})
 }
 
-func (c *Connector) DeleteRunFailover(ctx context.Context, resourceGroup, serverName, failoverGroup string) error {
-	return nil
-}
-
 func (c *Connector) ReadRunFailover(ctx context.Context, resourceGroup, serverName, failoverGroup string) (bool, error) {
 	var existFailover bool
 	err := c.withConnection(func(failoverGroupsClient *armsql.FailoverGroupsClient) error {
@@ -52,7 +48,7 @@ func (c *Connector) ReadRunFailover(ctx context.Context, resourceGroup, serverNa
 			return fmt.Errorf("error getting failover %w", err)
 		}
 
-		existFailover = *f.Name == "failovergroupname2"
+		existFailover = *f.Name == failoverGroup
 
 		return nil
 	})
@@ -63,11 +59,6 @@ func (c *Connector) ReadRunFailover(ctx context.Context, resourceGroup, serverNa
 	return existFailover, nil
 }
 
-func (c *Connector) UpdateRunFailover(ctx context.Context, resourceGroup, serverName, failoverGroup string) (result bool, err error) {
-	return false, nil
-}
-
-// TODO check client options
 func (c *Connector) withConnection(callback func(failoverGroupsClient *armsql.FailoverGroupsClient) error) error {
 	_ = os.Setenv("AZURE_SUBSCRIPTION_ID", c.azureSubscriptionID)
 	_ = os.Setenv("AZURE_TENANT_ID", c.azureTenantID)

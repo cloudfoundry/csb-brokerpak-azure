@@ -11,36 +11,48 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	. "github.com/onsi/ginkgo/v2"
-	"github.com/onsi/ginkgo/v2/dsl/core"
+	. "github.com/onsi/gomega"
+	"github.com/pborman/uuid"
 )
 
-var _ = Describe("resource_run_failover resource", func() {
+var _ = Describe("resource_run_failover resource", Ordered, func() {
 
 	var (
-		// failoverData        testhelpers.FailoverData
+		failoverData        testhelpers.FailoverData
 		azureTenantID       string
 		azureClientID       string
 		azureClientSecret   string
 		azureSubscriptionID string
+		config              testhelpers.FailoverConfig
 	)
-	BeforeEach(func() {
+
+	BeforeAll(func() {
+		var err error
 		azureTenantID = creds.getTenantID()
 		azureClientID = creds.getClientID()
 		azureClientSecret = creds.getClientSecret()
 		azureSubscriptionID = creds.getSubscriptionID()
 
-		// failoverData = testhelpers.CreateFailoverGroup(testhelpers.FailoverConfig{
-		// 	ResourceGroupName: "resourcegroupname2",
-		// 	ServerName:        "servername2",
-		// 	Location:          "eastus",
-		// 	PartnerServerName: "partnerservername2",
-		// 	SubscriptionID:    azureSubscriptionID,
-		// 	FailoverGroupName: "failovergroupname2",
-		// })
+		config = testhelpers.FailoverConfig{
+			ResourceGroupName: fmt.Sprintf("resourcegroupname-%s", uuid.New()),
+			ServerName:        fmt.Sprintf("servername-%s", uuid.New()),
+			MainLocation:      "eastus",
+			SecondaryLocation: "eastus2",
+			PartnerServerName: fmt.Sprintf("partnerservername-%s", uuid.New()),
+			SubscriptionID:    azureSubscriptionID,
+			FailoverGroupName: fmt.Sprintf("failovergroupname-%s", uuid.New()),
+		}
+
+		failoverData, err = testhelpers.CreateFailoverGroup(config)
+		Expect(err).NotTo(HaveOccurred())
+
+		DeferCleanup(func() {
+			_ = testhelpers.Cleanup(config)
+		})
 
 	})
 
-	It("should initiate the failover operation", func() {
+	It("should failover to the secondary database", func() {
 		hcl := fmt.Sprintf(`
 				provider "csbmssqldbrunfailover" {
 				  azure_tenant_id       = "%s"
@@ -59,13 +71,10 @@ var _ = Describe("resource_run_failover resource", func() {
 			azureClientID,
 			azureClientSecret,
 			azureSubscriptionID,
-			// *failoverData.ResourceGroup.Name,
-			// *failoverData.Server.Name,
-			// *failoverData.FailoverGroup.Name,
-			"resourcegroupname2",
-			"servername2",
-			"partnerservername2",
-			"failovergroupname2",
+			*failoverData.ResourceGroup.Name,
+			*failoverData.Server.Name,
+			*failoverData.PartnerServer.Name,
+			*failoverData.FailoverGroup.Name,
 		)
 
 		resource.Test(GinkgoT(), resource.TestCase{
@@ -76,17 +85,11 @@ var _ = Describe("resource_run_failover resource", func() {
 				ResourceName: "csbmssqldbrunfailover_failover",
 				Config:       hcl,
 				Check: func(state *terraform.State) error {
-					core.GinkgoWriter.Println("*******************Check Step*******************")
-					// group, err := testhelpers.GetFailoverGroup(
-					// 	*failoverData.ResourceGroup.Name,
-					// 	*failoverData.Server.Name,
-					// 	*failoverData.FailoverGroup.Name,
-					// 	azureSubscriptionID,
-					// )
+					GinkgoWriter.Println("*******************Check Step*******************")
 					group, err := testhelpers.GetFailoverGroup(
-						"resourcegroupname2",
-						"servername2",
-						"failovergroupname2",
+						*failoverData.ResourceGroup.Name,
+						*failoverData.Server.Name,
+						*failoverData.FailoverGroup.Name,
 						azureSubscriptionID,
 					)
 					if err != nil {
@@ -97,24 +100,18 @@ var _ = Describe("resource_run_failover resource", func() {
 					got := *partnerInfo.ReplicationRole
 					want := armsql.FailoverGroupReplicationRolePrimary
 					if got != want {
-						return fmt.Errorf("failover group replication role error got %s - want %s", got, want)
+						return fmt.Errorf("failover group replication role error in create got %s - want %s", got, want)
 					}
 
 					return nil
 				},
 			}},
 			CheckDestroy: func(state *terraform.State) error {
-				core.GinkgoWriter.Println("*******************Check Destroy Step*******************")
-				// group, err := testhelpers.GetFailoverGroup(
-				// 	*failoverData.ResourceGroup.Name,
-				// 	*failoverData.Server.Name,
-				// 	*failoverData.FailoverGroup.Name,
-				// 	azureSubscriptionID,
-				// )
+				GinkgoWriter.Println("*******************Check Destroy Step*******************")
 				group, err := testhelpers.GetFailoverGroup(
-					"resourcegroupname2",
-					"servername2",
-					"failovergroupname2",
+					*failoverData.ResourceGroup.Name,
+					*failoverData.Server.Name,
+					*failoverData.FailoverGroup.Name,
 					azureSubscriptionID,
 				)
 				if err != nil {
@@ -125,7 +122,7 @@ var _ = Describe("resource_run_failover resource", func() {
 				got := *partnerInfo.ReplicationRole
 				want := armsql.FailoverGroupReplicationRoleSecondary
 				if got != want {
-					return fmt.Errorf("failover group replication role error got %s - want %s", got, want)
+					return fmt.Errorf("failover group replication role error in destroy got %s - want %s", got, want)
 				}
 
 				return nil
@@ -133,16 +130,3 @@ var _ = Describe("resource_run_failover resource", func() {
 		})
 	})
 })
-
-// testAccPreCheck validates the necessary test API keys exist
-// in the testing environment
-func testAccPreCheck() {
-	// if v := os.Getenv("EXAMPLE_KEY"); v == "" {
-	// 	t.Fatal("EXAMPLE_KEY must be set for acceptance tests")
-	// }
-	// Expect(err).To(MatchError(ContainSubstring("location: Does not match pattern '^[a-z][a-z0-9]+$'")))
-	//
-	// if v := os.Getenv("EXAMPLE_SECRET"); v == "" {
-	// 	t.Fatal("EXAMPLE_SECRET must be set for acceptance tests")
-	// }
-}

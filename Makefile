@@ -87,7 +87,7 @@ endif
 .PHONY: build
 build: deps-go-binary $(IAAS)-services-*.brokerpak ## build brokerpak
 
-$(IAAS)-services-*.brokerpak: *.yml terraform/*/*.tf ./tools/sqlfailover/build/sqlfailover_*.zip ./providers/terraform-provider-csbsqlserver/cloudfoundry.org/cloud-service-broker/csbsqlserver | $(PAK_CACHE)
+$(IAAS)-services-*.brokerpak: *.yml terraform/*/*.tf ./tools/sqlfailover/build/sqlfailover_*.zip ./providers/terraform-provider-csbsqlserver/cloudfoundry.org/cloud-service-broker/csbsqlserver ./providers/terraform-provider-csbmssqldbrunfailover/cloudfoundry.org/cloud-service-broker/csbmssqldbrunfailover | $(PAK_CACHE)
 	$(RUN_CSB) pak build
 
 .PHONY: run
@@ -122,8 +122,13 @@ run-integration-tests: ./tools/sqlfailover/build/sqlfailover_*.zip latest-csb pr
 	cd ./integration-tests && go run github.com/onsi/ginkgo/v2/ginkgo -r .
 
 .PHONY: provider-tests
-provider-tests:
+provider-tests:  ## run the integration tests
 	cd providers/terraform-provider-csbsqlserver; $(MAKE) test
+	cd providers/terraform-provider-csbmssqldbrunfailover; $(MAKE) test
+
+.PHONY: provider-acceptance-tests
+provider-acceptance-tests: ## run the tests that are related to infrastructure
+	cd providers/terraform-provider-csbmssqldbrunfailover; $(MAKE) run-acceptance-tests
 
 .PHONY: info
 info: build ## show brokerpak info
@@ -227,3 +232,6 @@ format: ## format the source
 
 ./providers/terraform-provider-csbsqlserver/cloudfoundry.org/cloud-service-broker/csbsqlserver:
 	cd providers/terraform-provider-csbsqlserver; $(MAKE) build
+
+./providers/terraform-provider-csbmssqldbrunfailover/cloudfoundry.org/cloud-service-broker/csbmssqldbrunfailover:
+	cd providers/terraform-provider-csbmssqldbrunfailover; $(MAKE) build
