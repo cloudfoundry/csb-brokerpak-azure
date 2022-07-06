@@ -30,7 +30,7 @@ resource "azurerm_mssql_database" "secondary_db" {
   sku_name                    = local.sku_name
   tags                        = var.labels
   create_mode                 = "Secondary"
-  creation_source_database_id = azurerm_mssql_database.primary_db[count.index].id
+  creation_source_database_id = azurerm_mssql_database.primary_db[0].id
   count                       = var.existing ? 0 : 1
 }
 
@@ -38,7 +38,7 @@ resource "azurerm_sql_failover_group" "failover_group" {
   name                = var.instance_name
   resource_group_name = var.server_credential_pairs[var.server_pair].primary.resource_group
   server_name         = data.azurerm_sql_server.primary_sql_db_server.name
-  databases           = [azurerm_mssql_database.primary_db[count.index].id]
+  databases           = [azurerm_mssql_database.primary_db[0].id]
   partner_servers {
     id = data.azurerm_sql_server.secondary_sql_db_server.id
   }
