@@ -8,7 +8,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-func TestCSBSQLServer(t *testing.T) {
+func TestCSBSQLDBRunFailoverServer(t *testing.T) {
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "CSB MSSQL Db Run Failover Terraform Provider Suite")
 }
