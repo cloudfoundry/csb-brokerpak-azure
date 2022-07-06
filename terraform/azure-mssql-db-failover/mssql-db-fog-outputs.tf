@@ -1,9 +1,18 @@
-output "sqldbName" { value = var.existing ? var.db_name : azurerm_mssql_database.primary_db[0].name }
-output "sqlServerName" { value = var.existing ? var.instance_name : azurerm_sql_failover_group.failover_group[0].name }
-output "sqlServerFullyQualifiedDomainName" { value = format("%s.database.windows.net", var.existing ? var.instance_name : azurerm_sql_failover_group.failover_group[0].name) }
-output "hostname" { value = format("%s.database.windows.net", var.existing ? var.instance_name : azurerm_sql_failover_group.failover_group[0].name) }
+# locals needed as Terraform >= 0.13 evaluates the output variables on TF import. As a result we attempt to access a resource which has not yet been
+# instantiated and get an error. This check is to stop failures on the import step run for the subsume plan.
+locals {
+  primary_db_name = (length(azurerm_mssql_database.primary_db) > 0 ? azurerm_mssql_database.primary_db[0].name : "")
+  primary_db_id = (length(azurerm_mssql_database.primary_db) > 0 ? azurerm_mssql_database.primary_db[0].id : "")
+  fog_name = (length(azurerm_sql_failover_group.failover_group) > 0 ? azurerm_sql_failover_group.failover_group[0].name : "")
+  fog_id = (length(azurerm_sql_failover_group.failover_group) > 0 ? azurerm_sql_failover_group.failover_group[0].id : "")
+}
+
+output "sqldbName" { value = var.existing ? var.db_name : local.primary_db_name }
+output "sqlServerName" { value = var.existing ? var.instance_name : local.fog_name }
+output "sqlServerFullyQualifiedDomainName" { value = format("%s.database.windows.net", var.existing ? var.instance_name : local.fog_name) }
+output "hostname" { value = format("%s.database.windows.net", var.existing ? var.instance_name : local.fog_name) }
 output "port" { value = 1433 }
-output "name" { value = var.existing ? var.db_name : azurerm_mssql_database.primary_db[0].name }
+output "name" { value = var.existing ? var.db_name : local.primary_db_name }
 output "username" { value = var.server_credential_pairs[var.server_pair].admin_username }
 output "password" { value = var.server_credential_pairs[var.server_pair].admin_password }
 output "server_pair" { value = var.server_pair }
@@ -13,10 +22,10 @@ output "status" {
     data.azurerm_sql_server.secondary_sql_db_server.name, data.azurerm_sql_server.secondary_sql_db_server.id,
     var.azure_tenant_id,
     data.azurerm_sql_server.primary_sql_db_server.id) : format("created failover group %s (id: %s), primary db %s (id: %s) on server %s (id: %s), secondary db %s (id: %s/databases/%s) on server %s (id: %s) URL: https://portal.azure.com/#@%s/resource%s/failoverGroup",
-    azurerm_sql_failover_group.failover_group[0].name, azurerm_sql_failover_group.failover_group[0].id,
-    azurerm_sql_failover_group.failover_group[0].name, azurerm_mssql_database.primary_db[0].id,
+    local.fog_name, local.fog_id,
+    local.fog_name, local.primary_db_id,
     data.azurerm_sql_server.primary_sql_db_server.name, data.azurerm_sql_server.primary_sql_db_server.id,
-    azurerm_mssql_database.primary_db[0].name, data.azurerm_sql_server.secondary_sql_db_server.id, azurerm_mssql_database.primary_db[0].name,
+    local.primary_db_name, data.azurerm_sql_server.secondary_sql_db_server.id, local.primary_db_name,
     data.azurerm_sql_server.secondary_sql_db_server.name, data.azurerm_sql_server.secondary_sql_db_server.id,
     var.azure_tenant_id,
   data.azurerm_sql_server.primary_sql_db_server.id)
