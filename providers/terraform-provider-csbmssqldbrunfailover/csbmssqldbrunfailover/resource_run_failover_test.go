@@ -2,6 +2,7 @@ package csbmssqldbrunfailover_test
 
 import (
 	"fmt"
+	"os"
 
 	"csbbrokerpakazure/providers/terraform-provider-csbmssqldbrunfailover/csbmssqldbrunfailover"
 	"csbbrokerpakazure/providers/terraform-provider-csbmssqldbrunfailover/testhelpers"
@@ -15,7 +16,7 @@ import (
 	"github.com/pborman/uuid"
 )
 
-var _ = Describe("resource_run_failover resource", Ordered, func() {
+var _ = Describe("resource_run_failover resource", Ordered, Label("acceptance"), func() {
 
 	var (
 		failoverData        testhelpers.FailoverData
@@ -27,11 +28,21 @@ var _ = Describe("resource_run_failover resource", Ordered, func() {
 	)
 
 	BeforeAll(func() {
+		azureSubscriptionID = os.Getenv("ARM_SUBSCRIPTION_ID")
+		azureTenantID = os.Getenv("ARM_TENANT_ID")
+		azureClientID = os.Getenv("ARM_CLIENT_ID")
+		azureClientSecret = os.Getenv("ARM_CLIENT_SECRET")
+		Expect(azureSubscriptionID).NotTo(BeEmpty(), "ARM_SUBSCRIPTION_ID environment variable should not be empty")
+		Expect(azureTenantID).NotTo(BeEmpty(), "ARM_TENANT_ID environment variable should not be empty")
+		Expect(azureClientID).NotTo(BeEmpty(), "ARM_CLIENT_ID environment variable should not be empty")
+		Expect(azureClientSecret).NotTo(BeEmpty(), "ARM_CLIENT_SECRET environment variable should not be empty")
+		Expect(os.Getenv("TF_ACC")).NotTo(BeEmpty(), "TF_ACC environment variable should not be empty")
+
+		_ = os.Setenv("AZURE_SUBSCRIPTION_ID", azureSubscriptionID)
+		_ = os.Setenv("AZURE_TENANT_ID", azureTenantID)
+		_ = os.Setenv("AZURE_CLIENT_ID", azureClientID)
+		_ = os.Setenv("AZURE_CLIENT_SECRET", azureClientSecret)
 		var err error
-		azureTenantID = creds.getTenantID()
-		azureClientID = creds.getClientID()
-		azureClientSecret = creds.getClientSecret()
-		azureSubscriptionID = creds.getSubscriptionID()
 
 		config = testhelpers.FailoverConfig{
 			ResourceGroupName:     fmt.Sprintf("resourcegroupname-%s", uuid.New()),
