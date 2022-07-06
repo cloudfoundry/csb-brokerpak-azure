@@ -29,11 +29,12 @@ clean: ## clean up build artifacts
 
 .PHONY: test
 test: ## run the tests
-	go run github.com/onsi/ginkgo/v2/ginkgo -r
+	go run github.com/onsi/ginkgo/v2/ginkgo --label-filter="!acceptance" -r
 
 .PHONY: run-acceptance-tests
 run-acceptance-tests: ## run the tests that are related to infrastructure
-	TF_ACC=1; go run github.com/onsi/ginkgo/v2/ginkgo -r
+	export TF_ACC=1; \
+	go run github.com/onsi/ginkgo/v2/ginkgo --label-filter="acceptance" -r -v
 
 
 .PHONY: deps-go-binary
