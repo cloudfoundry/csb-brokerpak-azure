@@ -122,7 +122,7 @@ run-integration-tests: latest-csb ## run integration tests for this brokerpak
 	cd ./integration-tests && go run github.com/onsi/ginkgo/v2/ginkgo -r .
 
 .PHONY: provider-tests
-provider-tests:  ## run the integration tests
+provider-tests:  ## run the integration tests associated with providers
 	cd providers/terraform-provider-csbsqlserver; $(MAKE) test
 	cd providers/terraform-provider-csbmssqldbrunfailover; $(MAKE) test
 
