@@ -23,7 +23,7 @@ func NewConnector(azureTenantID, azureClientID, azureClientSecret, azureSubscrip
 	}
 }
 
-func (c *Connector) CreateRunFailover(ctx context.Context, resourceGroup, serverName, failoverGroup string) error {
+func (c *Connector) RunFailover(ctx context.Context, resourceGroup, serverName, failoverGroup string) error {
 
 	return c.withConnection(func(failoverGroupsClient *armsql.FailoverGroupsClient) error {
 		pollerResp, err := failoverGroupsClient.BeginFailover(ctx, resourceGroup, serverName, failoverGroup, nil)

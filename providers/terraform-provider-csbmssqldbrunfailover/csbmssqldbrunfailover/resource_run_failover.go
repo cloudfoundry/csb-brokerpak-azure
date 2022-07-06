@@ -86,7 +86,7 @@ func create(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics
 		}
 	}
 
-	if err := client.CreateRunFailover(ctx, partnerServerResourceGroupName, partnerServerName, failoverGroup); err != nil {
+	if err := client.RunFailover(ctx, partnerServerResourceGroupName, partnerServerName, failoverGroup); err != nil {
 		return diag.FromErr(err)
 	}
 
@@ -178,7 +178,7 @@ func delete(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics
 		}
 	}
 
-	if err := client.CreateRunFailover(ctx, resourceGroup, serverName, failoverGroup); err != nil {
+	if err := client.RunFailover(ctx, resourceGroup, serverName, failoverGroup); err != nil {
 		return diag.FromErr(err)
 	}
 
