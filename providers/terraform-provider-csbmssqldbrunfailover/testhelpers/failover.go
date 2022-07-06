@@ -1,3 +1,4 @@
+// Package testhelpers contains logic to create and retrieve data from the failover group using the Azure API
 package testhelpers
 
 import (
