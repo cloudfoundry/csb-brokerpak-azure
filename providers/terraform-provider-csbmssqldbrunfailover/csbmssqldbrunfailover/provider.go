@@ -44,7 +44,7 @@ func Provider() *schema.Provider {
 	}
 }
 
-func configure(ctx context.Context, d *schema.ResourceData) (any, diag.Diagnostics) {
+func configure(_ context.Context, d *schema.ResourceData) (any, diag.Diagnostics) {
 	var (
 		azureTenantID,
 		azureClientID,
