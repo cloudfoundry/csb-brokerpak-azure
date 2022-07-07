@@ -5,7 +5,7 @@ go 1.18
 require (
 	code.cloudfoundry.org/jsonry v1.1.3
 	github.com/Azure/azure-sdk-for-go/sdk/azcore v1.0.0
-	github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.0.0
+	github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.1.0
 	github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/resources/armresources v1.0.0
 	github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/sql/armsql v1.0.0
 	github.com/Pallinder/go-randomdata v1.2.0
@@ -27,7 +27,7 @@ require (
 	code.cloudfoundry.org/credhub-cli v0.0.0-20210802130126-03ba1c405d5e // indirect
 	code.cloudfoundry.org/lager v2.0.0+incompatible // indirect
 	github.com/Azure/azure-sdk-for-go/sdk/internal v1.0.0 // indirect
-	github.com/AzureAD/microsoft-authentication-library-for-go v0.4.0 // indirect
+	github.com/AzureAD/microsoft-authentication-library-for-go v0.5.1 // indirect
 	github.com/BurntSushi/toml v0.4.1 // indirect
 	github.com/agext/levenshtein v1.2.2 // indirect
 	github.com/apparentlymart/go-textseg/v13 v13.0.0 // indirect
