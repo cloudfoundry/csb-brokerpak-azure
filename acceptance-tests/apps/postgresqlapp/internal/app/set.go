@@ -32,6 +32,13 @@ func handleSet(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		if schema == "public" {
+			_, err = db.Exec(fmt.Sprintf(`CREATE TABLE IF NOT EXISTS %s (%s VARCHAR(255) NOT NULL, %s VARCHAR(255) NOT NULL)`, tableName, keyColumn, valueColumn))
+			if err != nil {
+				log.Fatalf("failed to create test table: %s", err)
+			}
+		}
+
 		stmt, err := db.Prepare(fmt.Sprintf(`INSERT INTO %s.%s (%s, %s) VALUES ($1, $2)`, schema, tableName, keyColumn, valueColumn))
 		if err != nil {
 			fail(w, http.StatusInternalServerError, "Error preparing statement: %s", err)
