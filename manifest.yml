@@ -52,9 +52,10 @@ terraform_binaries:
   version: 1.0.0
   provider: cloud-service-broker/csbsqlserver
   url_template: ./providers/${name}/cloudfoundry.org/cloud-service-broker/csbsqlserver/${version}/${os}_${arch}/terraform-provider-csbsqlserver_v${version}
-- name: sqlfailover
-  version: 0.1.0
-  url_template: ./tools/${name}/build/${name}_${version}_${os}_${arch}.zip  
+- name: terraform-provider-csbmssqldbrunfailover
+  version: 1.0.0
+  provider: cloud-service-broker/csbmssqldbrunfailover
+  url_template: ./providers/${name}/cloudfoundry.org/cloud-service-broker/csbmssqldbrunfailover/${version}/${os}_${arch}/terraform-provider-csbmssqldbrunfailover_v${version}
 - name: terraform-provider-postgresql
   version: 1.16.0
   provider: cyrilgdn/postgresql
