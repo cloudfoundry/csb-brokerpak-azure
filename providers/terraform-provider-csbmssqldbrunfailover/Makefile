@@ -8,7 +8,7 @@ DOCKER_OK := $(shell which docker 1>/dev/null 2>/dev/null; echo $$?)
 ifeq ($(GO_OK), 0)
   GO=go
 else ifeq ($(DOCKER_OK), 0)
-  GO=docker run --rm -v $(PWD)/../..:/src -w /src/providers/terraform-provider-csbsqlserver -e GOARCH -e GOOS golang:$(GO-VERSION) go
+  GO=docker run --rm -v $(PWD)/../..:/src -w /src/providers/terraform-provider-csbmssqldbrunfailover -e GOARCH -e GOOS golang:$(GO-VERSION) go
 else
   $(error either Go or Docker must be installed)
 endif
@@ -20,8 +20,8 @@ help: ## list Makefile targets
 build: deps-go-binary cloudfoundry.org ## build the provider
 
 cloudfoundry.org: *.go */*.go
-	mkdir -p cloudfoundry.org/cloud-service-broker/csbsqlserver/1.0.0/${OS}_amd64
-	GOOS=$(OS) $(GO) build -o cloudfoundry.org/cloud-service-broker/csbsqlserver/1.0.0/${OS}_amd64/terraform-provider-csbsqlserver_v1.0.0
+	mkdir -p cloudfoundry.org/cloud-service-broker/csbmssqldbrunfailover/1.0.0/${OS}_amd64
+	GOOS=$(OS) $(GO) build -o cloudfoundry.org/cloud-service-broker/csbmssqldbrunfailover/1.0.0/${OS}_amd64/terraform-provider-csbmssqldbrunfailover_v1.0.0
 
 .PHONY: clean
 clean: ## clean up build artifacts
@@ -29,8 +29,12 @@ clean: ## clean up build artifacts
 
 .PHONY: test
 test: ## run the tests
-	## runs docker, so tricky to make it work inside docker
-	go run github.com/onsi/ginkgo/v2/ginkgo -r
+	go run github.com/onsi/ginkgo/v2/ginkgo --label-filter="!acceptance" -r
+
+.PHONY: run-acceptance-tests
+run-acceptance-tests: ## run the tests that are related to infrastructure
+	export TF_ACC=1; \
+	go run github.com/onsi/ginkgo/v2/ginkgo --label-filter="acceptance" -r -v
 
 
 .PHONY: deps-go-binary

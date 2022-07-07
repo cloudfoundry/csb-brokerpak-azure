@@ -1,8 +1,8 @@
 terraform {
   required_providers {
-    null = {
-      source = "hashicorp/null"
-      version = "3.1.1"
+    csbmssqldbrunfailover = {
+      source  = "cloud-service-broker/csbmssqldbrunfailover"
+      version = "1.0.0"
     }
   }
 }

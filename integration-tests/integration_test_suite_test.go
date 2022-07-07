@@ -30,12 +30,10 @@ var _ = BeforeSuite(func() {
 	mockTerraform, err = testframework.NewTerraformMock()
 	Expect(err).NotTo(HaveOccurred())
 
-	extraFoldersBrokerpak := []string{"tools"}
 	broker, err = testframework.BuildTestInstance(
 		testframework.PathToBrokerPack(),
 		mockTerraform,
 		GinkgoWriter,
-		extraFoldersBrokerpak...,
 	)
 	Expect(err).NotTo(HaveOccurred())
 	Expect(broker.Start(GinkgoWriter, []string{
