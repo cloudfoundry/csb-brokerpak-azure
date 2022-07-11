@@ -1,6 +1,5 @@
 .DEFAULT_GOAL = help
 
-OS := $(shell uname -s | tr A-Z a-z)
 GO-VERSION = 1.18.3
 GO-VER = go$(GO-VERSION)
 GO_OK :=  $(or $(USE_GO_CONTAINERS), $(shell which go 1>/dev/null 2>/dev/null; echo $$?))
@@ -20,8 +19,10 @@ help: ## list Makefile targets
 build: deps-go-binary cloudfoundry.org ## build the provider
 
 cloudfoundry.org: *.go */*.go
-	mkdir -p cloudfoundry.org/cloud-service-broker/csbsqlserver/1.0.0/${OS}_amd64
-	GOOS=$(OS) $(GO) build -o cloudfoundry.org/cloud-service-broker/csbsqlserver/1.0.0/${OS}_amd64/terraform-provider-csbsqlserver_v1.0.0
+	mkdir -p cloudfoundry.org/cloud-service-broker/csbsqlserver/1.0.0/linux_amd64
+	mkdir -p cloudfoundry.org/cloud-service-broker/csbsqlserver/1.0.0/darwin_amd64
+	GOOS=linux $(GO) build -o cloudfoundry.org/cloud-service-broker/csbsqlserver/1.0.0/linux_amd64/terraform-provider-csbsqlserver_v1.0.0
+	GOOS=darwin $(GO) build -o cloudfoundry.org/cloud-service-broker/csbsqlserver/1.0.0/darwin_amd64/terraform-provider-csbsqlserver_v1.0.0
 
 .PHONY: clean
 clean: ## clean up build artifacts
