@@ -37,6 +37,12 @@ terraform_binaries:
   source: https://github.com/hashicorp/terraform/archive/v1.1.9.zip
   default: true
 - name: terraform-provider-azurerm
+  version: 2.20.0
+  source: https://github.com/terraform-providers/terraform-provider-azurerm/archive/v2.20.0.zip
+- name: terraform-provider-azurerm
+  version: 2.33.0
+  source: https://github.com/terraform-providers/terraform-provider-azurerm/archive/v2.33.0.zip
+- name: terraform-provider-azurerm
   version: 2.99.0
   source: https://github.com/terraform-providers/terraform-provider-azurerm/archive/v2.99.0.zip
 - name: terraform-provider-random
