@@ -124,6 +124,10 @@ resource "azurerm_cosmosdb_account" "mongo-account" {
   capabilities {
     name = "EnableMongo"
   }
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "azurerm_cosmosdb_mongo_database" "mongo-db" {
@@ -155,6 +159,10 @@ resource "azurerm_cosmosdb_mongo_collection" "mongo-collection" {
     keys   = ["_id"]
     unique = true
   }
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "azurerm_private_endpoint" "private_endpoint" {
@@ -185,8 +193,12 @@ output "uri" {
   value     = replace(azurerm_cosmosdb_account.mongo-account.connection_strings[0], "/?", "/${azurerm_cosmosdb_mongo_database.mongo-db.name}?")
   sensitive = true
 }
-output "status" { value = format("created db %s (id: %s) URL:  https://portal.azure.com/#@%s/resource%s",
-  azurerm_cosmosdb_mongo_database.mongo-db.name,
-  azurerm_cosmosdb_mongo_database.mongo-db.id,
-  var.azure_tenant_id,
-azurerm_cosmosdb_mongo_database.mongo-db.id) }
+output "status" {
+  value = format(
+    "created db %s (id: %s) URL:  https://portal.azure.com/#@%s/resource%s",
+    azurerm_cosmosdb_mongo_database.mongo-db.name,
+    azurerm_cosmosdb_mongo_database.mongo-db.id,
+    var.azure_tenant_id,
+    azurerm_cosmosdb_mongo_database.mongo-db.id,
+  )
+}
