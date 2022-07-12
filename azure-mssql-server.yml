@@ -109,7 +109,7 @@ provision:
     details: Hostname of the Azure SQL Server
   - field_name: sqlServerFullyQualifiedDomainName
     type: string
-    details: The fully qualifief domain name (FQDN) of the Azure SQL Server    
+    details: The fully qualified domain name (FQDN) of the Azure SQL Server
   - field_name: databaseLogin
     type: string
     details: The username to authenticate to the database server.
