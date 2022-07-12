@@ -19,6 +19,7 @@ func Push(opts ...Option) *App {
 	defaults := []Option{
 		WithName(random.Name(random.WithPrefix("app"))),
 		WithMemory("100MB"),
+		WithDisk("250MB"),
 	}
 	app := App{}
 	app.Push(append(defaults, opts...)...)
@@ -37,6 +38,9 @@ func (a *App) Push(opts ...Option) {
 	}
 	if a.memory != "" {
 		cmd = append(cmd, "-m", a.memory)
+	}
+	if a.disk != "" {
+		cmd = append(cmd, "-k", a.disk)
 	}
 	if a.manifest != "" {
 		cmd = append(cmd, "-f", a.manifest)
@@ -113,6 +117,12 @@ func WithStartedState() Option {
 func WithMemory(memory string) Option {
 	return func(a *App) {
 		a.memory = memory
+	}
+}
+
+func WithDisk(disk string) Option {
+	return func(a *App) {
+		a.disk = disk
 	}
 }
 
