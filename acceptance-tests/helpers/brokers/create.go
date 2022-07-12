@@ -19,6 +19,7 @@ func Create(opts ...Option) *Broker {
 		apps.WithDir(broker.dir),
 		apps.WithManifest(fmt.Sprintf("%s/cf-manifest.yml", broker.dir)),
 		apps.WithMemory("500MB"),
+		apps.WithDisk("2G"),
 		apps.WithVariable("app", broker.Name),
 	)
 	brokerApp.SetEnv(broker.env()...)
