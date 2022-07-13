@@ -124,7 +124,7 @@ provision:
     details: Maximum storage allocated to the database instance in GB
   - field_name: instance_name
     type: string
-    details: Name for your Azure SQL Faileover Group
+    details: Name for your Azure SQL Failover Group
     default: csb-azsql-fog-${request.instance_id}
     constraints:
       maxLength: 63
@@ -144,7 +144,7 @@ provision:
     required: true
   - field_name: read_write_endpoint_failover_policy
     type: string
-    details: Faileover policy (Automatic or Manual)
+    details: Failover policy (Automatic or Manual)
     default: Automatic
     enum:
       Automatic: Automatic

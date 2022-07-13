@@ -12,7 +12,7 @@ import (
 )
 
 var _ = Describe("UpgradeMssqlDBFailoverTest", Label("mssql-db-failover"), func() {
-	When("upgrading broker version", func() {
+	When("upgrading broker version", Label("modern"), func() {
 		It("should continue to work", func() {
 			By("pushing latest released broker version")
 			rgConfig := resourceGroupConfig()
@@ -140,6 +140,131 @@ var _ = Describe("UpgradeMssqlDBFailoverTest", Label("mssql-db-failover"), func(
 			appOne.DELETE(schema)
 		})
 	})
+
+	When("upgrading broker version", Label("ancient"), func() {
+		It("should continue to work", func() {
+			By("pushing an ancient broker version")
+			rgConfig := resourceGroupConfig()
+			serversConfig := newServerPair(rgConfig.Name)
+
+			serviceBroker := brokers.Create(
+				brokers.WithPrefix("csb-db-fo"),
+				brokers.WithSourceDir(releasedBuildDir),
+				brokers.WithEnv(apps.EnvVar{Name: "MSSQL_DB_FOG_SERVER_PAIR_CREDS", Value: serversConfig.ServerPairsConfig()}),
+			)
+			defer serviceBroker.Delete()
+
+			By("creating a new resource group")
+			resourceGroupInstance := services.CreateInstance(
+				"csb-azure-resource-group",
+				"standard",
+				services.WithBroker(serviceBroker),
+				services.WithParameters(rgConfig),
+			)
+			defer resourceGroupInstance.Delete()
+
+			By("creating primary and secondary DB servers in the resource group")
+			serverInstancePrimary := services.CreateInstance(
+				"csb-azure-mssql-server",
+				"standard",
+				services.WithBroker(serviceBroker),
+				services.WithParameters(serversConfig.PrimaryConfig()),
+			)
+			defer serverInstancePrimary.Delete()
+
+			serverInstanceSecondary := services.CreateInstance(
+				"csb-azure-mssql-server",
+				"standard",
+				services.WithBroker(serviceBroker),
+				services.WithParameters(serversConfig.SecondaryConfig()),
+			)
+			defer serverInstanceSecondary.Delete()
+
+			By("creating a failover group service instance")
+			fogConfig := failoverGroupAncientConfig(serversConfig.ServerPairTag, serversConfig.ServerPairsConfig())
+			initialFogInstance := services.CreateInstance(
+				"csb-azure-mssql-db-failover-group",
+				"small",
+				services.WithBroker(serviceBroker),
+				services.WithParameters(fogConfig),
+			)
+			defer initialFogInstance.Delete()
+
+			By("pushing the unstarted app")
+			app := apps.Push(apps.WithApp(apps.MSSQL))
+			defer apps.Delete(app)
+
+			By("binding to the app")
+			initialFogInstance.Bind(app)
+
+			By("starting the app")
+			apps.Start(app)
+
+			By("creating a schema")
+			schema := random.Name(random.WithMaxLength(10))
+			app.PUT("", "%s?dbo=false", schema)
+
+			By("setting a key-value")
+			keyOne := random.Hexadecimal()
+			valueOne := random.Hexadecimal()
+			app.PUT(valueOne, "%s/%s", schema, keyOne)
+
+			By("getting the value")
+			got := app.GET("%s/%s", schema, keyOne)
+			Expect(got).To(Equal(valueOne))
+
+			By("pushing the development version of the broker")
+			serviceBroker.UpgradeBroker(developmentBuildDir)
+
+			By("upgrading previous services")
+			resourceGroupInstance.Upgrade()
+			serverInstancePrimary.Upgrade()
+			serverInstanceSecondary.Upgrade()
+			initialFogInstance.Upgrade()
+
+			By("getting the previously set value")
+			got = app.GET("%s/%s", schema, keyOne)
+			Expect(got).To(Equal(valueOne))
+
+			By("updating the instance plan")
+			initialFogInstance.Update("-p", "medium")
+
+			By("getting the previously set value")
+			got = app.GET("%s/%s", schema, keyOne)
+			Expect(got).To(Equal(valueOne))
+
+			By("connecting to the existing failover group")
+			dbFogInstance := services.CreateInstance(
+				"csb-azure-mssql-db-failover-group",
+				"existing",
+				services.WithBroker(serviceBroker),
+				services.WithParameters(fogConfig),
+			)
+			defer dbFogInstance.Delete()
+
+			By("purging the initial FOG instance")
+			cf.Run("purge-service-instance", "-f", initialFogInstance.Name)
+
+			By("creating new bindings and testing they still work")
+			binding := dbFogInstance.Bind(app)
+			apps.Restage(app)
+			defer binding.Unbind()
+
+			By("getting the previously set value")
+			Expect(app.GET("%s/%s", schema, keyOne)).To(Equal(valueOne))
+
+			By("checking data can be written and read")
+			keyTwo := random.Hexadecimal()
+			valueTwo := random.Hexadecimal()
+			app.PUT(valueTwo, "%s/%s", schema, keyTwo)
+
+			got = app.GET("%s/%s", schema, keyTwo)
+			Expect(got).To(Equal(valueTwo))
+
+			By("dropping the schema used to allow us to unbind")
+			app.DELETE(schema)
+		})
+	})
 })
 
 func resourceGroupConfig() resourceConfig {
@@ -175,6 +300,15 @@ func failoverGroupConfig(serverPairTag string) map[string]string {
 		"instance_name": random.Name(random.WithPrefix("fog")),
 		"db_name":       random.Name(random.WithPrefix("db")),
 		"server_pair":   serverPairTag,
+	}
+}
+
+func failoverGroupAncientConfig(serverPairTag string, serverCreds any) map[string]any {
+	return map[string]any{
+		"instance_name":           random.Name(random.WithPrefix("fog")),
+		"db_name":                 random.Name(random.WithPrefix("db")),
+		"server_pair":             serverPairTag,
+		"server_credential_pairs": serverCreds,
 	}
 }
 
