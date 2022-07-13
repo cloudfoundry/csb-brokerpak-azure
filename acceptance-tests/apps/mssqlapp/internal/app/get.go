@@ -16,44 +16,38 @@ func handleGet(config string) func(w http.ResponseWriter, r *http.Request) {
 
 		schema, err := schemaName(r)
 		if err != nil {
-			log.Printf("Schema name error: %s\n", err)
-			http.Error(w, "Schema name error.", http.StatusInternalServerError)
+			fail(w, http.StatusInternalServerError, "schema name error: %s", err)
 			return
 		}
 
 		key, ok := mux.Vars(r)["key"]
 		if !ok {
-			log.Println("Key missing.")
-			http.Error(w, "Key missing.", http.StatusBadRequest)
+			fail(w, http.StatusBadRequest, "key missing: %s", key)
 			return
 		}
 
 		stmt, err := db.Prepare(fmt.Sprintf(`SELECT %s from %s.%s WHERE %s = @p1`, valueColumn, schema, tableName, keyColumn))
 		if err != nil {
-			log.Printf("Error preparing statement: %s", err)
-			http.Error(w, "Failed to prepare statement.", http.StatusInternalServerError)
+			fail(w, http.StatusInternalServerError, "error preparing statement: %s", err)
 			return
 		}
 		defer stmt.Close()
 
 		rows, err := stmt.Query(key)
 		if err != nil {
-			log.Printf("Error selecting value: %s", err)
-			http.Error(w, "Failed to select value.", http.StatusNotFound)
+			fail(w, http.StatusNotFound, "failed to select value for key: %s", key)
 			return
 		}
 		defer rows.Close()
 
 		if !rows.Next() {
-			log.Printf("Error finding value: %s", err)
-			http.Error(w, "Failed to find value.", http.StatusNotFound)
+			fail(w, http.StatusNotFound, "failed to find value for key: %s", key)
 			return
 		}
 
 		var value string
 		if err := rows.Scan(&value); err != nil {
-			log.Printf("Error retrieving value: %s", err)
-			http.Error(w, "Failed to retrieve value.", http.StatusNotFound)
+			fail(w, http.StatusNotFound, "failed to retrieve value for key: %s", key)
 			return
 		}
 
