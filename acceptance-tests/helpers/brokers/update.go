@@ -6,19 +6,21 @@ import (
 )
 
 func (b *Broker) UpgradeBroker(dir string, env ...apps.EnvVar) {
-	b.app.Push(
-		apps.WithName(b.Name),
-		apps.WithDir(dir),
-	)
-
 	env = append(env,
 		apps.EnvVar{Name: "BROKERPAK_UPDATES_ENABLED", Value: true},
 		apps.EnvVar{Name: "TERRAFORM_UPGRADES_ENABLED", Value: true},
 	)
-
 	WithEnv(env...)(b)
-	b.app.SetEnv(b.env()...)
-	b.app.Restart()
+
+	b.app.Push(
+		apps.WithName(b.Name),
+		apps.WithDir(dir),
+		apps.WithStartedState(),
+		apps.WithManifest(newManifest(
+			withName(b.Name),
+			withEnv(b.env()...),
+		)),
+	)
 
 	cf.Run("update-service-broker", b.Name, b.username, b.password, b.app.URL)
 }

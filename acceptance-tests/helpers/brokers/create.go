@@ -6,7 +6,10 @@ import (
 	"csbbrokerpakazure/acceptance-tests/helpers/random"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
+
+	"github.com/onsi/gomega"
 )
 
 type Option func(broker *Broker)
@@ -17,12 +20,11 @@ func Create(opts ...Option) *Broker {
 	brokerApp := apps.Push(
 		apps.WithName(broker.Name),
 		apps.WithDir(broker.dir),
-		apps.WithManifest(fmt.Sprintf("%s/cf-manifest.yml", broker.dir)),
-		apps.WithMemory("500MB"),
-		apps.WithDisk("2G"),
-		apps.WithVariable("app", broker.Name),
+		apps.WithManifest(newManifest(
+			withName(broker.Name),
+			withEnv(broker.env()...),
+		)),
 	)
-	brokerApp.SetEnv(broker.env()...)
 
 	schemaName := strings.ReplaceAll(broker.Name, "-", "_")
 	cf.Run("bind-service", broker.Name, "csb-sql", "-c", fmt.Sprintf(`{"schema":"%s"}`, schemaName))
@@ -57,6 +59,7 @@ func WithPrefix(prefix string) Option {
 
 func WithSourceDir(dir string) Option {
 	return func(b *Broker) {
+		gomega.Expect(filepath.Join(dir, "cloud-service-broker")).To(gomega.BeAnExistingFile())
 		b.dir = dir
 	}
 }
