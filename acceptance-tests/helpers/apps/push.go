@@ -16,12 +16,8 @@ const pushWaitTime = 20 * time.Minute
 type Option func(*App)
 
 func Push(opts ...Option) *App {
-	defaults := []Option{
-		WithName(random.Name(random.WithPrefix("app"))),
-		WithMemory("100MB"),
-		WithDisk("250MB"),
-	}
-	app := App{}
+	defaults := []Option{WithName(random.Name(random.WithPrefix("app")))}
+	var app App
 	app.Push(append(defaults, opts...)...)
 	return &app
 }
@@ -46,15 +42,10 @@ func (a *App) Push(opts ...Option) {
 		cmd = append(cmd, "-f", a.manifest)
 	}
 
-	for k, v := range a.variables {
-		cmd = append(cmd, "--var", fmt.Sprintf("%s=%s", k, v))
-	}
-
-	if a.dir.path() == "" {
+	if a.dir == "" {
 		Fail("App directory must be specified")
 	}
-	cmd = append(cmd, "-p", a.dir.path())
-	defer a.dir.cleanup()
+	cmd = append(cmd, "-p", a.dir)
 
 	if a.Name == "" {
 		Fail("App name must be specified")
@@ -89,22 +80,13 @@ func WithName(name string) Option {
 
 func WithDir(dir string) Option {
 	return func(a *App) {
-		a.dir = staticDir(dir)
+		a.dir = dir
 	}
 }
 
 func WithManifest(manifest string) Option {
 	return func(a *App) {
 		a.manifest = manifest
-	}
-}
-
-func WithVariable(key, value string) Option {
-	return func(a *App) {
-		if a.variables == nil {
-			a.variables = make(map[string]string)
-		}
-		a.variables[key] = value
 	}
 }
 

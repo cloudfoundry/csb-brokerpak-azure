@@ -9,6 +9,5 @@ type App struct {
 	memory    string
 	disk      string
 	manifest  string
-	variables map[string]string
-	dir       dir
+	dir       string
 }
