@@ -68,7 +68,7 @@ provision:
     details: Time in minutes after which database is automatically paused. A value of -1 means that automatic pause is disabled. This property is only settable for General Purpose Serverless databases.
   - field_name: instance_name
     type: string
-    details: Name for your Azure SQL Faileover Group
+    details: Name for your Azure SQL Failover Group
     default: csb-azsql-fog-${request.instance_id}
     constraints:
       maxLength: 63
@@ -91,7 +91,7 @@ provision:
       maxLength: 64
   - field_name: read_write_endpoint_failover_policy
     type: string
-    details: Faileover policy (Automatic or Manual)
+    details: Failover policy (Automatic or Manual)
     default: Automatic
     enum:
       Automatic: Automatic
