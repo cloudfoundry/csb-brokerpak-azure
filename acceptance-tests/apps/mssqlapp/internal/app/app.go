@@ -65,3 +65,9 @@ func schemaName(r *http.Request) (string, error) {
 		return schema, nil
 	}
 }
+
+func fail(w http.ResponseWriter, code int, format string, a ...interface{}) {
+	msg := fmt.Sprintf(format, a...)
+	log.Println(msg)
+	http.Error(w, msg, code)
+}

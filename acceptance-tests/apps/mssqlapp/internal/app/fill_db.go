@@ -16,15 +16,13 @@ func handleFillDatabase(config string) func(w http.ResponseWriter, r *http.Reque
 
 		schema, err := schemaName(r)
 		if err != nil {
-			log.Printf("Schema name error: %s\n", err)
-			http.Error(w, "Schema name error.", http.StatusInternalServerError)
+			fail(w, http.StatusInternalServerError, "schema name error: %s", err)
 			return
 		}
 
 		stmt, err := db.Prepare(fmt.Sprintf(`INSERT INTO %s.%s (%s, %s) VALUES (@p1, REPLICATE(CAST(@p2 AS VARCHAR(max)), 100000))`, schema, tableName, keyColumn, valueColumn))
 		if err != nil {
-			log.Printf("Error preparing statement: %s", err)
-			http.Error(w, "Failed to prepare statement.", http.StatusInternalServerError)
+			fail(w, http.StatusInternalServerError, "error preparing statement: %s", err)
 			return
 		}
 		defer stmt.Close()

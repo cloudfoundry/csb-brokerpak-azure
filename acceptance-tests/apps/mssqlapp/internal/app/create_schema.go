@@ -14,22 +14,27 @@ func handleCreateSchema(config string) func(w http.ResponseWriter, r *http.Reque
 
 		schema, err := schemaName(r)
 		if err != nil {
-			log.Printf("Schema name error: %s\n", err)
-			http.Error(w, "Schema name error.", http.StatusInternalServerError)
+			fail(w, http.StatusInternalServerError, "schema name error: %s", err)
 			return
 		}
 
-		_, err = db.Exec(fmt.Sprintf(`CREATE SCHEMA %s AUTHORIZATION dbo`, schema))
-		if err != nil {
-			log.Printf("Error creating schema: %s", err)
-			http.Error(w, "Failed to create schema.", http.StatusBadRequest)
+		statement := fmt.Sprintf(`CREATE SCHEMA %s`, schema)
+		switch r.URL.Query().Get("dbo") {
+		case "", "true":
+			statement = statement + " AUTHORIZATION dbo"
+		case "false":
+		default:
+			fail(w, http.StatusBadRequest, "invalid value for dbo")
 			return
 		}
 
-		_, err = db.Exec(fmt.Sprintf(`CREATE TABLE %s.%s (%s VARCHAR(255) NOT NULL, %s VARCHAR(max) NOT NULL)`, schema, tableName, keyColumn, valueColumn))
-		if err != nil {
-			log.Printf("Error creating table: %s", err)
-			http.Error(w, "Failed to create table.", http.StatusBadRequest)
+		if _, err = db.Exec(statement); err != nil {
+			fail(w, http.StatusBadRequest, "failed to create schema: %s", err)
+			return
+		}
+
+		if _, err = db.Exec(fmt.Sprintf(`CREATE TABLE %s.%s (%s VARCHAR(255) NOT NULL, %s VARCHAR(max) NOT NULL)`, schema, tableName, keyColumn, valueColumn)); err != nil {
+			fail(w, http.StatusBadRequest, "error creating table: %s", err)
 			return
 		}
 

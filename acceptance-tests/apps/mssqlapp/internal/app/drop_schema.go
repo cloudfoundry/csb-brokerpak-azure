@@ -14,22 +14,17 @@ func handleDropSchema(config string) func(w http.ResponseWriter, r *http.Request
 
 		schema, err := schemaName(r)
 		if err != nil {
-			log.Printf("Schema name error: %s\n", err)
-			http.Error(w, "Schema name error.", http.StatusInternalServerError)
+			fail(w, http.StatusInternalServerError, "schema name error: %s", err)
 			return
 		}
 
-		_, err = db.Exec(fmt.Sprintf(`DROP TABLE %s.%s`, schema, tableName))
-		if err != nil {
-			log.Printf("Error creating table: %s", err)
-			http.Error(w, "Failed to create table.", http.StatusBadRequest)
+		if _, err = db.Exec(fmt.Sprintf(`DROP TABLE %s.%s`, schema, tableName)); err != nil {
+			fail(w, http.StatusBadRequest, "error dropping table: %s", err)
 			return
 		}
 
-		_, err = db.Exec(fmt.Sprintf(`DROP SCHEMA %s`, schema))
-		if err != nil {
-			log.Printf("Error creating schema: %s", err)
-			http.Error(w, "Failed to drop schema.", http.StatusBadRequest)
+		if _, err = db.Exec(fmt.Sprintf(`DROP SCHEMA %s`, schema)); err != nil {
+			fail(w, http.StatusBadRequest, "error dropping schema: %s", err)
 			return
 		}
 
