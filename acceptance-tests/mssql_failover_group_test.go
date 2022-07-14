@@ -70,7 +70,7 @@ var _ = Describe("MSSQL Failover Group", Label("mssql"), func() {
 	})
 })
 
-func failoverParameters(instance *services.ServiceInstance) interface{} {
+func failoverParameters(instance *services.ServiceInstance) any {
 	key := instance.CreateServiceKey()
 	defer key.Delete()
 

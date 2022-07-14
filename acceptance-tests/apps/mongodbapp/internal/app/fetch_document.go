@@ -31,7 +31,7 @@ func handleFetchDocument(client *mongo.Client) func(w http.ResponseWriter, r *ht
 			return
 		}
 
-		var data interface{}
+		var data any
 		for _, e := range receiver {
 			if e.Key == documentDataKey {
 				data = e.Value

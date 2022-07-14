@@ -96,7 +96,7 @@ var _ = Describe("MSSQL Server Pair and Failover Group DB", Label("mssql-server-
 			"csb-azure-mssql-fog-run-failover",
 			"standard",
 			services.WithBroker(serviceBroker),
-			services.WithParameters(map[string]interface{}{
+			services.WithParameters(map[string]any{
 				"server_pair_name":  serversConfig.ServerPairTag,
 				"server_pairs":      serversConfig.ServerPairsConfig(),
 				"fog_instance_name": fogName,

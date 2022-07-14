@@ -110,22 +110,22 @@ var _ = Describe("MSSQL Failover Group DB Subsume", Label("mssql-db-failover-gro
 	})
 })
 
-func masbFOGConfig(masbDBName, fogName string) interface{} {
-	return map[string]interface{}{
+func masbFOGConfig(masbDBName, fogName string) any {
+	return map[string]any{
 		"primaryServerName":   metadata.PreProvisionedSQLServer,
 		"primaryDbName":       masbDBName,
 		"secondaryServerName": metadata.PreProvisionedFOGServer,
 		"failoverGroupName":   fogName,
-		"readWriteEndpoint": map[string]interface{}{
+		"readWriteEndpoint": map[string]any{
 			"failoverPolicy":                         "Automatic",
 			"failoverWithDataLossGracePeriodMinutes": 60,
 		},
 	}
 }
 
-func serverPairsConfig(serverPairTag string) interface{} {
-	return map[string]interface{}{
-		serverPairTag: map[string]interface{}{
+func serverPairsConfig(serverPairTag string) any {
+	return map[string]any{
+		serverPairTag: map[string]any{
 			"admin_username": metadata.PreProvisionedSQLUsername,
 			"admin_password": metadata.PreProvisionedSQLPassword,
 			"primary": map[string]string{

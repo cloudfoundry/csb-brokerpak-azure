@@ -9,7 +9,7 @@ import (
 
 type EnvVar struct {
 	Name  string
-	Value interface{}
+	Value any
 }
 
 func (e EnvVar) ValueString() string {

@@ -18,7 +18,7 @@ var _ = Describe("CosmosDB", Label("cosmosdb"), func() {
 		serviceInstance := services.CreateInstance(
 			"csb-azure-cosmosdb-sql",
 			"small",
-			services.WithParameters(map[string]interface{}{"db_name": databaseName}),
+			services.WithParameters(map[string]any{"db_name": databaseName}),
 		)
 		defer serviceInstance.Delete()
 
