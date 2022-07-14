@@ -11,7 +11,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-func (a *App) GET(format string, s ...interface{}) string {
+func (a *App) GET(format string, s ...any) string {
 	url := a.urlf(format, s...)
 	var data []byte
 
@@ -34,7 +34,7 @@ func (a *App) GET(format string, s ...interface{}) string {
 	return string(data)
 }
 
-func (a *App) PUT(data, format string, s ...interface{}) {
+func (a *App) PUT(data, format string, s ...any) {
 	url := a.urlf(format, s...)
 	fmt.Fprintf(GinkgoWriter, "HTTP PUT: %s\n", url)
 	fmt.Fprintf(GinkgoWriter, "Sending data: %s\n", data)
@@ -46,7 +46,7 @@ func (a *App) PUT(data, format string, s ...interface{}) {
 	Expect(response).To(HaveHTTPStatus(http.StatusCreated, http.StatusOK))
 }
 
-func (a *App) DELETE(format string, s ...interface{}) {
+func (a *App) DELETE(format string, s ...any) {
 	url := a.urlf(format, s...)
 	fmt.Fprintf(GinkgoWriter, "HTTP DELETE: %s\n", url)
 	request, err := http.NewRequest(http.MethodDelete, url, nil)
@@ -57,7 +57,7 @@ func (a *App) DELETE(format string, s ...interface{}) {
 	Expect(response).To(HaveHTTPStatus(http.StatusGone, http.StatusNoContent))
 }
 
-func (a *App) urlf(format string, s ...interface{}) string {
+func (a *App) urlf(format string, s ...any) string {
 	base := a.URL
 	path := fmt.Sprintf(format, s...)
 	switch {

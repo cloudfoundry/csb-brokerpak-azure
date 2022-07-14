@@ -208,7 +208,7 @@ var _ = Describe("UpgradeMssqlFailoverGroupTest", Label("mssql-failover-group"),
 	})
 })
 
-func failoverParameters(instance *services.ServiceInstance) interface{} {
+func failoverParameters(instance *services.ServiceInstance) any {
 	key := instance.CreateServiceKey()
 	defer key.Delete()
 
