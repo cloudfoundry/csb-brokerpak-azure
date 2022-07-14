@@ -42,8 +42,8 @@ func (c Config) String() string {
 	return s.String()
 }
 
-func (c Config) toMap() map[string]interface{} {
-	m := make(map[string]interface{})
+func (c Config) toMap() map[string]any {
+	m := make(map[string]any)
 	v := reflect.ValueOf(c)
 	t := v.Type()
 	for i := 0; i < t.NumField(); i++ {

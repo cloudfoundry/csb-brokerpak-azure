@@ -94,15 +94,15 @@ var _ = Describe("MSSQL DB Subsume", Label("mssql-db", "subsume"), func() {
 	})
 })
 
-func subsumeDBParams(resource, serverTag string) interface{} {
-	return map[string]interface{}{
+func subsumeDBParams(resource, serverTag string) any {
+	return map[string]any{
 		"azure_db_id": resource,
 		"server":      serverTag,
 	}
 }
 
-func getMASBServerDetails(tag string) map[string]interface{} {
-	return map[string]interface{}{
+func getMASBServerDetails(tag string) map[string]any {
+	return map[string]any{
 		tag: map[string]string{
 			"server_name":           metadata.PreProvisionedSQLServer,
 			"server_resource_group": metadata.ResourceGroup,

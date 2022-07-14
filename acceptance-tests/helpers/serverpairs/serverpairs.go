@@ -38,15 +38,15 @@ func NewDatabaseServerPair(metadata environment.Metadata) DatabaseServerPair {
 	}
 }
 
-func (d DatabaseServerPair) PrimaryConfig() interface{} {
+func (d DatabaseServerPair) PrimaryConfig() any {
 	return d.memberConfig(d.PrimaryServer.Name, "westus", d.PrimaryServer.ResourceGroup)
 }
 
-func (d DatabaseServerPair) SecondaryConfig() interface{} {
+func (d DatabaseServerPair) SecondaryConfig() any {
 	return d.memberConfig(d.SecondaryServer.Name, "eastus", d.SecondaryServer.ResourceGroup)
 }
 
-func (d DatabaseServerPair) memberConfig(name, location, rg string) interface{} {
+func (d DatabaseServerPair) memberConfig(name, location, rg string) any {
 	return struct {
 		Name          string `json:"instance_name"`
 		Username      string `json:"admin_username"`
@@ -62,7 +62,7 @@ func (d DatabaseServerPair) memberConfig(name, location, rg string) interface{} 
 	}
 }
 
-func (d DatabaseServerPair) SecondaryResourceGroupConfig() interface{} {
+func (d DatabaseServerPair) SecondaryResourceGroupConfig() any {
 	return struct {
 		InstanceName string `json:"instance_name"`
 		Location     string `json:"location"`
@@ -72,6 +72,6 @@ func (d DatabaseServerPair) SecondaryResourceGroupConfig() interface{} {
 	}
 }
 
-func (d DatabaseServerPair) ServerPairsConfig() interface{} {
-	return map[string]interface{}{d.ServerPairTag: d}
+func (d DatabaseServerPair) ServerPairsConfig() any {
+	return map[string]any{d.ServerPairTag: d}
 }

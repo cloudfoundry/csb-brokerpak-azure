@@ -27,7 +27,7 @@ var _ = Describe("UpgradeCosmosTest", Label("cosmosdb"), func() {
 				"csb-azure-cosmosdb-sql",
 				"small",
 				services.WithBroker(serviceBroker),
-				services.WithParameters(map[string]interface{}{"db_name": databaseName}),
+				services.WithParameters(map[string]any{"db_name": databaseName}),
 			)
 			defer serviceInstance.Delete()
 

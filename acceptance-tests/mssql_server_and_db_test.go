@@ -90,8 +90,8 @@ type databaseServer struct {
 	Password string `json:"admin_password"`
 }
 
-func (d databaseServer) getMASBServerDetails(tag string) map[string]interface{} {
-	return map[string]interface{}{
+func (d databaseServer) getMASBServerDetails(tag string) map[string]any {
+	return map[string]any{
 		tag: map[string]string{
 			"server_name":           d.Name,
 			"server_resource_group": metadata.ResourceGroup,

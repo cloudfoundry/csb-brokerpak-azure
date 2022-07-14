@@ -18,7 +18,7 @@ var _ = Describe("MongoDB", Label("mongodb"), func() {
 		collectionName := random.Name(random.WithPrefix("collection"))
 		serviceInstance := services.CreateInstance(
 			"csb-azure-mongodb",
-			"small", services.WithParameters(map[string]interface{}{
+			"small", services.WithParameters(map[string]any{
 				"db_name":         databaseName,
 				"collection_name": collectionName,
 				"shard_key":       "_id",

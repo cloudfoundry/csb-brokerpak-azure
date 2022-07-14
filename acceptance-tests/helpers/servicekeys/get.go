@@ -9,7 +9,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-func (s *ServiceKey) Get(receiver interface{}) {
+func (s *ServiceKey) Get(receiver any) {
 	Expect(reflect.ValueOf(receiver).Kind()).To(Equal(reflect.Ptr), "receiver must be a pointer")
 	out, _ := cf.Run("service-key", s.serviceInstanceName, s.name)
 	start := strings.Index(out, "{")
@@ -18,7 +18,7 @@ func (s *ServiceKey) Get(receiver interface{}) {
 
 	if cf.Version() == cf.VersionV8 {
 		var wrapper struct {
-			Credentials interface{} `json:"credentials"`
+			Credentials any `json:"credentials"`
 		}
 		err := json.Unmarshal(data, &wrapper)
 		Expect(err).NotTo(HaveOccurred())

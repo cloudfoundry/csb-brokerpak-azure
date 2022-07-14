@@ -234,7 +234,7 @@ type databaseServer struct {
 func (d databaseServer) reconfigureCSBWithServerDetails(broker *brokers.Broker) string {
 	serverTag := random.Name(random.WithMaxLength(10))
 
-	creds := map[string]interface{}{
+	creds := map[string]any{
 		serverTag: map[string]string{
 			"server_name":           d.Name,
 			"server_resource_group": metadata.ResourceGroup,
@@ -251,7 +251,7 @@ func (d databaseServer) reconfigureCSBWithServerDetails(broker *brokers.Broker) 
 func (d databaseServer) serverDetails() (string, map[string]any) {
 	serverTag := random.Name(random.WithMaxLength(10))
 
-	creds := map[string]interface{}{
+	creds := map[string]any{
 		serverTag: map[string]string{
 			"server_name":           d.Name,
 			"server_resource_group": metadata.ResourceGroup,
