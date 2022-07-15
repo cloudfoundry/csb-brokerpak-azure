@@ -130,26 +130,26 @@ var _ = Describe("UpgradeMssqlFailoverGroupTest", Label("mssql-failover-group"),
 			defer serviceInstance.Delete()
 
 			By("pushing the unstarted app")
-			app := apps.Push(apps.WithApp(apps.MSSQL))
-			defer apps.Delete(app)
+			appOne := apps.Push(apps.WithApp(apps.MSSQL))
+			defer apps.Delete(appOne)
 
 			By("binding to the app")
-			binding := serviceInstance.Bind(app)
+			serviceInstance.Bind(appOne)
 
 			By("starting the app")
-			apps.Start(app)
+			apps.Start(appOne)
 
 			By("creating a schema")
 			schema := random.Name(random.WithMaxLength(10))
-			app.PUT("", "%s?dbo=false", schema)
+			appOne.PUT("", "%s?dbo=false", schema)
 
 			By("setting a key-value")
 			keyOne := random.Hexadecimal()
 			valueOne := random.Hexadecimal()
-			app.PUT(valueOne, "%s/%s", schema, keyOne)
+			appOne.PUT(valueOne, "%s/%s", schema, keyOne)
 
 			By("getting the value")
-			got := app.GET("%s/%s", schema, keyOne)
+			got := appOne.GET("%s/%s", schema, keyOne)
 			Expect(got).To(Equal(valueOne))
 
 			By("pushing the development version of the broker")
@@ -159,14 +159,14 @@ var _ = Describe("UpgradeMssqlFailoverGroupTest", Label("mssql-failover-group"),
 			serviceInstance.Upgrade()
 
 			By("getting the previously set value using the second app")
-			got = app.GET("%s/%s", schema, keyOne)
+			got = appOne.GET("%s/%s", schema, keyOne)
 			Expect(got).To(Equal(valueOne))
 
 			By("updating the instance plan")
 			serviceInstance.Update("-p", "medium")
 
 			By("getting the previously set value using the second app")
-			got = app.GET("%s/%s", schema, keyOne)
+			got = appOne.GET("%s/%s", schema, keyOne)
 			Expect(got).To(Equal(valueOne))
 
 			By("triggering failover")
@@ -178,32 +178,20 @@ var _ = Describe("UpgradeMssqlFailoverGroupTest", Label("mssql-failover-group"),
 			)
 			defer failoverServiceInstance.Delete()
 
+			// Because of https://github.com/cloudfoundry/csb-brokerpak-azure/commit/40c6fd9744fe696296c84e3783b5f20af07f9ad9
+			// the binding users created before the upgrade will not exist in the replica
+			By("pushing and binding another app")
+			appTwo := apps.Push(apps.WithApp(apps.MSSQL))
+			defer apps.Delete(appTwo)
+			serviceInstance.Bind(appTwo)
+			apps.Start(appTwo)
+
 			By("getting the previously set values")
-			Expect(app.GET("%s/%s", schema, keyOne)).To(Equal(valueOne))
+			Expect(appTwo.GET("%s/%s", schema, keyOne)).To(Equal(valueOne))
 
-			By("dropping the schema used to allow us to unbind")
-			app.DELETE(schema)
-
-			By("deleting bindings created before the upgrade")
-			binding.Unbind()
-
-			By("creating new bindings and testing they still work")
-			serviceInstance.Bind(app)
-			apps.Restage(app)
-
-			By("creating a schema")
-			schema = random.Name(random.WithMaxLength(10))
-			app.PUT("", schema)
-
-			keyTwo := random.Hexadecimal()
-			valueTwo := random.Hexadecimal()
-			app.PUT(valueTwo, "%s/%s", schema, keyTwo)
-
-			got = app.GET("%s/%s", schema, keyTwo)
-			Expect(got).To(Equal(valueTwo))
-
-			By("dropping the schema used to allow us to unbind")
-			app.DELETE(schema)
+			apps.Delete(appTwo)
+			failoverServiceInstance.Delete()
+			appOne.DELETE(schema)
 		})
 	})
 })

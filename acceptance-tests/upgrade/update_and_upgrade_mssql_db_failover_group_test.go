@@ -234,6 +234,7 @@ var _ = Describe("UpgradeMssqlDBFailoverGroupTest", Label("mssql-db-failover-gro
 			Expect(got).To(Equal(valueOne))
 
 			By("connecting to the existing failover group")
+			delete(fogConfig, "server_credential_pairs") // not accepted now that we have upgraded
 			dbFogInstance := services.CreateInstance(
 				"csb-azure-mssql-db-failover-group",
 				"existing",

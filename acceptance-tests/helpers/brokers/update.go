@@ -27,7 +27,7 @@ func (b *Broker) UpgradeBroker(dir string, env ...apps.EnvVar) {
 
 func (b *Broker) UpdateEnv(env ...apps.EnvVar) {
 	WithEnv(env...)(b)
-	b.app.SetEnv(b.env()...)
+	b.app.SetEnv(env...)
 	b.app.Restart()
 
 	cf.Run("update-service-broker", b.Name, b.username, b.password, b.app.URL)
