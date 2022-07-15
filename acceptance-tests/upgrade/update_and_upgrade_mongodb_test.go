@@ -143,7 +143,7 @@ var _ = Describe("UpgradeMongoTest", Label("mongodb"), func() {
 			By("pushing the development version of the broker")
 			serviceBroker.UpgradeBroker(developmentBuildDir)
 
-			By("upgrading service instance")
+			By("failing to upgrade service instance")
 			serviceInstance.UpgradeExpectFailure()
 
 			By("checking previous data still accessible")

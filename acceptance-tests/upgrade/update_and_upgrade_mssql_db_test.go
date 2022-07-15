@@ -31,7 +31,8 @@ var _ = Describe("UpgradeMssqlDBTest", Label("mssql-db"), func() {
 			defer serverInstance.Delete()
 
 			By("reconfiguring the CSB with DB server details")
-			serverTag := serverConfig.reconfigureCSBWithServerDetails(serviceBroker)
+			serverTag := random.Name(random.WithMaxLength(10))
+			serviceBroker.UpdateEnv(apps.EnvVar{Name: "MSSQL_DB_SERVER_CREDS", Value: serverConfig.serverDetails(serverTag)})
 
 			By("creating a database in the server")
 			dbInstance := services.CreateInstance(
@@ -134,7 +135,12 @@ var _ = Describe("UpgradeMssqlDBTest", Label("mssql-db"), func() {
 			defer serverInstance.Delete()
 
 			By("reconfiguring the CSB with DB server details")
-			serverTag, serverCreds := serverConfig.serverDetails()
+			serverTag := random.Name(random.WithMaxLength(10))
+			serverCreds := serverConfig.serverDetails(serverTag)
+			serviceBroker.UpdateEnv(
+				apps.EnvVar{Name: "MSSQL_DB_SERVER_CREDS", Value: serverCreds},
+				apps.EnvVar{Name: "GSB_SERVICE_CSB_AZURE_MSSQL_DB_PROVISION_DEFAULTS", Value: map[string]any{"server_credentials": serverCreds}},
+			)
 
 			By("creating a database in the server")
 			dbInstance := services.CreateInstance(
@@ -172,7 +178,7 @@ var _ = Describe("UpgradeMssqlDBTest", Label("mssql-db"), func() {
 			Expect(got).To(Equal(valueOne))
 
 			By("pushing the development version of the broker")
-			serviceBroker.UpgradeBroker(developmentBuildDir, apps.EnvVar{Name: "MSSQL_DB_SERVER_CREDS", Value: serverCreds})
+			serviceBroker.UpgradeBroker(developmentBuildDir)
 
 			By("upgrading service instance")
 			dbInstance.Upgrade()
@@ -231,9 +237,7 @@ type databaseServer struct {
 	Password string `json:"admin_password"`
 }
 
-func (d databaseServer) reconfigureCSBWithServerDetails(broker *brokers.Broker) string {
-	serverTag := random.Name(random.WithMaxLength(10))
-
+func (d databaseServer) serverDetails(serverTag string) map[string]any {
 	creds := map[string]any{
 		serverTag: map[string]string{
 			"server_name":           d.Name,
@@ -243,22 +247,5 @@ func (d databaseServer) reconfigureCSBWithServerDetails(broker *brokers.Broker) 
 		},
 	}
 
-	broker.UpdateEnv(apps.EnvVar{Name: "MSSQL_DB_SERVER_CREDS", Value: creds})
-
-	return serverTag
-}
-
-func (d databaseServer) serverDetails() (string, map[string]any) {
-	serverTag := random.Name(random.WithMaxLength(10))
-
-	creds := map[string]any{
-		serverTag: map[string]string{
-			"server_name":           d.Name,
-			"server_resource_group": metadata.ResourceGroup,
-			"admin_username":        d.Username,
-			"admin_password":        d.Password,
-		},
-	}
-
-	return serverTag, creds
+	return creds
 }
