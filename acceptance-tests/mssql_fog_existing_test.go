@@ -3,7 +3,6 @@ package acceptance_test
 import (
 	"csbbrokerpakazure/acceptance-tests/helpers/apps"
 	"csbbrokerpakazure/acceptance-tests/helpers/brokers"
-	"csbbrokerpakazure/acceptance-tests/helpers/cf"
 	"csbbrokerpakazure/acceptance-tests/helpers/matchers"
 	"csbbrokerpakazure/acceptance-tests/helpers/random"
 	"csbbrokerpakazure/acceptance-tests/helpers/serverpairs"
@@ -95,7 +94,7 @@ var _ = Describe("MSSQL Failover Group Existing", Label("mssql-failover-group"),
 		defer dbFogInstance.Delete()
 
 		By("purging the initial FOG instance")
-		cf.Run("purge-service-instance", "-f", initialFogInstance.Name)
+		initialFogInstance.Purge()
 
 		By("binding the app to the CSB service instance")
 		bindingTwo := dbFogInstance.Bind(app)
