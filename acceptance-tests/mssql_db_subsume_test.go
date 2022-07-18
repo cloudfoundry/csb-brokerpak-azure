@@ -3,7 +3,6 @@ package acceptance_test
 import (
 	"csbbrokerpakazure/acceptance-tests/helpers/apps"
 	"csbbrokerpakazure/acceptance-tests/helpers/brokers"
-	"csbbrokerpakazure/acceptance-tests/helpers/cf"
 	"csbbrokerpakazure/acceptance-tests/helpers/matchers"
 	"csbbrokerpakazure/acceptance-tests/helpers/random"
 	"csbbrokerpakazure/acceptance-tests/helpers/services"
@@ -70,7 +69,7 @@ var _ = Describe("MSSQL DB Subsume", Label("mssql-db", "subsume"), func() {
 		defer csbServiceInstance.Delete()
 
 		By("purging the MASB service instance")
-		cf.Run("purge-service-instance", "-f", masbServiceInstance.Name)
+		masbServiceInstance.Purge()
 
 		By("updating to another plan")
 		csbServiceInstance.Update("-p", "small")

@@ -5,6 +5,11 @@ import (
 	"csbbrokerpakazure/acceptance-tests/helpers/brokers"
 	"csbbrokerpakazure/acceptance-tests/helpers/random"
 	"csbbrokerpakazure/acceptance-tests/helpers/services"
+	"fmt"
+	"os/exec"
+	"time"
+
+	"github.com/onsi/gomega/gexec"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -149,6 +154,13 @@ var _ = Describe("UpgradeMongoTest", Label("mongodb"), func() {
 			By("checking previous data still accessible")
 			got = app.GET("%s/%s/%s", databaseName, collectionName, documentNameOne)
 			Expect(got).To(Equal(documentDataOne))
+
+			By("deleting the backing service") // Can't delete with broker as TF version too high
+			cmd := exec.Command("az", "cosmosdb", "delete", "--resource-group", metadata.ResourceGroup, "--name", fmt.Sprintf("csb%s", serviceInstance.GUID()), "--yes")
+			session, err := gexec.Start(cmd, GinkgoWriter, GinkgoWriter)
+			Expect(err).NotTo(HaveOccurred())
+			Eventually(session).WithTimeout(30 * time.Minute).Should(gexec.Exit(0))
+			serviceInstance.Purge()
 		})
 	})
 })

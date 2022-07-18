@@ -3,7 +3,6 @@ package upgrade_test
 import (
 	"csbbrokerpakazure/acceptance-tests/helpers/apps"
 	"csbbrokerpakazure/acceptance-tests/helpers/brokers"
-	"csbbrokerpakazure/acceptance-tests/helpers/cf"
 	"csbbrokerpakazure/acceptance-tests/helpers/random"
 	"csbbrokerpakazure/acceptance-tests/helpers/services"
 
@@ -116,7 +115,7 @@ var _ = Describe("UpgradeMssqlDBFailoverGroupTest", Label("mssql-db-failover-gro
 			defer dbFogInstance.Delete()
 
 			By("purging the initial FOG instance")
-			cf.Run("purge-service-instance", "-f", initialFogInstance.Name)
+			initialFogInstance.Purge()
 
 			By("creating new bindings and testing they still work")
 			bindingOne := dbFogInstance.Bind(appOne)
@@ -244,7 +243,7 @@ var _ = Describe("UpgradeMssqlDBFailoverGroupTest", Label("mssql-db-failover-gro
 			defer dbFogInstance.Delete()
 
 			By("purging the initial FOG instance")
-			cf.Run("purge-service-instance", "-f", initialFogInstance.Name)
+			initialFogInstance.Purge()
 
 			By("creating new bindings and testing they still work")
 			binding := dbFogInstance.Bind(app)
