@@ -29,3 +29,7 @@ func deleteWithPoll(name string) {
 		return out
 	}).WithTimeout(operationTimeout).WithPolling(pollingInterval).ShouldNot(ContainSubstring(name))
 }
+
+func (s *ServiceInstance) Purge() {
+	cf.Run("purge-service-instance", "-f", s.Name)
+}
