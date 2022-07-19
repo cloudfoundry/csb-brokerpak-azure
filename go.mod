@@ -20,6 +20,11 @@ require (
 )
 
 require (
+	github.com/hashicorp/go-checkpoint v0.5.0 // indirect
+	github.com/hashicorp/hc-install v0.4.0 // indirect
+)
+
+require (
 	cloud.google.com/go v0.100.2 // indirect
 	cloud.google.com/go/compute v1.6.1 // indirect
 	cloud.google.com/go/iam v0.3.0 // indirect
