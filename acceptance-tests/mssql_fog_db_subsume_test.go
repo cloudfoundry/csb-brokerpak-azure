@@ -3,7 +3,6 @@ package acceptance_test
 import (
 	"csbbrokerpakazure/acceptance-tests/helpers/apps"
 	"csbbrokerpakazure/acceptance-tests/helpers/brokers"
-	"csbbrokerpakazure/acceptance-tests/helpers/cf"
 	"csbbrokerpakazure/acceptance-tests/helpers/matchers"
 	"csbbrokerpakazure/acceptance-tests/helpers/random"
 	"csbbrokerpakazure/acceptance-tests/helpers/services"
@@ -89,7 +88,7 @@ var _ = Describe("MSSQL Failover Group DB Subsume", Label("mssql-db-failover-gro
 		defer dbFogInstance.Delete()
 
 		By("purging the MASB FOG instance")
-		cf.Run("purge-service-instance", "-f", masbFOGInstance.Name)
+		masbFOGInstance.Purge()
 
 		By("updating to another plan")
 		dbFogInstance.Update("-p", "small")
