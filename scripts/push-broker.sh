@@ -12,8 +12,6 @@ if [[ -z ${APP_NAME} ]]; then
   APP_NAME=cloud-service-broker
 fi
 
-cf push --no-start -f "${MANIFEST}" --var app=${APP_NAME}
-
 if [[ -z ${SECURITY_USER_NAME} ]]; then
   echo "Missing SECURITY_USER_NAME variable"
   exit 1
@@ -24,75 +22,84 @@ if [[ -z ${SECURITY_USER_PASSWORD} ]]; then
   exit 1
 fi
 
-cf set-env "${APP_NAME}" SECURITY_USER_PASSWORD "${SECURITY_USER_PASSWORD}"
-cf set-env "${APP_NAME}" SECURITY_USER_NAME "${SECURITY_USER_NAME}"
+cfmf="/tmp/cf-manifest.$$.yml"
+touch "$cfmf"
+trap "rm -f $cfmf" EXIT
+chmod 600 "$cfmf"
+cat "$MANIFEST" >$cfmf
+
+echo "  env:" >>$cfmf
+echo "    SECURITY_USER_PASSWORD: ${SECURITY_USER_PASSWORD}" >>$cfmf
+echo "    SECURITY_USER_NAME: ${SECURITY_USER_NAME}" >>$cfmf
+echo "    TERRAFORM_UPGRADES_ENABLED: ${TERRAFORM_UPGRADES_ENABLED:-true}" >>$cfmf
+echo "    BROKERPAK_UPDATES_ENABLED: ${BROKERPAK_UPDATES_ENABLED:-true}" >>$cfmf
 
 if [[ ${GSB_PROVISION_DEFAULTS} ]]; then
-  cf set-env "${APP_NAME}" GSB_PROVISION_DEFAULTS "${GSB_PROVISION_DEFAULTS}"
+  echo "    GSB_PROVISION_DEFAULTS: $(echo "$GSB_PROVISION_DEFAULTS" | jq @json)" >>$cfmf
 fi
 
 if [[ ${GOOGLE_CREDENTIALS} ]]; then
   cf set-env "${APP_NAME}" GOOGLE_CREDENTIALS "${GOOGLE_CREDENTIALS}"
+  echo "    GOOGLE_CREDENTIALS: $(echo "$GOOGLE_CREDENTIALS" | jq @json)" >>$cfmf
 fi
 
 if [[ ${GOOGLE_PROJECT} ]]; then
-  cf set-env "${APP_NAME}" GOOGLE_PROJECT "${GOOGLE_PROJECT}"
+  echo "    GOOGLE_PROJECT: ${GOOGLE_PROJECT}" >>$cfmf
 fi
 
 if [[ ${ARM_SUBSCRIPTION_ID} ]]; then
-  cf set-env "${APP_NAME}" ARM_SUBSCRIPTION_ID "${ARM_SUBSCRIPTION_ID}"
+  echo "    ARM_SUBSCRIPTION_ID: ${ARM_SUBSCRIPTION_ID}" >>$cfmf
 fi
 
 if [[ ${ARM_TENANT_ID} ]]; then
-  cf set-env "${APP_NAME}" ARM_TENANT_ID "${ARM_TENANT_ID}"
+  echo "    ARM_TENANT_ID: ${ARM_TENANT_ID}" >>$cfmf
 fi
 
 if [[ ${ARM_CLIENT_ID} ]]; then
-  cf set-env "${APP_NAME}" ARM_CLIENT_ID "${ARM_CLIENT_ID}"
+  echo "    ARM_CLIENT_ID: ${ARM_CLIENT_ID}" >>$cfmf
 fi
 
 if [[ ${ARM_CLIENT_SECRET} ]]; then
-  cf set-env "${APP_NAME}" ARM_CLIENT_SECRET "${ARM_CLIENT_SECRET}"
+  echo "    ARM_CLIENT_SECRET: ${ARM_CLIENT_SECRET}" >>$cfmf
 fi
 
 if [[ ${GSB_BROKERPAK_BUILTIN_PATH} ]]; then
-  cf set-env "${APP_NAME}" GSB_BROKERPAK_BUILTIN_PATH "${GSB_BROKERPAK_BUILTIN_PATH}"
+  echo "    GSB_BROKERPAK_BUILTIN_PATH: ${GSB_BROKERPAK_BUILTIN_PATH}" >>$cfmf
 fi
 
 if [[ ${DB_TLS} ]]; then
-  cf set-env "${APP_NAME}" DB_TLS "${DB_TLS}"
+  echo "    DB_TLS: ${DB_TLS}" >>$cfmf
 fi
 
 if [[ ${CH_CRED_HUB_URL} ]]; then
-  cf set-env "${APP_NAME}" CH_CRED_HUB_URL "${CH_CRED_HUB_URL}"
+  echo "    CH_CRED_HUB_URL: ${CH_CRED_HUB_URL}" >>$cfmf
 fi
 
 if [[ ${CH_UAA_URL} ]]; then
-  cf set-env "${APP_NAME}" CH_UAA_URL "${CH_UAA_URL}"
+  echo "    CH_UAA_URL: ${CH_UAA_URL}" >>$cfmf
 fi
 
 if [[ ${CH_UAA_CLIENT_NAME} ]]; then
-  cf set-env "${APP_NAME}" CH_UAA_CLIENT_NAME "${CH_UAA_CLIENT_NAME}"
+  echo "    CH_UAA_CLIENT_NAME: ${CH_UAA_CLIENT_NAME}" >>$cfmf
 fi
 
 if [[ ${CH_UAA_CLIENT_SECRET} ]]; then
-  cf set-env "${APP_NAME}" CH_UAA_CLIENT_SECRET "${CH_UAA_CLIENT_SECRET}"
+  echo "    CH_UAA_CLIENT_SECRET: ${CH_UAA_CLIENT_SECRET}" >>$cfmf
 fi
 
 if [[ ${CH_SKIP_SSL_VALIDATION} ]]; then
-  cf set-env "${APP_NAME}" CH_SKIP_SSL_VALIDATION "${CH_SKIP_SSL_VALIDATION}"
+  echo "    CH_SKIP_SSL_VALIDATION: ${CH_SKIP_SSL_VALIDATION}" >>$cfmf
 fi
 
 if [[ ${ENCRYPTION_ENABLED} ]]; then
-  cf set-env "${APP_NAME}" ENCRYPTION_ENABLED "${ENCRYPTION_ENABLED}"
+  echo "    ENCRYPTION_ENABLED: ${ENCRYPTION_ENABLED}" >>$cfmf
 fi
 
 if [[ ${ENCRYPTION_PASSWORDS} ]]; then
-  cf set-env "${APP_NAME}" ENCRYPTION_PASSWORDS "${ENCRYPTION_PASSWORDS}"
+  echo "    ENCRYPTION_PASSWORDS: $(echo "$ENCRYPTION_PASSWORDS" | jq @json)" >>$cfmf
 fi
 
-cf set-env "${APP_NAME}" TERRAFORM_UPGRADES_ENABLED "${TERRAFORM_UPGRADES_ENABLED:-true}"
-cf set-env "${APP_NAME}" BROKERPAK_UPDATES_ENABLED "${BROKERPAK_UPDATES_ENABLED:-true}"
+cf push --no-start -f "${cfmf}" --var app=${APP_NAME}
 
 if [[ -z ${MSYQL_INSTANCE} ]]; then
   MSYQL_INSTANCE=csb-sql
