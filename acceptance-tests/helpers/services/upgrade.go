@@ -5,13 +5,15 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/onsi/ginkgo/v2"
+
 	. "github.com/onsi/gomega"
 	. "github.com/onsi/gomega/gexec"
 )
 
 func (s *ServiceInstance) Upgrade() {
 	if !s.UpgradeAvailable() {
-		fmt.Println("No Upgrade available for service instance")
+		fmt.Fprintln(ginkgo.GinkgoWriter, "No Upgrade available for service instance")
 		return
 	}
 
