@@ -38,15 +38,6 @@ if [[ ${GSB_PROVISION_DEFAULTS} ]]; then
   echo "    GSB_PROVISION_DEFAULTS: $(echo "$GSB_PROVISION_DEFAULTS" | jq @json)" >>$cfmf
 fi
 
-if [[ ${GOOGLE_CREDENTIALS} ]]; then
-  cf set-env "${APP_NAME}" GOOGLE_CREDENTIALS "${GOOGLE_CREDENTIALS}"
-  echo "    GOOGLE_CREDENTIALS: $(echo "$GOOGLE_CREDENTIALS" | jq @json)" >>$cfmf
-fi
-
-if [[ ${GOOGLE_PROJECT} ]]; then
-  echo "    GOOGLE_PROJECT: ${GOOGLE_PROJECT}" >>$cfmf
-fi
-
 if [[ ${ARM_SUBSCRIPTION_ID} ]]; then
   echo "    ARM_SUBSCRIPTION_ID: ${ARM_SUBSCRIPTION_ID}" >>$cfmf
 fi
