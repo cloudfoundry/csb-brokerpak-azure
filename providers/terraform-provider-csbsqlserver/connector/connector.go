@@ -72,7 +72,7 @@ func (c *Connector) ReadBinding(ctx context.Context, username string) (result bo
 	})
 }
 
-func (c *Connector) withConnection(callback func(db *sql.DB) error) error {
+func (c *Connector) withConnection(callback func(*sql.DB) error) error {
 	db, err := sql.Open("sqlserver", c.connStr())
 	if err != nil {
 		return fmt.Errorf("error connecting to database %q on %q port %d with user %q: %w", c.database, c.server, c.port, c.username, err)
@@ -85,7 +85,7 @@ func (c *Connector) withConnection(callback func(db *sql.DB) error) error {
 	return callback(db)
 }
 
-func (c *Connector) withTransaction(callback func(tx *sql.Tx) error) error {
+func (c *Connector) withTransaction(callback func(*sql.Tx) error) error {
 	return c.withConnection(func(db *sql.DB) error {
 		tx, err := db.Begin()
 		if err != nil {
