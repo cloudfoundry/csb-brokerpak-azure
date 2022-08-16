@@ -64,9 +64,9 @@ terraform_binaries:
   url_template: ./providers/${name}/cloudfoundry.org/cloud-service-broker/csbmssqldbrunfailover/${version}/${os}_${arch}/terraform-provider-csbmssqldbrunfailover_v${version}
 - name: terraform-provider-postgresql
   version: 1.16.0
+  source: https://github.com/cyrilgdn/terraform-provider-postgresql/archive/v1.16.0.zip
   provider: cyrilgdn/postgresql
   url_template: https://github.com/cyrilgdn/${name}/releases/download/v${version}/terraform-provider-postgresql_${version}_${os}_${arch}.zip
-  source: https://github.com/cyrilgdn/terraform-provider-postgresql/archive/v1.16.0.zip
 terraform_state_provider_replacements:
   registry.terraform.io/-/azurerm: "registry.terraform.io/hashicorp/azurerm"
   registry.terraform.io/-/random: "registry.terraform.io/hashicorp/random"
