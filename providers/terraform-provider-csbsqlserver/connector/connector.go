@@ -22,14 +22,23 @@ func New(server string, port int, username, password, database, encrypt string) 
 }
 
 type Connector struct {
-	server, username, password, database, encrypt string
-	port                                          int
+	server   string
+	username string
+	password string
+	database string
+	encrypt  string
+	port     int
+}
+
+type databaseActor interface {
+	QueryContext(ctx context.Context, query string, args ...any) (*sql.Rows, error)
+	ExecContext(ctx context.Context, query string, args ...any) (sql.Result, error)
 }
 
 // CreateBinding creates the binding user, adds roles and grants permission to execute store procedures
 // It is idempotent.
 func (c *Connector) CreateBinding(ctx context.Context, username, password string, roles []string) error {
-	return c.withConnection(func(db *sql.DB) error {
+	return c.withTransaction(func(db databaseActor) error {
 		if err := createUser(ctx, db, username, password); err != nil {
 			return err
 		}
@@ -48,7 +57,7 @@ func (c *Connector) CreateBinding(ctx context.Context, username, password string
 
 // DeleteBinding drops the binding user. It is idempotent.
 func (c *Connector) DeleteBinding(ctx context.Context, username string) error {
-	return c.withConnection(func(db *sql.DB) error {
+	return c.withTransaction(func(db databaseActor) error {
 		if err := dropUser(ctx, db, username); err != nil {
 			return err
 		}
@@ -81,6 +90,24 @@ func (c *Connector) withConnection(callback func(db *sql.DB) error) error {
 	return callback(db)
 }
 
+func (c *Connector) withTransaction(callback func(db databaseActor) error) error {
+	return c.withConnection(func(db *sql.DB) error {
+		tx, err := db.Begin()
+		if err != nil {
+			return err
+		}
+		defer func() {
+			_ = tx.Rollback()
+		}()
+
+		if err := callback(db); err != nil {
+			return err
+		}
+
+		return tx.Commit()
+	})
+}
+
 func (c *Connector) connStr() string {
 	query := url.Values{}
 	query.Add("database", c.database)
@@ -96,7 +123,7 @@ func (c *Connector) connStr() string {
 	return u.String()
 }
 
-func checkUser(ctx context.Context, db *sql.DB, username string) (bool, error) {
+func checkUser(ctx context.Context, db databaseActor, username string) (bool, error) {
 	rows, err := db.QueryContext(ctx, `SELECT NAME FROM sys.database_principals WHERE NAME = @p1 AND TYPE = 'S'`, username)
 	if err != nil {
 		return false, fmt.Errorf("error querying existence of user %q: %w", username, err)
@@ -105,7 +132,7 @@ func checkUser(ctx context.Context, db *sql.DB, username string) (bool, error) {
 	return rows.Next(), nil
 }
 
-func dropUser(ctx context.Context, db *sql.DB, username string) error {
+func dropUser(ctx context.Context, db databaseActor, username string) error {
 	statement := fmt.Sprintf(`DROP USER IF EXISTS [%s]`, username)
 	if _, err := db.ExecContext(ctx, statement); err != nil {
 		return fmt.Errorf("error deleting user %q: %w", username, err)
@@ -117,7 +144,7 @@ func dropUser(ctx context.Context, db *sql.DB, username string) error {
 // dropLogin drops a legacy login. In the past the brokerpak created a login and
 // then created a user from the login, but this was problematic in a failover because
 // the login did not exist on the replica. See: https://www.pivotaltracker.com/story/show/179168006
-func dropLogin(ctx context.Context, db *sql.DB, username string) error {
+func dropLogin(ctx context.Context, db databaseActor, username string) error {
 	// Unfortunately there's no "DROP LOGIN IF EXISTS" and checking for the existence of the login (via sys.sql_logins)
 	// proved unreliable as it worked on the database fake, but not on an Azure database. So we just attempt the operation
 	// and ignore any error. The issue with checking for the "right" error is that any check would be fragile if there were
@@ -127,7 +154,7 @@ func dropLogin(ctx context.Context, db *sql.DB, username string) error {
 	return nil
 }
 
-func createUser(ctx context.Context, db *sql.DB, username, password string) error {
+func createUser(ctx context.Context, db databaseActor, username, password string) error {
 	ok, err := checkUser(ctx, db, username)
 	switch {
 	case err != nil:
@@ -144,7 +171,7 @@ func createUser(ctx context.Context, db *sql.DB, username, password string) erro
 	return nil
 }
 
-func addRoles(ctx context.Context, db *sql.DB, username string, roles []string) error {
+func addRoles(ctx context.Context, db databaseActor, username string, roles []string) error {
 	for _, role := range roles {
 		statement := fmt.Sprintf(`ALTER ROLE %s ADD MEMBER [%s]`, role, username)
 		if _, err := db.ExecContext(ctx, statement); err != nil {
@@ -155,7 +182,7 @@ func addRoles(ctx context.Context, db *sql.DB, username string, roles []string) 
 	return nil
 }
 
-func grantExec(ctx context.Context, db *sql.DB, username string) error {
+func grantExec(ctx context.Context, db databaseActor, username string) error {
 	statement := fmt.Sprintf(`GRANT EXEC TO [%s]`, username)
 	if _, err := db.ExecContext(ctx, statement); err != nil {
 		return fmt.Errorf("error granting exec to user %q: %w", username, err)
