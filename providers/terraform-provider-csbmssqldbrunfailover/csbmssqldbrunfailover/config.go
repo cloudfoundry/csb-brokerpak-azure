@@ -7,9 +7,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
+const (
+	maxLengthClientSecret = 1024
+)
+
 var (
-	identifierRegexp   = regexp.MustCompile(`^[\w_.-]{1,64}$`)
-	clientSecretRegexp = regexp.MustCompile(`^[\w_.-]{1,96}$`)
+	identifierRegexp = regexp.MustCompile(`^[\w_.-]{1,64}$`)
 )
 
 // getIdentifier gets a string configuration value and validates that it's
@@ -26,8 +29,17 @@ func getIdentifier(d *schema.ResourceData, key string) (string, diag.Diagnostics
 
 func getClientSecret(d *schema.ResourceData) (string, diag.Diagnostics) {
 	s := d.Get(azureClientSecretKey).(string)
-	if !clientSecretRegexp.MatchString(s) {
-		return "", diag.Errorf("invalid value %q for identifier %q, validation expression is: %s", s, azureClientSecretKey, clientSecretRegexp.String())
+
+	if s == "" {
+		return "", diag.Errorf("empty client secret value for %q", azureClientSecretKey)
+	}
+
+	if len(s) > maxLengthClientSecret {
+		return "", diag.Errorf(
+			"invalid client secret value for %q, exceeds the maximum number of bytes allowed %d",
+			azureClientSecretKey,
+			maxLengthClientSecret,
+		)
 	}
 
 	return s, nil
