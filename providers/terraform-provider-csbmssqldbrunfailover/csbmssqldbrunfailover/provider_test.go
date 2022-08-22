@@ -2,7 +2,6 @@ package csbmssqldbrunfailover_test
 
 import (
 	"regexp"
-	"strings"
 
 	"csbbrokerpakazure/providers/terraform-provider-csbmssqldbrunfailover/csbmssqldbrunfailover"
 
@@ -69,54 +68,48 @@ var _ = Describe("Provider Configuration", func() {
 		},
 		Entry(
 			"tenant id",
-			func() { azureTenantID = "not valid" },
-			`invalid value "not valid" for identifier "azure_tenant_id"`,
+			func() { azureTenantID = "" },
+			`empty value for identifier "azure_tenant_id"`,
 		),
 		Entry(
 			"client id",
 			func() { azureClientID = "" },
-			`invalid value "" for identifier "azure_client_id"`,
+			`empty value for identifier "azure_client_id"`,
 		),
 		Entry(
 			"client secret empty",
 			func() { azureClientSecret = "" },
-			`empty client secret value for "azure_client_secret"`,
-		),
-		Entry(
-
-			"client secret too long",
-			func() { azureClientSecret = strings.Repeat("x", 1025) },
-			`invalid client secret value for "azure_client_secret", exceeds the maximum number of bytes allowed 1024`,
+			`empty value for identifier "azure_client_secret"`,
 		),
 		Entry(
 			"subscription id",
-			func() { azureSubscriptionID = "&&" },
-			`invalid value "&&" for identifier "azure_subscription_id"`,
+			func() { azureSubscriptionID = "" },
+			`empty value for identifier "azure_subscription_id"`,
 		),
 		Entry(
 			"resource group",
-			func() { resourceGroup = "not valid" },
-			`invalid value "not valid" for identifier "resource_group"`,
+			func() { resourceGroup = "" },
+			`empty value for identifier "resource_group"`,
 		),
 		Entry(
 			"partner server resource group",
-			func() { partnerServerResourceGroup = "not valid" },
-			`invalid value "not valid" for identifier "partner_server_resource_group"`,
+			func() { partnerServerResourceGroup = "" },
+			`empty value for identifier "partner_server_resource_group"`,
 		),
 		Entry(
 			"server name",
-			func() { serverName = "&&" },
-			`invalid value "&&" for identifier "server_name"`,
+			func() { serverName = "" },
+			`empty value for identifier "server_name"`,
 		),
 		Entry(
 			"partner server name",
-			func() { partnerServerName = "&&" },
-			`invalid value "&&" for identifier "partner_server_name"`,
+			func() { partnerServerName = "" },
+			`empty value for identifier "partner_server_name"`,
 		),
 		Entry(
 			"failover group",
-			func() { failoverGroup = "&&" },
-			`invalid value "&&" for identifier "failover_group"`,
+			func() { failoverGroup = "" },
+			`empty value for identifier "failover_group"`,
 		),
 	)
 })

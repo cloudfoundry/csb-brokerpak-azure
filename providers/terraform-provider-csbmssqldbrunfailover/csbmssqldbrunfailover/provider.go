@@ -64,7 +64,7 @@ func configure(_ context.Context, d *schema.ResourceData) (any, diag.Diagnostics
 			return
 		},
 		func() (diags diag.Diagnostics) {
-			azureClientSecret, diags = getClientSecret(d)
+			azureClientSecret, diags = getIdentifier(d, azureClientSecretKey)
 			return
 		},
 		func() (diags diag.Diagnostics) {
