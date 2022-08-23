@@ -31,6 +31,8 @@ func Provider() *schema.Provider {
 			azureClientSecretKey: {
 				Type:     schema.TypeString,
 				Required: true,
+				// Set the Sensitive flag so output is hidden in the TF UI
+				Sensitive: true,
 			},
 			azureSubscriptionIDKey: {
 				Type:     schema.TypeString,
@@ -62,7 +64,7 @@ func configure(_ context.Context, d *schema.ResourceData) (any, diag.Diagnostics
 			return
 		},
 		func() (diags diag.Diagnostics) {
-			azureClientSecret, diags = getClientSecret(d)
+			azureClientSecret, diags = getIdentifier(d, azureClientSecretKey)
 			return
 		},
 		func() (diags diag.Diagnostics) {

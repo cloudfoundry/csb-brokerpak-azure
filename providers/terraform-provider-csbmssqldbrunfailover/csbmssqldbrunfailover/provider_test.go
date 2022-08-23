@@ -1,7 +1,6 @@
 package csbmssqldbrunfailover_test
 
 import (
-	"fmt"
 	"regexp"
 
 	"csbbrokerpakazure/providers/terraform-provider-csbmssqldbrunfailover/csbmssqldbrunfailover"
@@ -43,21 +42,7 @@ var _ = Describe("Provider Configuration", func() {
 		func(cb func(), expectError string) {
 			cb()
 
-			hcl := fmt.Sprintf(`
-				provider "csbmssqldbrunfailover" {
-				  azure_tenant_id       = "%s"
-				  azure_client_id       = "%s"
-				  azure_client_secret   = "%s"
-				  azure_subscription_id = "%s"
-				}
-				
-				resource "csbmssqldbrunfailover_failover" "failover" {
-				  resource_group                = "%s"
-				  partner_server_resource_group = "%s"
-				  server_name                   = "%s"
-				  partner_server_name           = "%s"
-				  failover_group                = "%s"
-				}`,
+			hcl := generateHCLContent(
 				azureTenantID,
 				azureClientID,
 				azureClientSecret,
@@ -81,14 +66,50 @@ var _ = Describe("Provider Configuration", func() {
 				}},
 			})
 		},
-		Entry("tenant id", func() { azureTenantID = "not valid" }, `invalid value "not valid" for identifier "azure_tenant_id"`),
-		Entry("client id", func() { azureClientID = "" }, `invalid value "" for identifier "azure_client_id"`),
-		Entry("client secret", func() { azureClientSecret = "invalid value" }, `invalid value "invalid value" for identifier "azure_client_secret"`),
-		Entry("subscription id", func() { azureSubscriptionID = "&&" }, `invalid value "&&" for identifier "azure_subscription_id"`),
-		Entry("resource group", func() { resourceGroup = "not valid" }, `invalid value "not valid" for identifier "resource_group"`),
-		Entry("partner server resource group", func() { partnerServerResourceGroup = "not valid" }, `invalid value "not valid" for identifier "partner_server_resource_group"`),
-		Entry("server name", func() { serverName = "&&" }, `invalid value "&&" for identifier "server_name"`),
-		Entry("partner server name", func() { partnerServerName = "&&" }, `invalid value "&&" for identifier "partner_server_name"`),
-		Entry("failover group", func() { failoverGroup = "&&" }, `invalid value "&&" for identifier "failover_group"`),
+		Entry(
+			"tenant id",
+			func() { azureTenantID = "" },
+			`empty value for identifier "azure_tenant_id"`,
+		),
+		Entry(
+			"client id",
+			func() { azureClientID = "" },
+			`empty value for identifier "azure_client_id"`,
+		),
+		Entry(
+			"client secret empty",
+			func() { azureClientSecret = "" },
+			`empty value for identifier "azure_client_secret"`,
+		),
+		Entry(
+			"subscription id",
+			func() { azureSubscriptionID = "" },
+			`empty value for identifier "azure_subscription_id"`,
+		),
+		Entry(
+			"resource group",
+			func() { resourceGroup = "" },
+			`empty value for identifier "resource_group"`,
+		),
+		Entry(
+			"partner server resource group",
+			func() { partnerServerResourceGroup = "" },
+			`empty value for identifier "partner_server_resource_group"`,
+		),
+		Entry(
+			"server name",
+			func() { serverName = "" },
+			`empty value for identifier "server_name"`,
+		),
+		Entry(
+			"partner server name",
+			func() { partnerServerName = "" },
+			`empty value for identifier "partner_server_name"`,
+		),
+		Entry(
+			"failover group",
+			func() { failoverGroup = "" },
+			`empty value for identifier "failover_group"`,
+		),
 	)
 })
