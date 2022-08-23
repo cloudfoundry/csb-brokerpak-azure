@@ -3,3 +3,4 @@ providers/terraform-provider-csbsqlserver/cloudfoundry.org
 providers/terraform-provider-csbmssqldbrunfailover/cloudfoundry.org
 cloud-service-broker
 .idea
+csbmssqldbrunfailover.test

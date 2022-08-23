@@ -64,21 +64,7 @@ var _ = Describe("resource_run_failover resource", Ordered, Label("acceptance"),
 	})
 
 	It("should failover to the secondary database", func() {
-		hcl := fmt.Sprintf(`
-				provider "csbmssqldbrunfailover" {
-				  azure_tenant_id       = "%s"
-				  azure_client_id       = "%s"
-				  azure_client_secret   = "%s"
-				  azure_subscription_id = "%s"
-				}
-				
-				resource "csbmssqldbrunfailover_failover" "failover" {
-				  resource_group                = "%s"
-				  partner_server_resource_group = "%s"
-				  server_name                   = "%s"
-				  partner_server_name           = "%s"
-				  failover_group                = "%s"
-				}`,
+		hcl := generateHCLContent(
 			azureTenantID,
 			azureClientID,
 			azureClientSecret,
