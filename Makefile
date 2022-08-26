@@ -91,7 +91,8 @@ $(IAAS)-services-*.brokerpak: *.yml terraform/*/*.tf ./providers/terraform-provi
 	$(RUN_CSB) pak build
 
 .PHONY: run
-run: build arm-subscription-id arm-tenant-id arm-client-id arm-client-secret ## start broker with this brokerpak
+run: arm-subscription-id arm-tenant-id arm-client-id arm-client-secret ## start broker with this brokerpak
+	$(RUN_CSB) pak build --target current
 	$(RUN_CSB) serve
 
 .PHONY: catalog
