@@ -16,7 +16,7 @@ func newManifest(opts ...manifestOption) string {
 		Applications: []applicationModel{
 			{
 				Command:     "./cloud-service-broker serve",
-				Memory:      "500MB",
+				Memory:      "750MB",
 				Disk:        "2G",
 				Buildpacks:  []string{"binary_buildpack"},
 				RandomRoute: true,
