@@ -17,7 +17,7 @@ name: csb-azure-mongodb
 id: e5d2898e-534a-11ea-a4e8-00155da9789e
 description: The Cosmos DB service implements wire protocols for MongoDB.  Azure Cosmos DB is Microsoft's globally distributed, multi-model database service for mission-critical application
 display_name: Azure Cosmos DB's API for MongoDB
-image_url: https://azurecomcdn.azureedge.net/cvt-d09489c6661f16b0396f43f6be09db6e0a95b35e61aedbd2c0f30217ac43408c/images/page/services/cosmosdb/dev-03-mongodb.svg
+image_url: file://service-images/csb.png
 documentation_url: https://docs.microsoft.com/en-us/azure/cosmos-db/mongodb-introduction
 support_url: https://docs.microsoft.com/en-us/azure/cosmos-db/faq
 tags: [azure, mongodb, preview, cosmosdb-mongo, cosmosdb-mongodb]

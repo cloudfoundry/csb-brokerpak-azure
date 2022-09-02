@@ -17,7 +17,7 @@ name: csb-azure-mssql-fog-run-failover
 id: 50ef4ced-e7ac-48dc-8bfc-c86bfeafe964
 description: Fails primary to secondary on existing Azure SQL Failover Group
 display_name: Runs failover from primary to secondary on existing AZure SQL Failover group
-image_url: https://msdnshared.blob.core.windows.net/media/2017/03/azuresqlsquaretransparent1.png
+image_url: file://service-images/csb.png
 documentation_url: https://docs.microsoft.com/en-us/azure/sql-database/sql-database-auto-failover-group/
 support_url: https://docs.microsoft.com/en-us/azure/sql-database/sql-database-auto-failover-group/
 tags: [azure, dr, failover, preview]
