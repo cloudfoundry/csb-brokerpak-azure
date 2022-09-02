@@ -17,7 +17,7 @@ name: csb-azure-postgresql
 id: ef89bc54-299a-4384-9dd6-4ea0cca11700
 description: Azure Database for PostgreSQL
 display_name: Azure Database for PostgreSQL
-image_url: https://d1.awsstatic.com/rdsImages/postgresql_logo.6de4615badd99412268bc6aa8fc958a0f403dd41.png
+image_url: file://service-images/csb.png
 documentation_url: https://azure.microsoft.com/en-us/services/postgresql/
 support_url: https://azure.microsoft.com/en-us/services/postgresql/
 tags: [azure, postgresql, postgres, preview]

@@ -17,7 +17,7 @@ name: csb-azure-mysql
 id: cac4a46b-c4ec-49df-9b11-06457a29d31e
 description: Azure Database for MySQL servers
 display_name: Azure Database for MySQL servers
-image_url: https://pbs.twimg.com/profile_images/930941244724854784/noZmA1hr_400x400.jpg
+image_url: file://service-images/csb.png
 documentation_url: https://docs.microsoft.com/en-us/azure/mysql/
 support_url: https://docs.microsoft.com/en-us/azure/mysql/
 tags: [azure, mysql, preview]

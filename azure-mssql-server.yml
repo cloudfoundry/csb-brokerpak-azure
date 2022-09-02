@@ -17,7 +17,7 @@ name: csb-azure-mssql-server
 id: a0ab0f36-f8e1-4045-8ddb-1918d2ceafe4
 description: Azure SQL Server (no database attached)
 display_name: Azure SQL Server
-image_url: https://msdnshared.blob.core.windows.net/media/2017/03/azuresqlsquaretransparent1.png
+image_url: file://service-images/csb.png
 documentation_url: https://docs.microsoft.com/en-us/azure/sql-database/
 support_url: https://docs.microsoft.com/en-us/azure/sql-database/
 tags: [azure, preview]

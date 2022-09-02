@@ -17,7 +17,7 @@ name: csb-azure-mssql-db-failover-group
 id: d7ba0e8e-4480-4543-a504-b57e1dd1f1ad
 description: Manages auto failover group db's on existing Azure SQL server pairs
 display_name: Azure SQL Failover Group on Existing Server Pairs
-image_url: https://msdnshared.blob.core.windows.net/media/2017/03/azuresqlsquaretransparent1.png
+image_url: file://service-images/csb.png
 documentation_url: https://docs.microsoft.com/en-us/azure/sql-database/sql-database-auto-failover-group/
 support_url: https://docs.microsoft.com/en-us/azure/sql-database/sql-database-auto-failover-group/
 tags: [azure, mssql, sqlserver, dr, failover, preview]

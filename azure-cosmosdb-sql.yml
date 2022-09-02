@@ -17,7 +17,7 @@ name: csb-azure-cosmosdb-sql
 id: 685e151f-3ad8-414f-ab5b-54abbb3dee02
 description: Azure CosmosDB Account - SQL API
 display_name: Azure CosmosDB Account - SQL API
-image_url: https://azurecomcdn.azureedge.net/cvt-e38d7e7665389e39a7df3f96fc03f8b8f42655e6546ecadbb21196dd1c82bc95/images/page/services/cosmosdb/dev-01-sql-api.svg
+image_url: file://service-images/csb.png
 documentation_url: https://docs.microsoft.com/en-us/azure/cosmos-db/
 support_url: https://docs.microsoft.com/en-us/azure/cosmos-db/faq
 tags: [azure, cosmos, cosmosdb, cosmos-sql, cosmosdb-sql, preview]
