@@ -34,6 +34,7 @@ var _ = BeforeSuite(func() {
 		testframework.PathToBrokerPack(),
 		mockTerraform,
 		GinkgoWriter,
+		"service-images",
 	)
 	Expect(err).NotTo(HaveOccurred())
 	Expect(broker.Start(GinkgoWriter, []string{
