@@ -46,8 +46,8 @@ terraform_binaries:
   version: 2.99.0
   source: https://github.com/terraform-providers/terraform-provider-azurerm/archive/v2.99.0.zip
 - name: terraform-provider-random
-  version: 3.4.2
-  source: https://github.com/terraform-providers/terraform-provider-random/archive/v3.4.2.zip
+  version: 3.4.3
+  source: https://github.com/terraform-providers/terraform-provider-random/archive/v3.4.3.zip
 - name: terraform-provider-mysql
   version: 1.9.0
   source: https://github.com/terraform-providers/terraform-provider-mysql/archive/v1.9.0.zip
