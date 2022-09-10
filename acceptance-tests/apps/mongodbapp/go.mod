@@ -6,7 +6,7 @@ require (
 	github.com/cloudfoundry-community/go-cfenv v1.18.0
 	github.com/gorilla/mux v1.8.0
 	github.com/mitchellh/mapstructure v1.5.0
-	go.mongodb.org/mongo-driver v1.10.1
+	go.mongodb.org/mongo-driver v1.10.2
 )
 
 require (
