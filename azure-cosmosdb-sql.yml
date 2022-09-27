@@ -184,15 +184,13 @@ examples:
   plan_id: ca38881c-2d6b-4db4-988c-d8e49f3293da
   provision_params: {}
   bind_params: {}
-# TODO: Uncomment when https://www.pivotaltracker.com/story/show/178910443 or
-# https://www.pivotaltracker.com/story/show/178945167 is done
-#- name: cosmosdb-sql-medium
-#  description: Medium cosmosdb
-#  plan_id: f666cd68-cbba-4c58-b532-bfc0cb533011
-#  provision_params: {}
-#  bind_params: {}
-#- name: cosmosdb-sql-large
-#  description: Large cosmosdb
-#  plan_id: 2d5ee55d-1315-40ca-a9e9-08f4f76e880f
-#  provision_params: {}
-#  bind_params: {}
+- name: cosmosdb-sql-medium
+  description: Medium cosmosdb
+  plan_id: f666cd68-cbba-4c58-b532-bfc0cb533011
+  provision_params: {}
+  bind_params: {}
+- name: cosmosdb-sql-large
+  description: Large cosmosdb
+  plan_id: 2d5ee55d-1315-40ca-a9e9-08f4f76e880f
+  provision_params: {}
+  bind_params: {}
