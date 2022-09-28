@@ -203,24 +203,22 @@ bind:
   template: ''
   outputs: []
 examples:
-# TODO: Uncomment when https://www.pivotaltracker.com/story/show/178910443 or
-# https://www.pivotaltracker.com/story/show/178945167 is done
-#- name: spring-music-mongo-db
-#  description: Create a small cosmos db with Mongo API for the spring music sample app
-#  plan_id: 4ba45322-534c-11ea-b346-00155da9789e
-#  provision_params: {
-#    db_name: 'musicdb',
-#    collection_name: 'album',
-#    shard_key: '_id'
-#  }
-#  bind_params: {}
-#- name: spring-music-mongo-db-alternate-rg
-#  description: Create a small cosmos db with Mongo API for the spring music sample app
-#  plan_id: 4ba45322-534c-11ea-b346-00155da9789e
-#  provision_params: {
-#    db_name: 'musicdb',
-#    collection_name: 'album',
-#    shard_key: '_id',
-#    location: 'westus2'
-#  }
-#  bind_params: {}
+- name: spring-music-mongo-db
+  description: Create a small cosmos db with Mongo API for the spring music sample app
+  plan_id: 4ba45322-534c-11ea-b346-00155da9789e
+  provision_params: {
+    db_name: 'musicdb',
+    collection_name: 'album',
+    shard_key: '_id'
+  }
+  bind_params: {}
+- name: spring-music-mongo-db-alternate-rg
+  description: Create a small cosmos db with Mongo API for the spring music sample app
+  plan_id: 4ba45322-534c-11ea-b346-00155da9789e
+  provision_params: {
+    db_name: 'musicdb',
+    collection_name: 'album',
+    shard_key: '_id',
+    location: 'westus2'
+  }
+  bind_params: {}
