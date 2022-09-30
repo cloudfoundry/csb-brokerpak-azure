@@ -17,7 +17,7 @@ func WithPreBuild(source string) Option {
 	name := path.Base(source)
 	command := exec.Command("go", "build", "-o", fmt.Sprintf("%s/%s", dir, name))
 	command.Dir = source
-	command.Env = append(os.Environ(), "GOOS=linux", "GOARCH=amd64")
+	command.Env = append(os.Environ(), "CGO_ENABLED=0", "GOOS=linux", "GOARCH=amd64")
 
 	session, err := gexec.Start(command, ginkgo.GinkgoWriter, ginkgo.GinkgoWriter)
 	Expect(err).NotTo(HaveOccurred())

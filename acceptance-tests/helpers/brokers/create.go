@@ -4,6 +4,7 @@ import (
 	"csbbrokerpakazure/acceptance-tests/helpers/apps"
 	"csbbrokerpakazure/acceptance-tests/helpers/cf"
 	"csbbrokerpakazure/acceptance-tests/helpers/random"
+	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -63,8 +64,18 @@ func WithSourceDir(dir string) Option {
 		b.dir = dir
 	}
 }
+func WithConfig(config map[string]interface{}, dir string) {
 
+	bytes, err := json.Marshal(config)
+	if err != nil {
+		panic(err)
+	}
+
+	os.WriteFile(fmt.Sprintf("%s/config.yml", dir), bytes, 0666)
+
+}
 func WithEnv(env ...apps.EnvVar) Option {
+
 	return func(b *Broker) {
 		b.envExtras = append(b.envExtras, env...)
 	}
