@@ -13,7 +13,7 @@ require (
 	github.com/denisenkom/go-mssqldb v0.12.2
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.23.0
 	github.com/onsi/ginkgo/v2 v2.2.0
-	github.com/onsi/gomega v1.20.2
+	github.com/onsi/gomega v1.21.1
 	github.com/pborman/uuid v1.2.1
 	golang.org/x/tools v0.1.12
 	honnef.co/go/tools v0.4.0-0.dev
