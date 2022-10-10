@@ -269,7 +269,7 @@ var _ = Describe("UpgradeMssqlDBFailoverGroupTest", Label("mssql-db-failover-gro
 
 func resourceGroupConfig() resourceConfig {
 	return resourceConfig{
-		Name:     random.Name(random.WithPrefix("rg")),
+		Name:     random.Name(random.WithPrefix(metadata.ResourceGroup, "rg")),
 		Location: "westus",
 	}
 }
