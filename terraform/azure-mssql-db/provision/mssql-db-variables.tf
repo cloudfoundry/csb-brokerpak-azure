@@ -1,6 +1,9 @@
 variable "db_name" { type = string }
 variable "server" { type = string }
-variable "server_credentials" { type = map(any) }
+variable "server_credentials" { 
+  type = map(any) 
+  sensitive = true
+}
 variable "labels" { type = map(any) }
 variable "sku_name" { type = string }
 variable "cores" { type = number }

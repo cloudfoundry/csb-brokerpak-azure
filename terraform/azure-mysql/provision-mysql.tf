@@ -14,10 +14,22 @@
 
 variable "instance_name" { type = string }
 variable "resource_group" { type = string }
-variable "azure_tenant_id" { type = string }
-variable "azure_subscription_id" { type = string }
-variable "azure_client_id" { type = string }
-variable "azure_client_secret" { type = string }
+variable "azure_tenant_id" {
+  type = string
+  sensitive = true
+}
+variable "azure_subscription_id" {
+  type = string
+  sensitive = true
+}
+variable "azure_client_id" {
+  type = string
+  sensitive = true
+}
+variable "azure_client_secret" {
+  type = string
+  sensitive = true
+}
 variable "db_name" { type = string }
 variable "mysql_version" { type = string }
 variable "location" { type = string }
@@ -223,7 +235,10 @@ resource "azurerm_private_endpoint" "private_endpoint" {
 output "name" { value = azurerm_mysql_database.instance-db.name }
 output "hostname" { value = azurerm_mysql_server.instance.fqdn }
 output "port" { value = 3306 }
-output "username" { value = format("%s@%s", azurerm_mysql_server.instance.administrator_login, azurerm_mysql_server.instance.name) }
+output "username" { 
+  sensitive = true
+  value = format("%s@%s", azurerm_mysql_server.instance.administrator_login, azurerm_mysql_server.instance.name) 
+}
 output "password" {
   value     = azurerm_mysql_server.instance.administrator_login_password
   sensitive = true
