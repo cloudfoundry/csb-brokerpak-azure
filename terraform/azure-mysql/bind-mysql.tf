@@ -16,10 +16,7 @@ variable "mysql_db_name" { type = string }
 variable "mysql_hostname" { type = string }
 variable "mysql_port" { type = number }
 variable "admin_username" { type = string }
-variable "admin_password" {
-  type = string
-  sensitive = true
-}
+variable "admin_password" { type = string }
 variable "use_tls" { type = bool }
 
 provider "mysql" {
@@ -59,10 +56,7 @@ locals {
   username = format("%s@%s", random_string.username.result, var.mysql_hostname)
 }
 output "username" { value = local.username }
-output "password" {
-  value = random_password.password.result
-  sensitive = true
-}
+output "password" { value = random_password.password.result }
 output "uri" {
   value = format("%s://%s:%s@%s:%d/%s",
     "mysql",
@@ -71,7 +65,6 @@ output "uri" {
     var.mysql_hostname,
     var.mysql_port,
   var.mysql_db_name)
-  sensitive = true
 }
 output "jdbcUrl" {
   value = format("jdbc:%s://%s:%s/%s?user=%s\u0026password=%s\u0026verifyServerCertificate=true\u0026useSSL=%v\u0026requireSSL=%v\u0026serverTimezone=GMT",
@@ -83,6 +76,4 @@ output "jdbcUrl" {
     random_password.password.result,
     var.use_tls,
   var.use_tls)
-  sensitive = true
-}
-
+}  
