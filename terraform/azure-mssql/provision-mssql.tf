@@ -17,19 +17,19 @@ variable "resource_group" { type = string }
 variable "db_name" { type = string }
 variable "location" { type = string }
 variable "azure_tenant_id" {
-  type = string
+  type      = string
   sensitive = true
 }
 variable "azure_subscription_id" {
-  type = string
+  type      = string
   sensitive = true
 }
 variable "azure_client_id" {
-  type = string
+  type      = string
   sensitive = true
 }
 variable "azure_client_secret" {
-  type = string
+  type      = string
   sensitive = true
 }
 variable "labels" { type = map(any) }

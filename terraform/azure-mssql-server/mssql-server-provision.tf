@@ -14,25 +14,25 @@
 
 variable "instance_name" { type = string }
 variable "azure_tenant_id" {
-  type = string
+  type      = string
   sensitive = true
 }
 variable "azure_subscription_id" {
-  type = string
+  type      = string
   sensitive = true
 }
 variable "azure_client_id" {
-  type = string
+  type      = string
   sensitive = true
 }
 variable "azure_client_secret" {
-  type = string
+  type      = string
   sensitive = true
 }
 variable "resource_group" { type = string }
 variable "admin_username" { type = string }
 variable "admin_password" {
-  type = string
+  type      = string
   sensitive = true
 }
 variable "location" { type = string }
@@ -142,6 +142,6 @@ output "password" {
 }
 output "databaseLogin" { value = local.admin_username }
 output "databaseLoginPassword" {
-  value = local.admin_password
+  value     = local.admin_password
   sensitive = true
 }
