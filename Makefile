@@ -203,24 +203,18 @@ local-csb: ## point to a local CSB repo
 ###### lint ###################################################################
 
 .PHONY: lint
-lint: checkgoformat checkgoimports checktfformat vet staticcheck ## checks format, imports and vet
+lint: checkformat checkimports format vet staticcheck ## checks format, imports and vet
 
-checktfformat: ## checks that Terraform HCL is formatted correctly
-	@@if [ "$$(terraform fmt -recursive --check)" ]; then \
-		echo "terraform fmt check failed: run 'make format'"; \
-		exit 1; \
-	fi
-
-checkgoformat: ## checks that the Go code is formatted correctly
-	@@if [ -n "$$(${GOFMT} -s -e -l -d .)" ]; then \
+checkformat: ## checks that the code is formatted correctly
+	@@if [ -n "$$(${GOFMT} -s -e -l -d .)" ]; then       \
 		echo "gofmt check failed: run 'make format'"; \
-		exit 1; \
+		exit 1;                                       \
 	fi
 
-checkgoimports: ## checks that Go imports are formatted correctly
+checkimports: ## checks that imports are formatted correctly
 	@@if [ -n "$$(${GO} run golang.org/x/tools/cmd/goimports -l -d .)" ]; then \
-        echo "goimports check failed: run 'make format'"; \
-		exit 1; \
+		echo "goimports check failed: run 'make format'";                      \
+		exit 1;                                                                \
 	fi
 
 vet: ## runs go vet
@@ -233,7 +227,6 @@ staticcheck: ## runs staticcheck
 format: ## format the source
 	${GOFMT} -s -e -l -w .
 	${GO} run golang.org/x/tools/cmd/goimports -l -w .
-	terraform fmt --recursive
 
 ./providers/terraform-provider-csbsqlserver/cloudfoundry.org/cloud-service-broker/csbsqlserver:
 	cd providers/terraform-provider-csbsqlserver; $(MAKE) build

@@ -17,7 +17,7 @@ variable "mysql_hostname" { type = string }
 variable "mysql_port" { type = number }
 variable "admin_username" { type = string }
 variable "admin_password" {
-  type      = string
+  type = string
   sensitive = true
 }
 variable "use_tls" { type = bool }
@@ -60,7 +60,7 @@ locals {
 }
 output "username" { value = local.username }
 output "password" {
-  value     = random_password.password.result
+  value = random_password.password.result
   sensitive = true
 }
 output "uri" {
