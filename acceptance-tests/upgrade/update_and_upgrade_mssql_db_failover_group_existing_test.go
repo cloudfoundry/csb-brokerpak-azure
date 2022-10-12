@@ -10,7 +10,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("Upgrade and Update csb-azure-mssql-db-failover-group 'existing' plan", Label("mssql-failover-group-existing"), func() {
+var _ = Describe("Upgrade and Update csb-azure-mssql-db-failover-group 'existing' plan", Label("mssql-db-failover-group-existing"), func() {
 	When("upgrading broker version", Label("modern"), func() {
 		It("should continue to work", func() {
 			By("pushing latest released broker version")
