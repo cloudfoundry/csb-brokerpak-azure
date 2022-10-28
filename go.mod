@@ -9,7 +9,7 @@ require (
 	github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/resources/armresources v1.0.0
 	github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/sql/armsql v1.0.0
 	github.com/Pallinder/go-randomdata v1.2.0
-	github.com/cloudfoundry/cloud-service-broker v0.12.0
+	github.com/cloudfoundry/cloud-service-broker v0.12.1
 	github.com/denisenkom/go-mssqldb v0.12.3
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.24.0
 	github.com/onsi/ginkgo/v2 v2.3.1
@@ -77,7 +77,7 @@ require (
 	github.com/hashicorp/terraform-svchost v0.0.0-20200729002733-f050f53b9734 // indirect
 	github.com/hashicorp/yamux v0.0.0-20181012175058-2f1d1f20f75d // indirect
 	github.com/heptiolabs/healthcheck v0.0.0-20180807145615-6ff867650f40 // indirect
-	github.com/inconshreveable/mousetrap v1.0.0 // indirect
+	github.com/inconshreveable/mousetrap v1.0.1 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/jmespath/go-jmespath v0.0.0-20180206201540-c2b33e8439af // indirect
@@ -86,7 +86,7 @@ require (
 	github.com/magiconair/properties v1.8.6 // indirect
 	github.com/mattn/go-colorable v0.1.12 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
-	github.com/mattn/go-sqlite3 v1.14.12 // indirect
+	github.com/mattn/go-sqlite3 v1.14.15 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.1 // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
@@ -97,7 +97,7 @@ require (
 	github.com/oklog/run v1.0.0 // indirect
 	github.com/otiai10/copy v1.7.0 // indirect
 	github.com/pelletier/go-toml v1.9.5 // indirect
-	github.com/pelletier/go-toml/v2 v2.0.1 // indirect
+	github.com/pelletier/go-toml/v2 v2.0.5 // indirect
 	github.com/pivotal-cf/brokerapi/v8 v8.2.2 // indirect
 	github.com/pkg/browser v0.0.0-20210115035449-ce105d075bb4 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
@@ -108,11 +108,11 @@ require (
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/spf13/afero v1.8.2 // indirect
 	github.com/spf13/cast v1.5.0 // indirect
-	github.com/spf13/cobra v1.5.0 // indirect
+	github.com/spf13/cobra v1.6.0 // indirect
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
-	github.com/spf13/viper v1.12.0 // indirect
-	github.com/subosito/gotenv v1.3.0 // indirect
+	github.com/spf13/viper v1.13.0 // indirect
+	github.com/subosito/gotenv v1.4.1 // indirect
 	github.com/ulikunitz/xz v0.5.8 // indirect
 	github.com/vmihailenco/msgpack v4.0.4+incompatible // indirect
 	github.com/vmihailenco/msgpack/v4 v4.3.12 // indirect
@@ -120,7 +120,7 @@ require (
 	github.com/xeipuuv/gojsonpointer v0.0.0-20180127040702-4e3ac2762d5f // indirect
 	github.com/xeipuuv/gojsonreference v0.0.0-20180127040603-bd5ef7bd5415 // indirect
 	github.com/xeipuuv/gojsonschema v1.2.0 // indirect
-	github.com/zclconf/go-cty v1.11.0 // indirect
+	github.com/zclconf/go-cty v1.11.1 // indirect
 	go.opencensus.io v0.23.0 // indirect
 	golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d // indirect
 	golang.org/x/exp/typeparams v0.0.0-20220218215828-6cf2b201936e // indirect
@@ -135,10 +135,10 @@ require (
 	google.golang.org/genproto v0.0.0-20220519153652-3a47de7e79bd // indirect
 	google.golang.org/grpc v1.48.0 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
-	gopkg.in/ini.v1 v1.66.4 // indirect
+	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1
-	gorm.io/driver/mysql v1.3.6 // indirect
-	gorm.io/driver/sqlite v1.3.6 // indirect
-	gorm.io/gorm v1.23.8 // indirect
+	gorm.io/driver/mysql v1.4.1 // indirect
+	gorm.io/driver/sqlite v1.4.3 // indirect
+	gorm.io/gorm v1.24.0 // indirect
 )
