@@ -30,7 +30,7 @@ plans:
   properties:
     sku_name: Basic
     family: C
-    capacity: 1    
+    capacity: 1
     tls_min_version: "1.2"
     firewall_rules: []
 - name: medium
@@ -41,7 +41,7 @@ plans:
     sku_name: Basic
     family: C
     capacity: 3
-    tls_min_version: "1.2"    
+    tls_min_version: "1.2"
     firewall_rules: []
 - name: large
   id: c3e34abc-a820-457c-b723-1c342ef42c50
@@ -52,7 +52,7 @@ plans:
     family: C
     capacity: 5
     firewall_rules: []
-    tls_min_version: "1.2"    
+    tls_min_version: "1.2"
 - name: ha-small
   id: d27a8e60-3724-49d1-b668-44b03d99b3b3
   description: 'A standard plan with 1GB cache with high availability and no failover.'
@@ -60,9 +60,9 @@ plans:
   properties:
     sku_name: Standard
     family: C
-    capacity: 1      
+    capacity: 1
     firewall_rules: []
-    tls_min_version: "1.2"    
+    tls_min_version: "1.2"
 - name: ha-medium
   id: 421b932a-b86f-48a3-97e4-64bb13d3ec13
   description: 'A standard plan with 6GB cache with high availability and no failover.'
@@ -72,7 +72,7 @@ plans:
     family: C
     capacity: 3
     firewall_rules: []
-    tls_min_version: "1.2"    
+    tls_min_version: "1.2"
 - name: ha-large
   id: e919b281-9661-465d-82cf-0a0a6e1f195a
   description: 'A standard plan with 26GB cache with high availability and no failover.'
@@ -80,9 +80,9 @@ plans:
   properties:
     sku_name: Standard
     family: C
-    capacity: 5          
+    capacity: 5
     firewall_rules: []
-    tls_min_version: "1.2" 
+    tls_min_version: "1.2"
 - name: ha-P1
   id: 2a63e092-ab5c-4804-abd6-2d951240f0f6
   description: "A High Availability plan with 1GB cache and no failover"
@@ -91,7 +91,7 @@ plans:
     sku_name: Premium
     family: P
     capacity: 1
-    tls_min_version: "1.2"    
+    tls_min_version: "1.2"
     firewall_rules: []
 provision:
   plan_inputs:
@@ -113,27 +113,22 @@ provision:
   - field_name: capacity
     required: false
     type: integer
-    details: The size of the Redis cache to deploy. 
-    default: 1
+    details: The size of the Redis cache to deploy.
     constraints:
       maximum: 6
       minimum: 0
   - field_name: tls_min_version
     type: string
     details: Minimum enforced TLS version. Possible values are 1.0, 1.1, 1.2
-    default: "1.2"
   - field_name: firewall_rules
     type: array
     details: Array of firewall rule start/end IP pairs (e.g. [["1.2.3.4", "2.3.4.5"], ["5.6.7.8", "6.7.8.9"]])
-    default: []
   - field_name: private_endpoint_subnet_id
     type: string
     details: The ID of the Subnet within which Private Endpoint for the Redis cache will be created.
-    default: ""
   - field_name: private_dns_zone_ids
     type: array
     details: Array of Private DNS Zone IDs to create private DNS zone groups for when using Private Endpoints
-    default: []
   user_inputs:
   - field_name: instance_name
     type: string
@@ -143,7 +138,7 @@ provision:
       maxLength: 98
       minLength: 6
       pattern: ^[a-z][a-z0-9-]+$
-    prohibit_update: true  
+    prohibit_update: true
   - field_name: resource_group
     details: Name for the resource group for this instance
     default: ''
@@ -154,8 +149,8 @@ provision:
     prohibit_update: true
   - field_name: subnet_id
     type: string
-    details: The ID of the Subnet within which the Redis Cache should be deployed, valid only for Premium SKU 
-    default: ""        
+    details: The ID of the Subnet within which the Redis Cache should be deployed, valid only for Premium SKU
+    default: ""
     prohibit_update: true
   - field_name: location
     type: string
@@ -163,30 +158,30 @@ provision:
     default: westus
     constraints:
       examples:
-        - westus2
-        - uksouth
+      - westus2
+      - uksouth
       pattern: ^[a-z][a-z0-9]+$
-    prohibit_update: true  
+    prohibit_update: true
   - field_name: azure_tenant_id
     type: string
     details: Azure Tenant to create resource in
-    default: ${config("azure.tenant_id")}      
+    default: ${config("azure.tenant_id")}
   - field_name: azure_subscription_id
     type: string
     details: Azure Subscription to create resource in
-    default: ${config("azure.subscription_id")}      
+    default: ${config("azure.subscription_id")}
   - field_name: azure_client_id
     type: string
-    details: Client ID of Azure principal 
-    default: ${config("azure.client_id")}      
+    details: Client ID of Azure principal
+    default: ${config("azure.client_id")}
   - field_name: azure_client_secret
     type: string
     details: Client secret for Azure principal
-    default: ${config("azure.client_secret")}   
+    default: ${config("azure.client_secret")}
   - field_name: skip_provider_registration
     type: boolean
     details: Skip automatic Azure provider registration, set to true if service principal being used does not have rights to register providers
-    default: false       
+    default: false
   - field_name: maxmemory_policy
     type: string
     details: Max memory eviction policy. Possible values are volatile-lru (default), allkeys-lru, volatile-random, allkeys-random, volatile-ttl, noeviction
@@ -209,7 +204,7 @@ provision:
   #   details: The port number of the exposed redis instance.
   - field_name: tls_port
     type: integer
-    details: The tls_port number of the exposed redis instance.  
+    details: The tls_port number of the exposed redis instance.
   - field_name: password
     type: string
     details: The password to authenticate to the redis instance.
@@ -228,7 +223,7 @@ examples:
 - name: redis-cache-medium
   description: Medium redis cache in centralus region
   plan_id: 6b272c43-2116-4483-9a99-de9262c0a7d6
-  provision_params: { "location": "centralus" }
+  provision_params: {"location": "centralus"}
   bind_params: {}
 - name: redis-cache-large
   description: Large redis cache
