@@ -33,7 +33,7 @@ plans:
   display_name: "Medium"
   properties:
     request_units: 1000
-    failover_locations: [ "westus", "eastus" ]
+    failover_locations: ["westus", "eastus"]
     enable_automatic_failover: true
 - name: large
   id: 72227eac-534c-11ea-b7ca-00155da9789e
@@ -41,7 +41,7 @@ plans:
   display_name: "Large"
   properties:
     request_units: 10000
-    failover_locations: [ "westus", "eastus" ]
+    failover_locations: ["westus", "eastus"]
     enable_multiple_write_locations: true
     enable_automatic_failover: true
 provision:
@@ -49,11 +49,9 @@ provision:
   - field_name: private_endpoint_subnet_id
     type: string
     details: The ID of the Subnet within which Private Endpoint for the CosmosDB account will be created.
-    default: ""
   - field_name: private_dns_zone_ids
     type: array
     details: Array of Private DNS Zone IDs to create private DNS zone groups for when using Private Endpoints
-    default: []
   user_inputs:
   - field_name: request_units
     required: true
@@ -68,7 +66,7 @@ provision:
     required: false
     type: array
     details: A list of location for the Cosmos DB account.  The first location is the default write location
-    default: [ "westus" ]
+    default: ["westus"]
   - field_name: instance_name
     type: string
     details: Name for your Cosmos DB with API for MongoDB instance
@@ -77,7 +75,7 @@ provision:
       maxLength: 98
       minLength: 6
       pattern: ^[a-z][a-z0-9-]+$
-    prohibit_update: true  
+    prohibit_update: true
   - field_name: account_name
     type: string
     details: Account name for your Cosmos DB with API for MongoDB instance
@@ -85,8 +83,8 @@ provision:
     constraints:
       maxLength: 44
       minLength: 6
-      pattern: ^[a-z][a-z0-9-]+$ 
-    prohibit_update: true  
+      pattern: ^[a-z][a-z0-9-]+$
+    prohibit_update: true
   - field_name: resource_group
     details: Name for the resource group for this instance
     default: ''
@@ -94,7 +92,7 @@ provision:
       maxLength: 64
       minLength: 0
       pattern: ^[a-z][a-z0-9-]+$|^$
-    prohibit_update: true  
+    prohibit_update: true
   - field_name: db_name
     type: string
     details: Name for your Cosmos DB database with API for Mongo DB
@@ -118,8 +116,8 @@ provision:
     default: westus
     constraints:
       examples:
-        - westus2
-        - uksouth
+      - westus2
+      - uksouth
       pattern: ^[a-z][a-z0-9]+$
     prohibit_update: true
   - field_name: ip_range_filter
@@ -143,7 +141,7 @@ provision:
     constraints:
       minimum: 5
       maximum: 86400
-  - field_name: max_staleness_prefix 
+  - field_name: max_staleness_prefix
     type: integer
     details: (Optional) When used with the Bounded Staleness consistency level, this value represents the number of stale requests tolerated. Accepted range for this value is 10 – 2147483647. Defaults to 100. Required when consistency_level is set to BoundedStaleness.
     default: 100
@@ -161,15 +159,15 @@ provision:
   - field_name: azure_tenant_id
     type: string
     details: Azure Tenant to create resource in
-    default: ${config("azure.tenant_id")}      
+    default: ${config("azure.tenant_id")}
   - field_name: azure_subscription_id
     type: string
     details: Azure Subscription to create resource in
-    default: ${config("azure.subscription_id")}      
+    default: ${config("azure.subscription_id")}
   - field_name: azure_client_id
     type: string
-    details: Client ID of Azure principal 
-    default: ${config("azure.client_id")}      
+    details: Client ID of Azure principal
+    default: ${config("azure.client_id")}
   - field_name: azure_client_secret
     type: string
     details: Client secret for Azure principal
@@ -177,7 +175,7 @@ provision:
   - field_name: skip_provider_registration
     type: boolean
     details: Skip automatic Azure provider registration, set to true if service principal being used does not have rights to register providers
-    default: false        
+    default: false
   - field_name: authorized_network
     type: string
     default: ""
@@ -185,7 +183,7 @@ provision:
   - field_name: public_network_access_enabled
     type: boolean
     default: true
-    details: Whether or not public network access is allowed for this CosmosDB account. 
+    details: Whether or not public network access is allowed for this CosmosDB account.
   computed_inputs:
   - name: labels
     default: ${json.marshal(request.default_labels)}
