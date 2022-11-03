@@ -43,7 +43,7 @@ plans:
     cores: 32
     max_storage_gb: 500
 provision:
-  plan_inputs:
+  plan_inputs: []
   user_inputs:
   - field_name: cores
     required: false
@@ -74,15 +74,15 @@ provision:
       maxLength: 63
       minLength: 6
       pattern: ^[a-z][a-z0-9-]+$
-    prohibit_update: true  
+    prohibit_update: true
   - field_name: resource_group
     details: Name for the resource group for this instance
     default: ''
     constraints:
       maxLength: 64
       minLength: 0
-      pattern: ^[a-z][a-z0-9-]+$|^$ 
-    prohibit_update: true    
+      pattern: ^[a-z][a-z0-9-]+$|^$
+    prohibit_update: true
   - field_name: db_name
     type: string
     details: Name for your database
@@ -98,22 +98,22 @@ provision:
       Manual: Manual
   - field_name: failover_grace_minutes
     type: number
-    details: For automatic mode - the grace period in minutes before failover with data loss is attempted 
-    default: 60      
+    details: For automatic mode - the grace period in minutes before failover with data loss is attempted
+    default: 60
   - field_name: authorized_network
     type: string
-    details: The subnet ID of the Azure VNET to which the instance is locked down to. If left unspecified, 
-    default: default        
+    details: The subnet ID of the Azure VNET to which the instance is locked down to. If left unspecified,
+    default: default
   - field_name: location
     type: string
     details: The location of the primary Azure SQL Server
     default: westus
     constraints:
       examples:
-        - westus2
-        - uksouth
+      - westus2
+      - uksouth
       pattern: ^[a-z][a-z0-9]+$
-    prohibit_update: true  
+    prohibit_update: true
   - field_name: failover_location
     type: string
     details: The location of the failover Azure SQL server
@@ -159,15 +159,15 @@ provision:
   - field_name: azure_tenant_id
     type: string
     details: Azure Tenant to create resource in
-    default: ${config("azure.tenant_id")}      
+    default: ${config("azure.tenant_id")}
   - field_name: azure_subscription_id
     type: string
     details: Azure Subscription to create resource in
-    default: ${config("azure.subscription_id")}      
+    default: ${config("azure.subscription_id")}
   - field_name: azure_client_id
     type: string
-    details: Client ID of Azure principal 
-    default: ${config("azure.client_id")}      
+    details: Client ID of Azure principal
+    default: ${config("azure.client_id")}
   - field_name: azure_client_secret
     type: string
     details: Client secret for Azure principal
@@ -175,12 +175,12 @@ provision:
   - field_name: skip_provider_registration
     type: boolean
     details: Skip automatic Azure provider registration, set to true if service principal being used does not have rights to register providers
-    default: false    
+    default: false
   - field_name: sku_name
     type: string
     details: Azure sku (typically, tier [GP_S,GP,BC,HS] + family [Gen4,Gen5] + cores, e.g. GP_S_Gen4_1, GP_Gen5_8, see https://docs.microsoft.com/en-us/azure/azure-sql/database/resource-limits-vcore-single-databases) Will be computed from cores if empty.
-    default: ""     
-  template_ref: terraform/azure-mssql-failover/provision-mssql-failover.tf 
+    default: ""
+  template_ref: terraform/azure-mssql-failover/provision-mssql-failover.tf
   computed_inputs:
   - name: labels
     default: ${json.marshal(request.default_labels)}
@@ -242,44 +242,44 @@ bind:
     details: The username to authenticate to the database instance.
   - field_name: password
     type: string
-    details: The password to authenticate to the database instance.  
+    details: The password to authenticate to the database instance.
   - field_name: uri
     type: string
     details: The uri to connect to the database instance and database.
   - field_name: jdbcUrl
     type: string
-    details: The jdbc url to connect to the database instance and database.    
+    details: The jdbc url to connect to the database instance and database.
   - field_name: jdbcUrlForAuditingEnabled
     type: string
-    details: The audit enabled JDBC URL to connect to the database server and database.    
+    details: The audit enabled JDBC URL to connect to the database server and database.
   - field_name: databaseLogin
     type: string
     details: The username to authenticate to the database server.
   - field_name: databaseLoginPassword
     type: string
-    details: The password to authenticate to the database server.    
+    details: The password to authenticate to the database server.
 examples:
 - name: failover-group-azuresql-db-small-configuration
-  description: Create a small Azure SQL Database failover group 
+  description: Create a small Azure SQL Database failover group
   plan_id: eb9856fa-b285-11eb-ae46-536679aeffe8
   provision_params: {}
   bind_params: {}
-  bind_can_fail: true  
+  bind_can_fail: true
 - name: failover-group-azuresql-db-medium-configuration-in-centralus-location
-  description: Create a medium Azure SQL Database failover group 
+  description: Create a medium Azure SQL Database failover group
   plan_id: c5e8ec57-ab5a-4bbf-ac6d-5075a97ed1a5
-  provision_params: { "location": "centralus" }
+  provision_params: {"location": "centralus"}
   bind_params: {}
-  bind_can_fail: true  
+  bind_can_fail: true
 - name: failover-group-azuresql-db-medium-configuration manual failover
   description: Create a medium Azure SQL Database failover group with manual failover
   plan_id: c5e8ec57-ab5a-4bbf-ac6d-5075a97ed1a5
-  provision_params: { "read_write_endpoint_failover_policy": "Manual" }
+  provision_params: {"read_write_endpoint_failover_policy": "Manual"}
   bind_params: {}
-  bind_can_fail: true  
+  bind_can_fail: true
 - name: failover-group-azuresql-db-small-serverless-configuration
   description: Create a small Serverless Azure SQL Database failover group
   plan_id: eb9856fa-b285-11eb-ae46-536679aeffe8
-  provision_params: { "sku_name":"GP_S_Gen5_1" }
+  provision_params: {"sku_name": "GP_S_Gen5_1"}
   bind_params: {}
   bind_can_fail: true  

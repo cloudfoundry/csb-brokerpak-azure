@@ -62,37 +62,37 @@ provision:
       maxLength: 64
       minLength: 0
       pattern: ^[a-z][a-z0-9-]+$|^$
-    prohibit_update: true  
+    prohibit_update: true
   - field_name: location
     type: string
     details: The region for the associated Azure Storage data object.
     default: westus
     constraints:
       examples:
-        - westus2
-        - uksouth
+      - westus2
+      - uksouth
       pattern: ^[a-z][a-z0-9]+$
-    prohibit_update: true  
+    prohibit_update: true
   - field_name: azure_tenant_id
     type: string
     details: Azure Tenant to create resource in
-    default: ${config("azure.tenant_id")}      
+    default: ${config("azure.tenant_id")}
   - field_name: azure_subscription_id
     type: string
     details: Azure Subscription to create resource in
-    default: ${config("azure.subscription_id")}      
+    default: ${config("azure.subscription_id")}
   - field_name: azure_client_id
     type: string
-    details: Client ID of Azure principal 
-    default: ${config("azure.client_id")}      
+    details: Client ID of Azure principal
+    default: ${config("azure.client_id")}
   - field_name: azure_client_secret
     type: string
     details: Client secret for Azure principal
-    default: ${config("azure.client_secret")}   
+    default: ${config("azure.client_secret")}
   - field_name: skip_provider_registration
     type: boolean
     details: Skip automatic Azure provider registration, set to true if service principal being used does not have rights to register providers
-    default: false       
+    default: false
   - field_name: authorized_networks
     type: array
     details: A list of resource ids for subnets of the Azure Vnet authorized

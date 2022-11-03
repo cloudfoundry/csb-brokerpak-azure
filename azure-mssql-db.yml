@@ -72,11 +72,11 @@ provision:
     parameter_name: var.labels
   - tf_variable: retention_days
     parameter_name: var.short_term_retention_days
-  import_parameters_to_delete: [ "azurerm_mssql_database.azure_sql_db.id", 
-                                 "azurerm_mssql_database.azure_sql_db.min_capacity",
-                                 "azurerm_mssql_database.azure_sql_db.max_size_gb",
-                                 "azurerm_mssql_database.azure_sql_db.long_term_retention_policy",
-                                 "azurerm_mssql_database.azure_sql_db.extended_auditing_policy"]
+  import_parameters_to_delete: ["azurerm_mssql_database.azure_sql_db.id",
+                                "azurerm_mssql_database.azure_sql_db.min_capacity",
+                                "azurerm_mssql_database.azure_sql_db.max_size_gb",
+                                "azurerm_mssql_database.azure_sql_db.long_term_retention_policy",
+                                "azurerm_mssql_database.azure_sql_db.extended_auditing_policy"]
   plan_inputs:
   - field_name: subsume
     type: boolean
@@ -93,7 +93,7 @@ provision:
   - field_name: max_storage_gb
     type: number
     default: 5
-    details: Maximum storage allocated to the database instance in GB      
+    details: Maximum storage allocated to the database instance in GB
     constraints:
       minimum: 1
   - field_name: db_name
@@ -110,15 +110,15 @@ provision:
   - field_name: azure_tenant_id
     type: string
     details: Azure Tenant to create resource in
-    default: ${config("azure.tenant_id")}      
+    default: ${config("azure.tenant_id")}
   - field_name: azure_subscription_id
     type: string
     details: Azure Subscription to create resource in
-    default: ${config("azure.subscription_id")}      
+    default: ${config("azure.subscription_id")}
   - field_name: azure_client_id
     type: string
-    details: Client ID of Azure principal 
-    default: ${config("azure.client_id")}      
+    details: Client ID of Azure principal
+    default: ${config("azure.client_id")}
   - field_name: azure_client_secret
     type: string
     details: Client secret for Azure principal
@@ -126,11 +126,11 @@ provision:
   - field_name: skip_provider_registration
     type: boolean
     details: Skip automatic Azure provider registration, set to true if service principal being used does not have rights to register providers
-    default: false    
+    default: false
   - field_name: sku_name
     type: string
     details: Azure sku (typically, tier [GP_S,GP,BC,HS] + family [Gen4,Gen5] + cores, e.g. GP_S_Gen4_1, GP_Gen5_8) Will be computed from cores if empty.
-    default: ""       
+    default: ""
   - field_name: short_term_retention_days
     type: number
     details: Retention period in days for short term retention (Point in Time Restore) policy
@@ -160,7 +160,7 @@ provision:
     details: Hostname of the Azure SQL Server
   - field_name: sqldbName
     type: string
-    details: The name of the database.    
+    details: The name of the database.
   - field_name: sqlServerFullyQualifiedDomainName
     type: string
     details: The fully qualifief domain name (FQDN) of the Azure SQL Server
@@ -229,16 +229,16 @@ bind:
     details: The username to authenticate to the database instance.
   - field_name: password
     type: string
-    details: The password to authenticate to the database instance.  
+    details: The password to authenticate to the database instance.
   - field_name: uri
     type: string
     details: The uri to connect to the database instance and database.
   - field_name: jdbcUrl
     type: string
-    details: The jdbc url to connect to the database instance and database.    
+    details: The jdbc url to connect to the database instance and database.
   - field_name: jdbcUrlForAuditingEnabled
     type: string
-    details: The audit enabled JDBC URL to connect to the database server and database.    
+    details: The audit enabled JDBC URL to connect to the database server and database.
   - field_name: databaseLogin
     type: string
     details: The username to authenticate to the database server.

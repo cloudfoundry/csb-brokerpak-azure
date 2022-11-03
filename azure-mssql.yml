@@ -50,7 +50,7 @@ plans:
     cores: 80
     max_storage_gb: 1024
 provision:
-  plan_inputs:
+  plan_inputs: []
   user_inputs:
   - field_name: cores
     type: number
@@ -72,7 +72,7 @@ provision:
       maxLength: 63
       minLength: 6
       pattern: ^[a-z][a-z0-9-]+$
-    prohibit_update: true  
+    prohibit_update: true
   - field_name: resource_group
     details: Name for the resource group for this instance
     default: ''
@@ -80,7 +80,7 @@ provision:
       maxLength: 64
       minLength: 0
       pattern: ^[a-z][a-z0-9-]+$|^$
-    prohibit_update: true  
+    prohibit_update: true
   - field_name: db_name
     type: string
     details: Name for your database
@@ -89,43 +89,43 @@ provision:
       maxLength: 64
   - field_name: authorized_network
     type: string
-    details: The subnet ID of the Azure VNET to which the instance is locked down to. If left unspecified, 
-    default: default      
+    details: The subnet ID of the Azure VNET to which the instance is locked down to. If left unspecified,
+    default: default
   - field_name: location
     type: string
     details: The location for the Azure SQL Database
     default: westus
     constraints:
       examples:
-        - westus2
-        - uksouth
+      - westus2
+      - uksouth
       pattern: ^[a-z][a-z0-9]+$
     prohibit_update: true
   - field_name: azure_tenant_id
     type: string
     details: Azure Tenant to create resource in
-    default: ${config("azure.tenant_id")}      
+    default: ${config("azure.tenant_id")}
   - field_name: azure_subscription_id
     type: string
     details: Azure Subscription to create resource in
-    default: ${config("azure.subscription_id")}      
+    default: ${config("azure.subscription_id")}
   - field_name: azure_client_id
     type: string
-    details: Client ID of Azure principal 
-    default: ${config("azure.client_id")}      
+    details: Client ID of Azure principal
+    default: ${config("azure.client_id")}
   - field_name: azure_client_secret
     type: string
     details: Client secret for Azure principal
-    default: ${config("azure.client_secret")}    
+    default: ${config("azure.client_secret")}
   - field_name: skip_provider_registration
     type: boolean
     details: Skip automatic Azure provider registration, set to true if service principal being used does not have rights to register providers
-    default: false      
+    default: false
   - field_name: sku_name
     type: string
     details: Azure sku (typically, tier [GP_S,GP,BC,HS] + family [Gen4,Gen5] + cores, e.g. GP_S_Gen4_1, GP_Gen5_8, see https://docs.microsoft.com/en-us/azure/azure-sql/database/resource-limits-vcore-single-databases) Will be computed from cores if empty.
-    default: ""      
-  template_ref: terraform/azure-mssql/provision-mssql.tf 
+    default: ""
+  template_ref: terraform/azure-mssql/provision-mssql.tf
   computed_inputs:
   - name: labels
     default: ${json.marshal(request.default_labels)}
@@ -143,7 +143,7 @@ provision:
     details: Hostname of the Azure SQL Server
   - field_name: sqlServerFullyQualifiedDomainName
     type: string
-    details: The fully qualifief domain name (FQDN) of the Azure SQL Server    
+    details: The fully qualifief domain name (FQDN) of the Azure SQL Server
   - field_name: hostname
     type: string
     details: Hostname of the Azure SQL Server
@@ -190,16 +190,16 @@ bind:
     details: The username to authenticate to the database instance.
   - field_name: password
     type: string
-    details: The password to authenticate to the database instance.  
+    details: The password to authenticate to the database instance.
   - field_name: uri
     type: string
     details: The uri to connect to the database instance and database.
   - field_name: jdbcUrl
     type: string
-    details: The jdbc url to connect to the database instance and database.    
+    details: The jdbc url to connect to the database instance and database.
   - field_name: jdbcUrlForAuditingEnabled
     type: string
-    details: The audit enabled JDBC URL to connect to the database server and database.    
+    details: The audit enabled JDBC URL to connect to the database server and database.
   - field_name: databaseLogin
     type: string
     details: The username to authenticate to the database server.
@@ -212,19 +212,19 @@ examples:
   plan_id: 99ed044a-bf9b-11eb-a49a-e347783607d6
   provision_params: {"location": "eastus"}
   bind_params: {}
-  bind_can_fail: true  
+  bind_can_fail: true
 - name: azuresql-db-medium-configuration
   description: Create a medium Azure SQL Database
   plan_id: 9295b05a-58c9-11ea-b9df-00155d2c938f
   provision_params: {}
   bind_params: {}
-  bind_can_fail: true  
+  bind_can_fail: true
 - name: azuresql-db-large-configuration
   description: Create a large Azure SQL Database
   plan_id: 9dc5e814-58c9-11ea-9e77-00155d2c938f
   provision_params: {}
   bind_params: {}
-  bind_can_fail: true  
+  bind_can_fail: true
 - name: azuresql-db-xlarge-configuration
   description: Create an extra large Azure SQL Database
   plan_id: a94f7192-5cba-11ea-8b5a-00155d7cdd25
