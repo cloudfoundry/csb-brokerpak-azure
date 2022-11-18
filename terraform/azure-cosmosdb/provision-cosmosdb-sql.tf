@@ -55,9 +55,9 @@ provider "azurerm" {
 }
 
 locals {
-  resource_group = length(var.resource_group) == 0 ? format("rg-%s", var.instance_name) : var.resource_group
+  resource_group                = length(var.resource_group) == 0 ? format("rg-%s", var.instance_name) : var.resource_group
   enable_virtual_network_filter = (var.authorized_network != "")
-  private_endpoint_enabled = var.private_endpoint_subnet_id == null ? false : length(var.private_endpoint_subnet_id) > 0 ? true : false
+  private_endpoint_enabled      = var.private_endpoint_subnet_id == null ? false : length(var.private_endpoint_subnet_id) > 0 ? true : false
 }
 
 resource "azurerm_resource_group" "rg" {
@@ -125,19 +125,19 @@ resource "azurerm_private_endpoint" "private_endpoint" {
   resource_group_name = var.resource_group
   subnet_id           = var.private_endpoint_subnet_id
   tags                = var.labels
-  count = local.private_endpoint_enabled ? 1 : 0
+  count               = local.private_endpoint_enabled ? 1 : 0
 
   private_service_connection {
     name                           = "${var.instance_name}-private_service_connection"
     private_connection_resource_id = azurerm_cosmosdb_account.cosmosdb-account.id
-    subresource_names              = [ "MongoDB" ]
+    subresource_names              = ["MongoDB"]
     is_manual_connection           = false
   }
 
   dynamic "private_dns_zone_group" {
     for_each = length(var.private_dns_zone_ids) == 0 ? [] : [1]
     content {
-      name = "${var.instance_name}-private_dns_zone_group"
+      name                 = "${var.instance_name}-private_dns_zone_group"
       private_dns_zone_ids = var.private_dns_zone_ids
     }
   }
