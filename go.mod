@@ -12,7 +12,7 @@ require (
 	github.com/cloudfoundry/cloud-service-broker v0.13.0
 	github.com/denisenkom/go-mssqldb v0.12.3
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.24.0
-	github.com/onsi/ginkgo/v2 v2.4.0
+	github.com/onsi/ginkgo/v2 v2.5.0
 	github.com/onsi/gomega v1.24.0
 	github.com/pborman/uuid v1.2.1
 	golang.org/x/tools v0.3.0
