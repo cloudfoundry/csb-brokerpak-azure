@@ -18,10 +18,10 @@ func TestTerraformTests(t *testing.T) {
 
 var (
 	workingDir          string
-	azureClientId       = os.Getenv("ARM_CLIENT_ID")
+	azureClientID       = os.Getenv("ARM_CLIENT_ID")
 	azureClientSecret   = os.Getenv("ARM_CLIENT_SECRET")
-	azureSubscriptionId = os.Getenv("ARM_SUBSCRIPTION_ID")
-	azureTenantId       = os.Getenv("ARM_TENANT_ID")
+	azureSubscriptionID = os.Getenv("ARM_SUBSCRIPTION_ID")
+	azureTenantID       = os.Getenv("ARM_TENANT_ID")
 )
 
 var _ = BeforeSuite(func() {

@@ -24,10 +24,10 @@ var _ = Describe("CosmosDB SQL", Label("cosmosdb-sql-terraform"), Ordered, func(
 	)
 
 	defaultVars := map[string]any{
-		"azure_client_id":                 azureClientId,
+		"azure_client_id":                 azureClientID,
 		"azure_client_secret":             azureClientSecret,
-		"azure_subscription_id":           azureSubscriptionId,
-		"azure_tenant_id":                 azureTenantId,
+		"azure_subscription_id":           azureSubscriptionID,
+		"azure_tenant_id":                 azureTenantID,
 		"request_units":                   10000,
 		"instance_name":                   instanceName,
 		"failover_locations":              []string{"westus", "eastus"},
