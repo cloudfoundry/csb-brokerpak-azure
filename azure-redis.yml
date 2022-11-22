@@ -30,7 +30,7 @@ plans:
   properties:
     sku_name: Basic
     family: C
-    redis_version: 4
+    redis_version: "4"
     capacity: 1
     tls_min_version: "1.2"
     firewall_rules: []
@@ -41,7 +41,7 @@ plans:
   properties:
     sku_name: Basic
     family: C
-    redis_version: 4
+    redis_version: "4"
     capacity: 3
     tls_min_version: "1.2"
     firewall_rules: []
@@ -52,7 +52,7 @@ plans:
   properties:
     sku_name: Basic
     family: C
-    redis_version: 4
+    redis_version: "4"
     capacity: 5
     firewall_rules: []
     tls_min_version: "1.2"
@@ -63,7 +63,7 @@ plans:
   properties:
     sku_name: Standard
     family: C
-    redis_version: 4
+    redis_version: "4"
     capacity: 1
     firewall_rules: []
     tls_min_version: "1.2"
@@ -74,7 +74,7 @@ plans:
   properties:
     sku_name: Standard
     family: C
-    redis_version: 4
+    redis_version: "4"
     capacity: 3
     firewall_rules: []
     tls_min_version: "1.2"
@@ -85,7 +85,7 @@ plans:
   properties:
     sku_name: Standard
     family: C
-    redis_version: 4
+    redis_version: "4"
     capacity: 5
     firewall_rules: []
     tls_min_version: "1.2"
@@ -96,7 +96,7 @@ plans:
   properties:
     sku_name: Premium
     family: P
-    redis_version: 4
+    redis_version: "4"
     capacity: 1
     tls_min_version: "1.2"
     firewall_rules: []
