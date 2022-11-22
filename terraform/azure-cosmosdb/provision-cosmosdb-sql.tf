@@ -119,11 +119,11 @@ resource "azurerm_cosmosdb_sql_database" "db" {
 
 output "cosmosdb_host_endpoint" { value = azurerm_cosmosdb_account.cosmosdb-account.endpoint }
 output "cosmosdb_master_key" {
-  value     = azurerm_cosmosdb_account.cosmosdb-account.primary_master_key
+  value     = azurerm_cosmosdb_account.cosmosdb-account.primary_key
   sensitive = true
 }
 output "cosmosdb_readonly_master_key" {
-  value     = azurerm_cosmosdb_account.cosmosdb-account.primary_readonly_master_key
+  value     = azurerm_cosmosdb_account.cosmosdb-account.primary_readonly_key
   sensitive = true
 }
 output "cosmosdb_database_id" { value = azurerm_cosmosdb_sql_database.db.name }
