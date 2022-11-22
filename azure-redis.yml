@@ -30,73 +30,79 @@ plans:
   properties:
     sku_name: Basic
     family: C
+    redis_version: 4
     capacity: 1
     tls_min_version: "1.2"
     firewall_rules: []
 - name: medium
   id: 6b272c43-2116-4483-9a99-de9262c0a7d6
-  description: 'A basic plan with 6GB cache and no failover. High Availability is not provided, update WILL result in loss of data.'
+  description: 'A v4 Redis basic plan with 6GB cache and no failover. High Availability is not provided, update WILL result in loss of data.'
   display_name: "Medium"
   properties:
     sku_name: Basic
     family: C
+    redis_version: 4
     capacity: 3
     tls_min_version: "1.2"
     firewall_rules: []
 - name: large
   id: c3e34abc-a820-457c-b723-1c342ef42c50
-  description: 'A basic plan with 26GB cache and no failover. High Availability is not provided, update WILL result in loss of data.'
+  description: 'A v4 Redis basic plan with 26GB cache and no failover. High Availability is not provided, update WILL result in loss of data.'
   display_name: "Large"
   properties:
     sku_name: Basic
     family: C
+    redis_version: 4
     capacity: 5
     firewall_rules: []
     tls_min_version: "1.2"
 - name: ha-small
   id: d27a8e60-3724-49d1-b668-44b03d99b3b3
-  description: 'A standard plan with 1GB cache with high availability and no failover.'
+  description: 'A v4 Redis standard plan with 1GB cache with high availability and no failover.'
   display_name: "High Availability Small"
   properties:
     sku_name: Standard
     family: C
+    redis_version: 4
     capacity: 1
     firewall_rules: []
     tls_min_version: "1.2"
 - name: ha-medium
   id: 421b932a-b86f-48a3-97e4-64bb13d3ec13
-  description: 'A standard plan with 6GB cache with high availability and no failover.'
+  description: 'A v4 Redis standard plan with 6GB cache with high availability and no failover.'
   display_name: "High Availability Medium"
   properties:
     sku_name: Standard
     family: C
+    redis_version: 4
     capacity: 3
     firewall_rules: []
     tls_min_version: "1.2"
 - name: ha-large
   id: e919b281-9661-465d-82cf-0a0a6e1f195a
-  description: 'A standard plan with 26GB cache with high availability and no failover.'
+  description: 'A v4 Redis standard plan with 26GB cache with high availability and no failover.'
   display_name: "High Availability Large"
   properties:
     sku_name: Standard
     family: C
+    redis_version: 4
     capacity: 5
     firewall_rules: []
     tls_min_version: "1.2"
 - name: ha-P1
   id: 2a63e092-ab5c-4804-abd6-2d951240f0f6
-  description: "A High Availability plan with 1GB cache and no failover"
+  description: "A v4 Redis High Availability plan with 1GB cache and no failover"
   display_name: "High Availability P1"
   properties:
     sku_name: Premium
     family: P
+    redis_version: 4
     capacity: 1
     tls_min_version: "1.2"
     firewall_rules: []
 provision:
   plan_inputs:
   - field_name: sku_name
-    required: false
     type: string
     details: The SKU of Redis to use.
     enum:
@@ -104,14 +110,12 @@ provision:
       Standard: Standard
       Premium: Premium
   - field_name: family
-    required: false
     type: string
     details: The SKU family/pricing group to use.
     enum:
       C: Basic/Standard
       P: Premium
   - field_name: capacity
-    required: false
     type: integer
     details: The size of the Redis cache to deploy.
     constraints:
@@ -130,6 +134,11 @@ provision:
     type: array
     details: Array of Private DNS Zone IDs to create private DNS zone groups for when using Private Endpoints
   user_inputs:
+  - field_name: redis_version
+    type: string
+    details: The version of Redis to use. If not set it will use the default Azure-defined Redis version.
+    nullable: true
+    default: null
   - field_name: instance_name
     type: string
     details: Name for your redis instance
