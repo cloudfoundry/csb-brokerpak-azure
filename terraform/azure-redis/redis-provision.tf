@@ -142,7 +142,7 @@ output "password" {
   sensitive = true
 }
 output "tls_port" { value = azurerm_redis_cache.redis.ssl_port }
-output "status" { value = format("created cache %s (id: %s) URL: URL: https://portal.azure.com/#@%s/resource%s",
+output "status" { value = format("created cache %s (id: %s) URL: https://portal.azure.com/#@%s/resource%s",
   azurerm_redis_cache.redis.name,
   azurerm_redis_cache.redis.id,
   var.azure_tenant_id,
