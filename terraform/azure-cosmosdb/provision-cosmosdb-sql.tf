@@ -57,7 +57,7 @@ provider "azurerm" {
 locals {
   resource_group                = length(var.resource_group) == 0 ? format("rg-%s", var.instance_name) : var.resource_group
   enable_virtual_network_filter = (var.authorized_network != "")
-  private_endpoint_enabled      = var.private_endpoint_subnet_id == null ? false : length(var.private_endpoint_subnet_id) > 0 ? true : false
+  private_endpoint_enabled      = var.private_endpoint_subnet_id == null || length(var.private_endpoint_subnet_id) == 0 ? false : true
 }
 
 resource "azurerm_resource_group" "rg" {
@@ -130,7 +130,7 @@ resource "azurerm_private_endpoint" "private_endpoint" {
   private_service_connection {
     name                           = "${var.instance_name}-private_service_connection"
     private_connection_resource_id = azurerm_cosmosdb_account.cosmosdb-account.id
-    subresource_names              = ["MongoDB"]
+    subresource_names              = ["SQL"]
     is_manual_connection           = false
   }
 
