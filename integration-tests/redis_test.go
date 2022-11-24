@@ -21,13 +21,13 @@ var _ = Describe("Redis", Label("Redis"), func() {
 
 	Describe("provisioning", func() {
 		It("should check location constraints", func() {
-			_, err := broker.Provision(serviceName, "small", map[string]any{"location": "-Asia-northeast1"})
+			_, err := broker.Provision(serviceName, "deprecated-small", map[string]any{"location": "-Asia-northeast1"})
 
 			Expect(err).To(MatchError(ContainSubstring("location: Does not match pattern '^[a-z][a-z0-9]+$'")))
 		})
 
 		It("should provision a plan", func() {
-			instanceID, err := broker.Provision(serviceName, "small", map[string]any{})
+			instanceID, err := broker.Provision(serviceName, "deprecated-small", map[string]any{})
 			Expect(err).NotTo(HaveOccurred())
 
 			Expect(mockTerraform.FirstTerraformInvocationVars()).To(
@@ -49,7 +49,7 @@ var _ = Describe("Redis", Label("Redis"), func() {
 		})
 
 		It("should allow properties to be set on provision", func() {
-			_, err := broker.Provision(serviceName, "small", map[string]any{
+			_, err := broker.Provision(serviceName, "deprecated-small", map[string]any{
 				"instance_name":              "test-instance",
 				"resource_group":             "test-resource-group",
 				"subnet_id":                  "test-subnet-id",
@@ -76,14 +76,14 @@ var _ = Describe("Redis", Label("Redis"), func() {
 
 		BeforeEach(func() {
 			var err error
-			instanceID, err = broker.Provision(serviceName, "small", nil)
+			instanceID, err = broker.Provision(serviceName, "deprecated-small", nil)
 
 			Expect(err).NotTo(HaveOccurred())
 			Expect(mockTerraform.Reset()).To(Succeed())
 		})
 
 		It("should prevent updating location due to is flagged as `prohibit_update` and it can result in the recreation of the service instance and lost data", func() {
-			err := broker.Update(instanceID, serviceName, "small", map[string]any{"location": "asia-southeast1"})
+			err := broker.Update(instanceID, serviceName, "deprecated-small", map[string]any{"location": "asia-southeast1"})
 
 			Expect(err).To(MatchError(
 				ContainSubstring(
@@ -96,7 +96,7 @@ var _ = Describe("Redis", Label("Redis"), func() {
 		DescribeTable(
 			"allowed updates",
 			func(prop string, value any) {
-				Expect(broker.Update(instanceID, serviceName, "small", map[string]any{prop: value})).To(Succeed())
+				Expect(broker.Update(instanceID, serviceName, "deprecated-small", map[string]any{prop: value})).To(Succeed())
 			},
 			Entry("maxmemory_policy", "maxmemory_policy", "some_other_policy"),
 		)
