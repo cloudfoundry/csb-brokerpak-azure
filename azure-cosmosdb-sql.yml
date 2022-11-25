@@ -153,6 +153,14 @@ provision:
     type: string
     default: ""
     details: The subnet ID of the Azure VNET to which the instance is locked down to. If left unspecified, it will be public.
+  - field_name: private_endpoint_subnet_id
+    type: string
+    details: The ID of the Subnet within which Private Endpoint for the CosmosDB account will be created.
+    default: ""
+  - field_name: private_dns_zone_ids
+    type: array
+    details: Array of Private DNS Zone IDs to create private DNS zone groups for when using Private Endpoints.
+    default: []
   computed_inputs:
   - name: labels
     default: ${json.marshal(request.default_labels)}
