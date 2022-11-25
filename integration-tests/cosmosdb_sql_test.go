@@ -84,16 +84,20 @@ var _ = Describe("CosmosDB-SQL", Label("CosmosDB-SQL"), func() {
 					HaveKeyWithValue("max_staleness_prefix", BeNumerically("==", 100)),
 					HaveKeyWithValue("skip_provider_registration", BeFalse()),
 					HaveKeyWithValue("authorized_network", BeEmpty()),
+					HaveKeyWithValue("private_endpoint_subnet_id", BeEmpty()),
+					HaveKeyWithValue("private_dns_zone_ids", BeEmpty()),
 				),
 			)
 		})
 
 		It("should allow properties to be set on provision", func() {
 			_, err := broker.Provision(serviceName, planName, map[string]any{
-				"instance_name":  "my-cosmosdb-sql",
-				"resource_group": "my-resource-group",
-				"db_name":        "my-db-name",
-				"location":       "uksouth",
+				"instance_name":              "my-cosmosdb-sql",
+				"resource_group":             "my-resource-group",
+				"db_name":                    "my-db-name",
+				"location":                   "uksouth",
+				"private_endpoint_subnet_id": "subnet-id",
+				"private_dns_zone_ids":       []string{"dns-zone-id-1", "dns-zone-id-2"},
 			})
 			Expect(err).NotTo(HaveOccurred())
 
@@ -103,6 +107,8 @@ var _ = Describe("CosmosDB-SQL", Label("CosmosDB-SQL"), func() {
 					HaveKeyWithValue("resource_group", "my-resource-group"),
 					HaveKeyWithValue("db_name", "my-db-name"),
 					HaveKeyWithValue("location", "uksouth"),
+					HaveKeyWithValue("private_endpoint_subnet_id", "subnet-id"),
+					HaveKeyWithValue("private_dns_zone_ids", ConsistOf("dns-zone-id-1", "dns-zone-id-2")),
 				),
 			)
 		})
