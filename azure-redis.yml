@@ -23,10 +23,10 @@ support_url: https://docs.microsoft.com/en-us/azure/azure-cache-for-redis/
 tags: [azure, redis, preview]
 plan_updateable: true
 plans:
-- name: small
+- name: deprecated-small
   id: 6b9ca24e-1dec-4e6f-8c8a-dc6e11ab5bef
-  description: 'A basic plan with 1GB cache and no failover. High Availability is not provided, update WILL result in loss of data.'
-  display_name: "Small"
+  description: 'Deprecated - A basic plan with 1GB cache and no failover. High Availability is not provided, update WILL result in loss of data.'
+  display_name: "Deprecated - Small"
   properties:
     sku_name: Basic
     family: C
@@ -34,10 +34,10 @@ plans:
     capacity: 1
     tls_min_version: "1.2"
     firewall_rules: []
-- name: medium
+- name: deprecated-medium
   id: 6b272c43-2116-4483-9a99-de9262c0a7d6
-  description: 'A v4 Redis basic plan with 6GB cache and no failover. High Availability is not provided, update WILL result in loss of data.'
-  display_name: "Medium"
+  description: 'Deprecated - A v4 Redis basic plan with 6GB cache and no failover. High Availability is not provided, update WILL result in loss of data.'
+  display_name: "Deprecated - Medium"
   properties:
     sku_name: Basic
     family: C
@@ -45,10 +45,10 @@ plans:
     capacity: 3
     tls_min_version: "1.2"
     firewall_rules: []
-- name: large
+- name: deprecated-large
   id: c3e34abc-a820-457c-b723-1c342ef42c50
-  description: 'A v4 Redis basic plan with 26GB cache and no failover. High Availability is not provided, update WILL result in loss of data.'
-  display_name: "Large"
+  description: 'Deprecated - A v4 Redis basic plan with 26GB cache and no failover. High Availability is not provided, update WILL result in loss of data.'
+  display_name: "Deprecated - Large"
   properties:
     sku_name: Basic
     family: C
@@ -56,10 +56,10 @@ plans:
     capacity: 5
     firewall_rules: []
     tls_min_version: "1.2"
-- name: ha-small
+- name: deprecated-ha-small
   id: d27a8e60-3724-49d1-b668-44b03d99b3b3
-  description: 'A v4 Redis standard plan with 1GB cache with high availability and no failover.'
-  display_name: "High Availability Small"
+  description: 'Deprecated - A v4 Redis standard plan with 1GB cache with high availability and no failover.'
+  display_name: "Deprecated - High Availability Small"
   properties:
     sku_name: Standard
     family: C
@@ -67,10 +67,10 @@ plans:
     capacity: 1
     firewall_rules: []
     tls_min_version: "1.2"
-- name: ha-medium
+- name: deprecated-ha-medium
   id: 421b932a-b86f-48a3-97e4-64bb13d3ec13
-  description: 'A v4 Redis standard plan with 6GB cache with high availability and no failover.'
-  display_name: "High Availability Medium"
+  description: 'Deprecated - A v4 Redis standard plan with 6GB cache with high availability and no failover.'
+  display_name: "Deprecated - High Availability Medium"
   properties:
     sku_name: Standard
     family: C
@@ -78,10 +78,10 @@ plans:
     capacity: 3
     firewall_rules: []
     tls_min_version: "1.2"
-- name: ha-large
+- name: deprecated-ha-large
   id: e919b281-9661-465d-82cf-0a0a6e1f195a
-  description: 'A v4 Redis standard plan with 26GB cache with high availability and no failover.'
-  display_name: "High Availability Large"
+  description: 'Deprecated - A v4 Redis standard plan with 26GB cache with high availability and no failover.'
+  display_name: "Deprecated - High Availability Large"
   properties:
     sku_name: Standard
     family: C
@@ -89,10 +89,10 @@ plans:
     capacity: 5
     firewall_rules: []
     tls_min_version: "1.2"
-- name: ha-P1
+- name: deprecated-ha-P1
   id: 2a63e092-ab5c-4804-abd6-2d951240f0f6
-  description: "A v4 Redis High Availability plan with 1GB cache and no failover"
-  display_name: "High Availability P1"
+  description: "Deprecated - A v4 Redis High Availability plan with 1GB cache and no failover"
+  display_name: "Deprecated - High Availability P1"
   properties:
     sku_name: Premium
     family: P
