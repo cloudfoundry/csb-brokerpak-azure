@@ -42,6 +42,8 @@ var _ = Describe("CosmosDB SQL", Label("cosmosdb-sql-terraform"), Ordered, func(
 		"max_staleness_prefix":            100,
 		"skip_provider_registration":      false,
 		"authorized_network":              "",
+		"private_dns_zone_ids":            []string{},
+		"private_endpoint_subnet_id":      "",
 		"labels":                          map[string]any{"k1": "v1"},
 	}
 
@@ -110,6 +112,71 @@ var _ = Describe("CosmosDB SQL", Label("cosmosdb-sql-terraform"), Ordered, func(
 					"account_name":        Equal(instanceName),
 					"throughput":          BeNumerically("==", 10000),
 				}))
+		})
+	})
+
+	When("no resource group is passed", func() {
+		BeforeEach(func() {
+			plan = ShowPlan(terraformProvisionDir, buildVars(defaultVars, map[string]any{
+				"resource_group": "",
+			}))
+		})
+
+		It("should create a resource group", func() {
+			Expect(plan.ResourceChanges).To(HaveLen(3))
+
+			Expect(ResourceChangesTypes(plan)).To(ConsistOf(
+				"azurerm_resource_group",
+				"azurerm_cosmosdb_account",
+				"azurerm_cosmosdb_sql_database",
+			))
+
+			Expect(AfterValuesForType(plan, "azurerm_resource_group")).To(
+				MatchKeys(IgnoreExtras, Keys{
+					"name": Equal("rg-csb-cosmosdb-sql"),
+				}))
+		})
+	})
+
+	When("private endpoint is enabled", func() {
+		var subnetID = "/subscriptions/azureSubscriptionID/resourceGroups/csb-cosmos-rg/providers/Microsoft.Network/virtualNetworks/csb-cosmos-rg-platform/subnets/csb-cosmos-rg-pas-subnet"
+		var dnsID = "/subscriptions/azureSubscriptionID/resourceGroups/dns-configuration/providers/Microsoft.Network/privateDnsZones/test"
+
+		BeforeEach(func() {
+			plan = ShowPlan(terraformProvisionDir, buildVars(defaultVars, map[string]any{
+				"private_endpoint_subnet_id": subnetID,
+				"private_dns_zone_ids":       []string{dnsID},
+			}))
+		})
+
+		It("should create a private endpoint", func() {
+			Expect(plan.ResourceChanges).To(HaveLen(3))
+
+			Expect(ResourceChangesTypes(plan)).To(ConsistOf(
+				"azurerm_cosmosdb_account",
+				"azurerm_cosmosdb_sql_database",
+				"azurerm_private_endpoint",
+			))
+
+			Expect(AfterValuesForType(plan, "azurerm_private_endpoint")).To(
+				MatchKeys(IgnoreExtras, Keys{
+					"name":                Equal("csb-cosmosdb-sql-private_endpoint"),
+					"location":            Equal("westus"),
+					"resource_group_name": Equal(resourceGroupName),
+					"subnet_id":           Equal(subnetID),
+					"tags": MatchAllKeys(Keys{
+						"k1": Equal("v1"),
+					}),
+					"private_service_connection": ConsistOf(MatchKeys(IgnoreExtras, Keys{
+						"name":                 Equal("csb-cosmosdb-sql-private_service_connection"),
+						"is_manual_connection": BeFalse(),
+						"subresource_names":    ConsistOf("SQL"),
+					})),
+					"private_dns_zone_group": ConsistOf(MatchKeys(IgnoreExtras, Keys{
+						"private_dns_zone_ids": ConsistOf(dnsID),
+					})),
+				}),
+			)
 		})
 	})
 })
