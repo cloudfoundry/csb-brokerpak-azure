@@ -69,7 +69,7 @@ provision:
     default: ["westus"]
   - field_name: instance_name
     type: string
-    details: Name for your Cosmos DB with API for MongoDB instance
+    details: Name used to construct resource group name when `resource_group` not passed
     default: csb-mongo-${request.instance_id}
     constraints:
       maxLength: 98
