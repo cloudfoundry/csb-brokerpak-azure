@@ -7,7 +7,7 @@ help: ## list Makefile targets
 
 ###### Setup ##################################################################
 IAAS=azure
-GO-VERSION = 1.19.1
+GO-VERSION = 1.19.3
 GO-VER = go$(GO-VERSION)
 CSB_VERSION := $(or $(CSB_VERSION), $(shell grep 'github.com/cloudfoundry/cloud-service-broker' go.mod | grep -v replace | awk '{print $$NF}' | sed -e 's/v//'))
 CSB_RELEASE_VERSION := $(CSB_VERSION)
@@ -122,6 +122,10 @@ test: latest-csb lint run-integration-tests ## run the tests
 run-integration-tests: latest-csb provider-tests ## run integration tests for this brokerpak
 	cd ./integration-tests && go run github.com/onsi/ginkgo/v2/ginkgo -r .
 
+.PHONY: run-terraform-tests
+run-terraform-tests: latest-csb ## run terraform tests for this brokerpak
+	cd ./terraform-tests && go run github.com/onsi/ginkgo/v2/ginkgo -r .
+
 .PHONY: provider-tests
 provider-tests:  ## run the integration tests associated with providers
 	cd providers/terraform-provider-csbsqlserver; $(MAKE) test
@@ -203,15 +207,21 @@ local-csb: ## point to a local CSB repo
 ###### lint ###################################################################
 
 .PHONY: lint
-lint: checkformat checkimports format vet staticcheck ## checks format, imports and vet
+lint: checkgoformat checkgoimports checktfformat vet staticcheck ## checks format, imports and vet
 
-checkformat: ## checks that the code is formatted correctly
+checktfformat: ## checks that Terraform HCL is formatted correctly
+	@@if [ "$$(terraform fmt -recursive --check)" ]; then \
+		echo "terraform fmt check failed: run 'make format'"; \
+		exit 1; \
+	fi
+
+checkgoformat: ## checks that the Go code is formatted correctly
 	@@if [ -n "$$(${GOFMT} -s -e -l -d .)" ]; then       \
 		echo "gofmt check failed: run 'make format'"; \
 		exit 1;                                       \
 	fi
 
-checkimports: ## checks that imports are formatted correctly
+checkgoimports: ## checks that Go imports are formatted correctly
 	@@if [ -n "$$(${GO} run golang.org/x/tools/cmd/goimports -l -d .)" ]; then \
 		echo "goimports check failed: run 'make format'";                      \
 		exit 1;                                                                \
@@ -227,6 +237,7 @@ staticcheck: ## runs staticcheck
 format: ## format the source
 	${GOFMT} -s -e -l -w .
 	${GO} run golang.org/x/tools/cmd/goimports -l -w .
+	terraform fmt --recursive
 
 ./providers/terraform-provider-csbsqlserver/cloudfoundry.org/cloud-service-broker/csbsqlserver:
 	cd providers/terraform-provider-csbsqlserver; $(MAKE) build

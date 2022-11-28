@@ -1,6 +1,7 @@
 package integration_test
 
 import (
+	"strings"
 	"testing"
 
 	testframework "github.com/cloudfoundry/cloud-service-broker/brokerpaktestframework"
@@ -52,3 +53,7 @@ var _ = AfterSuite(func() {
 		Expect(broker.Cleanup()).To(Succeed())
 	}
 })
+
+func stringOfLen(length int) string {
+	return strings.Repeat("a", length)
+}

@@ -27,13 +27,13 @@ plans:
   id: ca38881c-2d6b-4db4-988c-d8e49f3293da
   description: 'SQL Cosmos DB Account, no redundancy, 400 request units'
   display_name: "small"
-- name: medium 
+- name: medium
   id: f666cd68-cbba-4c58-b532-bfc0cb533011
   description: 'SQL Cosmos DB Account, single read failover location, 1,000 request units'
   display_name: "medium"
   properties:
     request_units: 1000
-    failover_locations: [ "westus", "eastus" ]
+    failover_locations: ["westus", "eastus"]
     enable_automatic_failover: true
 - name: large
   id: 2d5ee55d-1315-40ca-a9e9-08f4f76e880f
@@ -41,7 +41,7 @@ plans:
   display_name: "Large"
   properties:
     request_units: 10000
-    failover_locations: [ "westus", "eastus" ]
+    failover_locations: ["westus", "eastus"]
     enable_multiple_write_locations: true
     enable_automatic_failover: true
 provision:
@@ -54,12 +54,12 @@ provision:
     constraints:
       maximum: 100000
       minimum: 400
-      multipleOf: 100  
+      multipleOf: 100
     default: 400
   - field_name: failover_locations
     type: array
     details: A list of location for the Cosmos DB account. The first location is the default write location
-    default: [ "westus" ]
+    default: ["westus"]
   - field_name: instance_name
     type: string
     details: Account name for your Cosmos DB
@@ -67,7 +67,7 @@ provision:
     constraints:
       maxLength: 44
       minLength: 6
-      pattern: ^[a-z][a-z0-9-]+$ 
+      pattern: ^[a-z][a-z0-9-]+$
   - field_name: resource_group
     details: Name for the resource group for this instance
     default: ''
@@ -75,24 +75,24 @@ provision:
       maxLength: 64
       minLength: 0
       pattern: ^[a-z][a-z0-9-]+$|^$
-    prohibit_update: true  
+    prohibit_update: true
   - field_name: db_name
     type: string
     details: Name for your Cosmos DB database
     default: csb-db${request.instance_id}
     constraints:
       maxLength: 255
-      pattern: ^[a-z][a-z0-9-_]*$      
+      pattern: ^[a-z][a-z0-9-_]*$
   - field_name: location
     type: string
     details: The location of the CosmosDB account.
     default: westus
     constraints:
       examples:
-        - westus2
-        - uksouth
+      - westus2
+      - uksouth
       pattern: ^[a-z][a-z0-9]+$
-    prohibit_update: true  
+    prohibit_update: true
   - field_name: ip_range_filter
     type: string
     details: CosmosDB Firewall Support. This value specifies the set of IP addresses or IP address ranges in CIDR form to be included as the allowed list of client IP's for a given database account. IP addresses/ranges must be comma separated and must not contain any spaces. 0.0.0.0 allows access from Azure networks.  An empty string "" allows access from all public networks.
@@ -114,7 +114,7 @@ provision:
     constraints:
       minimum: 5
       maximum: 86400
-  - field_name: max_staleness_prefix 
+  - field_name: max_staleness_prefix
     type: integer
     details: (Optional) When used with the Bounded Staleness consistency level, this value represents the number of stale requests tolerated. Accepted range for this value is 10 – 2147483647. Defaults to 100. Required when consistency_level is set to BoundedStaleness.
     default: 100
@@ -132,19 +132,19 @@ provision:
   - field_name: azure_tenant_id
     type: string
     details: Azure Tenant to create resource in
-    default: ${config("azure.tenant_id")}      
+    default: ${config("azure.tenant_id")}
   - field_name: azure_subscription_id
     type: string
     details: Azure Subscription to create resource in
-    default: ${config("azure.subscription_id")}      
+    default: ${config("azure.subscription_id")}
   - field_name: azure_client_id
     type: string
-    details: Client ID of Azure principal 
-    default: ${config("azure.client_id")}      
+    details: Client ID of Azure principal
+    default: ${config("azure.client_id")}
   - field_name: azure_client_secret
     type: string
     details: Client secret for Azure principal
-    default: ${config("azure.client_secret")}    
+    default: ${config("azure.client_secret")}
   - field_name: skip_provider_registration
     type: boolean
     details: Skip automatic Azure provider registration, set to true if service principal being used does not have rights to register providers
@@ -153,6 +153,14 @@ provision:
     type: string
     default: ""
     details: The subnet ID of the Azure VNET to which the instance is locked down to. If left unspecified, it will be public.
+  - field_name: private_endpoint_subnet_id
+    type: string
+    details: The ID of the Subnet within which Private Endpoint for the CosmosDB account will be created.
+    default: ""
+  - field_name: private_dns_zone_ids
+    type: array
+    details: Array of Private DNS Zone IDs to create private DNS zone groups for when using Private Endpoints.
+    default: []
   computed_inputs:
   - name: labels
     default: ${json.marshal(request.default_labels)}

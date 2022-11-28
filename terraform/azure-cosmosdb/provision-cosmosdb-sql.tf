@@ -31,6 +31,8 @@ variable "max_staleness_prefix" { type = number }
 variable "labels" { type = map(any) }
 variable "skip_provider_registration" { type = bool }
 variable "authorized_network" { type = string }
+variable "private_endpoint_subnet_id" { type = string }
+variable "private_dns_zone_ids" { type = list(string) }
 
 terraform {
   required_providers {
@@ -53,9 +55,9 @@ provider "azurerm" {
 }
 
 locals {
-  resource_group = length(var.resource_group) == 0 ? format("rg-%s", var.instance_name) : var.resource_group
-
+  resource_group                = length(var.resource_group) == 0 ? format("rg-%s", var.instance_name) : var.resource_group
   enable_virtual_network_filter = (var.authorized_network != "")
+  private_endpoint_enabled      = var.private_endpoint_subnet_id == null || length(var.private_endpoint_subnet_id) == 0 ? false : true
 }
 
 resource "azurerm_resource_group" "rg" {
@@ -117,13 +119,37 @@ resource "azurerm_cosmosdb_sql_database" "db" {
   }
 }
 
+resource "azurerm_private_endpoint" "private_endpoint" {
+  name                = "${var.instance_name}-private_endpoint"
+  location            = var.location
+  resource_group_name = var.resource_group
+  subnet_id           = var.private_endpoint_subnet_id
+  tags                = var.labels
+  count               = local.private_endpoint_enabled ? 1 : 0
+
+  private_service_connection {
+    name                           = "${var.instance_name}-private_service_connection"
+    private_connection_resource_id = azurerm_cosmosdb_account.cosmosdb-account.id
+    subresource_names              = ["SQL"]
+    is_manual_connection           = false
+  }
+
+  dynamic "private_dns_zone_group" {
+    for_each = length(var.private_dns_zone_ids) == 0 ? [] : [1]
+    content {
+      name                 = "${var.instance_name}-private_dns_zone_group"
+      private_dns_zone_ids = var.private_dns_zone_ids
+    }
+  }
+}
+
 output "cosmosdb_host_endpoint" { value = azurerm_cosmosdb_account.cosmosdb-account.endpoint }
 output "cosmosdb_master_key" {
-  value     = azurerm_cosmosdb_account.cosmosdb-account.primary_master_key
+  value     = azurerm_cosmosdb_account.cosmosdb-account.primary_key
   sensitive = true
 }
 output "cosmosdb_readonly_master_key" {
-  value     = azurerm_cosmosdb_account.cosmosdb-account.primary_readonly_master_key
+  value     = azurerm_cosmosdb_account.cosmosdb-account.primary_readonly_key
   sensitive = true
 }
 output "cosmosdb_database_id" { value = azurerm_cosmosdb_sql_database.db.name }

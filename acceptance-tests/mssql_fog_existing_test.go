@@ -67,13 +67,10 @@ var _ = Describe("MSSQL Failover Group Existing", Label("mssql-failover-group"),
 		app := apps.Push(apps.WithApp(apps.MSSQL))
 
 		By("binding the app to the initial failover group service instance")
-		bindingOne := initialFogInstance.Bind(app)
+		initialFogInstance.Bind(app)
 
 		By("starting the app")
 		apps.Start(app)
-
-		By("checking that the app environment has a credhub reference for credentials")
-		Expect(bindingOne.Credential()).To(matchers.HaveCredHubRef)
 
 		By("creating a schema")
 		schema := random.Name(random.WithMaxLength(10))

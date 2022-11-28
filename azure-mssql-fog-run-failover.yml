@@ -44,15 +44,15 @@ provision:
   - field_name: azure_tenant_id
     type: string
     details: Azure Tenant to create resource in
-    default: ${config("azure.tenant_id")}      
+    default: ${config("azure.tenant_id")}
   - field_name: azure_subscription_id
     type: string
     details: Azure Subscription to create resource in
-    default: ${config("azure.subscription_id")}      
+    default: ${config("azure.subscription_id")}
   - field_name: azure_client_id
     type: string
-    details: Client ID of Azure principal 
-    default: ${config("azure.client_id")}      
+    details: Client ID of Azure principal
+    default: ${config("azure.client_id")}
   - field_name: azure_client_secret
     type: string
     details: Client secret for Azure principal
@@ -60,7 +60,7 @@ provision:
   - field_name: skip_provider_registration
     type: boolean
     details: Skip automatic Azure provider registration, set to true if service principal being used does not have rights to register providers
-    default: false    
+    default: false
   template_refs:
     versions: terraform/azure-mssql-db-failover/run-failover/run-failover-versions.tf
     providers: terraform/azure-mssql-db-failover/run-failover/run-failover-providers.tf

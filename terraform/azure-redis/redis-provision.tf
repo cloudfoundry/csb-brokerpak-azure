@@ -18,6 +18,7 @@ variable "azure_subscription_id" { type = string }
 variable "azure_client_id" { type = string }
 variable "azure_client_secret" { type = string }
 variable "sku_name" { type = string }
+variable "redis_version" { type = string }
 variable "family" { type = string }
 variable "capacity" { type = string }
 variable "instance_name" { type = string }
@@ -81,6 +82,7 @@ resource "azurerm_redis_cache" "redis" {
   depends_on                    = [azurerm_resource_group.azure-redis]
   name                          = var.instance_name
   sku_name                      = var.sku_name
+  redis_version                 = var.redis_version
   family                        = var.family
   capacity                      = var.capacity
   location                      = var.location
@@ -140,7 +142,7 @@ output "password" {
   sensitive = true
 }
 output "tls_port" { value = azurerm_redis_cache.redis.ssl_port }
-output "status" { value = format("created cache %s (id: %s) URL: URL: https://portal.azure.com/#@%s/resource%s",
+output "status" { value = format("created cache %s (id: %s) URL: https://portal.azure.com/#@%s/resource%s",
   azurerm_redis_cache.redis.name,
   azurerm_redis_cache.redis.id,
   var.azure_tenant_id,
