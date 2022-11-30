@@ -16,3 +16,4 @@ CODEOWNERS
 LICENSE
 NOTICE
 staticcheck.conf
+terraform-tests

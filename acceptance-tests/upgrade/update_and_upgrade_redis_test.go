@@ -23,7 +23,7 @@ var _ = Describe("UpgradeRedisTest", Label("redis"), func() {
 			By("creating a service")
 			serviceInstance := services.CreateInstance(
 				"csb-azure-redis",
-				"small",
+				"deprecated-small",
 				services.WithBroker(serviceBroker),
 			)
 			defer serviceInstance.Delete()
