@@ -23,7 +23,7 @@ var _ = Describe("Service Plan Name By ID Searcher", Label("services"), func() {
 })
 
 func fakeSearcher(_ string) (services.ServicePlansData, error) {
-	absPath, err := filepath.Abs("./broker_catalog_ids.json")
+	absPath, err := filepath.Abs("./broker_catalog_ids_test_data.json")
 	if err != nil {
 		return services.ServicePlansData{}, err
 	}
