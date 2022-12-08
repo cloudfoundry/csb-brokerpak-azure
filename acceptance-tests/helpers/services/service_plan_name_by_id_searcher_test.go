@@ -2,7 +2,7 @@ package services_test
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 
 	. "github.com/onsi/ginkgo/v2"
@@ -27,7 +27,7 @@ func fakeSearcher(_ string) (services.ServicePlansData, error) {
 	if err != nil {
 		return services.ServicePlansData{}, err
 	}
-	content, err := ioutil.ReadFile(absPath)
+	content, err := os.ReadFile(absPath)
 	if err != nil {
 		return services.ServicePlansData{}, err
 	}
