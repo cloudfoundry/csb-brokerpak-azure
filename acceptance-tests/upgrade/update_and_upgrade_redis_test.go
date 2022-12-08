@@ -20,10 +20,14 @@ var _ = Describe("UpgradeRedisTest", Label("redis"), func() {
 			)
 			defer serviceBroker.Delete()
 
+			planID := "6b9ca24e-1dec-4e6f-8c8a-dc6e11ab5bef"
+			planName, err := services.NewServicePlanNameByIDSearcher(nil).Search(planID)
+			Expect(err).NotTo(HaveOccurred())
+
 			By("creating a service")
 			serviceInstance := services.CreateInstance(
 				"csb-azure-redis",
-				"deprecated-small",
+				planName,
 				services.WithBroker(serviceBroker),
 			)
 			defer serviceInstance.Delete()
