@@ -9,7 +9,7 @@ require (
 	github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/resources/armresources v1.0.0
 	github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/sql/armsql v1.0.0
 	github.com/Pallinder/go-randomdata v1.2.0
-	github.com/cloudfoundry/cloud-service-broker v0.13.2
+	github.com/cloudfoundry/cloud-service-broker v0.13.3
 	github.com/denisenkom/go-mssqldb v0.12.3
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.24.1
 	github.com/onsi/ginkgo/v2 v2.6.0
@@ -49,7 +49,7 @@ require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/fatih/color v1.13.0 // indirect
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
-	github.com/go-sql-driver/mysql v1.6.0 // indirect
+	github.com/go-sql-driver/mysql v1.7.0 // indirect
 	github.com/go-task/slim-sprig v0.0.0-20210107165309-348f09dbbbc0 // indirect
 	github.com/golang-sql/civil v0.0.0-20190719163853-cb61b32ac6fe // indirect
 	github.com/golang-sql/sqlexp v0.1.0 // indirect
