@@ -47,4 +47,42 @@ var _ = Describe("PostgreSQL", Label("PostgreSQL"), func() {
 			Expect(mockTerraform.ApplyInvocations()).To(HaveLen(0))
 		})
 	})
+
+	Context("bind a service ", func() {
+		It("return the bind values from terraform output", func() {
+			err := mockTerraform.SetTFState([]testframework.TFStateValue{
+				{Name: "hostname", Type: "string", Value: "create.hostname.azure.test"},
+				{Name: "username", Type: "string", Value: "create.test.username"},
+				{Name: "password", Type: "string", Value: "create.test.password"},
+				{Name: "name", Type: "string", Value: "create.test.instancename"},
+				{Name: "use_tls", Type: "bool", Value: true},
+				{Name: "port", Type: "number", Value: 5443},
+			})
+			Expect(err).NotTo(HaveOccurred())
+
+			instanceID, err := broker.Provision(serviceName, "small", nil)
+			Expect(err).NotTo(HaveOccurred())
+
+			err = mockTerraform.SetTFState([]testframework.TFStateValue{
+				{Name: "username", Type: "string", Value: "bind.test.username"},
+				{Name: "password", Type: "string", Value: "bind.test.password"},
+				{Name: "uri", Type: "string", Value: "bind.test.uri"},
+				{Name: "jdbcUrl", Type: "string", Value: "bind.test.jdbcUrl"},
+			})
+			Expect(err).NotTo(HaveOccurred())
+			bindResult, err := broker.Bind(serviceName, "small", instanceID, nil)
+			Expect(err).NotTo(HaveOccurred())
+
+			Expect(bindResult).To(Equal(map[string]any{
+				"username":    "bind.test.username",
+				"hostname":    "create.hostname.azure.test",
+				"jdbcUrl":     "bind.test.jdbcUrl",
+				"name":        "create.test.instancename",
+				"password":    "bind.test.password",
+				"uri":         "bind.test.uri",
+				"require_ssl": true,
+				"port": 5443,
+			}))
+		})
+	})
 })
