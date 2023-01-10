@@ -21,7 +21,7 @@ func WithPreBuild(source string) Option {
 
 	session, err := gexec.Start(command, ginkgo.GinkgoWriter, ginkgo.GinkgoWriter)
 	Expect(err).NotTo(HaveOccurred())
-	Eventually(session, time.Minute).Should(gexec.Exit(0))
+	Eventually(session, 5*time.Minute).Should(gexec.Exit(0))
 
 	err = os.WriteFile(path.Join(dir, "Procfile"), []byte(fmt.Sprintf("web: ./%s\n", name)), 0555)
 	Expect(err).NotTo(HaveOccurred())
