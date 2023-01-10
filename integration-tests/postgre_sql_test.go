@@ -74,14 +74,14 @@ var _ = Describe("PostgreSQL", Label("PostgreSQL"), func() {
 			Expect(err).NotTo(HaveOccurred())
 
 			Expect(bindResult).To(Equal(map[string]any{
-				"username":    "bind.test.username",
-				"hostname":    "create.hostname.azure.test",
-				"jdbcUrl":     "bind.test.jdbcUrl",
-				"name":        "create.test.instancename",
-				"password":    "bind.test.password",
-				"uri":         "bind.test.uri",
-				"require_ssl": true,
-				"port":        5443,
+				"username": "bind.test.username",
+				"hostname": "create.hostname.azure.test",
+				"jdbcUrl":  "bind.test.jdbcUrl",
+				"name":     "create.test.instancename",
+				"password": "bind.test.password",
+				"uri":      "bind.test.uri",
+				"use_tls":  true,
+				"port":     5443,
 			}))
 		})
 	})
