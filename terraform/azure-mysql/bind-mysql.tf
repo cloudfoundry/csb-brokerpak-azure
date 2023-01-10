@@ -60,7 +60,7 @@ output "password" { value = random_password.password.result }
 output "uri" {
   value = format("%s://%s:%s@%s:%d/%s",
     "mysql",
-    local.username,
+    urlencode(local.username),
     random_password.password.result,
     var.mysql_hostname,
     var.mysql_port,
@@ -72,7 +72,7 @@ output "jdbcUrl" {
     var.mysql_hostname,
     var.mysql_port,
     var.mysql_db_name,
-    local.username,
+    urlencode(local.username),
     random_password.password.result,
     var.use_tls,
   var.use_tls)
