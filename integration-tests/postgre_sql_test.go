@@ -81,7 +81,7 @@ var _ = Describe("PostgreSQL", Label("PostgreSQL"), func() {
 				"password":    "bind.test.password",
 				"uri":         "bind.test.uri",
 				"require_ssl": true,
-				"port": 5443,
+				"port":        5443,
 			}))
 		})
 	})
