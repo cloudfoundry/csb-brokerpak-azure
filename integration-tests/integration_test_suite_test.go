@@ -19,6 +19,8 @@ const (
 	armClientSecret   = "arm-client-secret"
 	armSubscriptionID = "arm-subscription-id"
 	armTenantID       = "arm-tenant-id"
+	Name              = "Name"
+	ID                = "ID"
 )
 
 var (
