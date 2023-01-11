@@ -17,7 +17,7 @@ name: csb-azure-storage-account
 id: eb263d40-3a2e-4af1-9333-752acb1e6ea3
 description: Azure Storage Account
 display_name: Azure Storage Account
-image_url: https://cloudfoundry.blob.core.windows.net/assets/StorageAccount.png
+image_url: file://service-images/csb.png
 documentation_url: https://docs.microsoft.com/en-us/azure/storage/common/storage-account-overview
 support_url: https://docs.microsoft.com/en-us/azure/storage/common/storage-account-overview
 tags: [azure, storage, Azure, preview, Storage]
