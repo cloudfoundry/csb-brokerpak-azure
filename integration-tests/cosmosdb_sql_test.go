@@ -9,9 +9,16 @@ import (
 	. "github.com/onsi/gomega/gstruct"
 )
 
-var _ = Describe("CosmosDB-SQL", Label("CosmosDB-SQL"), func() {
-	const serviceName = "csb-azure-cosmosdb-sql"
+const (
+	cosmosDBSQLServiceName             = "csb-azure-cosmosdb-sql"
+	cosmosDBSQLServiceID               = "685e151f-3ad8-414f-ab5b-54abbb3dee02"
+	cosmosDBSQLServiceDisplayName      = "Azure CosmosDB Account - SQL API"
+	cosmosDBSQLServiceDescription      = "Azure CosmosDB Account - SQL API"
+	cosmosDBSQLServiceDocumentationURL = "https://docs.microsoft.com/en-us/azure/cosmos-db/"
+	cosmosDBSQLServiceSupportURL       = "https://docs.microsoft.com/en-us/azure/cosmos-db/faq"
+)
 
+var _ = Describe("CosmosDB-SQL", Label("CosmosDB-SQL"), func() {
 	BeforeEach(func() {
 		Expect(mockTerraform.SetTFState([]testframework.TFStateValue{})).To(Succeed())
 	})
@@ -24,17 +31,28 @@ var _ = Describe("CosmosDB-SQL", Label("CosmosDB-SQL"), func() {
 		catalog, err := broker.Catalog()
 		Expect(err).NotTo(HaveOccurred())
 
-		service := testframework.FindService(catalog, serviceName)
-		Expect(service.ID).NotTo(BeNil())
-		Expect(service.Name).NotTo(BeNil())
+		service := testframework.FindService(catalog, cosmosDBSQLServiceName)
+		Expect(service.ID).To(Equal(cosmosDBSQLServiceID))
+		Expect(service.Description).To(Equal(cosmosDBSQLServiceDescription))
 		Expect(service.Tags).To(ConsistOf("azure", "cosmos", "cosmosdb", "cosmos-sql", "cosmosdb-sql", "preview"))
-		Expect(service.Metadata.ImageUrl).NotTo(BeNil())
-		Expect(service.Metadata.DisplayName).NotTo(BeNil())
+		Expect(service.Metadata.ImageUrl).To(ContainSubstring("data:image/png;base64,"))
+		Expect(service.Metadata.DisplayName).To(Equal(cosmosDBSQLServiceDisplayName))
+		Expect(service.Metadata.DocumentationUrl).To(Equal(cosmosDBSQLServiceDocumentationURL))
+		Expect(service.Metadata.SupportUrl).To(Equal(cosmosDBSQLServiceSupportURL))
 		Expect(service.Plans).To(
 			ConsistOf(
-				MatchFields(IgnoreExtras, Fields{"Name": Equal("small")}),
-				MatchFields(IgnoreExtras, Fields{"Name": Equal("medium")}),
-				MatchFields(IgnoreExtras, Fields{"Name": Equal("large")}),
+				MatchFields(IgnoreExtras, Fields{
+					Name: Equal("small"),
+					ID:   Equal("ca38881c-2d6b-4db4-988c-d8e49f3293da"),
+				}),
+				MatchFields(IgnoreExtras, Fields{
+					Name: Equal("medium"),
+					ID:   Equal("f666cd68-cbba-4c58-b532-bfc0cb533011"),
+				}),
+				MatchFields(IgnoreExtras, Fields{
+					Name: Equal("large"),
+					ID:   Equal("2d5ee55d-1315-40ca-a9e9-08f4f76e880f"),
+				}),
 			),
 		)
 	})
@@ -43,7 +61,7 @@ var _ = Describe("CosmosDB-SQL", Label("CosmosDB-SQL"), func() {
 		planName := "large"
 		DescribeTable("property constraints",
 			func(params map[string]any, expectedErrorMsg string) {
-				_, err := broker.Provision(serviceName, planName, params)
+				_, err := broker.Provision(cosmosDBSQLServiceName, planName, params)
 
 				Expect(err).To(MatchError(ContainSubstring(expectedErrorMsg)))
 			},
@@ -65,7 +83,7 @@ var _ = Describe("CosmosDB-SQL", Label("CosmosDB-SQL"), func() {
 		)
 
 		It("should provision a plan", func() {
-			instanceID, err := broker.Provision(serviceName, planName, nil)
+			instanceID, err := broker.Provision(cosmosDBSQLServiceName, planName, nil)
 			Expect(err).NotTo(HaveOccurred())
 
 			Expect(mockTerraform.FirstTerraformInvocationVars()).To(
@@ -91,7 +109,7 @@ var _ = Describe("CosmosDB-SQL", Label("CosmosDB-SQL"), func() {
 		})
 
 		It("should allow properties to be set on provision", func() {
-			_, err := broker.Provision(serviceName, planName, map[string]any{
+			_, err := broker.Provision(cosmosDBSQLServiceName, planName, map[string]any{
 				"instance_name":              "my-cosmosdb-sql",
 				"resource_group":             "my-resource-group",
 				"db_name":                    "my-db-name",
@@ -119,12 +137,12 @@ var _ = Describe("CosmosDB-SQL", Label("CosmosDB-SQL"), func() {
 
 		BeforeEach(func() {
 			var err error
-			instanceID, err = broker.Provision(serviceName, "small", nil)
+			instanceID, err = broker.Provision(cosmosDBSQLServiceName, "small", nil)
 			Expect(err).NotTo(HaveOccurred())
 		})
 
 		It("should prevent updating location due to is flagged as `prohibit_update` and it can result in the recreation of the service instance and lost data", func() {
-			err := broker.Update(instanceID, serviceName, "small", map[string]any{"location": "asia-southeast1"})
+			err := broker.Update(instanceID, cosmosDBSQLServiceName, "small", map[string]any{"location": "asia-southeast1"})
 
 			Expect(err).To(MatchError(
 				ContainSubstring(
