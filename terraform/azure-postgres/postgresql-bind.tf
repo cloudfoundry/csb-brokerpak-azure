@@ -89,7 +89,7 @@ output "password" { value = random_password.password.result }
 output "uri" {
   value = format("%s://%s:%s@%s:%d/%s",
     "postgresql",
-    local.username,
+    urlencode(local.username),
     random_password.password.result,
     var.hostname,
     var.port,
@@ -101,7 +101,7 @@ output "jdbcUrl" {
     var.hostname,
     var.port,
     var.db_name,
-    local.username,
+    urlencode(local.username),
     random_password.password.result,
   var.use_tls)
 }

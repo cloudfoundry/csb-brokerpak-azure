@@ -33,7 +33,8 @@ const handleListDatabases = (client) => async (req, res) => {
   try {
     console.log('handling list databases request')
     const result = await client.databases.readAll().fetchAll()
-    const list = jsonata('resources.id[]').evaluate(result)
+    const expression = jsonata('resources.id[]')
+    const list = await expression.evaluate(result)
     console.log('result: ' + JSON.stringify(list))
     res.json(list)
   } catch (e) {
@@ -46,7 +47,8 @@ const handleListContainers = (client) => async (req, res) => {
     const database = req.params.database
     console.log(`handling list containers request on database: ${database}`)
     const result = await client.database(database).containers.readAll().fetchAll()
-    const list = jsonata('resources.id[]').evaluate(result)
+    const expression = jsonata('resources.id[]')
+    const list = await expression.evaluate(result)
     console.log('result: ' + JSON.stringify(list))
     res.json(list)
   } catch (e) {
@@ -110,7 +112,8 @@ const handleFetchDocument = (client) => async (req, res) => {
 
     console.log(`handling fetch document request for ${document} in container ${container} for database ${database}`)
     const result = await client.database(database).container(container).items.readAll().fetchAll()
-    const data = jsonata(`resources[name="${document}"].data`).evaluate(result)
+    const expression = jsonata(`resources[name="${document}"].data`)
+    const data = await expression.evaluate(result)
     console.log(`result: ${data}`)
     res.send(data)
   } catch (e) {
