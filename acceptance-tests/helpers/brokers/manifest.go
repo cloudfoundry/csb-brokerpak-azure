@@ -11,6 +11,7 @@ import (
 )
 
 func newManifest(opts ...manifestOption) string {
+
 	m := manifestModel{
 		Version: 1,
 		Applications: []applicationModel{
@@ -59,6 +60,11 @@ type applicationModel struct {
 func withName(name string) manifestOption {
 	return func(m *manifestModel) {
 		m.Applications[0].Name = name
+	}
+}
+func withCustomStartCommand(command string) manifestOption {
+	return func(m *manifestModel) {
+		m.Applications[0].Command = command
 	}
 }
 

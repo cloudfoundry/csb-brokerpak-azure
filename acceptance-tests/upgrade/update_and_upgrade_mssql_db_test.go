@@ -114,7 +114,76 @@ var _ = Describe("UpgradeMssqlDBTest", Label("mssql-db"), func() {
 			appOne.DELETE(schema)
 		})
 	})
+	When("using a config file for broker configuration", func() {
+		It("it should respect the config as if it were set via an env var", func() {
+			By("pushing a broker with a config file")
 
+			serviceBroker := brokers.Create(
+				brokers.WithPrefix("csb-srvdb"),
+				brokers.WithSourceDir(developmentBuildDir),
+			)
+			defer serviceBroker.Delete()
+
+			By("creating a service")
+			serverConfig := newDatabaseServer()
+			serverInstance := services.CreateInstance(
+				"csb-azure-mssql-server",
+				"standard",
+				services.WithBroker(serviceBroker),
+				services.WithParameters(serverConfig),
+			)
+			defer serverInstance.Delete()
+
+			By("reconfiguring the CSB with DB server details and pushing it")
+			serverTag := random.Name(random.WithMaxLength(10))
+			serverCreds := serverConfig.serverDetails(serverTag)
+			serviceBroker.UpdateConfig(map[string]interface{}{
+				"azure.mssql_db_server_creds": serverCreds,
+			})
+
+			By("creating a database in the server")
+			dbInstance := services.CreateInstance(
+				"csb-azure-mssql-db",
+				"small",
+				services.WithBroker(serviceBroker),
+				services.WithParameters(map[string]any{
+					"server": serverTag,
+				}),
+			)
+			defer dbInstance.Delete()
+
+			By("pushing the unstarted app")
+			app := apps.Push(apps.WithApp(apps.MSSQL))
+			defer apps.Delete(app)
+
+			By("binding to the app")
+			binding := dbInstance.Bind(app)
+
+			By("starting the app")
+			apps.Start(app)
+
+			By("creating a schema")
+			schema := random.Name(random.WithMaxLength(10))
+			app.PUT("", "%s?dbo=false", schema)
+
+			By("setting a key-value")
+			keyOne := random.Hexadecimal()
+			valueOne := random.Hexadecimal()
+			app.PUT(valueOne, "%s/%s", schema, keyOne)
+
+			By("getting the value")
+			got := app.GET("%s/%s", schema, keyOne)
+			Expect(got).To(Equal(valueOne))
+
+			By("deleting the schema so we can unbind")
+			app.DELETE(schema)
+
+			By("deleting bindings")
+			binding.Unbind()
+
+		})
+
+	})
 	When("upgrading broker version", Label("ancient"), func() {
 		It("should continue to work", func() {
 			By("pushing an ancient broker version")
