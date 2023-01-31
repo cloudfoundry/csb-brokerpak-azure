@@ -4,8 +4,8 @@ import (
 	"csbbrokerpakazure/acceptance-tests/helpers/cf"
 	"csbbrokerpakazure/acceptance-tests/helpers/random"
 	"encoding/json"
-	"fmt"
 	"os"
+	"path/filepath"
 	"time"
 
 	. "github.com/onsi/ginkgo/v2"
@@ -60,7 +60,7 @@ func (a *App) Push(opts ...Option) {
 	checkSuccess(session.ExitCode(), a.Name)
 
 	if session.ExitCode() != 0 {
-		fmt.Fprintf(GinkgoWriter, "FAILED to push app. Getting logs...")
+		GinkgoWriter.Printf("FAILED to push app. Getting logs...")
 		cf.Run("logs", a.Name, "--recent")
 		Fail("App failed to push")
 	}
@@ -81,30 +81,20 @@ func WithName(name string) Option {
 	}
 }
 func (a *App) CleanFileFromAppDir(filename string) {
-	err := os.Remove(fmt.Sprintf("%s/%s", a.dir, filename))
-	if err != nil {
-		panic(err)
-	}
-
+	Expect(os.Remove(filepath.Join(a.dir, filename))).To(Succeed())
 }
-func WithYAMLFile(filename string, contents map[string]interface{}) Option {
+
+func WithYAMLFile(filename string, contents map[string]any) Option {
 	return func(a *App) {
 		//convert to yaml parsable by hil
 		for k, v := range contents {
 			valueBytes, err := json.Marshal(v)
-			if err != nil {
-				panic(err)
-			}
+			Expect(err).NotTo(HaveOccurred())
 			contents[k] = string(valueBytes)
 		}
 		bytes, err := yaml.Marshal(contents)
-		if err != nil {
-			panic(err)
-		}
-		err = os.WriteFile(fmt.Sprintf("%s/%s", a.dir, filename), bytes, 0666)
-		if err != nil {
-			panic(err)
-		}
+		Expect(err).NotTo(HaveOccurred())
+		Expect(os.WriteFile(filepath.Join(a.dir, filename), bytes, 0666)).To(Succeed())
 	}
 
 }
