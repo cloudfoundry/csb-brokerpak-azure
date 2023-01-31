@@ -3,12 +3,15 @@ package apps
 import (
 	"csbbrokerpakazure/acceptance-tests/helpers/cf"
 	"csbbrokerpakazure/acceptance-tests/helpers/random"
+	"encoding/json"
 	"fmt"
+	"os"
 	"time"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"github.com/onsi/gomega/gexec"
+	"gopkg.in/yaml.v2"
 )
 
 const pushWaitTime = 20 * time.Minute
@@ -76,6 +79,34 @@ func WithName(name string) Option {
 	return func(a *App) {
 		a.Name = name
 	}
+}
+func (a *App) CleanFileFromAppDir(filename string) {
+	err := os.Remove(fmt.Sprintf("%s/%s", a.dir, filename))
+	if err != nil {
+		panic(err)
+	}
+
+}
+func WithYAMLFile(filename string, contents map[string]interface{}) Option {
+	return func(a *App) {
+		//convert to yaml parsable by hil
+		for k, v := range contents {
+			valueBytes, err := json.Marshal(v)
+			if err != nil {
+				panic(err)
+			}
+			contents[k] = string(valueBytes)
+		}
+		bytes, err := yaml.Marshal(contents)
+		if err != nil {
+			panic(err)
+		}
+		err = os.WriteFile(fmt.Sprintf("%s/%s", a.dir, filename), bytes, 0666)
+		if err != nil {
+			panic(err)
+		}
+	}
+
 }
 
 func WithDir(dir string) Option {
