@@ -3,6 +3,7 @@ package upgrade_test
 import (
 	"csbbrokerpakazure/acceptance-tests/helpers/apps"
 	"csbbrokerpakazure/acceptance-tests/helpers/brokers"
+	"csbbrokerpakazure/acceptance-tests/helpers/lookupplan"
 	"csbbrokerpakazure/acceptance-tests/helpers/random"
 	"csbbrokerpakazure/acceptance-tests/helpers/services"
 
@@ -20,14 +21,10 @@ var _ = Describe("UpgradeRedisTest", Label("redis"), func() {
 			)
 			defer serviceBroker.Delete()
 
-			planID := "6b9ca24e-1dec-4e6f-8c8a-dc6e11ab5bef"
-			planName, err := services.NewServicePlanNameByIDSearcher(nil).Search(planID)
-			Expect(err).NotTo(HaveOccurred())
-
 			By("creating a service")
 			serviceInstance := services.CreateInstance(
 				"csb-azure-redis",
-				planName,
+				lookupplan.LookupByID("6b9ca24e-1dec-4e6f-8c8a-dc6e11ab5bef", "csb-azure-redis", serviceBroker.Name),
 				services.WithBroker(serviceBroker),
 			)
 			defer serviceInstance.Delete()
