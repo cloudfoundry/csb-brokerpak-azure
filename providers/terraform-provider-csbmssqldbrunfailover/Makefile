@@ -7,7 +7,7 @@ DOCKER_OK := $(shell which docker 1>/dev/null 2>/dev/null; echo $$?)
 ifeq ($(GO_OK), 0)
   GO=go
 else ifeq ($(DOCKER_OK), 0)
-  GO=docker run --rm -v $(PWD)/../..:/src -w /src/providers/terraform-provider-csbmssqldbrunfailover -e GOARCH -e GOOS golang:$(GO-VERSION) go
+  GO=docker run --rm -v $(PWD)/../..:/src -w /src/providers/terraform-provider-csbmssqldbrunfailover -e GOARCH -e GOOS -e CGO_ENABLED golang:$(GO-VERSION) go
 else
   $(error either Go or Docker must be installed)
 endif
@@ -21,8 +21,8 @@ build: deps-go-binary cloudfoundry.org ## build the provider
 cloudfoundry.org: *.go */*.go
 	mkdir -p cloudfoundry.org/cloud-service-broker/csbmssqldbrunfailover/1.0.0/linux_amd64
 	mkdir -p cloudfoundry.org/cloud-service-broker/csbmssqldbrunfailover/1.0.0/darwin_amd64
-	GOOS=linux $(GO) build -o cloudfoundry.org/cloud-service-broker/csbmssqldbrunfailover/1.0.0/linux_amd64/terraform-provider-csbmssqldbrunfailover_v1.0.0
-	GOOS=darwin $(GO) build -o cloudfoundry.org/cloud-service-broker/csbmssqldbrunfailover/1.0.0/darwin_amd64/terraform-provider-csbmssqldbrunfailover_v1.0.0
+	CGO_ENABLED=0 GOOS=linux $(GO) build -o cloudfoundry.org/cloud-service-broker/csbmssqldbrunfailover/1.0.0/linux_amd64/terraform-provider-csbmssqldbrunfailover_v1.0.0
+	CGO_ENABLED=0 GOOS=darwin $(GO) build -o cloudfoundry.org/cloud-service-broker/csbmssqldbrunfailover/1.0.0/darwin_amd64/terraform-provider-csbmssqldbrunfailover_v1.0.0
 
 .PHONY: clean
 clean: ## clean up build artifacts
