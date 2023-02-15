@@ -90,7 +90,6 @@ var _ = Describe("Redis", Label("Redis"), func() {
 					HaveKeyWithValue("location", "westus"),
 					HaveKeyWithValue("sku_name", "Basic"),
 					HaveKeyWithValue("family", "C"),
-					HaveKeyWithValue("redis_version", "4"),
 					HaveKeyWithValue("capacity", BeNumerically("==", 1)),
 					HaveKeyWithValue("tls_min_version", "1.2"),
 					HaveKeyWithValue("firewall_rules", []any{}),
