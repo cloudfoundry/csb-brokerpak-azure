@@ -11,7 +11,7 @@ require (
 	github.com/Pallinder/go-randomdata v1.2.0
 	github.com/cloudfoundry/cloud-service-broker v0.16.1
 	github.com/denisenkom/go-mssqldb v0.12.3
-	github.com/hashicorp/terraform-plugin-sdk/v2 v2.24.1
+	github.com/hashicorp/terraform-plugin-sdk/v2 v2.25.0
 	github.com/onsi/ginkgo/v2 v2.8.2
 	github.com/onsi/gomega v1.27.1
 	github.com/pborman/uuid v1.2.1
@@ -45,7 +45,6 @@ require (
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/cloudfoundry/go-socks5 v0.0.0-20180221174514-54f73bdb8a8e // indirect
 	github.com/cloudfoundry/socks5-proxy v0.2.60 // indirect
-	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/fatih/color v1.13.0 // indirect
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
 	github.com/go-sql-driver/mysql v1.7.0 // indirect
@@ -64,22 +63,22 @@ require (
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
 	github.com/hashicorp/go-cty v1.4.1-0.20200414143053-d3edf31b6320 // indirect
 	github.com/hashicorp/go-getter v1.6.2 // indirect
-	github.com/hashicorp/go-hclog v1.2.1 // indirect
+	github.com/hashicorp/go-hclog v1.4.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
-	github.com/hashicorp/go-plugin v1.4.6 // indirect
+	github.com/hashicorp/go-plugin v1.4.8 // indirect
 	github.com/hashicorp/go-safetemp v1.0.0 // indirect
 	github.com/hashicorp/go-uuid v1.0.3 // indirect
 	github.com/hashicorp/go-version v1.6.0 // indirect
-	github.com/hashicorp/hc-install v0.4.0 // indirect
+	github.com/hashicorp/hc-install v0.5.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
-	github.com/hashicorp/hcl/v2 v2.16.0 // indirect
+	github.com/hashicorp/hcl/v2 v2.16.1 // indirect
 	github.com/hashicorp/hil v0.0.0-20210521165536-27a72121fd40 // indirect
 	github.com/hashicorp/logutils v1.0.0 // indirect
 	github.com/hashicorp/terraform-exec v0.17.3 // indirect
 	github.com/hashicorp/terraform-json v0.15.0
-	github.com/hashicorp/terraform-plugin-go v0.14.1 // indirect
-	github.com/hashicorp/terraform-plugin-log v0.7.0 // indirect
-	github.com/hashicorp/terraform-registry-address v0.0.0-20220623143253-7d51757b572c // indirect
+	github.com/hashicorp/terraform-plugin-go v0.14.3 // indirect
+	github.com/hashicorp/terraform-plugin-log v0.8.0 // indirect
+	github.com/hashicorp/terraform-registry-address v0.1.0 // indirect
 	github.com/hashicorp/terraform-svchost v0.0.0-20200729002733-f050f53b9734 // indirect
 	github.com/hashicorp/yamux v0.0.0-20181012175058-2f1d1f20f75d // indirect
 	github.com/heptiolabs/healthcheck v0.0.0-20180807145615-6ff867650f40 // indirect
@@ -127,7 +126,7 @@ require (
 	github.com/xeipuuv/gojsonschema v1.2.0 // indirect
 	github.com/zclconf/go-cty v1.12.1 // indirect
 	go.opencensus.io v0.24.0 // indirect
-	golang.org/x/crypto v0.5.0 // indirect
+	golang.org/x/crypto v0.6.0 // indirect
 	golang.org/x/exp/typeparams v0.0.0-20230202163644-54bba9f4231b // indirect
 	golang.org/x/mod v0.8.0 // indirect
 	golang.org/x/net v0.7.0 // indirect
