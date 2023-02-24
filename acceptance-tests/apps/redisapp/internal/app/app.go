@@ -4,20 +4,27 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/go-redis/redis/v8"
-	"github.com/gorilla/mux"
 )
 
-func App(options *redis.Options) *mux.Router {
+func App(options *redis.Options) http.HandlerFunc {
 	client := redis.NewClient(options)
-	r := mux.NewRouter()
 
-	r.HandleFunc("/", aliveness).Methods("HEAD", "GET")
-	r.HandleFunc("/{key}", handleSet(client)).Methods("PUT")
-	r.HandleFunc("/{key}", handleGet(client)).Methods("GET")
-
-	return r
+	return func(w http.ResponseWriter, r *http.Request) {
+		key := strings.Trim(r.URL.Path, "/")
+		switch r.Method {
+		case http.MethodHead:
+			aliveness(w, r)
+		case http.MethodGet:
+			handleGet(w, r, key, client)
+		case http.MethodPut:
+			handleGet(w, r, key, client)
+		default:
+			fail(w, http.StatusMethodNotAllowed, http.StatusText(http.StatusMethodNotAllowed))
+		}
+	}
 }
 
 func aliveness(w http.ResponseWriter, r *http.Request) {
