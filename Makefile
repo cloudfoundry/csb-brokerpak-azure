@@ -17,7 +17,6 @@ GO_OK :=  $(or $(USE_GO_CONTAINERS), $(shell which go 1>/dev/null 2>/dev/null; e
 DOCKER_OK := $(shell which docker 1>/dev/null 2>/dev/null; echo $$?)
 
 ####### broker environment variables
-PAK_CACHE=/tmp/.pak-cache
 SECURITY_USER_NAME := $(or $(SECURITY_USER_NAME), $(IAAS)-broker)
 SECURITY_USER_PASSWORD := $(or $(SECURITY_USER_PASSWORD), $(IAAS)-broker-pw)
 GSB_PROVISION_DEFAULTS := $(or $(GSB_PROVISION_DEFAULTS), {"resource_group": "broker-cf-test"})
@@ -36,7 +35,7 @@ BROKER_GO_OPTS=PORT=8080 \
 				ARM_TENANT_ID=$(ARM_TENANT_ID) \
 				ARM_CLIENT_ID=$(ARM_CLIENT_ID) \
 				ARM_CLIENT_SECRET=$(ARM_CLIENT_SECRET) \
- 				PAK_BUILD_CACHE_PATH=$(PAK_CACHE) \
+ 				PAK_BUILD_CACHE_PATH=$(PAK_BUILD_CACHE_PATH) \
  				GSB_PROVISION_DEFAULTS='$(GSB_PROVISION_DEFAULTS)'
 
 PAK_PATH=$(PWD)
@@ -45,7 +44,7 @@ RUN_CSB=$(BROKER_GO_OPTS) go run github.com/cloudfoundry/cloud-service-broker
 LDFLAGS="-X github.com/cloudfoundry/cloud-service-broker/utils.Version=$(CSB_VERSION)"
 GET_CSB="env CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags $(LDFLAGS) github.com/cloudfoundry/cloud-service-broker"
 else ifeq ($(DOCKER_OK), 0)
-BROKER_DOCKER_OPTS=--rm -v $(PAK_CACHE):$(PAK_CACHE) -v $(PWD):/brokerpak -w /brokerpak --network=host \
+BROKER_DOCKER_OPTS=--rm -v $(PAK_BUILD_CACHE_PATH):$(PAK_BUILD_CACHE_PATH) -v $(PWD):/brokerpak -w /brokerpak --network=host \
 	-p 8080:8080 \
 	-e SECURITY_USER_NAME \
 	-e SECURITY_USER_PASSWORD \
@@ -55,7 +54,7 @@ BROKER_DOCKER_OPTS=--rm -v $(PAK_CACHE):$(PAK_CACHE) -v $(PWD):/brokerpak -w /br
 	-e ARM_CLIENT_SECRET \
 	-e "DB_TYPE=sqlite3" \
 	-e "DB_PATH=/tmp/csb-db" \
-	-e "PAK_BUILD_CACHE_PATH=$(PAK_CACHE)" \
+	-e "PAK_BUILD_CACHE_PATH=$(PAK_BUILD_CACHE_PATH)" \
 	-e GSB_PROVISION_DEFAULTS
 
 RUN_CSB=docker run $(BROKER_DOCKER_OPTS) $(CSB_DOCKER_IMAGE)
@@ -64,7 +63,7 @@ RUN_CSB=docker run $(BROKER_DOCKER_OPTS) $(CSB_DOCKER_IMAGE)
 # path inside the container
 PAK_PATH=/brokerpak
 
-GO_DOCKER_OPTS=--rm -v $(PAK_CACHE):$(PAK_CACHE) -v $(PWD):/brokerpak -w /brokerpak --network=host
+GO_DOCKER_OPTS=--rm -v $(PAK_BUILD_CACHE_PATH):$(PAK_BUILD_CACHE_PATH) -v $(PWD):/brokerpak -w /brokerpak --network=host
 GO=docker run $(GO_DOCKER_OPTS) golang:latest go
 GOFMT=docker run $(GO_DOCKER_OPTS) golang:latest gofmt
 
@@ -87,7 +86,7 @@ endif
 .PHONY: build
 build: deps-go-binary $(IAAS)-services-*.brokerpak ## build brokerpak
 
-$(IAAS)-services-*.brokerpak: *.yml terraform/*/*.tf ./providers/terraform-provider-csbsqlserver/cloudfoundry.org/cloud-service-broker/csbsqlserver ./providers/terraform-provider-csbmssqldbrunfailover/cloudfoundry.org/cloud-service-broker/csbmssqldbrunfailover | $(PAK_CACHE)
+$(IAAS)-services-*.brokerpak: *.yml terraform/*/*.tf ./providers/terraform-provider-csbsqlserver/cloudfoundry.org/cloud-service-broker/csbsqlserver ./providers/terraform-provider-csbmssqldbrunfailover/cloudfoundry.org/cloud-service-broker/csbmssqldbrunfailover | $(PAK_BUILD_CACHE_PATH)
 	$(RUN_CSB) pak build
 
 .PHONY: run
@@ -116,14 +115,14 @@ run-examples: build ## run examples against CSB on localhost (run "make run" to 
 ###### test ###################################################################
 
 .PHONY: test
-test: latest-csb lint run-integration-tests ## run the tests
+test: lint run-integration-tests ## run the tests
 
 .PHONY: run-integration-tests
-run-integration-tests: latest-csb provider-tests ## run integration tests for this brokerpak
+run-integration-tests: provider-tests ## run integration tests for this brokerpak
 	cd ./integration-tests && go run github.com/onsi/ginkgo/v2/ginkgo -r .
 
 .PHONY: run-terraform-tests
-run-terraform-tests: latest-csb ## run terraform tests for this brokerpak
+run-terraform-tests: ## run terraform tests for this brokerpak
 	cd ./terraform-tests && go run github.com/onsi/ginkgo/v2/ginkgo -r .
 
 .PHONY: provider-tests
@@ -161,7 +160,6 @@ clean: ## clean up build artifacts
 	- rm -f ./brokerpak-user-docs.md
 	- cd providers/terraform-provider-csbsqlserver; $(MAKE) clean
 	- cd providers/terraform-provider-csbmssqldbrunfailover; $(MAKE) clean
-	- rm -rf $(PAK_CACHE)
 
 .PHONY: rebuild
 rebuild: clean build
@@ -190,8 +188,8 @@ ifndef ARM_CLIENT_SECRET
 	$(error variable ARM_CLIENT_SECRET not defined)
 endif
 
-$(PAK_CACHE):
-	@echo "Folder $(PAK_CACHE) does not exist. Creating it..."
+$(PAK_BUILD_CACHE_PATH):
+	@echo "Folder $(PAK_BUILD_CACHE_PATH) does not exist. Creating it..."
 	mkdir -p $@
 
 .PHONY: latest-csb
