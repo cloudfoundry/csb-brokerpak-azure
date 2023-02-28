@@ -2,8 +2,9 @@ package csbsqlserver
 
 import (
 	"context"
-	"csbbrokerpakazure/providers/terraform-provider-csbsqlserver/connector"
 	"fmt"
+
+	"csbbrokerpakazure/providers/terraform-provider-csbsqlserver/connector"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"

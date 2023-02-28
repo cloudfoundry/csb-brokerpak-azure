@@ -1,14 +1,15 @@
 package brokers
 
 import (
-	"csbbrokerpakazure/acceptance-tests/helpers/apps"
-	"csbbrokerpakazure/acceptance-tests/helpers/cf"
-	"csbbrokerpakazure/acceptance-tests/helpers/random"
 	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"csbbrokerpakazure/acceptance-tests/helpers/apps"
+	"csbbrokerpakazure/acceptance-tests/helpers/cf"
+	"csbbrokerpakazure/acceptance-tests/helpers/random"
 
 	"github.com/onsi/gomega"
 )

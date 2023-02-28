@@ -1,8 +1,9 @@
 package services
 
 import (
-	"csbbrokerpakazure/acceptance-tests/helpers/cf"
 	"strings"
+
+	"csbbrokerpakazure/acceptance-tests/helpers/cf"
 )
 
 func (s *ServiceInstance) GUID() string {

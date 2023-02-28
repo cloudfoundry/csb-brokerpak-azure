@@ -1,9 +1,10 @@
 package upgrade_test
 
 import (
-	"csbbrokerpakazure/acceptance-tests/helpers/environment"
 	"flag"
 	"testing"
+
+	"csbbrokerpakazure/acceptance-tests/helpers/environment"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"

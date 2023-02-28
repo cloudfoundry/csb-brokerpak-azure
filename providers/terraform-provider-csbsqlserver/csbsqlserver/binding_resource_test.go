@@ -1,11 +1,12 @@
 package csbsqlserver_test
 
 import (
-	"csbbrokerpakazure/providers/terraform-provider-csbsqlserver/csbsqlserver"
-	"csbbrokerpakazure/providers/terraform-provider-csbsqlserver/testhelpers"
 	"database/sql"
 	"fmt"
 	"time"
+
+	"csbbrokerpakazure/providers/terraform-provider-csbsqlserver/csbsqlserver"
+	"csbbrokerpakazure/providers/terraform-provider-csbsqlserver/testhelpers"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"

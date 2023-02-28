@@ -1,14 +1,15 @@
 package acceptance_test
 
 import (
+	"os/exec"
+	"strings"
+	"time"
+
 	"csbbrokerpakazure/acceptance-tests/helpers/apps"
 	"csbbrokerpakazure/acceptance-tests/helpers/brokers"
 	"csbbrokerpakazure/acceptance-tests/helpers/matchers"
 	"csbbrokerpakazure/acceptance-tests/helpers/random"
 	"csbbrokerpakazure/acceptance-tests/helpers/services"
-	"os/exec"
-	"strings"
-	"time"
 
 	"github.com/onsi/gomega/gexec"
 

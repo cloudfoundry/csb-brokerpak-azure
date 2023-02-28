@@ -1,9 +1,10 @@
 package brokers
 
 import (
-	"csbbrokerpakazure/acceptance-tests/helpers/cf"
 	"fmt"
 	"os"
+
+	"csbbrokerpakazure/acceptance-tests/helpers/cf"
 
 	"code.cloudfoundry.org/jsonry"
 	. "github.com/onsi/gomega"
