@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/go-sql-driver/mysql"
-	"github.com/gorilla/mux"
 )
 
 const (
@@ -17,15 +17,22 @@ const (
 	valueColumn = "valuedata"
 )
 
-func App(config *mysql.Config) *mux.Router {
+func App(config *mysql.Config) http.HandlerFunc {
 	db := connect(config)
 
-	r := mux.NewRouter()
-	r.HandleFunc("/", aliveness).Methods("HEAD", "GET")
-	r.HandleFunc("/{key}", handleSet(db)).Methods("PUT")
-	r.HandleFunc("/{key}", handleGet(db)).Methods("GET")
-
-	return r
+	return func(w http.ResponseWriter, r *http.Request) {
+		key := strings.Trim(r.URL.Path, "/")
+		switch r.Method {
+		case http.MethodHead:
+			aliveness(w, r)
+		case http.MethodGet:
+			handleGet(w, r, key, db)
+		case http.MethodPut:
+			handleSet(w, r, key, db)
+		default:
+			fail(w, http.StatusMethodNotAllowed, http.StatusText(http.StatusMethodNotAllowed))
+		}
+	}
 }
 
 func aliveness(w http.ResponseWriter, r *http.Request) {
