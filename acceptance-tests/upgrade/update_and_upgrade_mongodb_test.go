@@ -1,13 +1,14 @@
 package upgrade_test
 
 import (
+	"fmt"
+	"os/exec"
+	"time"
+
 	"csbbrokerpakazure/acceptance-tests/helpers/apps"
 	"csbbrokerpakazure/acceptance-tests/helpers/brokers"
 	"csbbrokerpakazure/acceptance-tests/helpers/random"
 	"csbbrokerpakazure/acceptance-tests/helpers/services"
-	"fmt"
-	"os/exec"
-	"time"
 
 	"github.com/onsi/gomega/gexec"
 

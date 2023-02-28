@@ -1,11 +1,12 @@
 package connector_test
 
 import (
-	"csbbrokerpakazure/providers/terraform-provider-csbsqlserver/connector"
-	"csbbrokerpakazure/providers/terraform-provider-csbsqlserver/testhelpers"
 	"database/sql"
 	"testing"
 	"time"
+
+	"csbbrokerpakazure/providers/terraform-provider-csbsqlserver/connector"
+	"csbbrokerpakazure/providers/terraform-provider-csbsqlserver/testhelpers"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
