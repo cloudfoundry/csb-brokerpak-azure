@@ -1,9 +1,10 @@
 package brokers
 
 import (
-	"csbbrokerpakazure/acceptance-tests/helpers/apps"
 	"os"
 	"path/filepath"
+
+	"csbbrokerpakazure/acceptance-tests/helpers/apps"
 
 	"github.com/onsi/ginkgo/v2"
 	"github.com/onsi/gomega"

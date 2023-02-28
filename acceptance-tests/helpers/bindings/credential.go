@@ -1,9 +1,10 @@
 package bindings
 
 import (
-	"csbbrokerpakazure/acceptance-tests/helpers/cf"
 	"fmt"
 	"strings"
+
+	"csbbrokerpakazure/acceptance-tests/helpers/cf"
 
 	"code.cloudfoundry.org/jsonry"
 	. "github.com/onsi/ginkgo/v2"

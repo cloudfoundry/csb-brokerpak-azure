@@ -1,10 +1,11 @@
 package servicekeys
 
 import (
-	"csbbrokerpakazure/acceptance-tests/helpers/cf"
 	"encoding/json"
 	"reflect"
 	"strings"
+
+	"csbbrokerpakazure/acceptance-tests/helpers/cf"
 
 	. "github.com/onsi/gomega"
 )

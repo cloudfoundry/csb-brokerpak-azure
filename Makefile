@@ -220,7 +220,7 @@ checkgoformat: ## checks that the Go code is formatted correctly
 	fi
 
 checkgoimports: ## checks that Go imports are formatted correctly
-	@@if [ -n "$$(${GO} run golang.org/x/tools/cmd/goimports -l -d .)" ]; then \
+	@@if [ -n "$$(${GO} run golang.org/x/tools/cmd/goimports -l -d -local csbbrokerpakazure .)" ]; then \
 		echo "goimports check failed: run 'make format'";                      \
 		exit 1;                                                                \
 	fi
@@ -234,7 +234,7 @@ staticcheck: ## runs staticcheck
 .PHONY: format
 format: ## format the source
 	${GOFMT} -s -e -l -w .
-	${GO} run golang.org/x/tools/cmd/goimports -l -w .
+	${GO} run golang.org/x/tools/cmd/goimports -l -w -local csbbrokerpakazure .
 	terraform fmt --recursive
 
 ./providers/terraform-provider-csbsqlserver/cloudfoundry.org/cloud-service-broker/csbsqlserver:
