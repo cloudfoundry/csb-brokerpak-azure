@@ -25,5 +25,5 @@ func handleGet(w http.ResponseWriter, r *http.Request, key string, client *redis
 		return
 	}
 
-	log.Printf("Value %q retrived from key %q.", value, key)
+	log.Printf("Value %q retrieved from key %q.", value, key)
 }
