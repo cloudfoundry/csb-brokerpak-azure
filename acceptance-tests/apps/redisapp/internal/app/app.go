@@ -20,7 +20,7 @@ func App(options *redis.Options) http.HandlerFunc {
 		case http.MethodGet:
 			handleGet(w, r, key, client)
 		case http.MethodPut:
-			handleGet(w, r, key, client)
+			handleSet(w, r, key, client)
 		default:
 			fail(w, http.StatusMethodNotAllowed, http.StatusText(http.StatusMethodNotAllowed))
 		}
