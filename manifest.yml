@@ -43,8 +43,8 @@ terraform_binaries:
   version: 2.33.0
   source: https://github.com/terraform-providers/terraform-provider-azurerm/archive/v2.33.0.zip
 - name: terraform-provider-azurerm
-  version: 3.45.0
-  source: https://github.com/terraform-providers/terraform-provider-azurerm/archive/v3.45.0.zip
+  version: 3.46.0
+  source: https://github.com/terraform-providers/terraform-provider-azurerm/archive/v3.46.0.zip
 - name: terraform-provider-random
   version: 3.4.3
   source: https://github.com/terraform-providers/terraform-provider-random/archive/v3.4.3.zip
