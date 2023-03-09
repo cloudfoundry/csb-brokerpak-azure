@@ -21,8 +21,6 @@ SECURITY_USER_NAME := $(or $(SECURITY_USER_NAME), $(IAAS)-broker)
 SECURITY_USER_PASSWORD := $(or $(SECURITY_USER_PASSWORD), $(IAAS)-broker-pw)
 GSB_PROVISION_DEFAULTS := $(or $(GSB_PROVISION_DEFAULTS), {"resource_group": "broker-cf-test"})
 
-PARALLEL_JOB_COUNT := $(or $(PARALLEL_JOB_COUNT), 2)
-
 ifeq ($(GO_OK), 0)
 GO=go
 GOFMT=gofmt
@@ -106,11 +104,11 @@ brokerpak-user-docs.md: *.yml
 
 .PHONY: examples
 examples: build ## display available examples
-	 $(RUN_CSB) client examples
+	 $(RUN_CSB) examples
 
 .PHONY: run-examples
-run-examples: build ## run examples against CSB on localhost (run "make run" to start it), set service_name and example_name to run specific example
-	$(RUN_CSB) client run-examples --service-name="$(service_name)" --example-name="$(example_name)" -j $(PARALLEL_JOB_COUNT)
+run-examples: build ## run examples tests, set service_name and/or example_name
+	$(RUN_CSB) run-examples --service-name="$(service_name)" --example-name="$(example_name)"
 
 ###### test ###################################################################
 
