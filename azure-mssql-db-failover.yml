@@ -105,6 +105,7 @@ provision:
     details: Subsume existing DB
   user_inputs:
   - field_name: existing
+    type: boolean
     required: false
     default: false
     details: Connect to existing database if true
