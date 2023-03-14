@@ -56,6 +56,7 @@ provision:
       RAGRS: Read only geo-redundant
       ZRS: Zone-redundant
   - field_name: resource_group
+    type: string
     details: Name for the resource group for this instance
     default: ''
     constraints:

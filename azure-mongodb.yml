@@ -86,6 +86,7 @@ provision:
       pattern: ^[a-z][a-z0-9-]+$
     prohibit_update: true
   - field_name: resource_group
+    type: string
     details: Name for the resource group for this instance
     default: ''
     constraints:
