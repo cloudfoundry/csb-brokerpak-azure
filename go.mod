@@ -21,17 +21,13 @@ require (
 )
 
 require (
-	code.cloudfoundry.org/lager/v3 v3.0.0 // indirect
-	github.com/pivotal-cf/brokerapi/v9 v9.0.0 // indirect
-)
-
-require (
 	cloud.google.com/go v0.105.0 // indirect
 	cloud.google.com/go/compute v1.14.0 // indirect
 	cloud.google.com/go/compute/metadata v0.2.3 // indirect
 	cloud.google.com/go/iam v0.8.0 // indirect
 	cloud.google.com/go/storage v1.27.0 // indirect
 	code.cloudfoundry.org/credhub-cli v0.0.0-20220620130410-645eee56ecdb // indirect
+	code.cloudfoundry.org/lager/v3 v3.0.0 // indirect
 	github.com/Azure/azure-sdk-for-go/sdk/internal v1.2.0 // indirect
 	github.com/AzureAD/microsoft-authentication-library-for-go v0.9.0 // indirect
 	github.com/BurntSushi/toml v1.2.1 // indirect
@@ -103,6 +99,7 @@ require (
 	github.com/oklog/run v1.0.0 // indirect
 	github.com/otiai10/copy v1.9.0
 	github.com/pelletier/go-toml/v2 v2.0.6 // indirect
+	github.com/pivotal-cf/brokerapi/v9 v9.0.0 // indirect
 	github.com/pkg/browser v0.0.0-20210911075715-681adbf594b8 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/prometheus/client_golang v1.11.1 // indirect
