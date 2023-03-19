@@ -29,6 +29,10 @@ dependencies:
       version: 1.1.9
       source: https://github.com/hashicorp/terraform/archive/v1.1.9.zip
       source_sha256: 98e4d48e2703cff237d64a865bffba56dec597d72e40e8c978e1beccbe49c27b
+    - name: terraform
+      version: 1.4.2
+      source: https://github.com/hashicorp/terraform/archive/v1.4.2.zip
+      source_sha256: d04b859b3ca87f16fc31f5573c03b710631e8533493e4f1885c1eb795ebeddfa
     - name: terraform-provider-azurerm
       version: 2.20.0
       source: https://github.com/terraform-providers/terraform-provider-azurerm/archive/v2.20.0.zip
