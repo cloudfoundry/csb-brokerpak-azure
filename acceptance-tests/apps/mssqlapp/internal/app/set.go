@@ -6,7 +6,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/gorilla/mux"
+	"github.com/go-chi/chi/v5"
 )
 
 func handleSet(config string) func(w http.ResponseWriter, r *http.Request) {
@@ -21,9 +21,9 @@ func handleSet(config string) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		key, ok := mux.Vars(r)["key"]
-		if !ok {
-			fail(w, http.StatusBadRequest, "key missing: %s", key)
+		key := chi.URLParam(r, "key")
+		if key == "" {
+			fail(w, http.StatusBadRequest, "key must be supplied")
 			return
 		}
 
