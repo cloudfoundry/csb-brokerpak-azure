@@ -8,7 +8,7 @@ import (
 	"regexp"
 
 	_ "github.com/denisenkom/go-mssqldb"
-	"github.com/gorilla/mux"
+	"github.com/go-chi/chi/v5"
 )
 
 const (
@@ -17,20 +17,20 @@ const (
 	valueColumn = "valuedata"
 )
 
-func App(config string) *mux.Router {
+func App(config string) http.Handler {
 	db := connect(config)
 	defer db.Close()
 	if err := db.Ping(); err != nil {
 		log.Fatalf("failed to ping database: %s", err)
 	}
 
-	r := mux.NewRouter()
-	r.HandleFunc("/", aliveness).Methods("HEAD", "GET")
-	r.HandleFunc("/{schema}", handleCreateSchema(config)).Methods("PUT")
-	r.HandleFunc("/{schema}", handleFillDatabase(config)).Methods("POST")
-	r.HandleFunc("/{schema}", handleDropSchema(config)).Methods("DELETE")
-	r.HandleFunc("/{schema}/{key}", handleSet(config)).Methods("PUT")
-	r.HandleFunc("/{schema}/{key}", handleGet(config)).Methods("GET")
+	r := chi.NewRouter()
+	r.Head("/", aliveness)
+	r.Put("/{schema}", handleCreateSchema(config))
+	r.Post("/{schema}", handleFillDatabase(config))
+	r.Delete("/{schema}", handleDropSchema(config))
+	r.Put("/{schema}/{key}", handleSet(config))
+	r.Get("/{schema}/{key}", handleGet(config))
 
 	return r
 }
@@ -50,15 +50,13 @@ func connect(config string) *sql.DB {
 }
 
 func schemaName(r *http.Request) (string, error) {
-	schema, ok := mux.Vars(r)["schema"]
+	schema := chi.URLParam(r, "schema")
 
 	switch {
-	case !ok:
-		return "", fmt.Errorf("schema missing")
+	case schema == "":
+		return "", fmt.Errorf("schema name must be supplied")
 	case len(schema) > 50:
 		return "", fmt.Errorf("schema name too long")
-	case len(schema) == 0:
-		return "", fmt.Errorf("schema name cannot be zero length")
 	case !regexp.MustCompile(`^[a-zA-Z0-9]+$`).MatchString(schema):
 		return "", fmt.Errorf("schema name contains invalid characters")
 	default:
