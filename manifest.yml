@@ -94,14 +94,14 @@ service_definitions:
 - azure-redis.yml
 - azure-mysql.yml
 - azure-mssql.yml
-- azure-mssql-failover.yml
+- azure-mssql-failover-group.yml
 - azure-mongodb.yml
 - azure-eventhubs.yml
 - azure-mssql-db.yml
 - azure-mssql-server.yml
-- azure-mssql-db-failover.yml
+- azure-mssql-db-failover-group.yml
 - azure-mssql-fog-run-failover.yml
 - azure-resource-group.yml
-- azure-postgres.yml
+- azure-postgresql.yml
 - azure-storage-account.yml
 - azure-cosmosdb-sql.yml
