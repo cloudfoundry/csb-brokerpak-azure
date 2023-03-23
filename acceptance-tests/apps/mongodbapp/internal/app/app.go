@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/gorilla/mux"
+	"github.com/go-chi/chi/v5"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -18,15 +18,15 @@ const (
 	documentTTLKey  = "ttl"
 )
 
-func App(uri string) *mux.Router {
+func App(uri string) http.Handler {
 	client := connect(uri)
 
-	r := mux.NewRouter()
-	r.HandleFunc("/", aliveness).Methods("HEAD")
-	r.HandleFunc("/", handleListDatabases(client)).Methods("GET")
-	r.HandleFunc("/{database}", handleListCollections(client)).Methods("GET")
-	r.HandleFunc("/{database}/{collection}/{document}", handleFetchDocument(client)).Methods("GET")
-	r.HandleFunc("/{database}/{collection}/{document}", handleStoreDocument(client)).Methods("PUT")
+	r := chi.NewRouter()
+	r.Head("/", aliveness)
+	r.Get("/", handleListDatabases(client))
+	r.Get("/{database}", handleListCollections(client))
+	r.Get("/{database}/{collection}/{document}", handleFetchDocument(client))
+	r.Put("/{database}/{collection}/{document}", handleStoreDocument(client))
 
 	return r
 }

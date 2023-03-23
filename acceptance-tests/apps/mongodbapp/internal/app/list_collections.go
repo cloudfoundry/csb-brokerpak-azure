@@ -6,7 +6,8 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/gorilla/mux"
+	"github.com/go-chi/chi/v5"
+
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -15,7 +16,11 @@ func handleListCollections(client *mongo.Client) func(w http.ResponseWriter, r *
 	return func(w http.ResponseWriter, r *http.Request) {
 		log.Println("Handling list collections.")
 
-		databaseName := mux.Vars(r)["database"]
+		databaseName := chi.URLParam(r, "database")
+		if databaseName == "" {
+			fail(w, http.StatusBadRequest, "database name must be supplied")
+		}
+
 		list, err := client.Database(databaseName).ListCollectionNames(r.Context(), bson.D{})
 		if err != nil {
 			fail(w, http.StatusNotFound, "error listing collections: %s", err)
