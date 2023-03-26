@@ -9,11 +9,11 @@ require (
 	github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/resources/armresources v1.0.0
 	github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/sql/armsql v1.0.0
 	github.com/Pallinder/go-randomdata v1.2.0
-	github.com/cloudfoundry/cloud-service-broker v0.17.4
+	github.com/cloudfoundry/cloud-service-broker v0.17.5
 	github.com/denisenkom/go-mssqldb v0.12.3
-	github.com/hashicorp/terraform-plugin-sdk/v2 v2.25.0
-	github.com/onsi/ginkgo/v2 v2.9.1
-	github.com/onsi/gomega v1.27.4
+	github.com/hashicorp/terraform-plugin-sdk/v2 v2.26.1
+	github.com/onsi/ginkgo/v2 v2.9.2
+	github.com/onsi/gomega v1.27.5
 	github.com/pborman/uuid v1.2.1
 	golang.org/x/exp v0.0.0-20221114191408-850992195362
 	golang.org/x/tools v0.7.0
@@ -43,7 +43,7 @@ require (
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
 	github.com/go-logr/logr v1.2.3 // indirect
 	github.com/go-sql-driver/mysql v1.7.0 // indirect
-	github.com/go-task/slim-sprig v0.0.0-20210107165309-348f09dbbbc0 // indirect
+	github.com/go-task/slim-sprig v0.0.0-20230315185526-52ccab3ef572 // indirect
 	github.com/golang-jwt/jwt/v4 v4.5.0 // indirect
 	github.com/golang-sql/civil v0.0.0-20190719163853-cb61b32ac6fe // indirect
 	github.com/golang-sql/sqlexp v0.1.0 // indirect
@@ -71,7 +71,7 @@ require (
 	github.com/hashicorp/hcl/v2 v2.16.2 // indirect
 	github.com/hashicorp/hil v0.0.0-20210521165536-27a72121fd40 // indirect
 	github.com/hashicorp/logutils v1.0.0 // indirect
-	github.com/hashicorp/terraform-exec v0.17.3 // indirect
+	github.com/hashicorp/terraform-exec v0.18.1 // indirect
 	github.com/hashicorp/terraform-json v0.16.0
 	github.com/hashicorp/terraform-plugin-go v0.14.3 // indirect
 	github.com/hashicorp/terraform-plugin-log v0.8.0 // indirect
