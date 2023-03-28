@@ -10,6 +10,7 @@ import (
 	"csbbrokerpakazure/acceptance-tests/helpers/apps"
 	"csbbrokerpakazure/acceptance-tests/helpers/cf"
 	"csbbrokerpakazure/acceptance-tests/helpers/random"
+	"csbbrokerpakazure/acceptance-tests/helpers/testpath"
 
 	"github.com/onsi/gomega"
 )
@@ -97,23 +98,11 @@ func WithPassword(password string) Option {
 func defaultConfig(opts ...Option) (broker Broker) {
 	defaults := []Option{
 		WithName(random.Name(random.WithPrefix("broker"))),
-		WithSourceDir(defaultSourceDir()),
+		WithSourceDir(testpath.BrokerpakRoot()),
 		WithUsername(random.Name()),
 		WithPassword(random.Password()),
 		WithEncryptionSecret(random.Password()),
 	}
 	WithOptions(append(defaults, opts...)...)(&broker)
 	return broker
-}
-
-func defaultSourceDir() string {
-	for _, d := range []string{"..", "../.."} {
-		p := fmt.Sprintf("%s/%s", d, "cf-manifest.yml")
-		_, err := os.Stat(p)
-		if err == nil {
-			return d
-		}
-	}
-
-	panic("could not find source for broker app")
 }
