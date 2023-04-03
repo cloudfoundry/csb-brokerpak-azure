@@ -16,17 +16,17 @@ func (a *App) GET(format string, s ...any) string {
 	var data []byte
 
 	Eventually(func(g Gomega) *http.Response {
-		fmt.Fprintf(GinkgoWriter, "HTTP GET: %s\n", url)
+		GinkgoWriter.Printf("HTTP GET: %s\n", url)
 		response, err := http.Get(url)
 		g.Expect(err).NotTo(HaveOccurred())
 
-		fmt.Fprintf(GinkgoWriter, "HTTP Status: %s\n", response.Status)
+		GinkgoWriter.Printf("HTTP Status: %s\n", response.Status)
 
 		defer response.Body.Close()
 		data, err = io.ReadAll(response.Body)
 		g.Expect(err).NotTo(HaveOccurred())
 
-		fmt.Fprintf(GinkgoWriter, "Recieved: %s\n", string(data))
+		GinkgoWriter.Printf("Recieved: %s\n", string(data))
 
 		return response
 	}).WithPolling(5 * time.Second).WithTimeout(time.Minute).Should(HaveHTTPStatus(http.StatusOK))
@@ -36,8 +36,8 @@ func (a *App) GET(format string, s ...any) string {
 
 func (a *App) PUT(data, format string, s ...any) {
 	url := a.urlf(format, s...)
-	fmt.Fprintf(GinkgoWriter, "HTTP PUT: %s\n", url)
-	fmt.Fprintf(GinkgoWriter, "Sending data: %s\n", data)
+	GinkgoWriter.Printf("HTTP PUT: %s\n", url)
+	GinkgoWriter.Printf("Sending data: %s\n", data)
 	request, err := http.NewRequest(http.MethodPut, url, strings.NewReader(data))
 	Expect(err).NotTo(HaveOccurred())
 	request.Header.Set("Content-Type", "text/html")
@@ -48,7 +48,7 @@ func (a *App) PUT(data, format string, s ...any) {
 
 func (a *App) DELETE(format string, s ...any) {
 	url := a.urlf(format, s...)
-	fmt.Fprintf(GinkgoWriter, "HTTP DELETE: %s\n", url)
+	GinkgoWriter.Printf("HTTP DELETE: %s\n", url)
 	request, err := http.NewRequest(http.MethodDelete, url, nil)
 	Expect(err).NotTo(HaveOccurred())
 

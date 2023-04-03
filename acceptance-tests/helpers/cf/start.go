@@ -1,7 +1,6 @@
 package cf
 
 import (
-	"fmt"
 	"os/exec"
 	"strings"
 
@@ -11,7 +10,7 @@ import (
 )
 
 func Start(args ...string) *gexec.Session {
-	fmt.Fprintf(GinkgoWriter, "Running: cf %s\n", strings.Join(args, " "))
+	GinkgoWriter.Printf("Running: cf %s\n", strings.Join(args, " "))
 	command := exec.Command("cf", args...)
 	session, err := gexec.Start(command, GinkgoWriter, GinkgoWriter)
 	Expect(err).NotTo(HaveOccurred())
