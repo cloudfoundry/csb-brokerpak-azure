@@ -263,8 +263,8 @@ github.com/chzyer/logex v1.1.10/go.mod h1:+Ywpsq7O8HXn0nuIou7OrIPyXbp3wmkHB+jjWR
 github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e/go.mod h1:nSuG5e5PlCu98SY8svDHJxuZscDgtXS6KTTbou5AhLI=
 github.com/chzyer/test v0.0.0-20180213035817-a1ea475d72b1/go.mod h1:Q3SI9o4m/ZMnBNeIyt5eFwwo7qiLfzFZmjNmxjkiQlU=
 github.com/client9/misspell v0.3.4/go.mod h1:qj6jICC3Q7zFZvVWo7KLAzC3yx5G7kyvSDkc90ppPyw=
-github.com/cloudfoundry/cloud-service-broker v0.17.9 h1:iMZSUI6LWgrq+DzqZAuDmCaxIEblx/EzUYQLasshykw=
-github.com/cloudfoundry/cloud-service-broker v0.17.9/go.mod h1:gRiIvdqu89c4BrUOFwDoRPLu4svJ1PNGu5SoNLXy5k4=
+github.com/cloudfoundry/cloud-service-broker v0.17.10 h1:TWbWMHZvBQ5bByrLE0/ZOqVNXAno4tKlMCK6au19g+c=
+github.com/cloudfoundry/cloud-service-broker v0.17.10/go.mod h1:asVoPTk41QzKZhCov/9JSAS7uWtEjVS1vLBq/4+iEug=
 github.com/cloudfoundry/go-socks5 v0.0.0-20180221174514-54f73bdb8a8e h1:FQdRViaoDphGRfgrotl2QGsX1gbloe57dbGBS5CG6KY=
 github.com/cloudfoundry/go-socks5 v0.0.0-20180221174514-54f73bdb8a8e/go.mod h1:PXmcacyJB/pJjSxEl15IU6rEIKXrhZQRzsr0UTkgNNs=
 github.com/cloudfoundry/socks5-proxy v0.2.60 h1:ydBc1njXIrCrU6UwQAwfIrKIab4Qq1lse8l2cVc7HA4=
