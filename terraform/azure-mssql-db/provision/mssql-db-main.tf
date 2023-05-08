@@ -21,6 +21,9 @@ resource "azurerm_mssql_database" "azure_sql_db" {
   short_term_retention_policy {
     retention_days = var.short_term_retention_days
   }
+  long_term_retention_policy {
+    weekly_retention = var.long_term_weekly_retention
+  }
 
   lifecycle {
     prevent_destroy = true

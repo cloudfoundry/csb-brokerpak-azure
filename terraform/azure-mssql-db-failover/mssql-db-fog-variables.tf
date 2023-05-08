@@ -11,3 +11,4 @@ variable "read_write_endpoint_failover_policy" { type = string }
 variable "failover_grace_minutes" { type = number }
 variable "short_term_retention_days" { type = number }
 variable "subsume" { type = bool }
+variable "long_term_weekly_retention" { type = string }

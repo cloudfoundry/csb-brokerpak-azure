@@ -185,6 +185,12 @@ provision:
     default: 7
     constraints:
       maximum: 35
+  - field_name: long_term_weekly_retention
+    type: string
+    details: The weekly retention policy for an LTR backup in an ISO 8601 format. Valid value is between 1 to 520 weeks.
+    default: P15W
+    constraints:
+      allowed_values: ["P1W", "P2W", "P3W", "P4W", "P5W", "P6W", "P7W", "P8W", "P9W", "P10W", "P11W", "P12W", "P13W", "P14W", "P15W", "P16W", "P17W", "P18W", "P19W", "P20W", "P21W", "P22W", "P23W", "P24W", "P25W", "P26W", "P27W", "P28W", "P29W", "P30W", "P31W", "P32W", "P33W", "P34W", "P35W"]
   template_refs:
     outputs: terraform/azure-mssql-db-failover/mssql-db-fog-outputs.tf
     provider: terraform/azure-mssql-db-failover/azure-provider.tf
