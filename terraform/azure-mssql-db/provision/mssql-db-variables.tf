@@ -7,3 +7,6 @@ variable "cores" { type = number }
 variable "max_storage_gb" { type = number }
 variable "short_term_retention_days" { type = number }
 variable "long_term_weekly_retention" { type = string }
+variable "long_term_monthly_retention" { type = string }
+variable "long_term_yearly_retention" { type = string }
+variable "ltr_week_of_year" { type = number }

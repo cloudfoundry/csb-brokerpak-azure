@@ -188,9 +188,32 @@ provision:
   - field_name: long_term_weekly_retention
     type: string
     details: The weekly retention policy for an LTR backup in an ISO 8601 format. Valid value is between 1 to 520 weeks.
-    default: P15W
+    default: "PT0S"
     constraints:
-      allowed_values: ["P1W", "P2W", "P3W", "P4W", "P5W", "P6W", "P7W", "P8W", "P9W", "P10W", "P11W", "P12W", "P13W", "P14W", "P15W", "P16W", "P17W", "P18W", "P19W", "P20W", "P21W", "P22W", "P23W", "P24W", "P25W", "P26W", "P27W", "P28W", "P29W", "P30W", "P31W", "P32W", "P33W", "P34W", "P35W"]
+      pattern: "^(P|PT)(?:[0-9]|[1-9][0-9]|[1-4][0-9]{2}|5[0-1][0-9]|520)(W|S)$"
+    required: false
+  - field_name: long_term_monthly_retention
+    type: string
+    details: The monthly retention policy for an LTR backup in an ISO 8601 format. Valid value is between 1 to 120 months.
+    default: "PT0S"
+    constraints:
+      pattern: "^(P|PT)([0-9]{1,2}|1[01][0-9]|12[0])(M|S)$"
+    required: false
+  - field_name: long_term_yearly_retention
+    type: string
+    details: The yearly retention policy for an LTR backup in an ISO 8601 format. Valid value is between 1 to 10 years.
+    default: "PT0S"
+    constraints:
+      pattern: "^(P|PT)10|[0-9](Y|S)$"
+    required: false
+  - field_name: ltr_week_of_year
+    type: number
+    details: The week of year to take the yearly backup. Value has to be between 1 and 52.
+    default: 1
+    constraints:
+      minimum: 1
+      maximum: 52
+    required: false
   template_refs:
     outputs: terraform/azure-mssql-db-failover/mssql-db-fog-outputs.tf
     provider: terraform/azure-mssql-db-failover/azure-provider.tf
