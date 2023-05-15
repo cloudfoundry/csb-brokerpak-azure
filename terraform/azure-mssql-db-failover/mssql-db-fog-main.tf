@@ -23,10 +23,10 @@ resource "azurerm_mssql_database" "primary_db" {
     retention_days = var.short_term_retention_days
   }
   long_term_retention_policy {
-    weekly_retention = var.long_term_weekly_retention
+    weekly_retention  = var.long_term_weekly_retention
     monthly_retention = var.long_term_monthly_retention
-    yearly_retention = var.long_term_yearly_retention
-    week_of_year = var.ltr_week_of_year
+    yearly_retention  = var.long_term_yearly_retention
+    week_of_year      = var.ltr_week_of_year
   }
 }
 
