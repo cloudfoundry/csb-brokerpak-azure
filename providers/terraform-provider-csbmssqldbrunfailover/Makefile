@@ -27,6 +27,9 @@ cloudfoundry.org: *.go */*.go
 .PHONY: clean
 clean: ## clean up build artifacts
 	- rm -rf cloudfoundry.org
+	- rm -rf /tmp/tpmssqldbrunfailover-non-fake.txt
+	- rm -rf /tmp/tpmssqldbrunfailover-pkgs.txt
+	- rm -rf /tmp/tpmssqldbrunfailover-coverage.out
 
 .PHONY: test
 test: ## run the tests
@@ -37,6 +40,13 @@ run-acceptance-tests: ## run the tests that are related to infrastructure
 	export TF_ACC=1; \
 	go run github.com/onsi/ginkgo/v2/ginkgo --label-filter="acceptance" -r -v
 
+.PHONY: run-acceptance-tests-coverage
+run-acceptance-tests-coverage: ## infrastructure tests coverage score
+	go list ./... | grep -v fake > /tmp/tpmssqldbrunfailover-non-fake.txt
+	paste -sd "," /tmp/tpmssqldbrunfailover-non-fake.txt > /tmp/tpmssqldbrunfailover-pkgs.txt
+	export TF_ACC=1; \
+	go test -coverpkg=`cat /tmp/tpmssqldbrunfailover-pkgs.txt` -coverprofile=/tmp/tpmssqldbrunfailover-coverage.out ./...
+	go tool cover -func /tmp/tpmssqldbrunfailover-coverage.out | grep total
 
 .PHONY: deps-go-binary
 deps-go-binary:
