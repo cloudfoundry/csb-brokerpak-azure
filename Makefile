@@ -132,6 +132,15 @@ provider-tests:  ## run the integration tests associated with providers
 provider-acceptance-tests: ## run the tests that are related to infrastructure
 	cd providers/terraform-provider-csbmssqldbrunfailover; $(MAKE) run-acceptance-tests
 
+.PHONY: provider-csbmssqldbrunfailover-coverage
+provider-csbmssqldbrunfailover-coverage: ## csbmssqldbrunfailover tests coverage score
+	cd providers/terraform-provider-csbmssqldbrunfailover; $(MAKE) run-acceptance-tests-coverage
+
+.PHONY: provider-csbsqlserver-coverage
+provider-csbsqlserver-coverage: ## csbsqlserver tests coverage score
+	cd providers/terraform-provider-csbsqlserver; $(MAKE) test-coverage
+
+
 .PHONY: info
 info: build ## show brokerpak info
 	$(RUN_CSB) pak info $(PAK_PATH)/$(shell ls *.brokerpak)
