@@ -119,6 +119,16 @@ test: lint run-integration-tests ## run the tests
 run-integration-tests: provider-tests ## run integration tests for this brokerpak
 	cd ./integration-tests && go run github.com/onsi/ginkgo/v2/ginkgo -r .
 
+.PHONY: run-integration-tests-coverage
+run-integration-tests-coverage: ## integration tests coverage score
+	go list ./... | grep -v fake > /tmp/csbazure-non-fake.txt
+	paste -sd "," /tmp/csbazure-non-fake.txt > /tmp/csbazure-pkgs.txt
+	go test -coverpkg=`cat /tmp/csbazure-pkgs.txt` -coverprofile=/tmp/csbazure-coverage.out `go list ./... | grep -v acceptance-tests | grep -v terraform-tests | grep -v csbmssqldbrunfailover`
+	go tool cover -func /tmp/csbazure-coverage.out | grep total
+
+
+go test -coverpkg=./... -coverprofile=coverage.out $(go list ./... | grep -v acceptance-tests | grep -v terraform-tests | grep -v csbmssqldbrunfailover)
+
 .PHONY: run-terraform-tests
 run-terraform-tests: ## run terraform tests for this brokerpak
 	cd ./terraform-tests && go run github.com/onsi/ginkgo/v2/ginkgo -r .
@@ -158,6 +168,9 @@ clean: ## clean up build artifacts
 	- rm -f ./brokerpak-user-docs.md
 	- cd providers/terraform-provider-csbsqlserver; $(MAKE) clean
 	- cd providers/terraform-provider-csbmssqldbrunfailover; $(MAKE) clean
+	- rm -f /tmp/csbazure-non-fake.txt
+	- rm -f /tmp/csbazure-pkgs.txt
+	- rm -f /tmp/csbazure-coverage.out
 
 .PHONY: rebuild
 rebuild: clean build
