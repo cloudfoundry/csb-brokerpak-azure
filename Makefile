@@ -126,9 +126,6 @@ run-integration-tests-coverage: ## integration tests coverage score
 	go test -coverpkg=`cat /tmp/csbazure-pkgs.txt` -coverprofile=/tmp/csbazure-coverage.out `go list ./... | grep -v acceptance-tests | grep -v terraform-tests | grep -v csbmssqldbrunfailover`
 	go tool cover -func /tmp/csbazure-coverage.out | grep total
 
-
-go test -coverpkg=./... -coverprofile=coverage.out $(go list ./... | grep -v acceptance-tests | grep -v terraform-tests | grep -v csbmssqldbrunfailover)
-
 .PHONY: run-terraform-tests
 run-terraform-tests: ## run terraform tests for this brokerpak
 	cd ./terraform-tests && go run github.com/onsi/ginkgo/v2/ginkgo -r .
