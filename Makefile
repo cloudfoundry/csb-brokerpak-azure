@@ -128,6 +128,10 @@ provider-tests:  ## run the integration tests associated with providers
 	cd providers/terraform-provider-csbsqlserver; $(MAKE) test
 	cd providers/terraform-provider-csbmssqldbrunfailover; $(MAKE) test
 
+.PHONY: provider-acceptance-tests
+provider-acceptance-tests: ## run the tests that are related to infrastructure
+	cd providers/terraform-provider-csbmssqldbrunfailover; $(MAKE) run-acceptance-tests
+
 .PHONY: provider-csbmssqldbrunfailover-coverage
 provider-csbmssqldbrunfailover-coverage: ## csbmssqldbrunfailover tests coverage score
 	cd providers/terraform-provider-csbmssqldbrunfailover; $(MAKE) run-acceptance-tests-coverage
