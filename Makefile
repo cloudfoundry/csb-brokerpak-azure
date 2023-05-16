@@ -119,13 +119,6 @@ test: lint run-integration-tests ## run the tests
 run-integration-tests: provider-tests ## run integration tests for this brokerpak
 	cd ./integration-tests && go run github.com/onsi/ginkgo/v2/ginkgo -r .
 
-.PHONY: run-integration-tests-coverage
-run-integration-tests-coverage: ## integration tests coverage score
-	go list ./... | grep -v fake > /tmp/csbazure-non-fake.txt
-	paste -sd "," /tmp/csbazure-non-fake.txt > /tmp/csbazure-pkgs.txt
-	go test -coverpkg=`cat /tmp/csbazure-pkgs.txt` -coverprofile=/tmp/csbazure-coverage.out `go list ./... | grep -v acceptance-tests | grep -v terraform-tests | grep -v csbmssqldbrunfailover`
-	go tool cover -func /tmp/csbazure-coverage.out | grep total
-
 .PHONY: run-terraform-tests
 run-terraform-tests: ## run terraform tests for this brokerpak
 	cd ./terraform-tests && go run github.com/onsi/ginkgo/v2/ginkgo -r .
@@ -135,17 +128,14 @@ provider-tests:  ## run the integration tests associated with providers
 	cd providers/terraform-provider-csbsqlserver; $(MAKE) test
 	cd providers/terraform-provider-csbmssqldbrunfailover; $(MAKE) test
 
-.PHONY: provider-acceptance-tests
-provider-acceptance-tests: ## run the tests that are related to infrastructure
-	cd providers/terraform-provider-csbmssqldbrunfailover; $(MAKE) run-acceptance-tests
+.PHONY: provider-csbmssqldbrunfailover-coverage
+provider-csbmssqldbrunfailover-coverage: ## csbmssqldbrunfailover tests coverage score
+	cd providers/terraform-provider-csbmssqldbrunfailover; $(MAKE) run-acceptance-tests-coverage
 
-.PHONY: provider-acceptance-tests-coverage
-provider-acceptance-tests-coverage: ## infrastructure tests coverage score
-	go list ./... | grep -v fake > /tmp/csbazure-acceptance-non-fake.txt
-	paste -sd "," /tmp/csbazure-acceptance-non-fake.txt > /tmp/csbazure-acceptance-pkgs.txt
-	export TF_ACC=1; \
-	go test -coverpkg=`cat /tmp/csbazure-acceptance-pkgs.txt` -coverprofile=/tmp/csbazure-acceptance-coverage.out `go list ./... | grep csbmssqldbrunfailover`
-	go tool cover -func /tmp/csbazure-acceptance-coverage.out | grep total
+.PHONY: provider-csbsqlserver-coverage
+provider-csbsqlserver-coverage: ## csbsqlserver tests coverage score
+	cd providers/terraform-provider-csbsqlserver; $(MAKE) test-coverage
+
 
 .PHONY: info
 info: build ## show brokerpak info
@@ -173,12 +163,6 @@ clean: ## clean up build artifacts
 	- rm -f ./brokerpak-user-docs.md
 	- cd providers/terraform-provider-csbsqlserver; $(MAKE) clean
 	- cd providers/terraform-provider-csbmssqldbrunfailover; $(MAKE) clean
-	- rm -f /tmp/csbazure-non-fake.txt
-	- rm -f /tmp/csbazure-pkgs.txt
-	- rm -f /tmp/csbazure-coverage.out
-	- rm -f /tmp/csbazure-acceptance-non-fake.txt
-	- rm -f /tmp/csbazure-acceptance-pkgs.txt
-	- rm -f /tmp/csbazure-acceptance-coverage.out
 
 .PHONY: rebuild
 rebuild: clean build
