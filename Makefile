@@ -139,6 +139,14 @@ provider-tests:  ## run the integration tests associated with providers
 provider-acceptance-tests: ## run the tests that are related to infrastructure
 	cd providers/terraform-provider-csbmssqldbrunfailover; $(MAKE) run-acceptance-tests
 
+.PHONY: provider-acceptance-tests-coverage
+provider-acceptance-tests-coverage: ## infrastructure tests coverage score
+	go list ./... | grep -v fake > /tmp/csbazure-acceptance-non-fake.txt
+	paste -sd "," /tmp/csbazure-acceptance-non-fake.txt > /tmp/csbazure-acceptance-pkgs.txt
+	export TF_ACC=1; \
+	go test -coverpkg=`cat /tmp/csbazure-acceptance-pkgs.txt` -coverprofile=/tmp/csbazure-acceptance-coverage.out `go list ./... | grep csbmssqldbrunfailover`
+	go tool cover -func /tmp/csbazure-acceptance-coverage.out | grep total
+
 .PHONY: info
 info: build ## show brokerpak info
 	$(RUN_CSB) pak info $(PAK_PATH)/$(shell ls *.brokerpak)
@@ -168,6 +176,9 @@ clean: ## clean up build artifacts
 	- rm -f /tmp/csbazure-non-fake.txt
 	- rm -f /tmp/csbazure-pkgs.txt
 	- rm -f /tmp/csbazure-coverage.out
+	- rm -f /tmp/csbazure-acceptance-non-fake.txt
+	- rm -f /tmp/csbazure-acceptance-pkgs.txt
+	- rm -f /tmp/csbazure-acceptance-coverage.out
 
 .PHONY: rebuild
 rebuild: clean build
