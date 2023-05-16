@@ -23,9 +23,9 @@ resource "azurerm_mssql_database" "azure_sql_db" {
   }
 
   long_term_retention_policy {
-    weekly_retention  = var.long_term_weekly_retention
-    monthly_retention = var.long_term_monthly_retention
-    yearly_retention  = var.long_term_yearly_retention
+    weekly_retention  = var.ltr_weekly_retention
+    monthly_retention = var.ltr_monthly_retention
+    yearly_retention  = var.ltr_yearly_retention
     week_of_year      = var.ltr_week_of_year
   }
 
