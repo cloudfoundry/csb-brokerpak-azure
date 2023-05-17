@@ -22,6 +22,12 @@ resource "azurerm_mssql_database" "primary_db" {
   short_term_retention_policy {
     retention_days = var.short_term_retention_days
   }
+  long_term_retention_policy {
+    weekly_retention  = var.ltr_weekly_retention
+    monthly_retention = var.ltr_monthly_retention
+    yearly_retention  = var.ltr_yearly_retention
+    week_of_year      = var.ltr_week_of_year
+  }
 }
 
 resource "azurerm_mssql_database" "secondary_db" {

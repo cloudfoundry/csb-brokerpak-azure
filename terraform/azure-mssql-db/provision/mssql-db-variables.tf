@@ -6,3 +6,7 @@ variable "sku_name" { type = string }
 variable "cores" { type = number }
 variable "max_storage_gb" { type = number }
 variable "short_term_retention_days" { type = number }
+variable "ltr_weekly_retention" { type = string }
+variable "ltr_monthly_retention" { type = string }
+variable "ltr_yearly_retention" { type = string }
+variable "ltr_week_of_year" { type = number }
