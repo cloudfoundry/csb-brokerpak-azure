@@ -185,6 +185,35 @@ provision:
     default: 7
     constraints:
       maximum: 35
+  - field_name: ltr_weekly_retention
+    type: string
+    details: The weekly retention policy for an LTR backup in an ISO 8601 format. Valid value is between 1 to 520 weeks.
+    default: "PT0S"
+    constraints:
+      pattern: "^(P|PT)(?:[0-9]|[1-9][0-9]|[1-4][0-9]{2}|5[0-1][0-9]|520)(W|S)$"
+    required: false
+  - field_name: ltr_monthly_retention
+    type: string
+    details: The monthly retention policy for an LTR backup in an ISO 8601 format. Valid value is between 1 to 120 months.
+    default: "PT0S"
+    constraints:
+      pattern: "^(P|PT)([0-9]{1,2}|1[01][0-9]|12[0])(M|S)$"
+    required: false
+  - field_name: ltr_yearly_retention
+    type: string
+    details: The yearly retention policy for an LTR backup in an ISO 8601 format. Valid value is between 1 to 10 years.
+    default: "PT0S"
+    constraints:
+      pattern: "^(P|PT)10|[0-9](Y|S)$"
+    required: false
+  - field_name: ltr_week_of_year
+    type: number
+    details: The week of year to take the yearly backup. Value has to be between 1 and 52.
+    default: 1
+    constraints:
+      minimum: 1
+      maximum: 52
+    required: false
   template_refs:
     outputs: terraform/azure-mssql-db-failover/mssql-db-fog-outputs.tf
     provider: terraform/azure-mssql-db-failover/azure-provider.tf
