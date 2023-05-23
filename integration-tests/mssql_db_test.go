@@ -33,7 +33,7 @@ var customMSSQLDBPlan = map[string]any{
 	},
 }
 
-var _ = FDescribe("MSSQL DB", Label("MSSQL"), func() {
+var _ = Describe("MSSQL DB", Label("MSSQL"), func() {
 	BeforeEach(func() {
 		Expect(mockTerraform.SetTFState([]testframework.TFStateValue{})).To(Succeed())
 	})
