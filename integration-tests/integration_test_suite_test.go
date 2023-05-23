@@ -1,6 +1,7 @@
 package integration_test
 
 import (
+	"encoding/json"
 	"strings"
 	"testing"
 
@@ -40,6 +41,8 @@ var _ = BeforeSuite(func() {
 		"service-images",
 	)
 	Expect(err).NotTo(HaveOccurred())
+	servers := map[string]map[string]any{"preprovisioned-server-name": {"admin_password": "something"}}
+
 	Expect(broker.Start(GinkgoWriter, []string{
 		"GSB_COMPATIBILITY_ENABLE_PREVIEW_SERVICES=true",
 		"ARM_CLIENT_ID=" + armClientID,
@@ -47,7 +50,10 @@ var _ = BeforeSuite(func() {
 		"ARM_SUBSCRIPTION_ID=" + armSubscriptionID,
 		"ARM_TENANT_ID=" + armTenantID,
 		"CSB_LISTENER_HOST=localhost",
+		"GSB_SERVICE_CSB_AZURE_MSSQL_DB_PLANS=" + marshall(customMSSQLDBPlans),
+		"MSSQL_DB_SERVER_CREDS=" + marshall(servers),
 	})).To(Succeed())
+
 })
 
 var _ = AfterSuite(func() {
@@ -58,4 +64,10 @@ var _ = AfterSuite(func() {
 
 func stringOfLen(length int) string {
 	return strings.Repeat("a", length)
+}
+
+func marshall(element any) string {
+	b, err := json.Marshal(element)
+	Expect(err).NotTo(HaveOccurred())
+	return string(b)
 }
