@@ -41,6 +41,8 @@ func (b Broker) env() []apps.EnvVar {
 		apps.EnvVar{Name: "ENCRYPTION_ENABLED", Value: true},
 		apps.EnvVar{Name: "ENCRYPTION_PASSWORDS", Value: b.secrets},
 		apps.EnvVar{Name: "BROKERPAK_UPDATES_ENABLED", Value: true},
+		apps.EnvVar{Name: "TERRAFORM_UPGRADES_ENABLED", Value: true},
+		apps.EnvVar{Name: "CSB_DISABLE_TF_UPGRADE_PROVIDER_RENAMES", Value: true},
 	)
 
 	return append(result, b.envExtras...)
