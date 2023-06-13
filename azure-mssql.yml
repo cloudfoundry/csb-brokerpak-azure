@@ -226,9 +226,3 @@ examples:
   provision_params: {}
   bind_params: {}
   bind_can_fail: true
-- name: azuresql-db-xlarge-configuration
-  description: Create an extra large Azure SQL Database
-  plan_id: a94f7192-5cba-11ea-8b5a-00155d7cdd25
-  provision_params: {}
-  bind_params: {}
-  bind_can_fail: true  
