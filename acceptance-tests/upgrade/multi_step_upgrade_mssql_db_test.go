@@ -5,12 +5,12 @@ import (
 	"csbbrokerpakazure/acceptance-tests/helpers/brokers"
 	"csbbrokerpakazure/acceptance-tests/helpers/random"
 	"csbbrokerpakazure/acceptance-tests/helpers/services"
-
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+	"strings"
 )
 
-var _ = Describe("MultiStepUpgradeMssqlDBTest", Label("mssql-db", "multi-step"), func() {
+var _ = Describe("MultiStepUpgradeMssqlDBTest", Label("multi-step"), func() {
 	When("upgrading broker version", func() {
 		It("should continue to work", func() {
 			By("pushing latest released broker version")
@@ -69,7 +69,7 @@ var _ = Describe("MultiStepUpgradeMssqlDBTest", Label("mssql-db", "multi-step"),
 			Expect(got).To(Equal(valueOne))
 
 			By("Performing all intermediate upgrades")
-			for _, brokerDir := range intermediateBuildDirs {
+			for _, brokerDir := range strings.Split(intermediateBuildDirs, ",") {
 				By("pushing the next version of the broker")
 				serviceBroker.UpgradeBroker(brokerDir)
 				By("upgrading service instance")
