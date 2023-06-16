@@ -11,14 +11,17 @@ import (
 )
 
 var (
-	developmentBuildDir string
-	releasedBuildDir    string
-	metadata            environment.Metadata
+	developmentBuildDir   string
+	releasedBuildDir      string
+	intermediateBuildDirs string
+	metadata              environment.Metadata
 )
 
 func init() {
 	flag.StringVar(&releasedBuildDir, "releasedBuildDir", "../../../azure-released", "location of released version of built broker and brokerpak")
 	flag.StringVar(&developmentBuildDir, "developmentBuildDir", "../../dev-release", "location of development version of built broker and brokerpak")
+	flag.StringVar(&intermediateBuildDirs, "intermediateBuildDirs", "", "comma separated locations of intermediate versions of built broker and brokerpak")
+
 }
 
 var _ = BeforeSuite(func() {
