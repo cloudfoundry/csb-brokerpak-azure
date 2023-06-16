@@ -1,13 +1,15 @@
 package upgrade_test
 
 import (
+	"strings"
+
+	. "github.com/onsi/ginkgo/v2"
+	. "github.com/onsi/gomega"
+
 	"csbbrokerpakazure/acceptance-tests/helpers/apps"
 	"csbbrokerpakazure/acceptance-tests/helpers/brokers"
 	"csbbrokerpakazure/acceptance-tests/helpers/random"
 	"csbbrokerpakazure/acceptance-tests/helpers/services"
-	. "github.com/onsi/ginkgo/v2"
-	. "github.com/onsi/gomega"
-	"strings"
 )
 
 var _ = Describe("MultiStepUpgradeMssqlDBTest", Label("multi-step"), func() {
