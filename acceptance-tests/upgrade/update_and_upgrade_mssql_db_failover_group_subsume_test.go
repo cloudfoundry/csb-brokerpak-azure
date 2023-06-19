@@ -102,6 +102,9 @@ var _ = Describe("MSSQL Failover Group DB Subsume", Label("mssql-db-failover-gro
 		binding := dbFogInstance.Bind(app)
 		defer apps.Delete(app) // app needs to be deleted before service instance
 
+		By("restaging the app")
+		apps.Restage(app)
+
 		By("checking that the app environment has a credhub reference for credentials")
 		Expect(binding.Credential()).To(matchers.HaveCredHubRef)
 
