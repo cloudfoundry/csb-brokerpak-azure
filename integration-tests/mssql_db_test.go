@@ -28,7 +28,6 @@ var customMSSQLDBPlan = map[string]any{
 	"name":        msSQLDBCustomPlanName,
 	"id":          msSQLDBCustomPlanID,
 	"description": "Default MSSQL DB plan",
-	"subsume":     false,
 	"metadata": map[string]any{
 		"displayName": "custom-sample",
 	},
@@ -76,10 +75,6 @@ var _ = Describe("MSSQL DB", Label("MSSQL"), func() {
 				MatchFields(IgnoreExtras, Fields{
 					Name: Equal("extra-large"),
 					ID:   Equal("09096759-58a8-41d0-96bf-39b02a0e4104"),
-				}),
-				MatchFields(IgnoreExtras, Fields{
-					Name: Equal("subsume"),
-					ID:   Equal("7781fa41-f486-447a-942c-ded8cccb8299"),
 				}),
 			),
 		)
