@@ -41,6 +41,7 @@ provision:
     type: object
     details: 'JSON hash of server pair name to set of server names. { "name": { "primary":{"server_name":"...", "resource_group":..."}, "secondary":{"server_name":"...", "resource_group":..."}, ...}'
     required: true
+    default: ${config("service.csb-azure-mssql-fog-run-failover.provision.defaults.server_pairs")}
   - field_name: azure_tenant_id
     type: string
     details: Azure Tenant to create resource in
