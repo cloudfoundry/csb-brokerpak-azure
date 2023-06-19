@@ -42,7 +42,7 @@ var _ = Describe("MSSQL Failover Group DB Subsume", Label("mssql-db-failover-gro
 		defer apps.Delete(app)
 
 		By("binding the app to the MASB fog")
-		masbFOGServiceInstance.Bind(app)
+		masbinding := masbFOGServiceInstance.Bind(app)
 
 		By("starting the app")
 		apps.Start(app)
@@ -84,6 +84,7 @@ var _ = Describe("MSSQL Failover Group DB Subsume", Label("mssql-db-failover-gro
 		defer dbFogInstance.Delete()
 
 		By("purging the MASB FOG instance")
+		masbinding.Unbind()
 		masbFOGServiceInstance.Purge()
 
 		By("updating to another plan")
