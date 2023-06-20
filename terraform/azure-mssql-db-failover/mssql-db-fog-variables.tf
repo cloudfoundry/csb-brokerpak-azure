@@ -10,7 +10,6 @@ variable "existing" { type = bool }
 variable "read_write_endpoint_failover_policy" { type = string }
 variable "failover_grace_minutes" { type = number }
 variable "short_term_retention_days" { type = number }
-variable "subsume" { type = bool }
 variable "ltr_weekly_retention" { type = string }
 variable "ltr_monthly_retention" { type = string }
 variable "ltr_yearly_retention" { type = string }
