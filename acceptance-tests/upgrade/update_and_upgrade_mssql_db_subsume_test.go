@@ -32,7 +32,7 @@ var _ = Describe("MSSQL DB Subsume", Label("mssql-db-subsume"), func() {
 		defer apps.Delete(app)
 
 		By("binding the app to the MASB service instance")
-		masbServiceInstance.Bind(app)
+		masbinding := masbServiceInstance.Bind(app)
 
 		By("starting the app")
 		apps.Start(app)
@@ -70,6 +70,7 @@ var _ = Describe("MSSQL DB Subsume", Label("mssql-db-subsume"), func() {
 		defer csbServiceInstance.Delete()
 
 		By("purging the MASB service instance")
+		masbinding.Unbind()
 		masbServiceInstance.Purge()
 
 		By("updating to another plan")

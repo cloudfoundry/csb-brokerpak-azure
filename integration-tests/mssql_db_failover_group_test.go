@@ -57,10 +57,6 @@ var _ = Describe("MSSQL DB Auto-failover group", Label("MSSQL Auto-failover grou
 					Name: Equal("existing"),
 					ID:   Equal("669661c1-7fe6-4c59-8004-63905e79a508"),
 				}),
-				MatchFields(IgnoreExtras, Fields{
-					Name: Equal("subsume"),
-					ID:   Equal("6686c11f-8b38-41fc-9d61-0571127b8115"),
-				}),
 			),
 		)
 	})
