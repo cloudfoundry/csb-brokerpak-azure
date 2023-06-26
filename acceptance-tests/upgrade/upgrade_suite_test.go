@@ -2,12 +2,7 @@ package upgrade_test
 
 import (
 	"flag"
-	"os/exec"
-	"strings"
 	"testing"
-	"time"
-
-	"github.com/onsi/gomega/gexec"
 
 	"csbbrokerpakazure/acceptance-tests/helpers/environment"
 
@@ -36,12 +31,4 @@ var _ = BeforeSuite(func() {
 func TestUpgrade(t *testing.T) {
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "Upgrade Suite")
-}
-
-func fetchResourceID(kind, name, server string) string {
-	command := exec.Command("az", "sql", kind, "show", "--name", name, "--server", server, "--resource-group", metadata.ResourceGroup, "--query", "id", "-o", "tsv")
-	session, err := gexec.Start(command, GinkgoWriter, GinkgoWriter)
-	Expect(err).NotTo(HaveOccurred())
-	Eventually(session, time.Minute).Should(gexec.Exit(0))
-	return strings.TrimSpace(string(session.Out.Contents()))
 }
