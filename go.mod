@@ -9,7 +9,7 @@ require (
 	github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/resources/armresources v1.1.1
 	github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/sql/armsql v1.1.0
 	github.com/Pallinder/go-randomdata v1.2.0
-	github.com/cloudfoundry/cloud-service-broker v0.19.0
+	github.com/cloudfoundry/cloud-service-broker v0.19.1
 	github.com/denisenkom/go-mssqldb v0.12.3
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.26.1
 	github.com/onsi/ginkgo/v2 v2.11.0
@@ -146,5 +146,5 @@ require (
 	gopkg.in/yaml.v3 v3.0.1
 	gorm.io/driver/mysql v1.5.1 // indirect
 	gorm.io/driver/sqlite v1.4.4 // indirect
-	gorm.io/gorm v1.25.1 // indirect
+	gorm.io/gorm v1.25.2 // indirect
 )
