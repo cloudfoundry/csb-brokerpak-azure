@@ -9,7 +9,7 @@
     "test": "npx standard --fix"
   },
   "dependencies": {
-    "@azure/storage-blob": "^12.14.0",
+    "@azure/storage-blob": "^12.15.0",
     "express": "^4.18.2",
     "helmet": "^7.0.0",
     "vcap_services": "^0.7.1"
