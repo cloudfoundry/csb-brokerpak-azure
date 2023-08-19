@@ -4,8 +4,8 @@ go 1.21
 
 require (
 	code.cloudfoundry.org/jsonry v1.1.4
-	github.com/Azure/azure-sdk-for-go/sdk/azcore v1.7.0
-	github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.3.0
+	github.com/Azure/azure-sdk-for-go/sdk/azcore v1.7.1
+	github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.3.1
 	github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/resources/armresources v1.1.1
 	github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/sql/armsql v1.1.0
 	github.com/Pallinder/go-randomdata v1.2.0
@@ -24,6 +24,7 @@ require (
 	github.com/ProtonMail/go-crypto v0.0.0-20230217124315-7d5c6f04bbb8 // indirect
 	github.com/cloudflare/circl v1.3.3 // indirect
 	github.com/go-chi/chi/v5 v5.0.8 // indirect
+	github.com/golang-jwt/jwt/v5 v5.0.0 // indirect
 	github.com/google/s2a-go v0.1.3 // indirect
 	github.com/openzipkin/zipkin-go v0.4.1 // indirect
 	github.com/pivotal-cf/brokerapi/v10 v10.0.0 // indirect
@@ -40,7 +41,7 @@ require (
 	code.cloudfoundry.org/credhub-cli v0.0.0-20220620130410-645eee56ecdb // indirect
 	code.cloudfoundry.org/lager/v3 v3.0.2 // indirect
 	github.com/Azure/azure-sdk-for-go/sdk/internal v1.3.0 // indirect
-	github.com/AzureAD/microsoft-authentication-library-for-go v1.0.0 // indirect
+	github.com/AzureAD/microsoft-authentication-library-for-go v1.1.1 // indirect
 	github.com/BurntSushi/toml v1.2.1 // indirect
 	github.com/agext/levenshtein v1.2.2 // indirect
 	github.com/apparentlymart/go-textseg/v13 v13.0.0 // indirect
@@ -55,7 +56,6 @@ require (
 	github.com/go-logr/logr v1.2.4 // indirect
 	github.com/go-sql-driver/mysql v1.7.1 // indirect
 	github.com/go-task/slim-sprig v0.0.0-20230315185526-52ccab3ef572 // indirect
-	github.com/golang-jwt/jwt/v4 v4.5.0 // indirect
 	github.com/golang-sql/civil v0.0.0-20190719163853-cb61b32ac6fe // indirect
 	github.com/golang-sql/sqlexp v0.1.0 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
