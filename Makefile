@@ -151,7 +151,7 @@ validate: build  ## validate pak syntax
 
 # fetching bits for cf push broker
 cloud-service-broker: go.mod ## build or fetch CSB binary
-	$(shell "$(GET_CSB)")
+	"$(GET_CSB)"
 
 APP_NAME := $(or $(APP_NAME), cloud-service-broker)
 DB_TLS := $(or $(DB_TLS), skip-verify)
