@@ -10,7 +10,7 @@ import (
 )
 
 var _ = Describe("Encoder", func() {
-	server := "csb-mssql-a74b4ec1-d534-4a7b-ac5e-3e644b7798b0.crvbjnvu3aun.us-west-2.rds.amazonaws.com"
+	server := "csb-mssql-a74b4ec1-d534-4a7b-ac5e-3e644b7798b0.crvbjnvu3aun.my-server.com"
 	username := "fake_username"
 	password := "fake_password"
 	database := "db"
@@ -27,17 +27,17 @@ var _ = Describe("Encoder", func() {
 		Entry(
 			"encrypt disable",
 			"disable",
-			"sqlserver://fake_username:fake_password@csb-mssql-a74b4ec1-d534-4a7b-ac5e-3e644b7798b0.crvbjnvu3aun.us-west-2.rds.amazonaws.com:1433?database=db&encrypt=disable",
+			"sqlserver://fake_username:fake_password@csb-mssql-a74b4ec1-d534-4a7b-ac5e-3e644b7798b0.crvbjnvu3aun.my-server.com:1433?database=db&encrypt=disable",
 		),
 		Entry(
 			"encrypt true",
 			"true",
-			"sqlserver://fake_username:fake_password@csb-mssql-a74b4ec1-d534-4a7b-ac5e-3e644b7798b0.crvbjnvu3aun.us-west-2.rds.amazonaws.com:1433?HostNameInCertificate=csb-mssql-a74b4ec1-d534-4a7b-ac5e-3e644b7798b0.crvbjnvu3aun.us-west-2.rds.amazonaws.com&TrustServerCertificate=false&database=db&encrypt=true",
+			"sqlserver://fake_username:fake_password@csb-mssql-a74b4ec1-d534-4a7b-ac5e-3e644b7798b0.crvbjnvu3aun.my-server.com:1433?HostNameInCertificate=csb-mssql-a74b4ec1-d534-4a7b-ac5e-3e644b7798b0.crvbjnvu3aun.my-server.com&TrustServerCertificate=false&database=db&encrypt=true",
 		),
 		Entry(
 			"encrypt different than true",
 			"false",
-			"sqlserver://fake_username:fake_password@csb-mssql-a74b4ec1-d534-4a7b-ac5e-3e644b7798b0.crvbjnvu3aun.us-west-2.rds.amazonaws.com:1433?database=db&encrypt=false",
+			"sqlserver://fake_username:fake_password@csb-mssql-a74b4ec1-d534-4a7b-ac5e-3e644b7798b0.crvbjnvu3aun.my-server.com:1433?database=db&encrypt=false",
 		),
 	)
 })

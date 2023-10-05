@@ -1,7 +1,7 @@
 terraform {
   required_providers {
     csbsqlserver = {
-      source  = "cloudfoundry/csbsqlserver"
+      source  = "cloud-service-broker/csbsqlserver"
       version = "1.0.0"
     }
   }
