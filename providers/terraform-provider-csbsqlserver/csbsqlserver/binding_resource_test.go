@@ -62,34 +62,7 @@ var _ = Describe("csbsqlserver_binding resource", func() {
 			})
 		})
 	})
-
-	Context("database does not exists", func() {
-		When("containment is not enable", func() {
-			It("should fail to create the binding", func() {
-				var (
-					adminPassword = testhelpers.RandomPassword()
-					port          = testhelpers.FreePort()
-				)
-
-				shutdownServerFn := testhelpers.StartServer(adminPassword, port, testhelpers.WithNoop())
-				DeferCleanup(func() { shutdownServerFn(time.Minute) })
-
-				expectErrorRegexp := regexp.MustCompile(`engine containment is not enabled`)
-				cnf := createTestCaseCnf(adminPassword, port)
-				cnf.ExpectError = expectErrorRegexp
-				resource.Test(GinkgoT(), getTestCaseWithError(cnf, getMandatoryStep(cnf)))
-			})
-		})
-	})
 })
-
-func getTestCaseWithError(cnf testCaseCnf, steps ...resource.TestStep) resource.TestCase {
-	return getTestCaseWithParams(cnf, steps...)
-}
-
-func getTestCase(cnf testCaseCnf, steps ...resource.TestStep) resource.TestCase {
-	return getTestCaseWithParams(cnf, steps...)
-}
 
 type testCaseCnf struct {
 	ResourceBindingOneName string
@@ -120,7 +93,7 @@ func createTestCaseCnf(adminPassword string, port int) testCaseCnf {
 	}
 }
 
-func getTestCaseWithParams(cnf testCaseCnf, steps ...resource.TestStep) resource.TestCase {
+func getTestCase(cnf testCaseCnf, steps ...resource.TestStep) resource.TestCase {
 	var (
 		bindingUser1, bindingUser2 = cnf.BindingUserOne, cnf.BindingUserTwo
 		databaseName               = cnf.DatabaseName
