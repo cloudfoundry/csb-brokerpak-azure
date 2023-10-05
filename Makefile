@@ -131,6 +131,7 @@ provider-tests:  ## run the integration tests associated with providers
 .PHONY: provider-acceptance-tests
 provider-acceptance-tests: ## run the tests that are related to infrastructure
 	cd providers/terraform-provider-csbmssqldbrunfailover; $(MAKE) run-acceptance-tests
+	cd providers/terraform-provider-csbsqlserver; $(MAKE) test
 
 .PHONY: provider-csbmssqldbrunfailover-coverage
 provider-csbmssqldbrunfailover-coverage: ## csbmssqldbrunfailover tests coverage score
@@ -138,7 +139,7 @@ provider-csbmssqldbrunfailover-coverage: ## csbmssqldbrunfailover tests coverage
 
 .PHONY: provider-csbsqlserver-coverage
 provider-csbsqlserver-coverage: ## csbsqlserver tests coverage score
-	cd providers/terraform-provider-csbsqlserver; $(MAKE) test-coverage
+	cd providers/terraform-provider-csbsqlserver; $(MAKE) ginkgo-coverage
 
 
 .PHONY: info

@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"fmt"
 	"os/exec"
-	"strings"
 	"time"
 
 	_ "github.com/denisenkom/go-mssqldb"
@@ -20,55 +19,81 @@ const (
 	defaultDatabase = "tempdb"
 )
 
-func StartServer(password string, port int) *gexec.Session {
+type ShutdownServerFn func(time.Duration)
+
+func StartServer(password string, port int, opts ...ServerOption) ShutdownServerFn {
+	// The SA_PASSWORD environment variable is deprecated. Use MSSQL_SA_PASSWORD instead.
+
 	cmd := exec.Command(
-		"docker", "run",
-		"-e", "ACCEPT_EULA=y", // EULA allows usage for testing
-		"-e", fmt.Sprintf("SA_PASSWORD=%s", password),
+		"docker", "run", "--rm",
+		"-e", "ACCEPT_EULA=Y", // EULA allows usage for testing
+		"-e", fmt.Sprintf("MSSQL_SA_PASSWORD=%s", password),
 		"-p", fmt.Sprintf("%d:1433", port),
-		"mcr.microsoft.com/mssql/server:2019-latest",
+		"mcr.microsoft.com/mssql/server:2022-latest",
 	)
+	shutdownServerFn := runServerOrFail(password, port, cmd)
+
+	db := ConnectDefaultDB(AdminUser, password, port)
+
+	for _, opt := range opts {
+		opt(db)
+	}
+
+	if len(opts) == 0 {
+		WithSPConfigure()(db)
+		WithDatabase()(db)
+	}
+
+	return shutdownServerFn
+}
+
+func runServerOrFail(password string, port int, cmd *exec.Cmd) ShutdownServerFn {
 	session, err := gexec.Start(cmd, ginkgo.GinkgoWriter, ginkgo.GinkgoWriter)
 	gomega.Expect(err).NotTo(gomega.HaveOccurred())
 
 	for ready, started := false, time.Now(); !ready; {
-		db, err := sql.Open("sqlserver", ConnectionString(AdminUser, password, defaultDatabase, port))
-		gomega.Expect(err).NotTo(gomega.HaveOccurred())
+		db := Connect(AdminUser, password, defaultDatabase, port)
+
 		switch {
 		case db.Ping() == nil: // successful ping
 			ready = true
 		case session.ExitCode() != -1: // docker image no longer running
 			ginkgo.Fail("server running in docker has exited")
-		case time.Since(started) > 10*time.Minute:
+		case time.Since(started) > 5*time.Minute:
 			ginkgo.Fail("timed out waiting for the server to start")
 		default:
 			time.Sleep(time.Second)
 		}
 	}
-
-	db := Connect(AdminUser, password, defaultDatabase, port)
-	execf(db, `EXEC sp_configure 'contained database authentication', 1 RECONFIGURE`)
-	execf(db, `CREATE DATABASE %s CONTAINMENT = PARTIAL`, TestDatabase)
-
-	return session
+	return func(duration time.Duration) {
+		session.Terminate().Wait(duration)
+	}
 }
 
-func ConnectionString(username, password, database string, port int) string {
-	return strings.Join(
-		[]string{
-			fmt.Sprintf("server=%s", Server),
-			fmt.Sprintf("user id=%s", username),
-			fmt.Sprintf("password=%s", password),
-			fmt.Sprintf("port=%d", port),
-			fmt.Sprintf("database=%s", database),
-			"encrypt=disable",
-		},
-		";",
-	)
+type ServerOption func(db *sql.DB)
+
+func WithSPConfigure() ServerOption {
+	return func(db *sql.DB) {
+		execf(db, `EXEC sp_configure 'contained database authentication', 1 RECONFIGURE`)
+	}
 }
+
+func WithDatabase() ServerOption {
+	return func(db *sql.DB) {
+		execf(db, `CREATE DATABASE %s CONTAINMENT = PARTIAL`, TestDatabase)
+	}
+}
+
+func WithNoop() ServerOption { return func(db *sql.DB) {} }
 
 func Connect(username, password, database string, port int) *sql.DB {
-	db, err := sql.Open("sqlserver", ConnectionString(username, password, database, port))
+	db, err := sql.Open("sqlserver", NewEncoder(Server, username, password, database, "disable", port).Encode())
+	gomega.Expect(err).NotTo(gomega.HaveOccurred())
+	return db
+}
+
+func ConnectDefaultDB(username, password string, port int) *sql.DB {
+	db, err := sql.Open("sqlserver", NewEncoder(Server, username, password, "", "disable", port).EncodeWithoutDB())
 	gomega.Expect(err).NotTo(gomega.HaveOccurred())
 	return db
 }
