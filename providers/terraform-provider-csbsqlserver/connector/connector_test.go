@@ -98,6 +98,35 @@ var _ = Describe("Connector", func() {
 			defer rows.Close()
 			Expect(rows.Next()).To(BeFalse(), "login still exists")
 		})
+
+		It("reassigns ownership on deletion", func() {
+			bindingUsername := uuid.New()
+			bindingPassword := testhelpers.RandomPassword()
+
+			By("creating the binding")
+			err := conn.CreateBinding(context.TODO(), bindingUsername, bindingPassword, []string{"db_owner"})
+			Expect(err).NotTo(HaveOccurred())
+
+			By("checking that the binding user exists")
+			Expect(testhelpers.UserExists(db, bindingUsername)).To(BeTrue())
+
+			By("connecting and creating data")
+			value := uuid.New()
+			udb := testhelpers.Connect(bindingUsername, bindingPassword, testhelpers.TestDatabase, port)
+			_, err = udb.Exec(`CREATE SCHEMA reassignment`)
+			Expect(err).NotTo(HaveOccurred())
+			_, err = db.Exec(`CREATE TABLE reassignment.test (keyname VARCHAR(255) NOT NULL, valuename VARCHAR(max) NOT NULL)`)
+			Expect(err).NotTo(HaveOccurred())
+			_, err = db.Exec(`INSERT INTO reassignment.test (keyname, valuename) VALUES ('saved', @p1)`, value)
+			Expect(err).NotTo(HaveOccurred())
+
+			By("deleting the binding")
+			err = conn.DeleteBinding(context.TODO(), bindingUsername)
+			Expect(err).NotTo(HaveOccurred())
+
+			By("checking that the binding user does not exist")
+			Expect(testhelpers.UserExists(db, bindingUsername)).To(BeFalse(), "binding user still exists")
+		})
 	})
 
 	Describe("ReadBinding()", func() {

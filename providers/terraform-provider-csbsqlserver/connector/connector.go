@@ -10,6 +10,10 @@ import (
 	_ "github.com/denisenkom/go-mssqldb"
 )
 
+const (
+	roleName = "binding_user_group"
+)
+
 func New(server string, port int, username, password, database, encrypt string) *Connector {
 	return &Connector{
 		server:   server,
@@ -53,6 +57,9 @@ func (c *Connector) CreateBinding(ctx context.Context, username, password string
 // DeleteBinding drops the binding user. It is idempotent.
 func (c *Connector) DeleteBinding(ctx context.Context, username string) error {
 	return c.withTransaction(func(tx *sql.Tx) error {
+		if err := transferOwnership(ctx, tx, username); err != nil {
+			return err
+		}
 		if err := dropUser(ctx, tx, username); err != nil {
 			return err
 		}
@@ -129,6 +136,39 @@ func checkUser(ctx context.Context, db databaseActor, username string) (bool, er
 	}
 	defer rows.Close()
 	return rows.Next(), nil
+}
+
+func transferOwnership(ctx context.Context, tx *sql.Tx, username string) error {
+	statement := `
+DECLARE @cur CURSOR, @sql nvarchar(max), @schemaName nvarchar(max);
+
+IF DATABASE_PRINCIPAL_ID(@roleName) IS NULL
+BEGIN
+    SET @sql = 'CREATE ROLE ' + QuoteName(@roleName) + 'AUTHORIZATION dbo'
+    EXEC (@sql)
+END
+
+-- SET @sql = 'ALTER ROLE ' + QuoteName(@roleName) + ' ADD MEMBER ' + QuoteName(@username) + ' '
+-- EXEC (@sql)
+
+SET @cur = CURSOR STATIC FOR
+SELECT schema_name FROM information_schema.schemata WHERE schema_owner=@username
+
+OPEN @cur
+WHILE 1 = 1
+BEGIN
+   FETCH @cur INTO @schemaName
+   IF @@fetch_status <> 0
+       BREAK
+   SET @sql = 'ALTER AUTHORIZATION ON SCHEMA::' + QuoteName(@schemaName) + ' TO ' + QuoteName(@roleName) + ' '
+   EXEC (@sql)
+END
+`
+	if _, err := tx.ExecContext(ctx, statement, sql.Named("username", username), sql.Named("roleName", roleName)); err != nil {
+		return fmt.Errorf("error transfering ownership of schemas owned by %s to the %s role: %w", username, roleName, err)
+	}
+
+	return nil
 }
 
 func dropUser(ctx context.Context, tx *sql.Tx, username string) error {
