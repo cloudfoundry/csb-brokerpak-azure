@@ -80,7 +80,7 @@ var _ = Describe("MSSQL Server Pair and Failover Group DB", Label("mssql-server-
 
 		By("creating a schema using the first app")
 		schema := random.Name(random.WithMaxLength(10))
-		appOne.PUT("", schema)
+		appOne.PUT("", "%s?dbo=false", schema)
 
 		By("setting a key-value using the first app")
 		keyOne := random.Hexadecimal()
@@ -113,10 +113,14 @@ var _ = Describe("MSSQL Server Pair and Failover Group DB", Label("mssql-server-
 		Expect(appTwo.GET("%s/%s", schema, keyOne)).To(Equal(valueOne))
 		Expect(appTwo.GET("%s/%s", schema, keyTwo)).To(Equal(valueTwo))
 
+		By("deleting binding one the binding two keeps reading the value - object reassignment works")
+		binding.Unbind()
+		Expect(appTwo.GET("%s/%s", schema, keyOne)).To(Equal(valueOne))
+
 		By("reverting the failover")
 		failoverServiceInstance.Delete()
 
-		By("dropping the schema")
-		appOne.DELETE(schema)
+		By("dropping the schema using the second app")
+		appTwo.DELETE(schema)
 	})
 })
