@@ -36,7 +36,7 @@ var _ = Describe("MSSQL Failover Group", Label("mssql"), func() {
 
 		By("creating a schema using the first app")
 		schema := random.Name(random.WithMaxLength(10))
-		appOne.PUT("", schema)
+		appOne.PUT("", "%s?dbo=false", schema)
 
 		By("setting a key-value using the first app")
 		keyOne := random.Hexadecimal()
