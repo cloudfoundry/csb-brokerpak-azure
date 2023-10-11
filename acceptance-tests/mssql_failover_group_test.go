@@ -63,11 +63,15 @@ var _ = Describe("MSSQL Failover Group", Label("mssql"), func() {
 		Expect(appTwo.GET("%s/%s", schema, keyOne)).To(Equal(valueOne))
 		Expect(appTwo.GET("%s/%s", schema, keyTwo)).To(Equal(valueTwo))
 
+		By("deleting binding one the binding two keeps reading the value - object reassignment works")
+		bindingOne.Unbind()
+		Expect(appTwo.GET("%s/%s", schema, keyOne)).To(Equal(valueOne))
+
+		By("dropping the schema using the second app")
+		appTwo.DELETE(schema)
+
 		By("reverting the failover")
 		failoverServiceInstance.Delete()
-
-		By("dropping the schema")
-		appOne.DELETE(schema)
 	})
 })
 
