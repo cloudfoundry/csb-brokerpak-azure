@@ -4,62 +4,57 @@ package csbsqlserver
 import (
 	"context"
 
+	"csbbrokerpakazure/providers/terraform-provider-csbsqlserver/connector"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
-
-	"github.com/cloudfoundry/csb-brokerpak-azure/terraform-provider-csbsqlserver/connector"
 )
 
 const (
-	serverKey       = "server"
-	portKey         = "port"
-	databaseKey     = "database"
-	usernameKey     = "username"
-	passwordKey     = "password"
-	encryptKey      = "encrypt"
-	ResourceNameKey = "csbsqlserver_binding"
+	serverKey           = "server"
+	portKey             = "port"
+	databaseKey         = "database"
+	providerUsernameKey = "username"
+	providerPasswordKey = "password"
+	encryptKey          = "encrypt"
 )
 
 func Provider() *schema.Provider {
 	return &schema.Provider{
-		Schema:               GetProviderSchema(),
-		ConfigureContextFunc: ProviderContextFunc,
+		Schema: map[string]*schema.Schema{
+			serverKey: {
+				Type:     schema.TypeString,
+				Required: true,
+			},
+			portKey: {
+				Type:     schema.TypeInt,
+				Required: true,
+			},
+			databaseKey: {
+				Type:     schema.TypeString,
+				Required: true,
+			},
+			providerUsernameKey: {
+				Type:     schema.TypeString,
+				Required: true,
+			},
+			providerPasswordKey: {
+				Type:     schema.TypeString,
+				Required: true,
+			},
+			encryptKey: {
+				Type:     schema.TypeString,
+				Optional: true,
+			},
+		},
+		ConfigureContextFunc: configure,
 		ResourcesMap: map[string]*schema.Resource{
-			ResourceNameKey: BindingResource(),
+			"csbsqlserver_binding": bindingResource(),
 		},
 	}
 }
 
-func GetProviderSchema() map[string]*schema.Schema {
-	return map[string]*schema.Schema{
-		serverKey: {
-			Type:     schema.TypeString,
-			Required: true,
-		},
-		portKey: {
-			Type:     schema.TypeInt,
-			Required: true,
-		},
-		databaseKey: {
-			Type:     schema.TypeString,
-			Required: true,
-		},
-		usernameKey: {
-			Type:     schema.TypeString,
-			Required: true,
-		},
-		passwordKey: {
-			Type:     schema.TypeString,
-			Required: true,
-		},
-		encryptKey: {
-			Type:     schema.TypeString,
-			Optional: true,
-		},
-	}
-}
-
-func ProviderContextFunc(_ context.Context, d *schema.ResourceData) (any, diag.Diagnostics) {
+func configure(ctx context.Context, d *schema.ResourceData) (any, diag.Diagnostics) {
 	var (
 		server   string
 		port     int
@@ -79,11 +74,11 @@ func ProviderContextFunc(_ context.Context, d *schema.ResourceData) (any, diag.D
 			return
 		},
 		func() (diags diag.Diagnostics) {
-			username, diags = getServerIdentifier(d, usernameKey)
+			username, diags = getServerIdentifier(d, providerUsernameKey)
 			return
 		},
 		func() (diags diag.Diagnostics) {
-			password, diags = getServerPassword(d, passwordKey)
+			password, diags = getServerPassword(d, providerPasswordKey)
 			return
 		},
 		func() (diags diag.Diagnostics) {

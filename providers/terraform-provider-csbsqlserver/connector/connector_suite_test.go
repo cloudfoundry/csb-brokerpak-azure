@@ -5,11 +5,11 @@ import (
 	"testing"
 	"time"
 
+	"csbbrokerpakazure/providers/terraform-provider-csbsqlserver/connector"
+	"csbbrokerpakazure/providers/terraform-provider-csbsqlserver/testhelpers"
+
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
-
-	"github.com/cloudfoundry/csb-brokerpak-azure/terraform-provider-csbsqlserver/connector"
-	"github.com/cloudfoundry/csb-brokerpak-azure/terraform-provider-csbsqlserver/testhelpers"
 )
 
 func TestConnector(t *testing.T) {
@@ -27,17 +27,12 @@ var (
 var _ = BeforeSuite(func() {
 	adminPassword = testhelpers.RandomPassword()
 	port = testhelpers.FreePort()
-	shutdownServerFn := testhelpers.StartServer(adminPassword, port)
-	DeferCleanup(func() { shutdownServerFn(time.Minute) })
+	session := testhelpers.StartServer(adminPassword, port)
+	DeferCleanup(func() {
+		session.Terminate().Wait(time.Minute)
+	})
 	db = testhelpers.Connect(testhelpers.AdminUser, adminPassword, testhelpers.TestDatabase, port)
-	conn = connector.New(
-		testhelpers.Server,
-		port,
-		testhelpers.AdminUser,
-		adminPassword,
-		testhelpers.TestDatabase,
-		"disable",
-	)
+	conn = connector.New(testhelpers.Server, port, testhelpers.AdminUser, adminPassword, testhelpers.TestDatabase, "disable")
 })
 
 func userRoles(db *sql.DB, username string) (result []string) {

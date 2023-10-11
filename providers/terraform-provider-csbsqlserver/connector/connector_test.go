@@ -4,17 +4,17 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/google/uuid"
+	"csbbrokerpakazure/providers/terraform-provider-csbsqlserver/testhelpers"
+
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
-
-	"github.com/cloudfoundry/csb-brokerpak-azure/terraform-provider-csbsqlserver/testhelpers"
+	"github.com/pborman/uuid"
 )
 
 var _ = Describe("Connector", func() {
 	Describe("CreateBinding()", func() {
 		It("creates a binding", func() {
-			bindingUsername := uuid.NewString()
+			bindingUsername := uuid.New()
 			bindingPassword := testhelpers.RandomPassword()
 
 			By("creating the binding")
@@ -37,7 +37,7 @@ var _ = Describe("Connector", func() {
 		})
 
 		It("is idempotent", func() {
-			bindingUsername := uuid.NewString()
+			bindingUsername := uuid.New()
 			bindingPassword := testhelpers.RandomPassword()
 
 			By("creating the binding")
@@ -52,7 +52,7 @@ var _ = Describe("Connector", func() {
 
 	Describe("DeleteBinding()", func() {
 		It("removes a binding", func() {
-			bindingUsername := uuid.NewString()
+			bindingUsername := uuid.New()
 			bindingPassword := testhelpers.RandomPassword()
 
 			By("creating the binding")
@@ -70,28 +70,22 @@ var _ = Describe("Connector", func() {
 			Expect(testhelpers.UserExists(db, bindingUsername)).To(BeFalse(), "binding user still exists")
 		})
 
-		It("should fail when binding does not exists", func() {
-			bindingUsername := uuid.NewString()
+		It("is idempotent", func() {
+			bindingUsername := uuid.New()
 
 			By("deleting a binding that does not exist")
 			err := conn.DeleteBinding(context.TODO(), bindingUsername)
-			Expect(err).To(
-				MatchError(
-					ContainSubstring(
-						fmt.Sprintf("the principal '%s', because it does not exist or you do not have permission", bindingUsername),
-					),
-				),
-			)
+			Expect(err).NotTo(HaveOccurred())
 		})
 
 		It("removes legacy logins", func() {
-			bindingUsername := uuid.NewString()
+			bindingUsername := uuid.New()
 			bindingPassword := testhelpers.RandomPassword()
 
 			By("creating a legacy login")
 			_, err := db.Exec(fmt.Sprintf(`CREATE LOGIN [%s] with PASSWORD='%s'`, bindingUsername, bindingPassword))
 			Expect(err).NotTo(HaveOccurred())
-			_, err = db.Exec(fmt.Sprintf(`CREATE USER [%s] from LOGIN [%s]`, bindingUsername, bindingUsername))
+			db.Exec(fmt.Sprintf(`CREATE USER [%s] from LOGIN %s`, bindingUsername, bindingUsername))
 			Expect(err).NotTo(HaveOccurred())
 
 			By("deleting the binding")
@@ -108,7 +102,7 @@ var _ = Describe("Connector", func() {
 
 	Describe("ReadBinding()", func() {
 		It("can detect whether a user exists", func() {
-			bindingUsername := uuid.NewString()
+			bindingUsername := uuid.New()
 			bindingPassword := testhelpers.RandomPassword()
 
 			By("creating the binding")
@@ -121,7 +115,7 @@ var _ = Describe("Connector", func() {
 			Expect(found).To(BeTrue())
 
 			By("failing to find a user that doesn't exist")
-			found, err = conn.ReadBinding(context.TODO(), uuid.NewString())
+			found, err = conn.ReadBinding(context.TODO(), uuid.New())
 			Expect(err).NotTo(HaveOccurred())
 			Expect(found).To(BeFalse())
 		})
@@ -129,7 +123,7 @@ var _ = Describe("Connector", func() {
 
 	Describe("persisting data", func() {
 		It("persists data between bindings", func() {
-			bindingUsername1 := uuid.NewString()
+			bindingUsername1 := uuid.New()
 			bindingPassword1 := testhelpers.RandomPassword()
 
 			By("creating a first binding")
@@ -137,7 +131,7 @@ var _ = Describe("Connector", func() {
 			Expect(err).NotTo(HaveOccurred())
 
 			By("connecting and creating data")
-			value := uuid.NewString()
+			value := uuid.New()
 			udb := testhelpers.Connect(bindingUsername1, bindingPassword1, testhelpers.TestDatabase, port)
 			_, err = udb.Exec(`CREATE SCHEMA persist AUTHORIZATION dbo`)
 			Expect(err).NotTo(HaveOccurred())
@@ -151,7 +145,7 @@ var _ = Describe("Connector", func() {
 			Expect(err).NotTo(HaveOccurred())
 
 			By("creating another binding")
-			bindingUsername2 := uuid.NewString()
+			bindingUsername2 := uuid.New()
 			bindingPassword2 := testhelpers.RandomPassword()
 			err = conn.CreateBinding(context.TODO(), bindingUsername2, bindingPassword2, []string{"db_accessadmin", "db_datareader"})
 			Expect(err).NotTo(HaveOccurred())

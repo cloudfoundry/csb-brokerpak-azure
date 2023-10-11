@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"regexp"
 
+	"csbbrokerpakazure/providers/terraform-provider-csbsqlserver/csbsqlserver"
+
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
-
-	"github.com/cloudfoundry/csb-brokerpak-azure/terraform-provider-csbsqlserver/csbsqlserver"
 )
 
 var _ = Describe("Provider Configuration", func() {
