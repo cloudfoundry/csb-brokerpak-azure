@@ -51,12 +51,16 @@ var _ = Describe("csbsqlserver_binding resource", func() {
 							testCheckUserCanReadContent(cnf, tableNameUserTwo, cnf.ResourceBindingOneName, "fake_content"),
 							// user ONE creates schema
 							testCheckUserCanCreateSchema(cnf, schemaNameUserOne, cnf.ResourceBindingOneName),
+							testCheckEntityIsOwnerOfTheSchema(cnf, cnf.ResourceBindingOneName, cnf.BindingUserOne, schemaNameUserOne),
+							testCheckUserIsNotOwnerOfTheSchema(cnf, cnf.ResourceBindingTwoName, schemaNameUserTwo),
 							// user ONE creates table in schema, write and read content
 							testCheckUserCanCreateTableInSchema(cnf, schemaNameUserOne, tableNameUserOne, cnf.ResourceBindingOneName),
 							testCheckUserCanWriteContentInSchema(cnf, schemaNameUserOne, tableNameUserOne, cnf.ResourceBindingOneName, "fake_content"),
 							testCheckUserCanReadContentInSchema(cnf, schemaNameUserOne, tableNameUserOne, cnf.ResourceBindingOneName, "fake_content"),
 							// user TWO creates schema
 							testCheckUserCanCreateSchema(cnf, schemaNameUserTwo, cnf.ResourceBindingTwoName),
+							testCheckEntityIsOwnerOfTheSchema(cnf, cnf.ResourceBindingTwoName, cnf.BindingUserTwo, schemaNameUserTwo),
+							testCheckUserIsNotOwnerOfTheSchema(cnf, cnf.ResourceBindingOneName, schemaNameUserTwo),
 							// user TWO creates table in schema, write and read content
 							testCheckUserCanCreateTableInSchema(cnf, schemaNameUserTwo, tableNameUserTwo, cnf.ResourceBindingTwoName),
 							testCheckUserCanWriteContentInSchema(cnf, schemaNameUserTwo, tableNameUserTwo, cnf.ResourceBindingTwoName, "fake_content"),
