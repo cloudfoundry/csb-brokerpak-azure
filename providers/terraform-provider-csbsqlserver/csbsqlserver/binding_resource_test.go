@@ -205,7 +205,7 @@ func testCheckUserDoesNotExists(db *sql.DB, username string) func(state *terrafo
 
 func testCheckDatabaseExists(db *sql.DB, databaseName string) func(state *terraform.State) error {
 	return func(state *terraform.State) error {
-		statement := `SELECT 1 FROM master.dbo.sysdatabases where name=@p1`
+		statement := `SELECT 1 FROM sys.databases where name=@p1`
 		rows, err := db.Query(statement, databaseName)
 		if err != nil {
 			return fmt.Errorf("error querying existence of database %q: %w", databaseName, err)

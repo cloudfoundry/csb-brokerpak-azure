@@ -99,7 +99,7 @@ func (c *Connector) ReadBinding(ctx context.Context, username string) (result bo
 
 func (c *Connector) CheckDatabaseExists(ctx context.Context, dbName string) (result bool, err error) {
 	return result, c.withDefaultDBConnection(func(db *sql.DB) (err error) {
-		statement := `SELECT 1 FROM master.dbo.sysdatabases where name=@p1`
+		statement := `SELECT 1 FROM sys.databases where name=@p1`
 		rows, err := db.QueryContext(ctx, statement, dbName)
 		if err != nil {
 			return fmt.Errorf("error querying existence of database %q: %w", dbName, err)
