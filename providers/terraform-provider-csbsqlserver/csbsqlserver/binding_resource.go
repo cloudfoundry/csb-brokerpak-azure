@@ -4,10 +4,10 @@ import (
 	"context"
 	"fmt"
 
-	"csbbrokerpakazure/providers/terraform-provider-csbsqlserver/connector"
-
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+
+	"github.com/cloudfoundry/csb-brokerpak-azure/terraform-provider-csbsqlserver/connector"
 )
 
 const (
@@ -16,7 +16,7 @@ const (
 	bindingRoles    = "roles"
 )
 
-func bindingResource() *schema.Resource {
+func BindingResource() *schema.Resource {
 	return &schema.Resource{
 		Description: "A MS-SQL Server binding for the CSB brokerpak",
 		Schema: map[string]*schema.Schema{
@@ -107,7 +107,7 @@ func read(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
 	return nil
 }
 
-func update(ctx context.Context, d *schema.ResourceData, m any) diag.Diagnostics {
+func update(_ context.Context, _ *schema.ResourceData, _ any) diag.Diagnostics {
 	return diag.FromErr(fmt.Errorf("update lifecycle not implemented"))
 }
 

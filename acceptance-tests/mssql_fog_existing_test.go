@@ -74,7 +74,7 @@ var _ = Describe("MSSQL Failover Group Existing", Label("mssql-failover-group"),
 
 		By("creating a schema")
 		schema := random.Name(random.WithMaxLength(10))
-		app.PUT("", schema)
+		app.PUT("", "%s?dbo=false", schema)
 
 		By("setting a key-value")
 		key := random.Hexadecimal()
