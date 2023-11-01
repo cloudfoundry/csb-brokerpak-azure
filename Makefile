@@ -84,7 +84,7 @@ endif
 .PHONY: build
 build: deps-go-binary $(IAAS)-services-*.brokerpak ## build brokerpak
 
-$(IAAS)-services-*.brokerpak: *.yml terraform/*/*.tf ./providers/terraform-provider-csbsqlserver/cloudfoundry.org/cloud-service-broker/csbsqlserver ./providers/terraform-provider-csbmssqldbrunfailover/cloudfoundry.org/cloud-service-broker/csbmssqldbrunfailover | $(PAK_BUILD_CACHE_PATH)
+$(IAAS)-services-*.brokerpak: *.yml terraform/*/*.tf ./providers/terraform-provider-csbmssqldbrunfailover/cloudfoundry.org/cloud-service-broker/csbmssqldbrunfailover | $(PAK_BUILD_CACHE_PATH)
 	$(RUN_CSB) pak build
 
 .PHONY: run
@@ -125,7 +125,6 @@ run-terraform-tests: ## run terraform tests for this brokerpak
 
 .PHONY: provider-tests
 provider-tests:  ## run the integration tests associated with providers
-	cd providers/terraform-provider-csbsqlserver; $(MAKE) test
 	cd providers/terraform-provider-csbmssqldbrunfailover; $(MAKE) test
 
 .PHONY: provider-acceptance-tests
@@ -135,11 +134,6 @@ provider-acceptance-tests: ## run the tests that are related to infrastructure
 .PHONY: provider-csbmssqldbrunfailover-coverage
 provider-csbmssqldbrunfailover-coverage: ## csbmssqldbrunfailover tests coverage score
 	cd providers/terraform-provider-csbmssqldbrunfailover; $(MAKE) run-acceptance-tests-coverage
-
-.PHONY: provider-csbsqlserver-coverage
-provider-csbsqlserver-coverage: ## csbsqlserver tests coverage score
-	cd providers/terraform-provider-csbsqlserver; $(MAKE) ginkgo-coverage
-
 
 .PHONY: info
 info: build ## show brokerpak info
@@ -165,7 +159,6 @@ clean: ## clean up build artifacts
 	- rm -f $(IAAS)-services-*.brokerpak
 	- rm -f ./cloud-service-broker
 	- rm -f ./brokerpak-user-docs.md
-	- cd providers/terraform-provider-csbsqlserver; $(MAKE) clean
 	- cd providers/terraform-provider-csbmssqldbrunfailover; $(MAKE) clean
 
 .PHONY: rebuild
@@ -243,9 +236,6 @@ format: ## format the source
 	${GOFMT} -s -e -l -w .
 	${GO} run golang.org/x/tools/cmd/goimports -l -w -local csbbrokerpakazure .
 	terraform fmt --recursive
-
-./providers/terraform-provider-csbsqlserver/cloudfoundry.org/cloud-service-broker/csbsqlserver:
-	cd providers/terraform-provider-csbsqlserver; $(MAKE) build
 
 ./providers/terraform-provider-csbmssqldbrunfailover/cloudfoundry.org/cloud-service-broker/csbmssqldbrunfailover:
 	cd providers/terraform-provider-csbmssqldbrunfailover; $(MAKE) build
