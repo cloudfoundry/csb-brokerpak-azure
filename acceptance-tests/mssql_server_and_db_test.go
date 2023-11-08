@@ -11,7 +11,8 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("MSSQL Server and DB", Label("mssql-server"), func() {
+// Principally tests the 'csb-azure-mssql-db' service offering in combination with 'csb-azure-mssql-server'
+var _ = Describe("MSSQL Server and DB", Label("mssql-db-server"), func() {
 	It("can be accessed by an app", func() {
 		serverConfig := newDatabaseServer()
 

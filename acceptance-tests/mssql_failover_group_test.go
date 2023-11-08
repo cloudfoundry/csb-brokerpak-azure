@@ -13,7 +13,9 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("MSSQL Failover Group", Label("mssql"), func() {
+// Principally tests the 'csb-azure-mssql-failover-group' service offering,
+// using 'csb-azure-mssql-fog-run-failover' to trigger a failover
+var _ = Describe("MSSQL Failover Group", Label("mssql-failover-group"), func() {
 	It("can be accessed by an app before and after failover", func() {
 		By("creating a service instance")
 		serviceInstance := services.CreateInstance("csb-azure-mssql-failover-group", "small-v2")
