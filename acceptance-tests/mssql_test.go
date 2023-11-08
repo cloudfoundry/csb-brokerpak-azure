@@ -10,6 +10,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
+// Tests the 'csb-azure-mssql' service offering alone
 var _ = Describe("MSSQL", Label("mssql"), func() {
 	It("can be accessed by an app", func() {
 		By("creating a service instance")

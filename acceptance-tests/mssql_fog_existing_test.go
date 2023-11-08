@@ -12,7 +12,10 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("MSSQL Failover Group Existing", Label("mssql-failover-group"), func() {
+// Principally tests the 'existing' mode of the 'csb-azure-mssql-db-failover-group' service offering, using the
+// 'csb-azure-resource-group' and 'csb-azure-mssql-server' offerings as part of the test. This mode is used
+// by some customers, and executes a distinct Terraform path, so is worth testing separately.
+var _ = Describe("MSSQL Failover Group Existing", Label("mssql-db-failover-group-existing"), func() {
 	It("can be accessed by an app", func() {
 		By("deploying the CSB")
 		serversConfig := serverpairs.NewDatabaseServerPair(metadata)
