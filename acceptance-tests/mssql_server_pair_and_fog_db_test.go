@@ -12,7 +12,9 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("MSSQL Server Pair and Failover Group DB", Label("mssql-server-pair"), func() {
+// Principally tests the 'csb-azure-mssql-db-failover-group' service offering, using
+// 'csb-azure-mssql-server' and 'csb-azure-resource-group' as part of the test
+var _ = Describe("MSSQL Server Pair and Failover Group DB", Label("mssql-db-failover-group"), func() {
 	It("can be accessed by an app", func() {
 		serversConfig := serverpairs.NewDatabaseServerPair(metadata)
 
