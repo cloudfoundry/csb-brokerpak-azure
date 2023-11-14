@@ -167,7 +167,9 @@ provision:
     default: ${json.marshal(request.default_labels)}
     overwrite: true
     type: object
-  template_ref: terraform/azure-cosmosdb/provision-cosmosdb-sql.tf
+  template_refs:
+    main: terraform/azure-cosmosdb/provision-cosmosdb-sql.tf
+    moved: terraform/azure-cosmosdb/moved-provision-cosmosdb-sql.tf
   outputs:
   - field_name: cosmosdb_host_endpoint
     type: string

@@ -194,7 +194,9 @@ provision:
     default: ${json.marshal(request.default_labels)}
     overwrite: true
     type: object
-  template_ref: ./terraform/azure-redis/redis-provision.tf
+  template_refs:
+    main: terraform/azure-redis/redis-provision.tf
+    moved: terraform/azure-redis/moved-redis-provision.tf
   outputs:
   - field_name: name
     type: string
