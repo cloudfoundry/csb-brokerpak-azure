@@ -83,6 +83,8 @@ bind:
   plan_inputs: []
   user_inputs: []
   computed_inputs: []
+  template_refs:
+    noop: terraform/azure-resource-group/bind/noop.tf
   outputs: []
 examples:
 - name: azure-resource-group-standard

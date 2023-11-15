@@ -217,7 +217,8 @@ bind:
   plan_inputs: []
   user_inputs: []
   computed_inputs: []
-  template: ''
+  template_refs:
+    noop: terraform/azure-redis/bind/noop.tf
   outputs: []
 examples:
 - name: redis-cache-small

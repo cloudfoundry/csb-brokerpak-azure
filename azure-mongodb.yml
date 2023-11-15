@@ -201,7 +201,8 @@ bind:
   plan_inputs: []
   user_inputs: []
   computed_inputs: []
-  template: ''
+  template_refs:
+    noop: terraform/azure-mongodb/bind/noop.tf
   outputs: []
 examples:
 - name: spring-music-mongo-db

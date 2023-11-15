@@ -137,6 +137,8 @@ bind:
   plan_inputs: []
   user_inputs: []
   computed_inputs: []
+  template_refs:
+    noop:  terraform/azure-mssql-server/bind/noop.tf
   outputs: []
 examples:
 - name: azuresql-db-server-standard
