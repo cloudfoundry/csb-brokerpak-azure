@@ -181,7 +181,9 @@ provision:
     default: ${json.marshal(request.default_labels)}
     overwrite: true
     type: object
-  template_ref: terraform/azure-mysql/provision-mysql.tf
+  template_refs:
+    main: terraform/azure-mysql/provision-mysql.tf
+    moved: terraform/azure-mysql/moved-provision-mysql.tf
   outputs:
   - field_name: name
     type: string
@@ -229,7 +231,9 @@ bind:
     type: boolean
     default: ${instance.details["use_tls"]}
     overwrite: true
-  template_ref: terraform/azure-mysql/bind-mysql.tf
+  template_refs:
+    main: terraform/azure-mysql/bind-mysql.tf
+    moved: terraform/azure-mysql/moved-bind-mysql.tf
   outputs:
   - field_name: username
     type: string

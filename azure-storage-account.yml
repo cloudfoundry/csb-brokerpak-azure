@@ -103,7 +103,9 @@ provision:
     default: ${json.marshal(request.default_labels)}
     overwrite: true
     type: object
-  template_ref: ./terraform/azure-storage/account-provision.tf
+  template_refs:
+    main: terraform/azure-storage/account-provision.tf
+    moved: terraform/azure-storage/moved-account-provision.tf
   outputs:
   - field_name: primary_access_key
     type: string
@@ -118,7 +120,8 @@ bind:
   plan_inputs: []
   user_inputs: []
   computed_inputs: []
-  template: ''
+  template_refs:
+    noop: terraform/azure-storage/bind/noop.tf
   outputs: []
 examples:
 - name: storage-account-standard

@@ -126,7 +126,9 @@ provision:
     type: string
     details: Azure sku (typically, tier [GP_S,GP,BC,HS] + family [Gen4,Gen5] + cores, e.g. GP_S_Gen4_1, GP_Gen5_8, see https://docs.microsoft.com/en-us/azure/azure-sql/database/resource-limits-vcore-single-databases) Will be computed from cores if empty.
     default: ""
-  template_ref: terraform/azure-mssql/provision-mssql.tf
+  template_refs:
+    main: terraform/azure-mssql/provision-mssql.tf
+    moved: terraform/azure-mssql/moved-provision-mssql.tf
   computed_inputs:
   - name: labels
     default: ${json.marshal(request.default_labels)}
@@ -184,7 +186,9 @@ bind:
     type: string
     default: ${instance.details["password"]}
     overwrite: true
-  template_ref: terraform/azure-mssql/bind-mssql.tf
+  template_refs:
+    main: terraform/azure-mssql/bind-mssql.tf
+    moved: terraform/azure-mssql/moved-bind-mssql.tf
   outputs:
   - field_name: username
     type: string

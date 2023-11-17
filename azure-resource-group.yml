@@ -67,7 +67,9 @@ provision:
     type: boolean
     details: Skip automatic Azure provider registration, set to true if service principal being used does not have rights to register providers
     default: false
-  template_ref: terraform/azure-resource-group/resource-group-provision.tf
+  template_refs:
+    main: terraform/azure-resource-group/resource-group-provision.tf
+    moved: terraform/azure-resource-group/moved-resource-group-provision.tf
   computed_inputs:
   - name: labels
     default: ${json.marshal(request.default_labels)}
@@ -81,6 +83,8 @@ bind:
   plan_inputs: []
   user_inputs: []
   computed_inputs: []
+  template_refs:
+    noop: terraform/azure-resource-group/bind/noop.tf
   outputs: []
 examples:
 - name: azure-resource-group-standard
