@@ -140,7 +140,9 @@ provision:
     default: ${json.marshal(request.default_labels)}
     overwrite: true
     type: object
-  template_ref: terraform/azure-postgres/postgres-provision.tf
+  template_refs:
+    main: terraform/azure-postgres/postgres-provision.tf
+    moved: terraform/azure-postgres/moved-postgres-provision.tf
   outputs:
   - field_name: name
     type: string
@@ -188,7 +190,9 @@ bind:
     type: boolean
     default: ${instance.details["use_tls"]}
     overwrite: true
-  template_ref: terraform/azure-postgres/postgresql-bind.tf
+  template_refs:
+    main: terraform/azure-postgres/postgresql-bind.tf
+    moved: terraform/azure-postgres/moved-postgresql-bind.tf
   outputs:
   - field_name: username
     type: string

@@ -190,7 +190,9 @@ provision:
     default: ${json.marshal(request.default_labels)}
     overwrite: true
     type: object
-  template_ref: terraform/azure-mongodb/azure-mongodb.tf
+  template_refs:
+    main: terraform/azure-mongodb/azure-mongodb.tf
+    moved: terraform/azure-mongodb/moved-azure-mongodb.tf
   outputs:
   - field_name: uri
     type: string
@@ -199,7 +201,8 @@ bind:
   plan_inputs: []
   user_inputs: []
   computed_inputs: []
-  template: ''
+  template_refs:
+    noop: terraform/azure-mongodb/bind/noop.tf
   outputs: []
 examples:
 - name: spring-music-mongo-db

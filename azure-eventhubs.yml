@@ -108,7 +108,9 @@ provision:
     default: ${json.marshal(request.default_labels)}
     overwrite: true
     type: object
-  template_ref: terraform/azure-eventhubs/azure-eventhubs.tf
+  template_refs:
+    main: terraform/azure-eventhubs/azure-eventhubs.tf
+    moved: terraform/azure-eventhubs/moved-azure-eventhubs.tf
   outputs:
   - field_name: eventhub_rg_name
     type: string
@@ -155,7 +157,9 @@ bind:
     type: string
     default: ${instance.details["eventhub_name"]}
     overwrite: true
-  template_ref: terraform/azure-eventhubs/azure-eventhubs-bind.tf
+  template_refs:
+    main: terraform/azure-eventhubs/azure-eventhubs-bind.tf
+    moved: terraform/azure-eventhubs/moved-azure-eventhubs-bind.tf
   outputs:
   - field_name: event_hub_connection_string
     type: string
