@@ -15,7 +15,7 @@ output "port" { value = 1433 }
 output "name" { value = var.existing ? var.db_name : local.primary_db_name }
 output "username" { value = var.server_credential_pairs[var.server_pair].admin_username }
 output "password" {
-  value = var.server_credential_pairs[var.server_pair].admin_password
+  value     = var.server_credential_pairs[var.server_pair].admin_password
   sensitive = true
 }
 output "server_pair" { value = var.server_pair }

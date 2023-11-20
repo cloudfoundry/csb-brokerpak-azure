@@ -127,6 +127,6 @@ output "password" {
 }
 output "databaseLogin" { value = local.admin_username }
 output "databaseLoginPassword" {
-  value = local.admin_password
+  value     = local.admin_password
   sensitive = true
 }

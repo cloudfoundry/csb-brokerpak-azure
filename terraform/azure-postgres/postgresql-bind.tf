@@ -86,7 +86,7 @@ locals {
 }
 output "username" { value = local.username }
 output "password" {
-  value = random_password.password.result
+  value     = random_password.password.result
   sensitive = true
 }
 output "uri" {
