@@ -9,6 +9,7 @@ require (
 	github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/resources/armresources v1.1.1
 	github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/sql/armsql v1.1.0
 	github.com/Pallinder/go-randomdata v1.2.0
+	github.com/blang/semver/v4 v4.0.0
 	github.com/cloudfoundry/cloud-service-broker v0.20.0
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.30.0
 	github.com/onsi/ginkgo/v2 v2.13.1
