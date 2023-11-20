@@ -56,7 +56,10 @@ locals {
   username = format("%s@%s", random_string.username.result, var.mysql_hostname)
 }
 output "username" { value = local.username }
-output "password" { value = random_password.password.result }
+output "password" {
+  value     = random_password.password.result
+  sensitive = true
+}
 output "uri" {
   value = format("%s://%s:%s@%s:%d/%s",
     "mysql",
