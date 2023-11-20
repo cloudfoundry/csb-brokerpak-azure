@@ -56,8 +56,8 @@ terraform_binaries:
   version: 1.9.0
   source: https://github.com/terraform-providers/terraform-provider-mysql/archive/v1.9.0.zip
 - name: terraform-provider-null
-  version: 3.2.1
-  source: https://github.com/terraform-providers/terraform-provider-null/archive/v3.2.1.zip
+  version: 3.2.2
+  source: https://github.com/terraform-providers/terraform-provider-null/archive/v3.2.2.zip
 - name: terraform-provider-csbsqlserver
   version: 1.0.2
   source: https://github.com/cloudfoundry/terraform-provider-csbsqlserver/archive/v1.0.2.zip
