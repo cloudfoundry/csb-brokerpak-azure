@@ -1,4 +1,4 @@
-# Contributing to CSB Brokerpak for AWS
+# Contributing to CSB Brokerpak for Azure
 
 The Cloud Service Broker team uses GitHub and accepts contributions via
 [pull request](https://help.github.com/articles/using-pull-requests).
