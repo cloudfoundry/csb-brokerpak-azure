@@ -11,4 +11,4 @@ output "status" { value = format("created storage account %s (id: %s) URL:  http
   azurerm_storage_account.account.name,
   azurerm_storage_account.account.id,
   var.azure_tenant_id,
-  azurerm_storage_account.account.id) }
+azurerm_storage_account.account.id) }

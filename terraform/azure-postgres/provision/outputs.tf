@@ -13,4 +13,4 @@ output "status" { value = format("created db %s (id: %s) on server %s (id: %s) U
   azurerm_postgresql_server.instance.name,
   azurerm_postgresql_server.instance.id,
   var.azure_tenant_id,
-  azurerm_postgresql_server.instance.id) }
+azurerm_postgresql_server.instance.id) }

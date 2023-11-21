@@ -16,4 +16,4 @@ output "status" { value = format("created failover group %s (id: %s), primary db
   azurerm_mssql_database.azure_sql_db.name, azurerm_sql_server.secondary_sql_db_server.id, azurerm_mssql_database.azure_sql_db.name,
   azurerm_sql_server.secondary_sql_db_server.name, azurerm_sql_server.secondary_sql_db_server.id,
   var.azure_tenant_id,
-  azurerm_sql_server.primary_azure_sql_db_server.id) }
+azurerm_sql_server.primary_azure_sql_db_server.id) }

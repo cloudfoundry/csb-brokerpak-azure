@@ -16,4 +16,4 @@ output "status" { value = format("created db %s (id: %s) on server %s (id: %s) U
   azurerm_sql_server.azure_sql_db_server.name,
   azurerm_sql_server.azure_sql_db_server.id,
   var.azure_tenant_id,
-  azurerm_sql_database.azure_sql_db.id) }
+azurerm_sql_database.azure_sql_db.id) }

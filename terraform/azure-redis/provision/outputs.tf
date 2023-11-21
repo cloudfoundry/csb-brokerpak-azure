@@ -10,4 +10,4 @@ output "status" { value = format("created cache %s (id: %s) URL: https://portal.
   azurerm_redis_cache.redis.name,
   azurerm_redis_cache.redis.id,
   var.azure_tenant_id,
-  azurerm_redis_cache.redis.id) }
+azurerm_redis_cache.redis.id) }

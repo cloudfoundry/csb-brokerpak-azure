@@ -10,7 +10,7 @@ output "uri" {
     random_password.password.result,
     var.mysql_hostname,
     var.mysql_port,
-    var.mysql_db_name)
+  var.mysql_db_name)
   sensitive = true
 }
 output "jdbcUrl" {
@@ -22,6 +22,6 @@ output "jdbcUrl" {
     urlencode(local.username),
     random_password.password.result,
     var.use_tls,
-    var.use_tls)
+  var.use_tls)
   sensitive = true
 }

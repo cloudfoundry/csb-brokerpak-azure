@@ -5,4 +5,4 @@ output "status" { value = format("created event hub %s (id: %s)  URL: https://po
   azurerm_eventhub.eventhub.name,
   azurerm_eventhub.eventhub.id,
   var.azure_tenant_id,
-  azurerm_eventhub.eventhub.id) }
+azurerm_eventhub.eventhub.id) }

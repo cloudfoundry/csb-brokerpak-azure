@@ -12,4 +12,4 @@ output "status" { value = format("created account %s (id: %s) URL: https://porta
   azurerm_cosmosdb_account.cosmosdb-account.name,
   azurerm_cosmosdb_account.cosmosdb-account.id,
   var.azure_tenant_id,
-  azurerm_cosmosdb_account.cosmosdb-account.id) }
+azurerm_cosmosdb_account.cosmosdb-account.id) }
