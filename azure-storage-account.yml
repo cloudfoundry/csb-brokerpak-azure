@@ -104,8 +104,13 @@ provision:
     overwrite: true
     type: object
   template_refs:
-    main: terraform/azure-storage/account-provision.tf
-    moved: terraform/azure-storage/moved-account-provision.tf
+    data: terraform/azure-storage/provision/data.tf
+    main: terraform/azure-storage/provision/main.tf
+    moved: terraform/azure-storage/provision/moved-azure-storage.tf
+    outputs: terraform/azure-storage/provision/outputs.tf
+    provider: terraform/azure-storage/provision/provider.tf
+    variables: terraform/azure-storage/provision/variables.tf
+    versions: terraform/azure-storage/provision/versions.tf
   outputs:
   - field_name: primary_access_key
     type: string

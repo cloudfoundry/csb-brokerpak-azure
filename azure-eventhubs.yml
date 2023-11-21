@@ -109,8 +109,13 @@ provision:
     overwrite: true
     type: object
   template_refs:
-    main: terraform/azure-eventhubs/azure-eventhubs.tf
-    moved: terraform/azure-eventhubs/moved-azure-eventhubs.tf
+    main: terraform/azure-eventhubs/provision/main.tf
+    data: terraform/azure-eventhubs/provision/data.tf
+    outputs: terraform/azure-eventhubs/provision/outputs.tf
+    provider: terraform/azure-eventhubs/provision/provider.tf
+    variables: terraform/azure-eventhubs/provision/variables.tf
+    versions: terraform/azure-eventhubs/provision/versions.tf
+    moved: terraform/azure-eventhubs/provision/moved-azure-eventhubs.tf
   outputs:
   - field_name: eventhub_rg_name
     type: string
@@ -158,8 +163,12 @@ bind:
     default: ${instance.details["eventhub_name"]}
     overwrite: true
   template_refs:
-    main: terraform/azure-eventhubs/azure-eventhubs-bind.tf
-    moved: terraform/azure-eventhubs/moved-azure-eventhubs-bind.tf
+    data: terraform/azure-eventhubs/bind/data.tf
+    outputs: terraform/azure-eventhubs/bind/outputs.tf
+    provider: terraform/azure-eventhubs/bind/provider.tf
+    variables: terraform/azure-eventhubs/bind/variables.tf
+    versions: terraform/azure-eventhubs/bind/versions.tf
+    moved: terraform/azure-eventhubs/bind/moved-azure-eventhubs-bind.tf
   outputs:
   - field_name: event_hub_connection_string
     type: string

@@ -182,8 +182,13 @@ provision:
     overwrite: true
     type: object
   template_refs:
-    main: terraform/azure-mysql/provision-mysql.tf
-    moved: terraform/azure-mysql/moved-provision-mysql.tf
+    data: terraform/azure-mysql/provision/data.tf
+    main: terraform/azure-mysql/provision/main.tf
+    moved: terraform/azure-mysql/provision/moved-azure-mysql.tf
+    outputs: terraform/azure-mysql/provision/outputs.tf
+    provider: terraform/azure-mysql/provision/provider.tf
+    variables: terraform/azure-mysql/provision/variables.tf
+    versions: terraform/azure-mysql/provision/versions.tf
   outputs:
   - field_name: name
     type: string
@@ -232,8 +237,13 @@ bind:
     default: ${instance.details["use_tls"]}
     overwrite: true
   template_refs:
-    main: terraform/azure-mysql/bind-mysql.tf
-    moved: terraform/azure-mysql/moved-bind-mysql.tf
+    data: terraform/azure-mysql/bind/data.tf
+    main: terraform/azure-mysql/bind/main.tf
+    moved: terraform/azure-mysql/bind/moved-azure-mysql.tf
+    outputs: terraform/azure-mysql/bind/outputs.tf
+    provider: terraform/azure-mysql/bind/provider.tf
+    variables: terraform/azure-mysql/bind/variables.tf
+    versions: terraform/azure-mysql/bind/versions.tf
   outputs:
   - field_name: username
     type: string
