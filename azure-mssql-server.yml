@@ -98,8 +98,13 @@ provision:
     details: Skip automatic Azure provider registration, set to true if service principal being used does not have rights to register providers
     default: false
   template_refs:
-    main: terraform/azure-mssql-server/mssql-server-provision.tf
-    moved: terraform/azure-mssql-server/moved-mssql-server-provision.tf
+    data: terraform/azure-mssql-server/provision/data.tf
+    main: terraform/azure-mssql-server/provision/main.tf
+    moved: terraform/azure-mssql-server/provision/moved-azure-mssql-server.tf
+    outputs: terraform/azure-mssql-server/provision/outputs.tf
+    provider: terraform/azure-mssql-server/provision/provider.tf
+    variables: terraform/azure-mssql-server/provision/variables.tf
+    versions: terraform/azure-mssql-server/provision/versions.tf
   computed_inputs:
   - name: labels
     default: ${json.marshal(request.default_labels)}
