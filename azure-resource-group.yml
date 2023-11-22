@@ -68,8 +68,12 @@ provision:
     details: Skip automatic Azure provider registration, set to true if service principal being used does not have rights to register providers
     default: false
   template_refs:
-    main: terraform/azure-resource-group/resource-group-provision.tf
-    moved: terraform/azure-resource-group/moved-resource-group-provision.tf
+    main: terraform/azure-resource-group/provision/main.tf
+    moved: terraform/azure-resource-group/provision/moved-azure-resource-group.tf
+    outputs: terraform/azure-resource-group/provision/outputs.tf
+    provider: terraform/azure-resource-group/provision/provider.tf
+    variables: terraform/azure-resource-group/provision/variables.tf
+    versions: terraform/azure-resource-group/provision/versions.tf
   computed_inputs:
   - name: labels
     default: ${json.marshal(request.default_labels)}

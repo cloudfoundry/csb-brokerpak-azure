@@ -182,8 +182,13 @@ provision:
     details: Azure sku (typically, tier [GP_S,GP,BC,HS] + family [Gen4,Gen5] + cores, e.g. GP_S_Gen4_1, GP_Gen5_8, see https://docs.microsoft.com/en-us/azure/azure-sql/database/resource-limits-vcore-single-databases) Will be computed from cores if empty.
     default: ""
   template_refs:
-    main: terraform/azure-mssql-failover/provision-mssql-failover.tf
-    moved: terraform/azure-mssql-failover/moved-provision-mssql-failover.tf
+    main: terraform/azure-mssql-failover/provision/main.tf
+    data: terraform/azure-mssql-failover/provision/data.tf
+    outputs: terraform/azure-mssql-failover/provision/outputs.tf
+    provider: terraform/azure-mssql-failover/provision/provider.tf
+    variables: terraform/azure-mssql-failover/provision/variables.tf
+    versions: terraform/azure-mssql-failover/provision/versions.tf
+    moved: terraform/azure-mssql-failover/provision/moved-azure-mssql-failover.tf
   computed_inputs:
   - name: labels
     default: ${json.marshal(request.default_labels)}
@@ -239,8 +244,12 @@ bind:
     default: ${instance.details["password"]}
     overwrite: true
   template_refs:
-    main: terraform/azure-mssql/bind-mssql.tf
-    moved: terraform/azure-mssql/moved-bind-mssql.tf
+    main: terraform/azure-mssql/bind/main.tf
+    moved: terraform/azure-mssql/bind/moved-azure-mssql.tf
+    outputs: terraform/azure-mssql/bind/outputs.tf
+    provider: terraform/azure-mssql/bind/provider.tf
+    variables: terraform/azure-mssql/bind/variables.tf
+    versions: terraform/azure-mssql/bind/versions.tf
   outputs:
   - field_name: username
     type: string

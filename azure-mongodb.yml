@@ -191,8 +191,13 @@ provision:
     overwrite: true
     type: object
   template_refs:
-    main: terraform/azure-mongodb/azure-mongodb.tf
-    moved: terraform/azure-mongodb/moved-azure-mongodb.tf
+    main: terraform/azure-mongodb/provision/main.tf
+    data: terraform/azure-mongodb/provision/data.tf
+    outputs: terraform/azure-mongodb/provision/outputs.tf
+    provider: terraform/azure-mongodb/provision/provider.tf
+    variables: terraform/azure-mongodb/provision/variables.tf
+    versions: terraform/azure-mongodb/provision/versions.tf
+    moved: terraform/azure-mongodb/provision/moved-azure-mongodb.tf
   outputs:
   - field_name: uri
     type: string

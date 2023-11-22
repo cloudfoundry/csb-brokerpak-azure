@@ -195,8 +195,13 @@ provision:
     overwrite: true
     type: object
   template_refs:
-    main: terraform/azure-redis/redis-provision.tf
-    moved: terraform/azure-redis/moved-redis-provision.tf
+    data: terraform/azure-redis/provision/data.tf
+    main: terraform/azure-redis/provision/main.tf
+    moved: terraform/azure-redis/provision/moved-azure-redis.tf
+    outputs: terraform/azure-redis/provision/outputs.tf
+    provider: terraform/azure-redis/provision/provider.tf
+    variables: terraform/azure-redis/provision/variables.tf
+    versions: terraform/azure-redis/provision/versions.tf
   outputs:
   - field_name: name
     type: string

@@ -141,8 +141,13 @@ provision:
     overwrite: true
     type: object
   template_refs:
-    main: terraform/azure-postgres/postgres-provision.tf
-    moved: terraform/azure-postgres/moved-postgres-provision.tf
+    data: terraform/azure-postgres/provision/data.tf
+    main: terraform/azure-postgres/provision/main.tf
+    moved: terraform/azure-postgres/provision/moved-azure-postgres.tf
+    outputs: terraform/azure-postgres/provision/outputs.tf
+    provider: terraform/azure-postgres/provision/provider.tf
+    variables: terraform/azure-postgres/provision/variables.tf
+    versions: terraform/azure-postgres/provision/versions.tf
   outputs:
   - field_name: name
     type: string
@@ -191,8 +196,13 @@ bind:
     default: ${instance.details["use_tls"]}
     overwrite: true
   template_refs:
-    main: terraform/azure-postgres/postgresql-bind.tf
-    moved: terraform/azure-postgres/moved-postgresql-bind.tf
+    data: terraform/azure-postgres/bind/data.tf
+    main: terraform/azure-postgres/bind/main.tf
+    moved: terraform/azure-postgres/bind/moved-azure-postgres.tf
+    outputs: terraform/azure-postgres/bind/outputs.tf
+    provider: terraform/azure-postgres/bind/provider.tf
+    variables: terraform/azure-postgres/bind/variables.tf
+    versions: terraform/azure-postgres/bind/versions.tf
   outputs:
   - field_name: username
     type: string

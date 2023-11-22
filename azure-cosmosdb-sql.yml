@@ -168,8 +168,13 @@ provision:
     overwrite: true
     type: object
   template_refs:
-    main: terraform/azure-cosmosdb/provision-cosmosdb-sql.tf
-    moved: terraform/azure-cosmosdb/moved-provision-cosmosdb-sql.tf
+    main: terraform/azure-cosmosdb/provision/main.tf
+    data: terraform/azure-cosmosdb/provision/data.tf
+    outputs: terraform/azure-cosmosdb/provision/outputs.tf
+    provider: terraform/azure-cosmosdb/provision/provider.tf
+    variables: terraform/azure-cosmosdb/provision/variables.tf
+    versions: terraform/azure-cosmosdb/provision/versions.tf
+    moved: terraform/azure-cosmosdb/provision/moved-provision-cosmosdb-sql.tf
   outputs:
   - field_name: cosmosdb_host_endpoint
     type: string
