@@ -24,15 +24,6 @@ platforms:
 #   arch: amd64
 terraform_binaries:
 - name: terraform
-  version: 0.13.7
-  source: https://github.com/hashicorp/terraform/archive/v0.13.7.zip
-- name: terraform
-  version: 0.14.11
-  source: https://github.com/hashicorp/terraform/archive/v0.14.11.zip
-- name: terraform
-  version: 1.0.11
-  source: https://github.com/hashicorp/terraform/archive/v1.0.11.zip
-- name: terraform
   version: 1.1.9
   source: https://github.com/hashicorp/terraform/archive/v1.1.9.zip
   default: false
@@ -82,9 +73,6 @@ terraform_state_provider_replacements:
   registry.terraform.io/-/null: "registry.terraform.io/hashicorp/null"
   registry.terraform.io/-/postgresql: "registry.terraform.io/cyrilgdn/postgresql"
 terraform_upgrade_path:
-- version: 0.13.7
-- version: 0.14.11
-- version: 1.0.11
 - version: 1.1.9
 - version: 1.4.6
 - version: 1.5.7
