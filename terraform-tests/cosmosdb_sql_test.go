@@ -48,7 +48,7 @@ var _ = Describe("CosmosDB SQL", Label("cosmosdb-sql-terraform"), Ordered, func(
 	}
 
 	BeforeAll(func() {
-		terraformProvisionDir = path.Join(workingDir, "azure-cosmosdb")
+		terraformProvisionDir = path.Join(workingDir, "azure-cosmosdb/provision")
 		Init(terraformProvisionDir)
 	})
 

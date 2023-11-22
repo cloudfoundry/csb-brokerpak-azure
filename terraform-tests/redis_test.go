@@ -46,7 +46,7 @@ var _ = Describe("Redis", Label("redis"), Ordered, func() {
 	}
 
 	BeforeAll(func() {
-		terraformProvisionDir = path.Join(workingDir, "azure-redis")
+		terraformProvisionDir = path.Join(workingDir, "azure-redis/provision")
 		Init(terraformProvisionDir)
 	})
 
