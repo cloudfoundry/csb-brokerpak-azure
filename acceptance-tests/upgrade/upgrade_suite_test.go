@@ -43,8 +43,8 @@ var _ = BeforeSuite(func() {
 		releasedBuildDir = brokerpaks.DownloadBrokerpak(fromVersion, brokerpaks.TargetDir(fromVersion))
 	}
 
-	preflight(developmentBuildDir) // faster feedback as no download
-	preflight(releasedBuildDir)
+	preflight(developmentBuildDir)
+	// Don't do a preflight on releasedBuildDir as older versions (tile v1.3.0 and earlier) don't have a .envrc file
 })
 
 // preflight checks that a specified broker dir is viable so that the user gets fast feedback
