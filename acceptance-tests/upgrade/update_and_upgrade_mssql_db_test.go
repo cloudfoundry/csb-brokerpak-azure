@@ -114,6 +114,7 @@ var _ = Describe("UpgradeMssqlDBTest", Label("mssql-db"), func() {
 			appOne.DELETE(schema)
 		})
 	})
+
 	When("using a config file for broker configuration", func() {
 		It("it should respect the config as if it were set via an env var", func() {
 			By("pushing a broker with a config file")
@@ -184,6 +185,7 @@ var _ = Describe("UpgradeMssqlDBTest", Label("mssql-db"), func() {
 		})
 
 	})
+
 	When("upgrading broker version", Label("ancient"), func() {
 		It("should continue to work", func() {
 			By("pushing an ancient broker version")
