@@ -71,7 +71,6 @@ provision:
     default: csb-db-${request.instance_id}
     constraints:
       maxLength: 64
-    tf_attribute: azurerm_mssql_database.azure_sql_db.name
   - field_name: server
     type: string
     details: Name of server from server_credentials to create database upon
