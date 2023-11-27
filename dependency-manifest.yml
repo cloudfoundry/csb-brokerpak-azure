@@ -26,9 +26,9 @@ dependencies:
       source: https://github.com/hashicorp/terraform/archive/v1.5.7.zip
       source_sha256: 67ceb2f009313c076a6bf8a063443da5ea97d75bac18fc22a6861e9f73712155
     - name: terraform-provider-azurerm
-      version: 3.81.0
-      source: https://github.com/terraform-providers/terraform-provider-azurerm/archive/v3.81.0.zip
-      source_sha256: 964544d8aef814ce351b8c3014d184e147596d768f2dd26104f5c893a133d675
+      version: 3.82.0
+      source: https://github.com/terraform-providers/terraform-provider-azurerm/archive/v3.82.0.zip
+      source_sha256: 6e6e2b432266e051e7ca1f6f5b5ac85ecb1038fcf08fc20688acfd56c6711359
     - name: terraform-provider-csbsqlserver
       version: 1.0.3
       source: https://github.com/cloudfoundry/terraform-provider-csbsqlserver/archive/v1.0.3.zip
