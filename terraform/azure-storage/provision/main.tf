@@ -48,8 +48,7 @@ resource "azurerm_storage_account" "account" {
 resource "azurerm_storage_account_network_rules" "account_network_rule" {
   count = length(var.authorized_networks) != 0 ? 1 : 0
 
-  resource_group_name  = local.resource_group
-  storage_account_name = azurerm_storage_account.account.name
+  storage_account_id = azurerm_storage_account.account.id
 
   default_action             = "Deny"
   virtual_network_subnet_ids = var.authorized_networks[*]

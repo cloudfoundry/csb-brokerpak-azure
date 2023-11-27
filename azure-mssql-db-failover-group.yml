@@ -76,16 +76,12 @@ provision:
       maxLength: 63
       minLength: 6
       pattern: ^[a-z][a-z0-9-]+$
-    tf_attribute: azurerm_sql_failover_group.failover_group.name
-    tf_attribute_skip: existing
   - field_name: db_name
     type: string
     details: Name for your database
     default: csb-fog-db-${request.instance_id}
     constraints:
       maxLength: 64
-    tf_attribute: azurerm_mssql_database.primary_db.name
-    tf_attribute_skip: existing
   - field_name: server_pair
     type: string
     details: Name of server pair from server_credential_pairs to create database upon
