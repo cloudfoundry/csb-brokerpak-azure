@@ -3,48 +3,49 @@ updates:
 - package-ecosystem: gomod
   directory: "/"
   schedule:
-    interval: "weekly"
-    day: "saturday"
-    time: "06:00"
+    interval: "daily"
+    time: "22:00"
+  groups:
+    azure-sdk-for-go:
+      patterns:
+        - "*azure-sdk-for-go*"
 - package-ecosystem: gomod
   directory: "/acceptance-tests/apps/mongodbapp"
   schedule:
-    interval: "weekly"
-    day: "saturday"
-    time: "06:00"
+    interval: "daily"
+    time: "22:00"
 - package-ecosystem: gomod
   directory: "/acceptance-tests/apps/postgresqlapp"
   schedule:
-    interval: "weekly"
-    day: "saturday"
-    time: "06:00"
+    interval: "daily"
+    time: "22:00"
 - package-ecosystem: gomod
   directory: "/acceptance-tests/apps/mssqlapp"
   schedule:
-    interval: "weekly"
-    day: "saturday"
-    time: "06:00"
+    interval: "daily"
+    time: "22:00"
 - package-ecosystem: gomod
   directory: "/acceptance-tests/apps/mysqlapp"
   schedule:
-    interval: "weekly"
-    day: "saturday"
-    time: "06:00"
+    interval: "daily"
+    time: "22:00"
 - package-ecosystem: gomod
   directory: "/acceptance-tests/apps/redisapp"
   schedule:
-    interval: "weekly"
-    day: "saturday"
-    time: "06:00"
+    interval: "daily"
+    time: "22:00"
 - package-ecosystem: npm
   directory: "/acceptance-tests/apps/cosmosdbapp"
   schedule:
-    interval: "weekly"
-    day: "saturday"
-    time: "06:00"
+    interval: "daily"
+    time: "22:00"
 - package-ecosystem: npm
   directory: "/acceptance-tests/apps/storageapp"
   schedule:
-    interval: "weekly"
-    day: "saturday"
-    time: "06:00"
+    interval: "daily"
+    time: "22:00"
+- package-ecosystem: "github-actions"
+  directory: "/"
+  schedule:
+    interval: "daily"
+    time: "22:00"
