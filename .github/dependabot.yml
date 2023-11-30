@@ -4,7 +4,7 @@ updates:
   directory: "/"
   schedule:
     interval: "daily"
-    time: "22:00"
+    time: "20:00"
   groups:
     azure-sdk-for-go:
       patterns:
@@ -13,17 +13,17 @@ updates:
   directory: "/acceptance-tests/apps/mongodbapp"
   schedule:
     interval: "daily"
-    time: "22:00"
+    time: "20:30"
 - package-ecosystem: gomod
   directory: "/acceptance-tests/apps/postgresqlapp"
   schedule:
     interval: "daily"
-    time: "22:00"
+    time: "21:00"
 - package-ecosystem: gomod
   directory: "/acceptance-tests/apps/mssqlapp"
   schedule:
     interval: "daily"
-    time: "22:00"
+    time: "21:30"
 - package-ecosystem: gomod
   directory: "/acceptance-tests/apps/mysqlapp"
   schedule:
@@ -33,19 +33,19 @@ updates:
   directory: "/acceptance-tests/apps/redisapp"
   schedule:
     interval: "daily"
-    time: "22:00"
+    time: "22:30"
 - package-ecosystem: npm
   directory: "/acceptance-tests/apps/cosmosdbapp"
   schedule:
     interval: "daily"
-    time: "22:00"
+    time: "23:00"
 - package-ecosystem: npm
   directory: "/acceptance-tests/apps/storageapp"
   schedule:
     interval: "daily"
-    time: "22:00"
+    time: "23:30"
 - package-ecosystem: "github-actions"
   directory: "/"
   schedule:
     interval: "daily"
-    time: "22:00"
+    time: "00:00"
