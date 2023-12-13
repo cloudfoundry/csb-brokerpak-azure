@@ -16,7 +16,7 @@ require (
 	github.com/onsi/gomega v1.30.0
 	github.com/pborman/uuid v1.2.1
 	golang.org/x/exp v0.0.0-20230905200255-921286631fa9
-	golang.org/x/tools v0.16.0
+	golang.org/x/tools v0.16.1
 	honnef.co/go/tools v0.4.6
 )
 
