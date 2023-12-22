@@ -40,8 +40,8 @@ terraform_binaries:
   version: 3.2.2
   source: https://github.com/terraform-providers/terraform-provider-null/archive/v3.2.2.zip
 - name: terraform-provider-csbsqlserver
-  version: 1.0.4
-  source: https://github.com/cloudfoundry/terraform-provider-csbsqlserver/archive/v1.0.4.zip
+  version: 1.0.5
+  source: https://github.com/cloudfoundry/terraform-provider-csbsqlserver/archive/v1.0.5.zip
   provider: cloud-service-broker/csbsqlserver
   url_template: https://github.com/cloudfoundry/${name}/releases/download/v${version}/${name}_${version}_${os}_${arch}.zip
 - name: terraform-provider-csbmssqldbrunfailover
