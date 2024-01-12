@@ -12,7 +12,7 @@ require (
 	github.com/blang/semver/v4 v4.0.0
 	github.com/cloudfoundry/cloud-service-broker v0.21.3
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.31.0
-	github.com/onsi/ginkgo/v2 v2.13.2
+	github.com/onsi/ginkgo/v2 v2.14.0
 	github.com/onsi/gomega v1.30.0
 	github.com/pborman/uuid v1.2.1
 	golang.org/x/exp v0.0.0-20230905200255-921286631fa9
