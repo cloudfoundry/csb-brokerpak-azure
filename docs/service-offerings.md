@@ -1,7 +1,7 @@
 
 # Service offering and plans docs
 
-Documentation on all the services and plans can be found [here](https://docs.pivotal.io/csb-azure/reference.html).
+Documentation on all the services and plans can be found [here](https://docs.vmware.com/en/Tanzu-Cloud-Service-Broker-for-Azure/1.6/csb-azure/GUID-index.html).
 
 # CSB Configuration 
 
