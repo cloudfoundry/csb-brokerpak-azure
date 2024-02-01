@@ -4,10 +4,8 @@ A brokerpak for the [Cloud Service Broker](https://github.com/pivotal/cloud-serv
 
 ## Development Requirements
 
-* Either Go or [Docker](https://docs.docker.com/get-docker/)
+* Either an up-to-date version of Go or [Docker](https://docs.docker.com/get-docker/)
 * make - covers development lifecycle steps
-
-A docker container for the cloud service broker binary is available at *cfplatformeng/csb*
 
 ## Azure account information
 
@@ -29,14 +27,16 @@ Available make targets can be listed by running `make`.
 ### Running with docker
 
 1. Install [Docker](https://docs.docker.com/get-docker/)
-2. If you don't have Go installed, the makefile will automatically use Docker. If you do have go installed but still want to use docker, then set the `USE_GO_CONTAINERS` to `true`.
-
-Make targets will run with the *cfplatformeng/csb* docker image. Alternatively, a custom image can be specified by setting the `CSB` environment variable.
+2. Launch an interactive shell into some supported image containing all necessary tools. For example:
+   ```
+   # From the root of this repo run:
+   docker run -it --rm -v "${PWD}:/repo" --workdir "/repo" --entrypoint "/bin/bash" cflondonservices/csb-ci-main
+   make
+   ```
 
 ### Running with Go
 
 1. Make sure you have the right Go version installed (see `go.mod` file).
-2. Make sure `USE_GO_CONTAINERS` environment variable is ***NOT*** set.
 
 The make targets will build the source using the local go installation.
 
