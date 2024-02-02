@@ -28,8 +28,8 @@ terraform_binaries:
   source: https://github.com/hashicorp/terraform/archive/v1.5.7.zip
   default: true  
 - name: terraform-provider-azurerm
-  version: 3.89.0
-  source: https://github.com/terraform-providers/terraform-provider-azurerm/archive/v3.89.0.zip
+  version: 3.90.0
+  source: https://github.com/terraform-providers/terraform-provider-azurerm/archive/v3.90.0.zip
 - name: terraform-provider-random
   version: 3.6.0
   source: https://github.com/terraform-providers/terraform-provider-random/archive/v3.6.0.zip
@@ -37,8 +37,8 @@ terraform_binaries:
   version: 1.9.0
   source: https://github.com/terraform-providers/terraform-provider-mysql/archive/v1.9.0.zip
 - name: terraform-provider-csbsqlserver
-  version: 1.0.6
-  source: https://github.com/cloudfoundry/terraform-provider-csbsqlserver/archive/v1.0.6.zip
+  version: 1.0.7
+  source: https://github.com/cloudfoundry/terraform-provider-csbsqlserver/archive/v1.0.7.zip
   provider: cloud-service-broker/csbsqlserver
   url_template: https://github.com/cloudfoundry/${name}/releases/download/v${version}/${name}_${version}_${os}_${arch}.zip
 - name: terraform-provider-csbmssqldbrunfailover
