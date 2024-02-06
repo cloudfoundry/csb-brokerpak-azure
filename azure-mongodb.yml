@@ -229,7 +229,9 @@ examples:
   provision_params: {
     db_name: 'musicdb',
     collection_name: 'album',
-    shard_key: '_id'
+    shard_key: '_id',
+    unique_indexes: '',
+    indexes: '_id'
   }
   bind_params: {}
 - name: spring-music-mongo-db-alternate-rg
