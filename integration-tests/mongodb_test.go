@@ -63,6 +63,45 @@ var _ = Describe("MongoDB", Label("MongoDB"), func() {
 		})
 	})
 
+	Describe("provisioning with custom shard_key", func() {
+		It("should affect the value of unique_indexes computed value", func() {
+			_, err := broker.Provision(mongoDBServiceName, "small", map[string]any{"shard_key": "shard"})
+			Expect(err).NotTo(HaveOccurred())
+			Expect(mockTerraform.FirstTerraformInvocationVars()).To(
+				SatisfyAll(
+					HaveKeyWithValue("shard_key", "shard"),
+					HaveKeyWithValue("unique_indexes", "_id,shard"),
+				),
+			)
+		})
+	})
+
+	Describe("provisioning with custom unique_indexes", func() {
+		It("should override computed unique_indexes", func() {
+			_, err := broker.Provision(mongoDBServiceName, "small", map[string]any{"unique_indexes": "uidx1,uidx2", "shard_key": "shard"})
+			Expect(err).NotTo(HaveOccurred())
+			Expect(mockTerraform.FirstTerraformInvocationVars()).To(
+				SatisfyAll(
+					HaveKeyWithValue("unique_indexes", "uidx1,uidx2"),
+				),
+			)
+		})
+	})
+
+	Describe("provisioning with default values", func() {
+		It("should use default values for shard_key, indexes and unique_indexes", func() {
+			_, err := broker.Provision(mongoDBServiceName, "small", map[string]any{})
+			Expect(err).NotTo(HaveOccurred())
+			Expect(mockTerraform.FirstTerraformInvocationVars()).To(
+				SatisfyAll(
+					HaveKeyWithValue("indexes", ""),
+					HaveKeyWithValue("shard_key", "uniqueKey"),
+					HaveKeyWithValue("unique_indexes", "_id,uniqueKey"),
+				),
+			)
+		})
+	})
+
 	Describe("updating instance", func() {
 		var instanceID string
 
