@@ -98,14 +98,20 @@ resource "azurerm_cosmosdb_mongo_collection" "mongo-collection" {
   default_ttl_seconds = "777"
   shard_key           = var.shard_key
 
-  index {
-    keys   = [var.shard_key]
-    unique = true
+  dynamic "index" {
+    for_each = compact(split(",", coalesce(var.indexes, ",")))
+    content {
+      keys   = [index.value]
+      unique = false
+    }
   }
 
-  index {
-    keys   = ["_id"]
-    unique = true
+  dynamic "index" {
+    for_each = compact(split(",", coalesce(var.unique_indexes, ",")))
+    content {
+      keys   = [index.value]
+      unique = true
+    }
   }
 
   lifecycle {

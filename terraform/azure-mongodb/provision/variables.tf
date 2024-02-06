@@ -23,3 +23,5 @@ variable "authorized_network" { type = string }
 variable "private_endpoint_subnet_id" { type = string }
 variable "private_dns_zone_ids" { type = list(string) }
 variable "public_network_access_enabled" { type = bool }
+variable "unique_indexes" { type = string }
+variable "indexes" { type = string }

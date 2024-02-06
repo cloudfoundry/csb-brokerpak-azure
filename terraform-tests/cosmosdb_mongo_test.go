@@ -51,6 +51,8 @@ var _ = Describe("CosmosDB Mongo", Label("cosmosdb-mongo-terraform"), Ordered, f
 		"private_endpoint_subnet_id":      "",
 		"public_network_access_enabled":   true,
 		"labels":                          map[string]any{"k1": "v1"},
+		"indexes":                         "",
+		"unique_indexes":                  "_id,key1",
 	}
 
 	BeforeAll(func() {
@@ -132,7 +134,19 @@ var _ = Describe("CosmosDB Mongo", Label("cosmosdb-mongo-terraform"), Ordered, f
 					"database_name":       Equal(dbName),
 					"default_ttl_seconds": BeNumerically("==", 777),
 					"shard_key":           Equal("key1"),
-				}))
+
+					"index": BeEquivalentTo([]any{
+						map[string]any{
+							"keys":   []any{"_id"},
+							"unique": true,
+						},
+						map[string]any{
+							"keys":   []any{"key1"},
+							"unique": true,
+						},
+					}),
+				}),
+			)
 		})
 	})
 

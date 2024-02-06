@@ -111,6 +111,15 @@ provision:
     type: string
     details: Name for your shard key
     default: uniqueKey
+  - field_name: indexes
+    required: false
+    type: string
+    details: A comma-separated list of non-unique indexes.
+    default: ""
+  - field_name: unique_indexes
+    required: false
+    type: string
+    details: A comma-separated list of unique indexes.
   - field_name: location
     type: string
     details: The location of the MongoDB instance.
@@ -190,6 +199,10 @@ provision:
     default: ${json.marshal(request.default_labels)}
     overwrite: true
     type: object
+  - name: unique_indexes
+    default: "_id,${shard_key}"
+    overwrite: false
+    type: string
   template_refs:
     main: terraform/azure-mongodb/provision/main.tf
     data: terraform/azure-mongodb/provision/data.tf
@@ -226,6 +239,8 @@ examples:
     db_name: 'musicdb',
     collection_name: 'album',
     shard_key: '_id',
-    location: 'westus2'
+    location: 'westus2',
+    unique_indexes: '',
+    indexes: '_id'
   }
   bind_params: {}
