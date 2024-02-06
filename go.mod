@@ -1,6 +1,6 @@
 module csbbrokerpakazure
 
-go 1.21
+go 1.22
 
 require (
 	code.cloudfoundry.org/jsonry v1.1.4
