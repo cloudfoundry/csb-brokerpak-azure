@@ -17,8 +17,6 @@ SECURITY_USER_NAME := $(or $(SECURITY_USER_NAME), $(IAAS)-broker)
 SECURITY_USER_PASSWORD := $(or $(SECURITY_USER_PASSWORD), $(IAAS)-broker-pw)
 GSB_PROVISION_DEFAULTS := $(or $(GSB_PROVISION_DEFAULTS), {"resource_group": "broker-cf-test"})
 
-GO=go
-GOFMT=gofmt
 BROKER_GO_OPTS=PORT=8080 \
 				DB_TYPE=sqlite3 \
 				DB_PATH=/tmp/csb-db \
@@ -42,8 +40,8 @@ GET_CSB="env CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags $(LDFLAGS) 
 .PHONY: deps-go-binary
 deps-go-binary:
 ifeq ($(SKIP_GO_VERSION_CHECK),)
-	@@if [ "$$($(GO) version | awk '{print $$3}')" != "${GO-VER}" ]; then \
-		echo "Go version does not match: expected: ${GO-VER}, got $$($(GO) version | awk '{print $$3}')"; \
+	@@if [ "$$(go version | awk '{print $$3}')" != "${GO-VER}" ]; then \
+		echo "Go version does not match: expected: ${GO-VER}, got $$(go version | awk '{print $$3}')"; \
 		exit 1; \
 	fi
 endif
@@ -161,13 +159,13 @@ $(PAK_BUILD_CACHE_PATH):
 
 .PHONY: latest-csb
 latest-csb: ## point to the very latest CSB on GitHub
-	$(GO) get -d github.com/cloudfoundry/cloud-service-broker@main
-	$(GO) mod tidy
+	go get -d github.com/cloudfoundry/cloud-service-broker@main
+	go mod tidy
 
 .PHONY: local-csb
 local-csb: ## point to a local CSB repo
 	echo "replace \"github.com/cloudfoundry/cloud-service-broker\" => \"$$PWD/../cloud-service-broker\"" >>go.mod
-	$(GO) mod tidy
+	go mod tidy
 
 ###### lint ###################################################################
 
@@ -181,27 +179,27 @@ checktfformat: ## checks that Terraform HCL is formatted correctly
 	fi
 
 checkgoformat: ## checks that the Go code is formatted correctly
-	@@if [ -n "$$(${GOFMT} -s -e -l -d .)" ]; then       \
+	@@if [ -n "$$(gofmt -s -e -l -d .)" ]; then       \
 		echo "gofmt check failed: run 'make format'"; \
 		exit 1;                                       \
 	fi
 
 checkgoimports: ## checks that Go imports are formatted correctly
-	@@if [ -n "$$(${GO} run golang.org/x/tools/cmd/goimports -l -d -local csbbrokerpakazure .)" ]; then \
+	@@if [ -n "$$(go run golang.org/x/tools/cmd/goimports -l -d -local csbbrokerpakazure .)" ]; then \
 		echo "goimports check failed: run 'make format'";                      \
 		exit 1;                                                                \
 	fi
 
 vet: ## runs go vet
-	${GO} vet ./...
+	go vet ./...
 
 staticcheck: ## runs staticcheck
-	${GO} run honnef.co/go/tools/cmd/staticcheck ./...
+	go run honnef.co/go/tools/cmd/staticcheck ./...
 
 .PHONY: format
 format: ## format the source
-	${GOFMT} -s -e -l -w .
-	${GO} run golang.org/x/tools/cmd/goimports -l -w -local csbbrokerpakazure .
+	gofmt -s -e -l -w .
+	go run golang.org/x/tools/cmd/goimports -l -w -local csbbrokerpakazure .
 	terraform fmt --recursive
 
 ./providers/terraform-provider-csbmssqldbrunfailover/cloudfoundry.org/cloud-service-broker/csbmssqldbrunfailover:

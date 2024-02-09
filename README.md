@@ -30,7 +30,7 @@ Available make targets can be listed by running `make`.
 2. Launch an interactive shell into some supported image containing all necessary tools. For example:
    ```
    # From the root of this repo run:
-   docker run -it --rm -v "${PWD}:/repo" --workdir "/repo" --entrypoint "/bin/bash" cflondonservices/csb-ci-main
+   docker run -it --rm -v "${PWD}:/repo" --workdir "/repo" --entrypoint "/bin/bash" golang:latest
    make
    ```
 
