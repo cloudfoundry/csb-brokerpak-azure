@@ -2,15 +2,7 @@
 
 GO-VERSION = 1.22.0
 GO-VER = go$(GO-VERSION)
-GO_OK :=  $(or $(USE_GO_CONTAINERS), $(shell which go 1>/dev/null 2>/dev/null; echo $$?))
-DOCKER_OK := $(shell which docker 1>/dev/null 2>/dev/null; echo $$?)
-ifeq ($(GO_OK), 0)
   GO=go
-else ifeq ($(DOCKER_OK), 0)
-  GO=docker run --rm -v $(PWD)/../..:/src -w /src/providers/terraform-provider-csbmssqldbrunfailover -e GOARCH -e GOOS -e CGO_ENABLED golang:$(GO-VERSION) go
-else
-  $(error either Go or Docker must be installed)
-endif
 
 .PHONY: help
 help: ## list Makefile targets
