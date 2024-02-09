@@ -37,6 +37,8 @@ var _ = Describe("UpgradeMongoTest", Label("mongodb"), func() {
 					"db_name":         databaseName,
 					"collection_name": collectionName,
 					"shard_key":       "_id",
+					"indexes":         "_id",
+					"unique_indexes":  "",
 				}),
 			)
 			defer serviceInstance.Delete()
@@ -123,6 +125,8 @@ var _ = Describe("UpgradeMongoTest", Label("mongodb"), func() {
 					"db_name":         databaseName,
 					"collection_name": collectionName,
 					"shard_key":       "_id",
+					"indexes":         "_id",
+					"unique_indexes":  "",
 				}),
 			)
 			defer serviceInstance.Delete()
