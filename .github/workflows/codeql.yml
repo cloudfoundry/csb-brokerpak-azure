@@ -24,9 +24,6 @@ jobs:
         language: [ 'go' ]
 
     steps:
-    - uses: actions/setup-go@v5
-      with:
-        go-version: '1.22.0'
     - name: Checkout repository
       uses: actions/checkout@v4
 
@@ -41,6 +38,12 @@ jobs:
 
         # Details on CodeQL's query packs refer to : https://docs.github.com/en/code-security/code-scanning/automatically-scanning-your-code-for-vulnerabilities-and-errors/configuring-code-scanning#using-queries-in-ql-packs
         queries: +security-and-quality
+
+    # Install golang used by this project (https://github.com/github/codeql-action/issues/1842)
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version-file: "go.mod"
 
     - run: make build
 
