@@ -1,14 +1,12 @@
 .DEFAULT_GOAL = help
 
-GO-VERSION = 1.22.0
-GO-VER = go$(GO-VERSION)
   GO=go
 
 .PHONY: help
 help: ## list Makefile targets
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
-build: deps-go-binary cloudfoundry.org ## build the provider
+build: cloudfoundry.org ## build the provider
 
 cloudfoundry.org: *.go */*.go
 	mkdir -p cloudfoundry.org/cloud-service-broker/csbmssqldbrunfailover/1.0.0/linux_amd64
@@ -39,12 +37,3 @@ run-acceptance-tests-coverage: ## infrastructure tests coverage score
 	export TF_ACC=1; \
 	go test -coverpkg=`cat /tmp/tpmssqldbrunfailover-pkgs.txt` -coverprofile=/tmp/tpmssqldbrunfailover-coverage.out ./...
 	go tool cover -func /tmp/tpmssqldbrunfailover-coverage.out | grep total
-
-.PHONY: deps-go-binary
-deps-go-binary:
-ifeq ($(SKIP_GO_VERSION_CHECK),)
-	@@if [ "$$($(GO) version | awk '{print $$3}')" != "${GO-VER}" ]; then \
-		echo "Go version does not match: expected: ${GO-VER}, got $$($(GO) version | awk '{print $$3}')"; \
-		exit 1; \
-	fi
-endif

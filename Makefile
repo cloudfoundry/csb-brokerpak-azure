@@ -7,8 +7,6 @@ help: ## list Makefile targets
 
 ###### Setup ##################################################################
 IAAS=azure
-GO-VERSION = 1.22.0
-GO-VER = go$(GO-VERSION)
 CSB_VERSION := $(or $(CSB_VERSION), $(shell grep 'github.com/cloudfoundry/cloud-service-broker' go.mod | grep -v replace | awk '{print $$NF}' | sed -e 's/v//'))
 CSB_RELEASE_VERSION := $(CSB_VERSION)
 
@@ -37,17 +35,8 @@ GET_CSB="env CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags $(LDFLAGS) 
 
 ###### Targets ################################################################
 
-.PHONY: deps-go-binary
-deps-go-binary:
-ifeq ($(SKIP_GO_VERSION_CHECK),)
-	@@if [ "$$(go version | awk '{print $$3}')" != "${GO-VER}" ]; then \
-		echo "Go version does not match: expected: ${GO-VER}, got $$(go version | awk '{print $$3}')"; \
-		exit 1; \
-	fi
-endif
-
 .PHONY: build
-build: deps-go-binary $(IAAS)-services-*.brokerpak ## build brokerpak
+build: $(IAAS)-services-*.brokerpak ## build brokerpak
 
 $(IAAS)-services-*.brokerpak: *.yml terraform/*/*.tf ./providers/terraform-provider-csbmssqldbrunfailover/cloudfoundry.org/cloud-service-broker/csbmssqldbrunfailover | $(PAK_BUILD_CACHE_PATH)
 	$(RUN_CSB) pak build
