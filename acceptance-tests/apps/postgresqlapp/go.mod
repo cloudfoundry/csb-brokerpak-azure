@@ -4,7 +4,7 @@ go 1.22.0
 
 require (
 	github.com/cloudfoundry-community/go-cfenv v1.18.0
-	github.com/go-chi/chi/v5 v5.0.11
+	github.com/go-chi/chi/v5 v5.0.12
 	github.com/jackc/pgx/v4 v4.18.1
 	github.com/mitchellh/mapstructure v1.5.0
 )
