@@ -4,7 +4,7 @@ go 1.22.0
 
 require (
 	code.cloudfoundry.org/jsonry v1.1.4
-	github.com/Azure/azure-sdk-for-go/sdk/azcore v1.9.2
+	github.com/Azure/azure-sdk-for-go/sdk/azcore v1.10.0
 	github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.5.1
 	github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/resources/armresources v1.2.0
 	github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/sql/armsql v1.2.0
