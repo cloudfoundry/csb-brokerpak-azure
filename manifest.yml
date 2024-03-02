@@ -46,8 +46,8 @@ terraform_binaries:
   provider: cloud-service-broker/csbmssqldbrunfailover
   url_template: ./providers/${name}/cloudfoundry.org/cloud-service-broker/csbmssqldbrunfailover/${version}/${os}_${arch}/terraform-provider-csbmssqldbrunfailover_v${version}
 - name: terraform-provider-postgresql
-  version: 1.21.0
-  source: https://github.com/cyrilgdn/terraform-provider-postgresql/archive/v1.21.0.zip
+  version: 1.22.0
+  source: https://github.com/cyrilgdn/terraform-provider-postgresql/archive/v1.22.0.zip
   provider: cyrilgdn/postgresql
   url_template: https://github.com/cyrilgdn/${name}/releases/download/v${version}/terraform-provider-postgresql_${version}_${os}_${arch}.zip
 terraform_upgrade_path:
