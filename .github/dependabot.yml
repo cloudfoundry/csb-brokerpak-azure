@@ -8,7 +8,7 @@ updates:
   groups:
     azure-sdk-for-go:
       patterns:
-        - "*azure-sdk-for-go*"
+        - "github.com/Azure/azure-sdk-for-go/*"
 - package-ecosystem: gomod
   directory: "/acceptance-tests/apps/mongodbapp"
   schedule:
