@@ -73,6 +73,9 @@ var _ = Describe("UpgradeRedisTest", Label("redis"), func() {
 			By("checking previously written data still accessible")
 			Expect(appTwo.GET(key1)).To(Equal(value1))
 
+			By("updating the instance without changing the plan")
+			serviceInstance.Update("-c", `{"maxmemory_policy": "volatile-random"}`)
+
 			By("updating the instance plan")
 			serviceInstance.Update("-p", "deprecated-medium")
 
