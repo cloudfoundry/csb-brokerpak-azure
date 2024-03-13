@@ -2,7 +2,10 @@ variable "resource_group" { type = string }
 variable "azure_tenant_id" { type = string }
 variable "azure_subscription_id" { type = string }
 variable "azure_client_id" { type = string }
-variable "azure_client_secret" { type = string }
+variable "azure_client_secret" {
+  type      = string
+  sensitive = true
+}
 variable "sku_name" { type = string }
 variable "redis_version" { type = string }
 variable "family" { type = string }

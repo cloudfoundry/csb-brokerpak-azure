@@ -12,12 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-variable "azure_subscription_id" { type = string }
-variable "azure_client_id" { type = string }
-variable "azure_client_secret" { type = string }
-variable "azure_tenant_id" { type = string }
-variable "skip_provider_registration" { type = bool }
-
 provider "azurerm" {
   features {}
 

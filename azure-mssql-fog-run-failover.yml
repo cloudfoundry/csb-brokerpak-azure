@@ -63,6 +63,7 @@ provision:
     default: false
   template_refs:
     versions: terraform/azure-mssql-db-failover/run-failover/run-failover-versions.tf
+    variables: terraform/azure-mssql-db-failover/run-failover/variables.tf
     providers: terraform/azure-mssql-db-failover/run-failover/run-failover-providers.tf
     main: terraform/azure-mssql-db-failover/run-failover/run-failover.tf
   computed_inputs: []
