@@ -13,7 +13,10 @@ output "sqlServerFullyQualifiedDomainName" { value = format("%s.database.windows
 output "hostname" { value = format("%s.database.windows.net", var.existing ? var.instance_name : local.fog_name) }
 output "port" { value = 1433 }
 output "name" { value = var.existing ? var.db_name : local.primary_db_name }
-output "username" { value = var.server_credential_pairs[var.server_pair].admin_username }
+output "username" {
+  value     = var.server_credential_pairs[var.server_pair].admin_username
+  sensitive = true
+}
 output "password" {
   value     = var.server_credential_pairs[var.server_pair].admin_password
   sensitive = true
@@ -31,5 +34,7 @@ output "status" {
     local.primary_db_name, data.azurerm_sql_server.secondary_sql_db_server.id, local.primary_db_name,
     data.azurerm_sql_server.secondary_sql_db_server.name, data.azurerm_sql_server.secondary_sql_db_server.id,
     var.azure_tenant_id,
-  data.azurerm_sql_server.primary_sql_db_server.id)
+    data.azurerm_sql_server.primary_sql_db_server.id,
+  )
+  sensitive = true
 }
