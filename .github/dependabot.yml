@@ -9,6 +9,8 @@ updates:
     azure-sdk-for-go:
       patterns:
         - "*azure-sdk-for-go*"
+  ignore: 
+    - dependency-name: "github.com/cloudfoundry/cloud-service-broker"
 - package-ecosystem: gomod
   directory: "/acceptance-tests/apps/mongodbapp"
   schedule:
