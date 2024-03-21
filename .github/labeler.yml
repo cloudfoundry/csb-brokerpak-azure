@@ -1,0 +1,18 @@
+# Add 'breaking-change' label to any PR where the head branch name starts with `!feat` 
+breaking-change:
+ - head-branch: ['^feat!']
+
+new-feature:
+ - head-branch: ['^feat']
+
+bug-fix:
+- head-branch: ['^fix']
+
+test-dependency-updates:
+- head-branch: ['dependabot/go_modules/acceptance-tests']
+
+dependency-updates:
+- head-branch: ['^.*(deps)']
+
+chore:
+- head-branch: ['^chore']
