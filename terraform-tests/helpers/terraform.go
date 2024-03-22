@@ -17,8 +17,10 @@ import (
 	. "github.com/onsi/gomega"
 )
 
+const binaryName = "tofu"
+
 func Init(dir string) {
-	command := exec.Command("terraform", "-chdir="+dir, "init")
+	command := exec.Command(binaryName, "-chdir="+dir, "init")
 	CommandStart(command)
 }
 
@@ -40,11 +42,11 @@ func ShowPlan(dir string, vars map[string]any) tfjson.Plan {
 }
 
 func createPlan(dir, planFile string) {
-	CommandStart(exec.Command("terraform", "-chdir="+dir, "plan", "-refresh=false", fmt.Sprintf("-out=%s", planFile)))
+	CommandStart(exec.Command(binaryName, "-chdir="+dir, "plan", "-refresh=false", fmt.Sprintf("-out=%s", planFile)))
 }
 
 func decodePlan(dir, planFile string) []byte {
-	jsonPlan, err := CommandOutput(exec.Command("terraform", "-chdir="+dir, "show", "-json", planFile))
+	jsonPlan, err := CommandOutput(exec.Command(binaryName, "-chdir="+dir, "show", "-json", planFile))
 	Expect(err).ToNot(HaveOccurred())
 	return jsonPlan
 }

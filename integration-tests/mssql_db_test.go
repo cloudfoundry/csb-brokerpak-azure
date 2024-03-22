@@ -86,7 +86,6 @@ var _ = Describe("MSSQL DB", Label("MSSQL"), func() {
 			func(params map[string]any, expectedErrorMsg string) {
 				params["server"] = "preprovisioned-server-name"
 				_, err := broker.Provision(mssqlDBServiceName, msSQLDBCustomPlanName, params)
-				fmt.Printf("error %v", err)
 				Expect(err).To(MatchError(ContainSubstring(expectedErrorMsg)))
 			},
 			Entry(
