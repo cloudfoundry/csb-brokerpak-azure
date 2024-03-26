@@ -8,11 +8,5 @@ new-feature:
 bug-fix:
 - head-branch: ['^fix']
 
-test-dependency-updates:
-- head-branch: ['dependabot/go_modules/acceptance-tests']
-
-dependency-updates:
-- head-branch: ['^.*(deps)']
-
 chore:
 - head-branch: ['^chore']

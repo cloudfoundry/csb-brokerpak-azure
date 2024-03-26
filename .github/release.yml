@@ -1,7 +1,7 @@
 changelog:
   exclude:
     labels:
-      - test-dependency-updates
+      - test-dependencies
   categories:
     - title: Breaking Changes
       labels:
@@ -14,7 +14,6 @@ changelog:
         - bug-fix
     - title: Dependency updates
       labels:
-        - dependency-updates
         - dependencies
     - title: Others
       labels:
