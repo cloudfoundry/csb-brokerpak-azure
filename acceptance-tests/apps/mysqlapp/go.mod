@@ -4,7 +4,7 @@ go 1.22.1
 
 require (
 	github.com/cloudfoundry-community/go-cfenv v1.18.0
-	github.com/go-sql-driver/mysql v1.8.0
+	github.com/go-sql-driver/mysql v1.8.1
 	github.com/mitchellh/mapstructure v1.5.0
 )
 
