@@ -23,11 +23,11 @@ platforms:
 # - os: darwin
 #   arch: amd64
 terraform_upgrade_path:
-  - version: 1.6.1
+- version: 1.6.2
 terraform_binaries:
 - name: tofu
-  version: 1.6.1
-  source: https://github.com/opentofu/opentofu/archive/refs/tags/v1.6.1.zip
+  version: 1.6.2
+  source: https://github.com/opentofu/opentofu/archive/v1.6.2.zip
   default: true
 - name: terraform-provider-azurerm
   version: 3.97.1
