@@ -1,22 +1,29 @@
-# Terraform Test Tools and Scripts
+# Test, Tools and Scripts
 
-Terraform tests are `unit` tests that run with the system's installed terraform binary on the terraform files directly. They will download the latest versions of the providers
-that comply with the restrictions in the definition file. They won't look at the service offering definitions (.yml) or the manifest.yml files. 
+Tests within the `terraform-test` folder are `unit` tests that run with the system's installed OpenTofu binary on the
+OpenTofu language files directly. These tests download the latest versions of the providers that comply with the
+restrictions in the definition file. They do not examine the service offering definitions (.yml) or the manifest.yml
+files.
 
-The aim of these tests is to verify that Terraform gets a set of variables inputs, and it will send the expected values to the providers. 
-This is accomplished by running `terraform plan --no-refresh` and analysing the output with terraform provided commands and structures. 
+The objective of these tests is to ensure that OpenTofu receives a set of variable inputs and sends the expected values
+to the providers. This verification is achieved by executing `tofu plan -refresh=false` and analyzing the outputs.
 
-Properties that are not given a value will be `Unknown` until an apply operation is performed and therefore no much checking can be performed.
-Also, given that no `apply` is done, this won't verify the instances are created with the expected values, and downstream services (providers, IaaS API),
-can have defaults or logic implemented that end up changing the end state.
+Properties without assigned values will remain `Unknown` until an apply operation is executed, limiting the extent of
+checks that can be performed. Moreover, since no `apply` operation is conducted, this process does not verify if
+instances are created with the expected values. Additionally, downstream services (such as providers and IaaS APIs)
+might have defaults or embedded logic that could alter the final state.
 
-`data` resources needed by terraform to run a given module must be present in the IaaS. 
+`data` resources needed by OpenTofu to run a given module must be present in the IaaS.
 
 ## Running the tests
+
 ### Pre-requisite software
+
 - The [Go Programming language](https://golang.org/)
-- [Terraform](https://www.terraform.io/downloads)
+- [OpenTofu](https://opentofu.org)
 
 ### Environment
-- `ARM_CLIENT_ID`, `"ARM_CLIENT_SECRET`, `ARM_SUBSCRIPTION_ID`, and `ARM_TENANT_ID` must be set as environment variables as Terraform will attempt to connect to the IaaS.
+
+- `ARM_CLIENT_ID`, `"ARM_CLIENT_SECRET`, `ARM_SUBSCRIPTION_ID`, and `ARM_TENANT_ID` must be set as environment variables
+  as OpenTofu will attempt to connect to the IaaS.
 
