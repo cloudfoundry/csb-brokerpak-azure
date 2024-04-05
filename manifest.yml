@@ -30,8 +30,8 @@ terraform_binaries:
   source: https://github.com/opentofu/opentofu/archive/v1.6.2.zip
   default: true
 - name: terraform-provider-azurerm
-  version: 3.97.1
-  source: https://github.com/terraform-providers/terraform-provider-azurerm/archive/v3.97.1.zip
+  version: 3.98.0
+  source: https://github.com/terraform-providers/terraform-provider-azurerm/archive/v3.98.0.zip
 - name: terraform-provider-random
   version: 3.6.0
   source: https://github.com/terraform-providers/terraform-provider-random/archive/v3.6.0.zip
