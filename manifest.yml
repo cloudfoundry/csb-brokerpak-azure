@@ -22,6 +22,9 @@ platforms:
   arch: amd64
 # - os: darwin
 #   arch: amd64
+terraform_state_provider_replacements:
+  registry.terraform.io/cloud-service-broker/csbsqlserver: "cloudfoundry.org/cloud-service-broker/csbsqlserver"
+  registry.terraform.io/cloud-service-broker/csbmssqldbrunfailover: "cloudfoundry.org/cloud-service-broker/csbmssqldbrunfailover"
 terraform_upgrade_path:
 - version: 1.6.2
 terraform_binaries:
@@ -41,11 +44,11 @@ terraform_binaries:
 - name: terraform-provider-csbsqlserver
   version: 1.0.14
   source: https://github.com/cloudfoundry/terraform-provider-csbsqlserver/archive/v1.0.14.zip
-  provider: cloud-service-broker/csbsqlserver
+  provider: cloudfoundry.org/cloud-service-broker/csbsqlserver
   url_template: https://github.com/cloudfoundry/${name}/releases/download/v${version}/${name}_${version}_${os}_${arch}.zip
 - name: terraform-provider-csbmssqldbrunfailover
   version: 1.0.0
-  provider: cloud-service-broker/csbmssqldbrunfailover
+  provider: cloudfoundry.org/cloud-service-broker/csbmssqldbrunfailover
   url_template: ./providers/${name}/cloudfoundry.org/cloud-service-broker/csbmssqldbrunfailover/${version}/${os}_${arch}/terraform-provider-csbmssqldbrunfailover_v${version}
 - name: terraform-provider-postgresql
   version: 1.22.0
