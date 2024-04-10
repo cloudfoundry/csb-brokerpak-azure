@@ -4,7 +4,7 @@
 package tools
 
 import (
-	_ "github.com/cloudfoundry/cloud-service-broker"
+	_ "github.com/cloudfoundry/cloud-service-broker/v2"
 	_ "github.com/onsi/ginkgo/v2/ginkgo"
 	_ "golang.org/x/tools/cmd/goimports"
 	_ "honnef.co/go/tools/cmd/staticcheck"
