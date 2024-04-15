@@ -42,12 +42,12 @@ func readBrokerVersion(version string) string {
 	defer body.Close()
 	data := must(io.ReadAll(body))
 
-	matches := regexp.MustCompile(`(?m)^\s*github\.com/cloudfoundry/cloud-service-broker\s+(\S+)\s*$`).FindSubmatch(data)
-	if len(matches) != 2 {
+	matches := regexp.MustCompile(`(?m)^\s*github\.com/cloudfoundry/cloud-service-broker(/v\d+)?\s+(\S+)\s*$`).FindSubmatch(data)
+	if len(matches) != 3 {
 		panic(fmt.Sprintf("Could not extract CSB version from go.mod file: %q", data))
 	}
 
-	brokerVersion := string(matches[1])
+	brokerVersion := string(matches[2])
 	fmt.Printf("Brokerpak version %q uses broker version %q\n", version, brokerVersion)
 	return brokerVersion
 }
