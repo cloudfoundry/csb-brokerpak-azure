@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/go-redis/redis/v8"
+	"github.com/redis/go-redis/v9"
 )
 
 func handleSet(w http.ResponseWriter, r *http.Request, key string, client *redis.Client) {
