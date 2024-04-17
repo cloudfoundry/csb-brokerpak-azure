@@ -5,8 +5,8 @@ import (
 	"fmt"
 
 	"github.com/cloudfoundry-community/go-cfenv"
-	"github.com/go-redis/redis/v8"
 	"github.com/mitchellh/mapstructure"
+	"github.com/redis/go-redis/v9"
 )
 
 func Read() (*redis.Options, error) {
