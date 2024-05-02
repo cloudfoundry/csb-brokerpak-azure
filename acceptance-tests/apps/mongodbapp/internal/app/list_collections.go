@@ -6,8 +6,6 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/go-chi/chi/v5"
-
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -16,7 +14,7 @@ func handleListCollections(client *mongo.Client) func(w http.ResponseWriter, r *
 	return func(w http.ResponseWriter, r *http.Request) {
 		log.Println("Handling list collections.")
 
-		databaseName := chi.URLParam(r, "database")
+		databaseName := r.PathValue("database")
 		if databaseName == "" {
 			fail(w, http.StatusBadRequest, "database name must be supplied")
 		}

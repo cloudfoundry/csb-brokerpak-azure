@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-
-	"github.com/go-chi/chi/v5"
 )
 
 func handleGet(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
@@ -19,7 +17,7 @@ func handleGet(db *sql.DB) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		key := chi.URLParam(r, "key")
+		key := r.PathValue("key")
 		if key == "" {
 			fail(w, http.StatusBadRequest, "key name must be supplied")
 			return

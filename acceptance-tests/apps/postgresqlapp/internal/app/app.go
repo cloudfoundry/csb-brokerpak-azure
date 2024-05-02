@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"regexp"
 
-	"github.com/go-chi/chi/v5"
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
@@ -20,12 +19,12 @@ const (
 func App(uri string) http.Handler {
 	db := connect(uri)
 
-	r := chi.NewRouter()
-	r.Head("/", aliveness)
-	r.Put("/{schema}", handleCreateSchema(db))
-	r.Delete("/{schema}", handleDropSchema(db))
-	r.Put("/{schema}/{key}", handleSet(db))
-	r.Get("/{schema}/{key}", handleGet(db))
+	r := http.NewServeMux()
+	r.HandleFunc("GET /", aliveness)
+	r.HandleFunc("PUT /{schema}", handleCreateSchema(db))
+	r.HandleFunc("DELETE /{schema}", handleDropSchema(db))
+	r.HandleFunc("PUT /{schema}/{key}", handleSet(db))
+	r.HandleFunc("GET /{schema}/{key}", handleGet(db))
 
 	return r
 }
@@ -45,7 +44,7 @@ func connect(uri string) *sql.DB {
 }
 
 func schemaName(r *http.Request) (string, error) {
-	schema := chi.URLParam(r, "schema")
+	schema := r.PathValue("schema")
 
 	switch {
 	case schema == "":
