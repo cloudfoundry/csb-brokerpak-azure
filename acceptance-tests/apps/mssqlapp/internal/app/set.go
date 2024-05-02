@@ -5,8 +5,6 @@ import (
 	"io"
 	"log"
 	"net/http"
-
-	"github.com/go-chi/chi/v5"
 )
 
 func handleSet(config string) func(w http.ResponseWriter, r *http.Request) {
@@ -21,7 +19,7 @@ func handleSet(config string) func(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		key := chi.URLParam(r, "key")
+		key := r.PathValue("key")
 		if key == "" {
 			fail(w, http.StatusBadRequest, "key must be supplied")
 			return

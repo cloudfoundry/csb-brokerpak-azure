@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/go-chi/chi/v5"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -21,19 +20,13 @@ const (
 func App(uri string) http.Handler {
 	client := connect(uri)
 
-	r := chi.NewRouter()
-	r.Head("/", aliveness)
-	r.Get("/", handleListDatabases(client))
-	r.Get("/{database}", handleListCollections(client))
-	r.Get("/{database}/{collection}/{document}", handleFetchDocument(client))
-	r.Put("/{database}/{collection}/{document}", handleStoreDocument(client))
+	r := http.NewServeMux()
+	r.HandleFunc("GET /", handleListDatabases(client))
+	r.HandleFunc("GET /{database}", handleListCollections(client))
+	r.HandleFunc("GET /{database}/{collection}/{document}", handleFetchDocument(client))
+	r.HandleFunc("PUT /{database}/{collection}/{document}", handleStoreDocument(client))
 
 	return r
-}
-
-func aliveness(w http.ResponseWriter, r *http.Request) {
-	log.Printf("Handled aliveness test.")
-	w.WriteHeader(http.StatusNoContent)
 }
 
 func connect(uri string) *mongo.Client {
