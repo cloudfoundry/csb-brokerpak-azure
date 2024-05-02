@@ -24,7 +24,7 @@ func App(config string) http.Handler {
 	}
 
 	r := http.NewServeMux()
-	r.HandleFunc("HEAD /", aliveness)
+	r.HandleFunc("GET /", aliveness)
 	r.HandleFunc("PUT /{schema}", handleCreateSchema(config))
 	r.HandleFunc("POST /{schema}", handleFillDatabase(config))
 	r.HandleFunc("DELETE /{schema}", handleDropSchema(config))
