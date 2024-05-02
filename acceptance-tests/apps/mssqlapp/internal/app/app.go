@@ -8,7 +8,6 @@ import (
 	"regexp"
 
 	_ "github.com/denisenkom/go-mssqldb"
-	"github.com/go-chi/chi/v5"
 )
 
 const (
@@ -24,13 +23,13 @@ func App(config string) http.Handler {
 		log.Fatalf("failed to ping database: %s", err)
 	}
 
-	r := chi.NewRouter()
-	r.Head("/", aliveness)
-	r.Put("/{schema}", handleCreateSchema(config))
-	r.Post("/{schema}", handleFillDatabase(config))
-	r.Delete("/{schema}", handleDropSchema(config))
-	r.Put("/{schema}/{key}", handleSet(config))
-	r.Get("/{schema}/{key}", handleGet(config))
+	r := http.NewServeMux()
+	r.HandleFunc("HEAD /", aliveness)
+	r.HandleFunc("PUT /{schema}", handleCreateSchema(config))
+	r.HandleFunc("POST /{schema}", handleFillDatabase(config))
+	r.HandleFunc("DELETE /{schema}", handleDropSchema(config))
+	r.HandleFunc("PUT /{schema}/{key}", handleSet(config))
+	r.HandleFunc("GET /{schema}/{key}", handleGet(config))
 
 	return r
 }
@@ -50,7 +49,7 @@ func connect(config string) *sql.DB {
 }
 
 func schemaName(r *http.Request) (string, error) {
-	schema := chi.URLParam(r, "schema")
+	schema := r.PathValue("schema")
 
 	switch {
 	case schema == "":
