@@ -159,5 +159,5 @@ examples:
 - name: azuresql-db-server-standard-admin-username-password
   description: Create a standard Azure SQL Database Server with instance name, admin username and admin password
   plan_id: 1aab10e2-ca79-4755-855a-6073a739d2e0
-  provision_params: {"instance_name": "a-test-instance", "admin_username": "anadmin", "admin_password": "SomeComp-l1cat3d_Passw0rd"}
+  provision_params: {"admin_username": "anadmin", "admin_password": "SomeComp-l1cat3d_Passw0rd"}
   bind_params: {}  
