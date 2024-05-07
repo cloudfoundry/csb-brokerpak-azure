@@ -1,6 +1,6 @@
 module mssqlapp
 
-go 1.22.2
+go 1.22.3
 
 require (
 	github.com/cloudfoundry-community/go-cfenv v1.18.0
