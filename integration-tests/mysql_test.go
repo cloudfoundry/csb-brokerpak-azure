@@ -32,7 +32,7 @@ var _ = Describe("MySQL", Label("MySQL"), func() {
 		service := testframework.FindService(catalog, mysqlServiceName)
 		Expect(service.ID).To(Equal(mysqlServiceID))
 		Expect(service.Description).To(Equal(mysqlServiceDescription))
-		Expect(service.Tags).To(ConsistOf("azure", "mysql", "preview"))
+		Expect(service.Tags).To(ConsistOf("azure", "mysql", "preview", "retired", "single server"))
 		Expect(service.Metadata.ImageUrl).To(ContainSubstring("data:image/png;base64,"))
 		Expect(service.Metadata.DisplayName).To(Equal(mysqlServiceDisplayName))
 		Expect(service.Metadata.DocumentationUrl).To(Equal(mysqlServiceDocumentationURL))

@@ -32,7 +32,7 @@ var _ = Describe("PostgreSQL", Label("PostgreSQL"), func() {
 		service := testframework.FindService(catalog, postgreSQLServiceName)
 		Expect(service.ID).To(Equal(postgreSQLServiceID))
 		Expect(service.Description).To(Equal(postgreSQLServiceDescription))
-		Expect(service.Tags).To(ConsistOf("azure", "postgresql", "postgres", "preview"))
+		Expect(service.Tags).To(ConsistOf("azure", "postgresql", "postgres", "preview", "retired", "single server"))
 		Expect(service.Metadata.ImageUrl).To(ContainSubstring("data:image/png;base64,"))
 		Expect(service.Metadata.DisplayName).To(Equal(postgreSQLServiceDisplayName))
 		Expect(service.Metadata.DocumentationUrl).To(Equal(postgreSQLServiceDocumentationURL))
