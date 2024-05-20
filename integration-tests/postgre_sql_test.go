@@ -10,10 +10,10 @@ import (
 const (
 	postgreSQLServiceName             = "csb-azure-postgresql"
 	postgreSQLServiceID               = "ef89bc54-299a-4384-9dd6-4ea0cca11700"
-	postgreSQLServiceDisplayName      = "Azure Database for PostgreSQL"
-	postgreSQLServiceDescription      = "Azure Database for PostgreSQL"
-	postgreSQLServiceDocumentationURL = "https://azure.microsoft.com/en-us/services/postgresql/"
-	postgreSQLServiceSupportURL       = "https://azure.microsoft.com/en-us/services/postgresql/"
+	postgreSQLServiceDisplayName      = "Retired - Azure Database for PostgreSQL single servers"
+	postgreSQLServiceDescription      = "Retired - Azure Database for PostgreSQL single servers"
+	postgreSQLServiceDocumentationURL = "https://learn.microsoft.com/en-gb/azure/postgresql/single-server/overview-single-server"
+	postgreSQLServiceSupportURL       = "https://learn.microsoft.com/en-gb/azure/postgresql/single-server/overview-single-server"
 )
 
 var _ = Describe("PostgreSQL", Label("PostgreSQL"), func() {
@@ -32,7 +32,7 @@ var _ = Describe("PostgreSQL", Label("PostgreSQL"), func() {
 		service := testframework.FindService(catalog, postgreSQLServiceName)
 		Expect(service.ID).To(Equal(postgreSQLServiceID))
 		Expect(service.Description).To(Equal(postgreSQLServiceDescription))
-		Expect(service.Tags).To(ConsistOf("azure", "postgresql", "postgres", "preview"))
+		Expect(service.Tags).To(ConsistOf("azure", "postgresql", "postgres", "preview", "retired", "single server"))
 		Expect(service.Metadata.ImageUrl).To(ContainSubstring("data:image/png;base64,"))
 		Expect(service.Metadata.DisplayName).To(Equal(postgreSQLServiceDisplayName))
 		Expect(service.Metadata.DocumentationUrl).To(Equal(postgreSQLServiceDocumentationURL))
