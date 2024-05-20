@@ -10,8 +10,8 @@ import (
 const (
 	postgreSQLServiceName             = "csb-azure-postgresql"
 	postgreSQLServiceID               = "ef89bc54-299a-4384-9dd6-4ea0cca11700"
-	postgreSQLServiceDisplayName      = "Azure Database for PostgreSQL"
-	postgreSQLServiceDescription      = "Azure Database for PostgreSQL"
+	postgreSQLServiceDisplayName      = "Retired - Azure Database for PostgreSQL single servers"
+	postgreSQLServiceDescription      = "Retired - Azure Database for PostgreSQL single servers"
 	postgreSQLServiceDocumentationURL = "https://azure.microsoft.com/en-us/services/postgresql/"
 	postgreSQLServiceSupportURL       = "https://azure.microsoft.com/en-us/services/postgresql/"
 )

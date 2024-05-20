@@ -10,8 +10,8 @@ import (
 const (
 	mysqlServiceName             = "csb-azure-mysql"
 	mysqlServiceID               = "cac4a46b-c4ec-49df-9b11-06457a29d31e"
-	mysqlServiceDisplayName      = "Azure Database for MySQL servers"
-	mysqlServiceDescription      = "Azure Database for MySQL servers"
+	mysqlServiceDisplayName      = "Retired - Azure Database for MySQL single servers"
+	mysqlServiceDescription      = "Retired - Azure Database for MySQL single servers"
 	mysqlServiceDocumentationURL = "https://docs.microsoft.com/en-us/azure/mysql/"
 	mysqlServiceSupportURL       = "https://docs.microsoft.com/en-us/azure/mysql/"
 )

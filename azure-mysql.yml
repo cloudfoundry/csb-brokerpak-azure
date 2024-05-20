@@ -15,8 +15,8 @@
 version: 1
 name: csb-azure-mysql
 id: cac4a46b-c4ec-49df-9b11-06457a29d31e
-description: Retired - Azure Database for MySQL servers
-display_name: Retired - Azure Database for MySQL servers
+description: Retired - Azure Database for MySQL single servers
+display_name: Retired - Azure Database for MySQL single servers
 image_url: file://service-images/csb.png
 documentation_url: https://learn.microsoft.com/en-gb/azure/mysql/single-server/single-server-overview
 support_url: https://learn.microsoft.com/en-gb/azure/mysql/single-server/single-server-overview
