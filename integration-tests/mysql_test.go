@@ -12,8 +12,8 @@ const (
 	mysqlServiceID               = "cac4a46b-c4ec-49df-9b11-06457a29d31e"
 	mysqlServiceDisplayName      = "Retired - Azure Database for MySQL single servers"
 	mysqlServiceDescription      = "Retired - Azure Database for MySQL single servers"
-	mysqlServiceDocumentationURL = "https://docs.microsoft.com/en-us/azure/mysql/"
-	mysqlServiceSupportURL       = "https://docs.microsoft.com/en-us/azure/mysql/"
+	mysqlServiceDocumentationURL = "https://learn.microsoft.com/en-gb/azure/mysql/single-server/single-server-overview"
+	mysqlServiceSupportURL       = "https://learn.microsoft.com/en-gb/azure/mysql/single-server/single-server-overview"
 )
 
 var _ = Describe("MySQL", Label("MySQL"), func() {
