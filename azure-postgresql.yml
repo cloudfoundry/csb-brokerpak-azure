@@ -15,12 +15,12 @@
 version: 1
 name: csb-azure-postgresql
 id: ef89bc54-299a-4384-9dd6-4ea0cca11700
-description: Azure Database for PostgreSQL
-display_name: Azure Database for PostgreSQL
+description: Retired - Azure Database for PostgreSQL
+display_name: Retired - Azure Database for PostgreSQL
 image_url: file://service-images/csb.png
-documentation_url: https://azure.microsoft.com/en-us/services/postgresql/
-support_url: https://azure.microsoft.com/en-us/services/postgresql/
-tags: [azure, postgresql, postgres, preview]
+documentation_url: https://learn.microsoft.com/en-gb/azure/postgresql/single-server/overview-single-server
+support_url: https://learn.microsoft.com/en-gb/azure/postgresql/single-server/overview-single-server
+tags: [azure, postgresql, postgres, preview, retired, single server]
 plan_updateable: true
 plans:
 - name: small
