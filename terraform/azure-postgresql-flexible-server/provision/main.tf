@@ -13,10 +13,11 @@
 # limitations under the License.
 
 resource "azurerm_resource_group" "azure-postgres" {
+  count    = length(var.resource_group) == 0 ? 1 : 0
+
   name     = local.resource_group
   location = var.location
   tags     = var.labels
-  count    = length(var.resource_group) == 0 ? 1 : 0
 
   lifecycle {
     prevent_destroy = true
@@ -26,7 +27,7 @@ resource "azurerm_resource_group" "azure-postgres" {
 resource "random_string" "username" {
   length  = 16
   special = false
-  number  = false
+  numeric  = false
 }
 
 resource "random_password" "password" {
@@ -44,7 +45,7 @@ resource "azurerm_postgresql_flexible_server" "instance" {
   resource_group_name          = local.resource_group
   location                     = var.location
   version                      = var.postgres_version
-  sku_name                     = local.sku_name
+  sku_name                     = var.sku_name
   storage_mb                   = var.storage_gb * 1024
   administrator_login          = random_string.username.result
   administrator_password       = random_password.password.result
@@ -66,14 +67,13 @@ resource "azurerm_postgresql_flexible_server_database" "instance-db" {
   }
 }
 
-resource "azurerm_postgresql_virtual_network_rule" "allow_subnet_id" {
-  name                = format("snr-%s", var.instance_name)
-  resource_group_name = local.resource_group
-  server_name         = azurerm_postgresql_flexible_server.instance.name
-  subnet_id           = var.authorized_network
-  count               = var.authorized_network != "default" ? 1 : 0
-}
 
+// For public access with firewall rules
+// This would fail in the console with error:
+// Adding 0.0.0.0-0.0.0.0 to firewall rule is not allowed because it is a system reserved range.
+// Use 'Allow public access from any Azure service within Azure to this server' option instead.
+// It doesn't fail in TF - it just doesnt do anything when authorised network is default
+// This is to give public access with allowed IP addresses
 resource "azurerm_postgresql_flexible_server_firewall_rule" "allow_azure" {
   count               = var.authorized_network == "default" ? 1 : 0
 
