@@ -62,7 +62,7 @@ provision:
       maxLength: 64
   - field_name: authorized_network
     type: string
-    details: The subnet ID of the Azure VNET to which the instance is locked down to. If left unspecified,
+    details: The subnet ID of the Azure VNET to which the instance is locked down to. If left unspecified it will allow public access from any Azure service within Azure to this server.
     default: default
   - field_name: location
     type: string
@@ -169,37 +169,7 @@ bind:
 examples:
 - name: small
   description: Create a small PostgreSQL instance
-  plan_id: aa1cf0f0-79fe-4132-a112-859fef9bf7cc
+  plan_id: 5bfac89e-689c-483f-85c5-2dd6fb22e80b
   provision_params: {}
   bind_params: {}
   bind_can_fail: true
-- name: small-v9.6-50gb
-  description: Create a small PostgreSQL v9.6 instance with 50gb storage
-  plan_id: aa1cf0f0-79fe-4132-a112-859fef9bf7cc
-  provision_params: {"postgres_version": "9.6", "storage_gb": 50}
-  bind_params: {}
-  bind_can_fail: true
-- name: medium
-  description: Create a medium PostgreSQL instance
-  plan_id: d83c74b9-0bb9-409e-bd26-8424ea908462
-  provision_params: {}
-  bind_params: {}
-  bind_can_fail: true
-- name: large
-  description: Create a large PostgreSQL instance
-  plan_id: 945b0ca1-5b5e-49b0-884a-20809103907e
-  provision_params: {}
-  bind_params: {}
-  bind_can_fail: true
-- name: small-v9.5
-  description: Create a small PostgreSQL v9.5 instance
-  plan_id: aa1cf0f0-79fe-4132-a112-859fef9bf7cc
-  provision_params: {"postgres_version": "9.5"}
-  bind_params: {}
-  bind_can_fail: true
-- name: small-v10
-  description: Create a small PostgreSQL v10 instance
-  plan_id: aa1cf0f0-79fe-4132-a112-859fef9bf7cc
-  provision_params: {"postgres_version": "10"}
-  bind_params: {}
-  bind_can_fail: true  
