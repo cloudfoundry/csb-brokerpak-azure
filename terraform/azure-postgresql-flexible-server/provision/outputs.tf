@@ -1,7 +1,7 @@
 output "name" { value = azurerm_postgresql_flexible_server_database.instance-db.name }
 output "hostname" { value = azurerm_postgresql_flexible_server.instance.fqdn }
 output "port" { value = 5432 }
-output "username" { value = format("%s@%s", random_string.username.result, azurerm_postgresql_flexible_server.instance.name) }
+output "username" { value = random_string.username.result }
 output "password" {
   value     = random_password.password.result
   sensitive = true

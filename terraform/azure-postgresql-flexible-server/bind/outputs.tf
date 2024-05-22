@@ -1,25 +1,24 @@
-output "username" { value = local.username }
+output "username" { value = csbpg_binding_user.new_user.username }
 output "password" {
-  value     = random_password.password.result
+  value     = csbpg_binding_user.new_user.password
   sensitive = true
 }
 output "uri" {
-  value = format("%s://%s:%s@%s:%d/%s",
-    "postgresql",
-    urlencode(local.username),
-    random_password.password.result,
+  value = format("postgresql://%s:%s@%s:%d/%s",
+    csbpg_binding_user.new_user.username,
+    csbpg_binding_user.new_user.password,
     var.hostname,
     var.port,
   var.db_name)
   sensitive = true
 }
+
 output "jdbcUrl" {
-  value = format("jdbc:%s://%s:%s/%s?user=%s\u0026password=%s\u0026verifyServerCertificate=true\u0026useSSL=true\u0026requireSSL=false\u0026serverTimezone=GMT",
-    "postgresql",
+  value = format("jdbc:postgresql://%s:%s/%s?user=%s\u0026password=%s\u0026verifyServerCertificate=true\u0026ssl=true\u0026sslmode=require\u0026serverTimezone=GMT",
     var.hostname,
     var.port,
     var.db_name,
-    urlencode(local.username),
-    random_password.password.result)
+    csbpg_binding_user.new_user.username,
+    csbpg_binding_user.new_user.password)
   sensitive = true
 }
