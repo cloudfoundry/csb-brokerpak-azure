@@ -39,6 +39,7 @@ var _ = Describe("PostgreSQL Flexible Server", Label("postgresql-flexible-server
 		"allow_access_from_azure_services": true,
 		"delegated_subnet_id":              nil,
 		"private_dns_zone_id":              nil,
+		"private_endpoint_subnet_id":       "",
 	}
 
 	BeforeAll(func() {
@@ -160,4 +161,50 @@ var _ = Describe("PostgreSQL Flexible Server", Label("postgresql-flexible-server
 		})
 	})
 
+	When("private endpoint is enabled", func() {
+		var subnetID = "/subscriptions/azureSubscriptionID/resourceGroups/csb-resource-group/providers/Microsoft.Network/virtualNetworks/csb-resource-group-vnet/subnets/subnet-name"
+		var privateDNSZoneID = "/subscriptions/azureSubscriptionID/resourceGroups/csb-resource-group/providers/Microsoft.Network/privateDnsZones/test.postgres.database.azure.com"
+
+		BeforeEach(func() {
+			plan = ShowPlan(terraformProvisionDir, buildVars(defaultVars, map[string]any{
+				"private_endpoint_subnet_id":       subnetID,
+				"private_dns_zone_id":              privateDNSZoneID,
+				"allow_access_from_azure_services": false,
+			}))
+		})
+
+		It("should create the right resources", func() {
+			Expect(plan.ResourceChanges).To(HaveLen(5))
+
+			Expect(ResourceChangesTypes(plan)).To(ConsistOf(
+				"azurerm_postgresql_flexible_server",
+				"azurerm_postgresql_flexible_server_database",
+				"random_string",
+				"random_password",
+				"azurerm_private_endpoint",
+			))
+		})
+
+		It("should setup a new private endpoint", func() {
+			Expect(AfterValuesForType(plan, "azurerm_private_endpoint")).To(
+				MatchKeys(IgnoreExtras, Keys{
+					"name":                Equal("csb-postgresql-flexible-server-instance-private_endpoint"),
+					"location":            Equal("westus"),
+					"resource_group_name": Equal(resourceGroupName),
+					"subnet_id":           Equal(subnetID),
+					"tags": MatchAllKeys(Keys{
+						"k1": Equal("v1"),
+					}),
+					"private_service_connection": ConsistOf(MatchKeys(IgnoreExtras, Keys{
+						"name":                 Equal("csb-postgresql-flexible-server-instance-private_service_connection"),
+						"is_manual_connection": BeFalse(),
+						"subresource_names":    ConsistOf("postgresqlServer"),
+					})),
+					"private_dns_zone_group": ConsistOf(MatchKeys(IgnoreExtras, Keys{
+						"private_dns_zone_ids": ConsistOf(privateDNSZoneID),
+					})),
+				}),
+			)
+		})
+	})
 })

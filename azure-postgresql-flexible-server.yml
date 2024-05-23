@@ -62,7 +62,9 @@ provision:
       maxLength: 64
   - field_name: delegated_subnet_id
     type: string
-    details: The ID of the virtual network subnet to create the PostgreSQL Flexible Server. The provided subnet should not have any other resource deployed in it and this subnet will be delegated to the PostgreSQL Flexible Server, if not already delegated.
+    details: |
+      The ID of the virtual network subnet to create the PostgreSQL Flexible Server. 
+      The provided subnet should not have any other resource deployed in it and this subnet will be delegated to the PostgreSQL Flexible Server, if not already delegated.
     nullable: true
     default: null
     prohibit_update: true
@@ -71,6 +73,10 @@ provision:
     details: The ID of the private DNS zone to create the PostgreSQL Flexible Server. Must be set when `delegated_subnet_id` is also set.
     nullable: true
     default: null
+  - field_name: private_endpoint_subnet_id
+    type: string
+    details: The ID of the virtual network subnet to create the private endpoint to allow hosts in the selected virtual network to access this server.
+    default: ""
   - field_name: allow_access_from_azure_services
     type: boolean
     details: If it should allow public access from any Azure service within Azure to this server for flexible server with public access. Doesn't take effect when `delegated_subnet_id` is set.

@@ -52,7 +52,7 @@ resource "azurerm_postgresql_flexible_server" "instance" {
   tags                         = var.labels
 
   delegated_subnet_id          = var.delegated_subnet_id
-  private_dns_zone_id          = var.private_dns_zone_id
+  private_dns_zone_id          = var.delegated_subnet_id != null ? var.private_dns_zone_id : null
 
   lifecycle {
     prevent_destroy = true
@@ -77,4 +77,26 @@ resource "azurerm_postgresql_flexible_server_firewall_rule" "allow_azure" {
   server_id           = azurerm_postgresql_flexible_server.instance.id
   start_ip_address    = "0.0.0.0"
   end_ip_address      = "0.0.0.0"
+}
+
+resource "azurerm_private_endpoint" "private_endpoint" {
+  count               = length(var.private_endpoint_subnet_id) != 0 ? 1 : 0
+
+  name                = "${var.instance_name}-private_endpoint"
+  location            = var.location
+  resource_group_name = var.resource_group
+  subnet_id           = var.private_endpoint_subnet_id
+  tags                = var.labels
+
+  private_service_connection {
+    name                           = "${var.instance_name}-private_service_connection"
+    private_connection_resource_id = azurerm_postgresql_flexible_server.instance.id
+    subresource_names              = ["postgresqlServer"]
+    is_manual_connection           = false
+  }
+
+  private_dns_zone_group {
+    name                 = "${var.instance_name}-private_dns_zone_group"
+    private_dns_zone_ids = [var.private_dns_zone_id]
+  }
 }
