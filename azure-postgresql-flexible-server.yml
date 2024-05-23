@@ -32,7 +32,7 @@ provision:
   - field_name: storage_gb
     type: number
     details: Size of storage volume for service instance.
-    default: 5
+    default: 32
     constraints:
       maximum: 4096
       minimum: 5
@@ -60,10 +60,21 @@ provision:
     default: vsbdb
     constraints:
       maxLength: 64
-  - field_name: authorized_network
+  - field_name: delegated_subnet_id
     type: string
-    details: The subnet ID of the Azure VNET to which the instance is locked down to. If left unspecified it will allow public access from any Azure service within Azure to this server.
-    default: default
+    details: The ID of the virtual network subnet to create the PostgreSQL Flexible Server. The provided subnet should not have any other resource deployed in it and this subnet will be delegated to the PostgreSQL Flexible Server, if not already delegated.
+    nullable: true
+    default: null
+    prohibit_update: true
+  - field_name: private_dns_zone_id
+    type: string
+    details: The ID of the private DNS zone to create the PostgreSQL Flexible Server. Must be set when `delegated_subnet_id` is also set.
+    nullable: true
+    default: null
+  - field_name: allow_access_from_azure_services
+    type: boolean
+    details: If it should allow public access from any Azure service within Azure to this server for flexible server with public access. Doesn't take effect when `delegated_subnet_id` is set.
+    default: true
   - field_name: location
     type: string
     details: The location of the Postgres instance.

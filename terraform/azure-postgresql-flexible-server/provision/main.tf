@@ -51,6 +51,9 @@ resource "azurerm_postgresql_flexible_server" "instance" {
   administrator_password       = random_password.password.result
   tags                         = var.labels
 
+  delegated_subnet_id          = var.delegated_subnet_id
+  private_dns_zone_id          = var.private_dns_zone_id
+
   lifecycle {
     prevent_destroy = true
   }
@@ -67,10 +70,8 @@ resource "azurerm_postgresql_flexible_server_database" "instance-db" {
   }
 }
 
-
-// Firewall rule to allow public access from any Azure service within Azure to this server
 resource "azurerm_postgresql_flexible_server_firewall_rule" "allow_azure" {
-  count               = var.authorized_network == "default" ? 1 : 0
+  count               = var.allow_access_from_azure_services ? 1 : 0
 
   name                = "allow-access-from-azure-services"
   server_id           = azurerm_postgresql_flexible_server.instance.id

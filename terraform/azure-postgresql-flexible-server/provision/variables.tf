@@ -13,4 +13,6 @@ variable "azure_client_secret" {
 }
 variable "postgres_version" { type = string }
 variable "sku_name" { type = string }
-variable "authorized_network" { type = string }
+variable "allow_access_from_azure_services" { type = bool }
+variable "delegated_subnet_id" { type = string }
+variable "private_dns_zone_id" { type = string }
