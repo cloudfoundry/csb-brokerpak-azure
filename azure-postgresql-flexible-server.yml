@@ -40,8 +40,8 @@ provision:
     details: Name for your PostgreSQL instance
     default: csb-postgresql-${request.instance_id}
     constraints:
-      maxLength: 98
-      minLength: 6
+      maxLength: 63
+      minLength: 3
       pattern: ^[a-z][a-z0-9-]+$
     prohibit_update: true
   - field_name: resource_group

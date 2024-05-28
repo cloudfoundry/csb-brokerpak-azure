@@ -77,9 +77,14 @@ var _ = Describe("PostgreSQL Flexible Server", Label("PostgreSQL-flexible-server
 				"location: Does not match pattern '^[a-z][a-z0-9]+$'",
 			),
 			Entry(
-				"instance name minimum length is 6 characters",
-				map[string]any{"instance_name": stringOfLen(5)},
-				"instance_name: String length must be greater than or equal to 6",
+				"instance name minimum length is 3 characters",
+				map[string]any{"instance_name": stringOfLen(2)},
+				"instance_name: String length must be greater than or equal to 3",
+			),
+			Entry(
+				"instance name maximum length is 63 characters",
+				map[string]any{"instance_name": stringOfLen(64)},
+				"instance_name: String length must be less than or equal to 63",
 			),
 			Entry(
 				"instance name invalid characters",
