@@ -10,10 +10,10 @@ import (
 const (
 	mysqlServiceName             = "csb-azure-mysql"
 	mysqlServiceID               = "cac4a46b-c4ec-49df-9b11-06457a29d31e"
-	mysqlServiceDisplayName      = "Azure Database for MySQL servers"
-	mysqlServiceDescription      = "Azure Database for MySQL servers"
-	mysqlServiceDocumentationURL = "https://docs.microsoft.com/en-us/azure/mysql/"
-	mysqlServiceSupportURL       = "https://docs.microsoft.com/en-us/azure/mysql/"
+	mysqlServiceDisplayName      = "Retired - Azure Database for MySQL single servers"
+	mysqlServiceDescription      = "Retired - Azure Database for MySQL single servers"
+	mysqlServiceDocumentationURL = "https://learn.microsoft.com/en-gb/azure/mysql/single-server/single-server-overview"
+	mysqlServiceSupportURL       = "https://learn.microsoft.com/en-gb/azure/mysql/single-server/single-server-overview"
 )
 
 var _ = Describe("MySQL", Label("MySQL"), func() {
@@ -32,7 +32,7 @@ var _ = Describe("MySQL", Label("MySQL"), func() {
 		service := testframework.FindService(catalog, mysqlServiceName)
 		Expect(service.ID).To(Equal(mysqlServiceID))
 		Expect(service.Description).To(Equal(mysqlServiceDescription))
-		Expect(service.Tags).To(ConsistOf("azure", "mysql", "preview"))
+		Expect(service.Tags).To(ConsistOf("azure", "mysql", "preview", "retired", "single server"))
 		Expect(service.Metadata.ImageUrl).To(ContainSubstring("data:image/png;base64,"))
 		Expect(service.Metadata.DisplayName).To(Equal(mysqlServiceDisplayName))
 		Expect(service.Metadata.DocumentationUrl).To(Equal(mysqlServiceDocumentationURL))
