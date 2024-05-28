@@ -1,0 +1,191 @@
+# Copyright 2024 Broadcom Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http:#www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+---
+version: 1
+name: csb-azure-postgresql-flexible-server
+id: d69dd4aa-e27e-490c-bdbf-c887563da27f
+description: Azure Database for PostgreSQL - flexible server
+display_name: Azure Database for PostgreSQL - flexible server
+image_url: file://service-images/csb.png
+documentation_url: https://learn.microsoft.com/en-gb/azure/postgresql/
+support_url: https://learn.microsoft.com/en-gb/azure/postgresql/
+tags: [azure, postgresql, postgres, preview, flexible server]
+plan_updateable: true
+provision:
+  plan_inputs: []
+  user_inputs:
+  - field_name: postgres_version
+    type: string
+    details: The version for the PostgreSQL instance.
+  - field_name: storage_gb
+    type: number
+    details: Size of storage volume for service instance in GB.
+    default: 32
+    constraints:
+      maximum: 32767
+      minimum: 32
+  - field_name: instance_name
+    type: string
+    details: Name for your PostgreSQL instance
+    default: csb-postgresql-${request.instance_id}
+    constraints:
+      maxLength: 63
+      minLength: 3
+      pattern: ^[a-z][a-z0-9-]+$
+    prohibit_update: true
+  - field_name: resource_group
+    type: string
+    details: Name for the resource group for this instance
+    default: ''
+    constraints:
+      maxLength: 64
+      minLength: 0
+      pattern: ^[a-z][a-z0-9-]+$|^$
+    prohibit_update: true
+  - field_name: db_name
+    type: string
+    details: Name for your database
+    default: vsbdb
+    constraints:
+      maxLength: 64
+  - field_name: delegated_subnet_id
+    type: string
+    details: |
+      The ID of the virtual network subnet to create the PostgreSQL Flexible Server. 
+      The provided subnet should not have any other resource deployed in it and this subnet will be delegated to the PostgreSQL Flexible Server, if not already delegated.
+    nullable: true
+    default: null
+    prohibit_update: true
+  - field_name: private_dns_zone_id
+    type: string
+    details: The ID of the private DNS zone to create the PostgreSQL Flexible Server. Must be set when `delegated_subnet_id` is also set.
+    nullable: true
+    default: null
+  - field_name: private_endpoint_subnet_id
+    type: string
+    details: The ID of the virtual network subnet to create the private endpoint to allow hosts in the selected virtual network to access this server.
+    default: ""
+  - field_name: allow_access_from_azure_services
+    type: boolean
+    details: If it should allow public access from any Azure service within Azure to this server for flexible server with public access. Doesn't take effect when `delegated_subnet_id` is set.
+    default: true
+  - field_name: location
+    type: string
+    details: The location of the Postgres instance.
+    default: westus
+    constraints:
+      examples:
+      - westus2
+      - uksouth
+      pattern: ^[a-z][a-z0-9]+$
+    prohibit_update: true
+  - field_name: azure_tenant_id
+    type: string
+    details: Azure Tenant to create resource in
+    default: ${config("azure.tenant_id")}
+  - field_name: azure_subscription_id
+    type: string
+    details: Azure Subscription to create resource in
+    default: ${config("azure.subscription_id")}
+  - field_name: azure_client_id
+    type: string
+    details: Client ID of Azure principal
+    default: ${config("azure.client_id")}
+  - field_name: azure_client_secret
+    type: string
+    details: Client secret for Azure principal
+    default: ${config("azure.client_secret")}
+  - field_name: sku_name
+    type: string
+    details: Azure sku (typically, tier [B,GP,MO] + family [Gen4,Gen5] + cores, e.g. B_Gen4_1, GP_Gen5_8, see https://docs.microsoft.com/en-us/azure/mysql/concepts-pricing-tiers) Will be computed from cores if empty.
+    default: ""
+  computed_inputs:
+  - name: labels
+    default: ${json.marshal(request.default_labels)}
+    overwrite: true
+    type: object
+  template_refs:
+    data: terraform/azure-postgresql-flexible-server/provision/data.tf
+    main: terraform/azure-postgresql-flexible-server/provision/main.tf
+    outputs: terraform/azure-postgresql-flexible-server/provision/outputs.tf
+    provider: terraform/azure-postgresql-flexible-server/provision/provider.tf
+    variables: terraform/azure-postgresql-flexible-server/provision/variables.tf
+    versions: terraform/azure-postgresql-flexible-server/provision/versions.tf
+  outputs:
+  - field_name: name
+    type: string
+    details: The name of the database.
+  - field_name: hostname
+    type: string
+    details: Hostname or IP address of the exposed PostgreSQL endpoint used by clients to connect to the service.
+  - field_name: port
+    type: integer
+    details: The port number of the exposed PostgreSQL instance.
+  - field_name: username
+    type: string
+    details: The username to authenticate to the database instance.
+  - field_name: password
+    type: string
+    details: The password to authenticate to the database instance.
+bind:
+  plan_inputs: []
+  user_inputs: []
+  computed_inputs:
+  - name: db_name
+    type: string
+    default: ${instance.details["name"]}
+    overwrite: true
+  - name: hostname
+    type: string
+    default: ${instance.details["hostname"]}
+    overwrite: true
+  - name: port
+    type: integer
+    default: ${instance.details["port"]}
+    overwrite: true
+  - name: admin_username
+    type: string
+    default: ${instance.details["username"]}
+    overwrite: true
+  - name: admin_password
+    type: string
+    default: ${instance.details["password"]}
+    overwrite: true
+  template_refs:
+    data: terraform/azure-postgresql-flexible-server/bind/data.tf
+    main: terraform/azure-postgresql-flexible-server/bind/main.tf
+    outputs: terraform/azure-postgresql-flexible-server/bind/outputs.tf
+    provider: terraform/azure-postgresql-flexible-server/bind/provider.tf
+    variables: terraform/azure-postgresql-flexible-server/bind/variables.tf
+    versions: terraform/azure-postgresql-flexible-server/bind/versions.tf
+  outputs:
+  - field_name: username
+    type: string
+    details: The username to authenticate to the database instance.
+  - field_name: password
+    type: string
+    details: The password to authenticate to the database instance.
+  - field_name: uri
+    type: string
+    details: The uri to connect to the database instance and database.
+  - field_name: jdbcUrl
+    type: string
+    details: The jdbc url to connect to the database instance and database.
+examples:
+- name: example
+  description: Create an example PostgreSQL instance
+  plan_id: 62c5a9d6-d3c5-4544-a8a6-85af30f7e41c
+  provision_params: {}
+  bind_params: {}
+  bind_can_fail: true

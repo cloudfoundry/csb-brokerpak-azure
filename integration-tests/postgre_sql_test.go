@@ -16,7 +16,7 @@ const (
 	postgreSQLServiceSupportURL       = "https://learn.microsoft.com/en-gb/azure/postgresql/single-server/overview-single-server"
 )
 
-var _ = Describe("PostgreSQL", Label("PostgreSQL"), func() {
+var _ = Describe("PostgreSQL Single Server", Label("PostgreSQL"), func() {
 	BeforeEach(func() {
 		Expect(mockTerraform.SetTFState([]testframework.TFStateValue{})).To(Succeed())
 	})
