@@ -28,7 +28,6 @@ provision:
   - field_name: postgres_version
     type: string
     details: The version for the PostgreSQL instance.
-    default: "11"
   - field_name: storage_gb
     type: number
     details: Size of storage volume for service instance.
@@ -184,9 +183,9 @@ bind:
     type: string
     details: The jdbc url to connect to the database instance and database.
 examples:
-- name: small
-  description: Create a small PostgreSQL instance
+- name: example
+  description: Create an example PostgreSQL instance
   plan_id: 5bfac89e-689c-483f-85c5-2dd6fb22e80b
-  provision_params: {}
+  provision_params: {"postgres_version": "14"}
   bind_params: {}
   bind_can_fail: true
