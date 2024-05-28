@@ -30,11 +30,11 @@ provision:
     details: The version for the PostgreSQL instance.
   - field_name: storage_gb
     type: number
-    details: Size of storage volume for service instance.
+    details: Size of storage volume for service instance in GB.
     default: 32
     constraints:
-      maximum: 4096
-      minimum: 5
+      maximum: 32767
+      minimum: 32
   - field_name: instance_name
     type: string
     details: Name for your PostgreSQL instance
