@@ -9,7 +9,8 @@ output "uri" {
     csbpg_binding_user.new_user.password,
     var.hostname,
     var.port,
-  var.db_name)
+    var.db_name
+  )
   sensitive = true
 }
 
@@ -19,6 +20,7 @@ output "jdbcUrl" {
     var.port,
     var.db_name,
     csbpg_binding_user.new_user.username,
-    csbpg_binding_user.new_user.password)
+    csbpg_binding_user.new_user.password
+  )
   sensitive = true
 }

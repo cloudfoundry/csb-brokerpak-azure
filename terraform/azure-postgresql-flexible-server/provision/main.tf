@@ -13,7 +13,7 @@
 # limitations under the License.
 
 resource "azurerm_resource_group" "azure-postgres" {
-  count    = length(var.resource_group) == 0 ? 1 : 0
+  count = length(var.resource_group) == 0 ? 1 : 0
 
   name     = local.resource_group
   location = var.location
@@ -27,7 +27,7 @@ resource "azurerm_resource_group" "azure-postgres" {
 resource "random_string" "username" {
   length  = 16
   special = false
-  numeric  = false
+  numeric = false
 }
 
 resource "random_password" "password" {
@@ -39,20 +39,20 @@ resource "random_password" "password" {
 }
 
 resource "azurerm_postgresql_flexible_server" "instance" {
-  depends_on                   = [azurerm_resource_group.azure-postgres]
+  depends_on = [azurerm_resource_group.azure-postgres]
 
-  name                         = var.instance_name
-  resource_group_name          = local.resource_group
-  location                     = var.location
-  version                      = var.postgres_version
-  sku_name                     = var.sku_name
-  storage_mb                   = var.storage_gb * 1024
-  administrator_login          = random_string.username.result
-  administrator_password       = random_password.password.result
-  tags                         = var.labels
+  name                   = var.instance_name
+  resource_group_name    = local.resource_group
+  location               = var.location
+  version                = var.postgres_version
+  sku_name               = var.sku_name
+  storage_mb             = var.storage_gb * 1024
+  administrator_login    = random_string.username.result
+  administrator_password = random_password.password.result
+  tags                   = var.labels
 
-  delegated_subnet_id          = var.delegated_subnet_id
-  private_dns_zone_id          = var.delegated_subnet_id != null ? var.private_dns_zone_id : null
+  delegated_subnet_id = var.delegated_subnet_id
+  private_dns_zone_id = var.delegated_subnet_id != null ? var.private_dns_zone_id : null
 
   lifecycle {
     prevent_destroy = true
@@ -60,10 +60,10 @@ resource "azurerm_postgresql_flexible_server" "instance" {
 }
 
 resource "azurerm_postgresql_flexible_server_database" "instance-db" {
-  name                = var.db_name
-  server_id           = azurerm_postgresql_flexible_server.instance.id
-  charset             = "UTF8"
-  collation           = "en_US.utf8"
+  name      = var.db_name
+  server_id = azurerm_postgresql_flexible_server.instance.id
+  charset   = "UTF8"
+  collation = "en_US.utf8"
 
   lifecycle {
     prevent_destroy = true
@@ -76,16 +76,16 @@ resource "azurerm_postgresql_flexible_server_database" "instance-db" {
 //      Use 'Allow public access from any Azure service within Azure to this server' option instead.
 // Setting this rule in TF translates to enabling public access from any Azure service within Azure to this server.
 resource "azurerm_postgresql_flexible_server_firewall_rule" "allow_azure" {
-  count               = var.allow_access_from_azure_services ? 1 : 0
+  count = var.allow_access_from_azure_services ? 1 : 0
 
-  name                = "allow-access-from-azure-services"
-  server_id           = azurerm_postgresql_flexible_server.instance.id
-  start_ip_address    = "0.0.0.0"
-  end_ip_address      = "0.0.0.0"
+  name             = "allow-access-from-azure-services"
+  server_id        = azurerm_postgresql_flexible_server.instance.id
+  start_ip_address = "0.0.0.0"
+  end_ip_address   = "0.0.0.0"
 }
 
 resource "azurerm_private_endpoint" "private_endpoint" {
-  count               = length(var.private_endpoint_subnet_id) != 0 ? 1 : 0
+  count = length(var.private_endpoint_subnet_id) != 0 ? 1 : 0
 
   name                = "${var.instance_name}-private_endpoint"
   location            = var.location

@@ -1,9 +1,10 @@
 package terraformtests
 
 import (
-	. "csbbrokerpakazure/terraform-tests/helpers"
 	tfjson "github.com/hashicorp/terraform-json"
 	. "github.com/onsi/gomega/gstruct"
+
+	. "csbbrokerpakazure/terraform-tests/helpers"
 
 	"path"
 
