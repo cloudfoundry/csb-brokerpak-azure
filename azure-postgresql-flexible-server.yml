@@ -28,7 +28,6 @@ provision:
   - field_name: postgres_version
     type: string
     details: The version for the PostgreSQL instance.
-    default: "11"
   - field_name: storage_gb
     type: number
     details: Size of storage volume for service instance.
