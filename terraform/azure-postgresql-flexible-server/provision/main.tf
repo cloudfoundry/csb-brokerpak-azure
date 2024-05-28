@@ -31,7 +31,7 @@ resource "random_string" "username" {
 }
 
 resource "random_password" "password" {
-  length           = 31
+  length           = 64
   override_special = "~_-."
   min_upper        = 2
   min_lower        = 2
