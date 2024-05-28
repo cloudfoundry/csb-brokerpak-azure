@@ -16,35 +16,38 @@ var _ = Describe("PostgreSQL Flexible Server", Label("postgresql-flexible-server
 		instanceName      = "csb-postgresql-flexible-server-instance"
 		resourceGroupName = "csb-resource-group"
 		dbName            = "csb-db"
+		subnetID          = "/subscriptions/azureSubscriptionID/resourceGroups/csb-resource-group/providers/Microsoft.Network/virtualNetworks/csb-resource-group-vnet/subnets/subnet-name"
+		privateDNSZoneID  = "/subscriptions/azureSubscriptionID/resourceGroups/csb-resource-group/providers/Microsoft.Network/privateDnsZones/test.postgres.database.azure.com"
 	)
 
 	var (
 		plan                  tfjson.Plan
 		terraformProvisionDir string
+		defaultVars           map[string]any
 	)
-
-	defaultVars := map[string]any{
-		"azure_client_id":                  azureClientID,
-		"azure_client_secret":              azureClientSecret,
-		"azure_subscription_id":            azureSubscriptionID,
-		"azure_tenant_id":                  azureTenantID,
-		"instance_name":                    instanceName,
-		"db_name":                          dbName,
-		"location":                         "westus",
-		"labels":                           map[string]any{"k1": "v1"},
-		"storage_gb":                       32,
-		"resource_group":                   resourceGroupName,
-		"postgres_version":                 "11",
-		"sku_name":                         "GP_Standard_D2ads_v5",
-		"allow_access_from_azure_services": true,
-		"delegated_subnet_id":              nil,
-		"private_dns_zone_id":              nil,
-		"private_endpoint_subnet_id":       "",
-	}
 
 	BeforeAll(func() {
 		terraformProvisionDir = path.Join(workingDir, "azure-postgresql-flexible-server/provision")
 		Init(terraformProvisionDir)
+
+		defaultVars = map[string]any{
+			"azure_client_id":                  azureClientID,
+			"azure_client_secret":              azureClientSecret,
+			"azure_subscription_id":            azureSubscriptionID,
+			"azure_tenant_id":                  azureTenantID,
+			"instance_name":                    instanceName,
+			"db_name":                          dbName,
+			"location":                         "westus",
+			"labels":                           map[string]any{"k1": "v1"},
+			"storage_gb":                       32,
+			"resource_group":                   resourceGroupName,
+			"postgres_version":                 "11",
+			"sku_name":                         "GP_Standard_D2ads_v5",
+			"allow_access_from_azure_services": true,
+			"delegated_subnet_id":              nil,
+			"private_dns_zone_id":              nil,
+			"private_endpoint_subnet_id":       "",
+		}
 	})
 
 	Context("with Default values", func() {
@@ -119,9 +122,6 @@ var _ = Describe("PostgreSQL Flexible Server", Label("postgresql-flexible-server
 	})
 
 	When("private access with virtual network is enabled", func() {
-		var subnetID = "/subscriptions/azureSubscriptionID/resourceGroups/csb-resource-group/providers/Microsoft.Network/virtualNetworks/csb-resource-group-vnet/subnets/subnet-name"
-		var privateDNSZoneID = "/subscriptions/azureSubscriptionID/resourceGroups/csb-resource-group/providers/Microsoft.Network/privateDnsZones/test.postgres.database.azure.com"
-
 		BeforeEach(func() {
 			plan = ShowPlan(terraformProvisionDir, buildVars(defaultVars, map[string]any{
 				"delegated_subnet_id":              subnetID,
@@ -162,9 +162,6 @@ var _ = Describe("PostgreSQL Flexible Server", Label("postgresql-flexible-server
 	})
 
 	When("private endpoint is enabled", func() {
-		var subnetID = "/subscriptions/azureSubscriptionID/resourceGroups/csb-resource-group/providers/Microsoft.Network/virtualNetworks/csb-resource-group-vnet/subnets/subnet-name"
-		var privateDNSZoneID = "/subscriptions/azureSubscriptionID/resourceGroups/csb-resource-group/providers/Microsoft.Network/privateDnsZones/test.postgres.database.azure.com"
-
 		BeforeEach(func() {
 			plan = ShowPlan(terraformProvisionDir, buildVars(defaultVars, map[string]any{
 				"private_endpoint_subnet_id":       subnetID,
