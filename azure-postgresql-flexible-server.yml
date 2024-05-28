@@ -185,7 +185,7 @@ bind:
 examples:
 - name: example
   description: Create an example PostgreSQL instance
-  plan_id: 5bfac89e-689c-483f-85c5-2dd6fb22e80b
-  provision_params: {"postgres_version": "14"}
+  plan_id: 62c5a9d6-d3c5-4544-a8a6-85af30f7e41c
+  provision_params: {}
   bind_params: {}
   bind_can_fail: true
