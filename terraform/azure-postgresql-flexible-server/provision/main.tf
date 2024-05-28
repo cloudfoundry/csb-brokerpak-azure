@@ -70,6 +70,11 @@ resource "azurerm_postgresql_flexible_server_database" "instance-db" {
   }
 }
 
+// For enabling public access with firewall rules
+// Setting this same rule in the console would fail with error:
+//      Adding 0.0.0.0-0.0.0.0 to firewall rule is not allowed because it is a system reserved range.
+//      Use 'Allow public access from any Azure service within Azure to this server' option instead.
+// Setting this rule in TF translates to enabling public access from any Azure service within Azure to this server.
 resource "azurerm_postgresql_flexible_server_firewall_rule" "allow_azure" {
   count               = var.allow_access_from_azure_services ? 1 : 0
 
