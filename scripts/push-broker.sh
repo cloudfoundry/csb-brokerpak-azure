@@ -3,6 +3,7 @@
 set +x # Hide secrets
 set -o errexit
 set -o pipefail
+set -e
 
 if [[ -z ${MANIFEST} ]]; then
   MANIFEST=manifest.yml
@@ -62,6 +63,12 @@ fi
 if [[ ${DB_TLS} ]]; then
   echo "    DB_TLS: ${DB_TLS}" >>$cfmf
 fi
+
+if [[ -z "$GSB_SERVICE_CSB_AZURE_POSTGRESQL_FLEXIBLE_SERVER_PLANS" ]]; then
+  echo "Missing GSB_SERVICE_CSB_AZURE_POSTGRESQL_FLEXIBLE_SERVER_PLANS variable"
+  exit 1
+fi
+echo "    GSB_SERVICE_CSB_AZURE_POSTGRESQL_FLEXIBLE_SERVER_PLANS: $(echo "$GSB_SERVICE_CSB_AZURE_POSTGRESQL_FLEXIBLE_SERVER_PLANS" | jq @json)" >>$cfmf
 
 if [[ ${CH_CRED_HUB_URL} ]]; then
   echo "    CH_CRED_HUB_URL: ${CH_CRED_HUB_URL}" >>$cfmf
