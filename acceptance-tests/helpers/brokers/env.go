@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 
+	"csbbrokerpakazure/acceptance-tests/helpers/testpath"
+
 	"csbbrokerpakazure/acceptance-tests/helpers/apps"
 
 	"github.com/onsi/ginkgo/v2"
@@ -46,4 +48,8 @@ func (b Broker) env() []apps.EnvVar {
 	)
 
 	return append(result, b.envExtras...)
+}
+
+func (b Broker) latestEnv() []apps.EnvVar {
+	return readEnvrcServices(testpath.BrokerpakFile(".envrc"))
 }

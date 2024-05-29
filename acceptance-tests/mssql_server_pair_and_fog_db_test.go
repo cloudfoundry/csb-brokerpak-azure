@@ -21,6 +21,7 @@ var _ = Describe("MSSQL Server Pair and Failover Group DB", Label("mssql-db-fail
 		By("Create CSB with server details")
 		serviceBroker := brokers.Create(
 			brokers.WithPrefix("csb-mssql-db"),
+			brokers.WithLatestEnv(),
 			brokers.WithEnv(apps.EnvVar{Name: "MSSQL_DB_FOG_SERVER_PAIR_CREDS", Value: serversConfig.ServerPairsConfig()}),
 		)
 		defer serviceBroker.Delete()

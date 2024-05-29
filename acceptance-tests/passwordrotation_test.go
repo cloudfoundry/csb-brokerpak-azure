@@ -14,6 +14,7 @@ var _ = Describe("Password Rotation", Label("passwordrotation"), func() {
 		firstEncryptionSecret := random.Password()
 		serviceBroker := brokers.Create(
 			brokers.WithPrefix("csb-rotation"),
+			brokers.WithLatestEnv(),
 			brokers.WithEncryptionSecrets(brokers.EncryptionSecret{
 				Password: firstEncryptionSecret,
 				Label:    "default",

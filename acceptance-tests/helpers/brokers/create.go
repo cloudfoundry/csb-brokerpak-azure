@@ -83,6 +83,12 @@ func WithEnv(env ...apps.EnvVar) Option {
 	}
 }
 
+func WithLatestEnv() Option {
+	return func(b *Broker) {
+		b.envExtras = append(b.envExtras, b.latestEnv()...)
+	}
+}
+
 func WithUsername(username string) Option {
 	return func(b *Broker) {
 		b.username = username
