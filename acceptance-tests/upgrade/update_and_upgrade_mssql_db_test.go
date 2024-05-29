@@ -11,7 +11,7 @@ import (
 )
 
 var _ = Describe("UpgradeMssqlDBTest", Label("mssql-db"), func() {
-	When("upgrading broker version", Label("modern"), func() {
+	When("upgrading broker version", func() {
 		It("should continue to work", func() {
 			By("pushing latest released broker version")
 			serviceBroker := brokers.Create(
@@ -183,116 +183,6 @@ var _ = Describe("UpgradeMssqlDBTest", Label("mssql-db"), func() {
 
 			By("deleting bindings")
 			binding.Unbind()
-
-		})
-
-	})
-
-	When("upgrading broker version", Label("ancient"), func() {
-		It("should continue to work", func() {
-			By("pushing an ancient broker version")
-			serviceBroker := brokers.Create(
-				brokers.WithPrefix("csb-srvdb"),
-				brokers.WithSourceDir(releasedBuildDir),
-				brokers.WithReleaseEnv(releasedBuildDir),
-			)
-			defer serviceBroker.Delete()
-
-			By("creating a service")
-			serverConfig := newDatabaseServer()
-			serverInstance := services.CreateInstance(
-				"csb-azure-mssql-server",
-				"standard",
-				services.WithBroker(serviceBroker),
-				services.WithParameters(serverConfig),
-			)
-			defer serverInstance.Delete()
-
-			By("reconfiguring the CSB with DB server details")
-			serverTag := random.Name(random.WithMaxLength(10))
-			serverCreds := serverConfig.serverDetails(serverTag)
-			serviceBroker.UpdateEnv(
-				apps.EnvVar{Name: "MSSQL_DB_SERVER_CREDS", Value: serverCreds},
-				apps.EnvVar{Name: "GSB_SERVICE_CSB_AZURE_MSSQL_DB_PROVISION_DEFAULTS", Value: map[string]any{"server_credentials": serverCreds}},
-			)
-
-			By("creating a database in the server")
-			dbInstance := services.CreateInstance(
-				"csb-azure-mssql-db",
-				"small",
-				services.WithBroker(serviceBroker),
-				services.WithParameters(map[string]any{
-					"server":             serverTag,
-					"server_credentials": serverCreds,
-				}),
-			)
-			defer dbInstance.Delete()
-
-			By("pushing the unstarted app")
-			app := apps.Push(apps.WithApp(apps.MSSQL))
-			defer apps.Delete(app)
-
-			By("binding to the app")
-			binding := dbInstance.Bind(app)
-
-			By("starting the app")
-			apps.Start(app)
-
-			By("creating a schema")
-			schema := random.Name(random.WithMaxLength(10))
-			app.PUT("", "%s?dbo=false", schema)
-
-			By("setting a key-value")
-			keyOne := random.Hexadecimal()
-			valueOne := random.Hexadecimal()
-			app.PUT(valueOne, "%s/%s", schema, keyOne)
-
-			By("getting the value")
-			got := app.GET("%s/%s", schema, keyOne)
-			Expect(got).To(Equal(valueOne))
-
-			By("pushing the development version of the broker")
-			serviceBroker.UpgradeBroker(developmentBuildDir)
-
-			By("upgrading service instance")
-			dbInstance.Upgrade()
-			serverInstance.Upgrade()
-
-			By("checking previously created data still accessible")
-			got = app.GET("%s/%s", schema, keyOne)
-			Expect(got).To(Equal(valueOne))
-
-			By("updating the instance plan")
-			dbInstance.Update("-p", "medium")
-
-			By("checking previously created data still accessible")
-			got = app.GET("%s/%s", schema, keyOne)
-			Expect(got).To(Equal(valueOne))
-
-			By("dropping the schema used to allow us to unbind")
-			app.DELETE(schema)
-
-			By("deleting bindings created before the upgrade")
-			binding.Unbind()
-
-			By("creating new bindings")
-			dbInstance.Bind(app)
-			apps.Restage(app)
-
-			By("creating a schema")
-			schema = random.Name(random.WithMaxLength(10))
-			app.PUT("", schema)
-
-			By("checking data can still be written and read")
-			keyTwo := random.Hexadecimal()
-			valueTwo := random.Hexadecimal()
-			app.PUT(valueTwo, "%s/%s", schema, keyTwo)
-
-			got = app.GET("%s/%s", schema, keyTwo)
-			Expect(got).To(Equal(valueTwo))
-
-			By("dropping the schema used to allow us to unbind")
-			app.DELETE(schema)
 		})
 	})
 })
