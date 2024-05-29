@@ -17,6 +17,7 @@ var _ = Describe("UpgradeStorageTest", Label("storage"), func() {
 			serviceBroker := brokers.Create(
 				brokers.WithPrefix("csb-storage"),
 				brokers.WithSourceDir(releasedBuildDir),
+				brokers.WithReleaseEnv(releasedBuildDir),
 			)
 			defer serviceBroker.Delete()
 

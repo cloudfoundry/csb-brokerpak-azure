@@ -17,6 +17,7 @@ var _ = Describe("UpgradeMssqlDBTest", Label("mssql-db"), func() {
 			serviceBroker := brokers.Create(
 				brokers.WithPrefix("csb-srvdb"),
 				brokers.WithSourceDir(releasedBuildDir),
+				brokers.WithReleaseEnv(releasedBuildDir),
 			)
 			defer serviceBroker.Delete()
 

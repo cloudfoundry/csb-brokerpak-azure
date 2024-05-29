@@ -23,6 +23,7 @@ var _ = Describe("UpgradeMongoTest", Label("mongodb"), func() {
 			serviceBroker := brokers.Create(
 				brokers.WithPrefix("csb-mongodb"),
 				brokers.WithSourceDir(releasedBuildDir),
+				brokers.WithReleaseEnv(releasedBuildDir),
 			)
 			defer serviceBroker.Delete()
 

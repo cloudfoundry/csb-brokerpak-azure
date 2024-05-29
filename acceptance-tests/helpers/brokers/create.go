@@ -83,6 +83,12 @@ func WithEnv(env ...apps.EnvVar) Option {
 	}
 }
 
+func WithReleaseEnv(dir string) Option {
+	return func(b *Broker) {
+		b.envExtras = append(b.envExtras, readEnvrcServices(filepath.Join(dir, ".envrc"))...)
+	}
+}
+
 func WithLatestEnv() Option {
 	return func(b *Broker) {
 		b.envExtras = append(b.envExtras, b.latestEnv()...)
