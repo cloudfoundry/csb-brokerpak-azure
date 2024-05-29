@@ -10,13 +10,13 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("UpgradePostgreSQLTest", Label("postgresql"), func() {
+var _ = Describe("UpgradePostgreSQLFlexibleServerTest", Label("postgresql-flexible"), func() {
 	When("upgrading broker version", func() {
 		Context("schema supported", Label("schema"), func() {
 			It("should continue to work", func() {
 				By("pushing latest released broker version")
 				serviceBroker := brokers.Create(
-					brokers.WithPrefix("csb-postgresql"),
+					brokers.WithPrefix("csb-postgresql-flexible-server"),
 					brokers.WithSourceDir(releasedBuildDir),
 					brokers.WithReleaseEnv(releasedBuildDir),
 				)
@@ -24,8 +24,8 @@ var _ = Describe("UpgradePostgreSQLTest", Label("postgresql"), func() {
 
 				By("creating a service")
 				serviceInstance := services.CreateInstance(
-					"csb-azure-postgresql",
-					"small",
+					"csb-azure-postgresql-flexible-server",
+					"default",
 					services.WithBroker(serviceBroker),
 				)
 				defer serviceInstance.Delete()
