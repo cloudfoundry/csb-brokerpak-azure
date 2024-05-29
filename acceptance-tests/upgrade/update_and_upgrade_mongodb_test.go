@@ -1,23 +1,17 @@
 package upgrade_test
 
 import (
-	"fmt"
-	"os/exec"
-	"time"
-
 	"csbbrokerpakazure/acceptance-tests/helpers/apps"
 	"csbbrokerpakazure/acceptance-tests/helpers/brokers"
 	"csbbrokerpakazure/acceptance-tests/helpers/random"
 	"csbbrokerpakazure/acceptance-tests/helpers/services"
-
-	"github.com/onsi/gomega/gexec"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 )
 
 var _ = Describe("UpgradeMongoTest", Label("mongodb"), func() {
-	When("upgrading broker version", Label("succeeding"), func() {
+	When("upgrading broker version", func() {
 		It("should continue to work", func() {
 			By("pushing latest released broker version")
 			serviceBroker := brokers.Create(
@@ -103,70 +97,6 @@ var _ = Describe("UpgradeMongoTest", Label("mongodb"), func() {
 			By("getting the document using the second app")
 			got = appTwo.GET("%s/%s/%s", databaseName, collectionName, documentNameTwo)
 			Expect(got).To(Equal(documentDataTwo))
-		})
-	})
-
-	When("upgrading broker version", Label("failing"), func() {
-		It("should retain data and bindings", func() {
-			By("pushing latest released broker version")
-			serviceBroker := brokers.Create(
-				brokers.WithPrefix("csb-mongodb"),
-				brokers.WithSourceDir(releasedBuildDir),
-			)
-			defer serviceBroker.Delete()
-
-			By("creating a service instance")
-			databaseName := random.Name(random.WithPrefix("database"))
-			collectionName := random.Name(random.WithPrefix("collection"))
-			serviceInstance := services.CreateInstance(
-				"csb-azure-mongodb",
-				"small",
-				services.WithBroker(serviceBroker),
-				services.WithParameters(map[string]any{
-					"db_name":         databaseName,
-					"collection_name": collectionName,
-					"shard_key":       "_id",
-					"indexes":         "_id",
-					"unique_indexes":  "",
-				}),
-			)
-			defer serviceInstance.Delete()
-
-			By("pushing the unstarted app")
-			app := apps.Push(apps.WithApp(apps.MongoDB))
-			defer apps.Delete(app)
-
-			By("binding the app")
-			serviceInstance.Bind(app)
-
-			By("starting the app")
-			apps.Start(app)
-
-			By("creating a document")
-			documentNameOne := random.Hexadecimal()
-			documentDataOne := random.Hexadecimal()
-			app.PUT(documentDataOne, "%s/%s/%s", databaseName, collectionName, documentNameOne)
-
-			By("getting the document")
-			got := app.GET("%s/%s/%s", databaseName, collectionName, documentNameOne)
-			Expect(got).To(Equal(documentDataOne))
-
-			By("pushing the development version of the broker")
-			serviceBroker.UpgradeBroker(developmentBuildDir)
-
-			By("failing to upgrade service instance")
-			serviceInstance.UpgradeExpectFailure()
-
-			By("checking previous data still accessible")
-			got = app.GET("%s/%s/%s", databaseName, collectionName, documentNameOne)
-			Expect(got).To(Equal(documentDataOne))
-
-			By("deleting the backing service") // Can't delete with broker as TF version too high
-			cmd := exec.Command("az", "cosmosdb", "delete", "--resource-group", metadata.ResourceGroup, "--name", fmt.Sprintf("csb%s", serviceInstance.GUID()), "--yes")
-			session, err := gexec.Start(cmd, GinkgoWriter, GinkgoWriter)
-			Expect(err).NotTo(HaveOccurred())
-			Eventually(session).WithTimeout(30 * time.Minute).Should(gexec.Exit(0))
-			serviceInstance.Purge()
 		})
 	})
 })

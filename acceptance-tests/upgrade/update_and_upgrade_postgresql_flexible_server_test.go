@@ -10,12 +10,12 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("UpgradeMssqlTest", Label("mssql"), func() {
+var _ = Describe("UpgradePostgreSQLFlexibleServerTest", Label("postgresql-flexible"), func() {
 	When("upgrading broker version", func() {
 		It("should continue to work", func() {
 			By("pushing latest released broker version")
 			serviceBroker := brokers.Create(
-				brokers.WithPrefix("csb-mssql"),
+				brokers.WithPrefix("csb-postgresql-flexible-server"),
 				brokers.WithSourceDir(releasedBuildDir),
 				brokers.WithReleaseEnv(releasedBuildDir),
 			)
@@ -23,15 +23,15 @@ var _ = Describe("UpgradeMssqlTest", Label("mssql"), func() {
 
 			By("creating a service")
 			serviceInstance := services.CreateInstance(
-				"csb-azure-mssql",
-				"small-v2",
+				"csb-azure-postgresql-flexible-server",
+				"default",
 				services.WithBroker(serviceBroker),
 			)
 			defer serviceInstance.Delete()
 
 			By("pushing the unstarted app twice")
-			appOne := apps.Push(apps.WithApp(apps.MSSQL))
-			appTwo := apps.Push(apps.WithApp(apps.MSSQL))
+			appOne := apps.Push(apps.WithApp(apps.PostgreSQL))
+			appTwo := apps.Push(apps.WithApp(apps.PostgreSQL))
 			defer apps.Delete(appOne, appTwo)
 
 			By("binding to the apps")
@@ -65,7 +65,7 @@ var _ = Describe("UpgradeMssqlTest", Label("mssql"), func() {
 			Expect(got).To(Equal(valueOne))
 
 			By("updating the instance plan")
-			serviceInstance.Update("-p", "medium")
+			serviceInstance.Update("-c", `{""storage_gb": 64}`)
 
 			By("checking previously written data still accessible")
 			got = appTwo.GET("%s/%s", schema, keyOne)
