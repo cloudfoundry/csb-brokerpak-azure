@@ -19,6 +19,7 @@ var _ = Describe("MultiStepUpgradeMssqlDBTest", Label("multi-step"), func() {
 			serviceBroker := brokers.Create(
 				brokers.WithPrefix("csb-srvdb"),
 				brokers.WithSourceDir(releasedBuildDir),
+				brokers.WithReleaseEnv(releasedBuildDir),
 			)
 			defer serviceBroker.Delete()
 

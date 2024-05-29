@@ -1,8 +1,6 @@
 package upgrade_test
 
 import (
-	"fmt"
-
 	"csbbrokerpakazure/acceptance-tests/helpers/apps"
 	"csbbrokerpakazure/acceptance-tests/helpers/brokers"
 	"csbbrokerpakazure/acceptance-tests/helpers/random"
@@ -12,12 +10,12 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("UpgradeMssqlTest", Label("mssql"), func() {
-	When("upgrading broker version", Label("modern"), func() {
+var _ = Describe("UpgradePostgreSQLFlexibleServerTest", Label("postgresql-flexible"), func() {
+	When("upgrading broker version", func() {
 		It("should continue to work", func() {
 			By("pushing latest released broker version")
 			serviceBroker := brokers.Create(
-				brokers.WithPrefix("csb-mssql"),
+				brokers.WithPrefix("csb-postgresql-flexible-server"),
 				brokers.WithSourceDir(releasedBuildDir),
 				brokers.WithReleaseEnv(releasedBuildDir),
 			)
@@ -25,15 +23,15 @@ var _ = Describe("UpgradeMssqlTest", Label("mssql"), func() {
 
 			By("creating a service")
 			serviceInstance := services.CreateInstance(
-				"csb-azure-mssql",
-				"small-v2",
+				"csb-azure-postgresql-flexible-server",
+				"default",
 				services.WithBroker(serviceBroker),
 			)
 			defer serviceInstance.Delete()
 
 			By("pushing the unstarted app twice")
-			appOne := apps.Push(apps.WithApp(apps.MSSQL))
-			appTwo := apps.Push(apps.WithApp(apps.MSSQL))
+			appOne := apps.Push(apps.WithApp(apps.PostgreSQL))
+			appTwo := apps.Push(apps.WithApp(apps.PostgreSQL))
 			defer apps.Delete(appOne, appTwo)
 
 			By("binding to the apps")
@@ -67,7 +65,7 @@ var _ = Describe("UpgradeMssqlTest", Label("mssql"), func() {
 			Expect(got).To(Equal(valueOne))
 
 			By("updating the instance plan")
-			serviceInstance.Update("-p", "medium")
+			serviceInstance.Update("-c", `{""storage_gb": 64}`)
 
 			By("checking previously written data still accessible")
 			got = appTwo.GET("%s/%s", schema, keyOne)
@@ -97,69 +95,6 @@ var _ = Describe("UpgradeMssqlTest", Label("mssql"), func() {
 
 			got = appTwo.GET("%s/%s", schemaTwo, keyTwo)
 			Expect(got).To(Equal(valueTwo))
-		})
-	})
-
-	When("upgrading broker version", Label("ancient"), func() {
-		It("should continue to work", func() {
-			By("pushing ancient broker version")
-			serviceBroker := brokers.Create(
-				brokers.WithPrefix("csb-mssql"),
-				brokers.WithSourceDir(releasedBuildDir),
-				brokers.WithReleaseEnv(releasedBuildDir),
-			)
-			defer serviceBroker.Delete()
-
-			By("creating a service")
-			serviceInstance := services.CreateInstance(
-				"csb-azure-mssql",
-				"small-v2",
-				services.WithBroker(serviceBroker),
-			)
-			defer serviceInstance.Delete()
-
-			By("pushing the unstarted app")
-			app := apps.Push(apps.WithApp(apps.MSSQL))
-			defer apps.Delete(app)
-
-			By("binding to the app")
-			serviceInstance.Bind(app)
-
-			By("starting the app")
-			apps.Start(app)
-
-			By("creating a schema")
-			schema := random.Name(random.WithMaxLength(10))
-			app.PUT("", fmt.Sprintf("%s?dbo=false", schema))
-
-			By("setting a key-value")
-			keyOne := random.Hexadecimal()
-			valueOne := random.Hexadecimal()
-			app.PUT(valueOne, "%s/%s", schema, keyOne)
-
-			By("getting the value")
-			got := app.GET("%s/%s", schema, keyOne)
-			Expect(got).To(Equal(valueOne))
-
-			By("pushing the development version of the broker")
-			serviceBroker.UpgradeBroker(developmentBuildDir)
-
-			By("upgrading service instance")
-			serviceInstance.Upgrade()
-
-			By("checking previously written data still accessible")
-			got = app.GET("%s/%s", schema, keyOne)
-			Expect(got).To(Equal(valueOne))
-
-			By("updating the instance plan")
-			serviceInstance.Update("-p", "medium")
-
-			By("checking previously written data still accessible")
-			got = app.GET("%s/%s", schema, keyOne)
-			Expect(got).To(Equal(valueOne))
-
-			By("dropping the schema")
-			app.DELETE(schema)
 		})
 	})
 })

@@ -98,6 +98,7 @@ var _ = Describe("UpgradePostgreSQLTest", Label("postgresql"), func() {
 				serviceBroker := brokers.Create(
 					brokers.WithPrefix("csb-postgresql"),
 					brokers.WithSourceDir(releasedBuildDir),
+					brokers.WithReleaseEnv(releasedBuildDir),
 				)
 				defer serviceBroker.Delete()
 
