@@ -1,16 +1,14 @@
 package brokers
 
 import (
+	"slices"
+
 	"csbbrokerpakazure/acceptance-tests/helpers/apps"
 	"csbbrokerpakazure/acceptance-tests/helpers/cf"
 )
 
 func (b *Broker) UpgradeBroker(dir string, env ...apps.EnvVar) {
-	env = append(env,
-		apps.EnvVar{Name: "BROKERPAK_UPDATES_ENABLED", Value: true},
-		apps.EnvVar{Name: "TERRAFORM_UPGRADES_ENABLED", Value: true},
-	)
-	WithEnv(env...)(b)
+	b.envExtras = slices.Concat(b.envExtras, b.latestEnv(), env)
 
 	b.app.Push(
 		apps.WithName(b.Name),
@@ -32,6 +30,7 @@ func (b *Broker) UpdateEnv(env ...apps.EnvVar) {
 
 	cf.Run("update-service-broker", b.Name, b.username, b.password, b.app.URL)
 }
+
 func (b *Broker) UpdateConfig(config map[string]interface{}) {
 	b.app.Push(
 		apps.WithName(b.Name),

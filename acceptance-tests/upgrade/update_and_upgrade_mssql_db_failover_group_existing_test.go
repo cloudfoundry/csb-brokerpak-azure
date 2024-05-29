@@ -20,6 +20,7 @@ var _ = Describe("Upgrade and Update csb-azure-mssql-db-failover-group 'existing
 			serviceBroker := brokers.Create(
 				brokers.WithPrefix("csb-db-fo"),
 				brokers.WithSourceDir(releasedBuildDir),
+				brokers.WithReleaseEnv(releasedBuildDir),
 				brokers.WithEnv(apps.EnvVar{Name: "MSSQL_DB_FOG_SERVER_PAIR_CREDS", Value: serversConfig.ServerPairsConfig()}),
 			)
 			defer serviceBroker.Delete()
