@@ -8,12 +8,12 @@ import (
 	"csbbrokerpakazure/providers/terraform-provider-csbmssqldbrunfailover/testhelpers"
 
 	"github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/sql/armsql"
+	"github.com/google/uuid"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
-	"github.com/pborman/uuid"
 )
 
 var _ = Describe("resource_run_failover resource", Ordered, Label("acceptance"), func() {
@@ -45,13 +45,13 @@ var _ = Describe("resource_run_failover resource", Ordered, Label("acceptance"),
 		var err error
 
 		config = testhelpers.FailoverConfig{
-			ResourceGroupName:     fmt.Sprintf("resourcegroupname-%s", uuid.New()),
-			ServerName:            fmt.Sprintf("servername-%s", uuid.New()),
+			ResourceGroupName:     fmt.Sprintf("resourcegroupname-%s", uuid.NewString()),
+			ServerName:            fmt.Sprintf("servername-%s", uuid.NewString()),
 			MainLocation:          "eastus",
 			PartnerServerLocation: "eastus2",
-			PartnerServerName:     fmt.Sprintf("partnerservername-%s", uuid.New()),
+			PartnerServerName:     fmt.Sprintf("partnerservername-%s", uuid.NewString()),
 			SubscriptionID:        azureSubscriptionID,
-			FailoverGroupName:     fmt.Sprintf("failovergroupname-%s", uuid.New()),
+			FailoverGroupName:     fmt.Sprintf("failovergroupname-%s", uuid.NewString()),
 		}
 
 		failoverData, err = testhelpers.CreateFailoverGroup(config)
