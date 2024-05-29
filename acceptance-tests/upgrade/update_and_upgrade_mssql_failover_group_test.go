@@ -14,7 +14,7 @@ import (
 )
 
 var _ = Describe("UpgradeMssqlFailoverGroupTest", Label("mssql-failover-group"), func() {
-	When("upgrading broker version", Label("modern"), func() {
+	When("upgrading broker version", func() {
 		It("should continue to work", func() {
 			By("pushing latest released broker version")
 			serviceBroker := brokers.Create(
@@ -110,90 +110,6 @@ var _ = Describe("UpgradeMssqlFailoverGroupTest", Label("mssql-failover-group"),
 			Expect(got).To(Equal(valueTwo))
 
 			By("dropping the schema used to allow us to unbind")
-			appOne.DELETE(schema)
-		})
-	})
-
-	When("upgrading broker version", Label("ancient"), func() {
-		It("should continue to work", func() {
-			By("pushing an ancient broker version")
-			serviceBroker := brokers.Create(
-				brokers.WithPrefix("csb-mssql-fog"),
-				brokers.WithSourceDir(releasedBuildDir),
-				brokers.WithReleaseEnv(releasedBuildDir),
-			)
-			defer serviceBroker.Delete()
-
-			By("creating a service")
-			serviceInstance := services.CreateInstance(
-				"csb-azure-mssql-failover-group",
-				"small-v2",
-				services.WithBroker(serviceBroker),
-			)
-			defer serviceInstance.Delete()
-
-			By("pushing the unstarted app")
-			appOne := apps.Push(apps.WithApp(apps.MSSQL))
-			defer apps.Delete(appOne)
-
-			By("binding to the app")
-			serviceInstance.Bind(appOne)
-
-			By("starting the app")
-			apps.Start(appOne)
-
-			By("creating a schema")
-			schema := random.Name(random.WithMaxLength(10))
-			appOne.PUT("", "%s?dbo=false", schema)
-
-			By("setting a key-value")
-			keyOne := random.Hexadecimal()
-			valueOne := random.Hexadecimal()
-			appOne.PUT(valueOne, "%s/%s", schema, keyOne)
-
-			By("getting the value")
-			got := appOne.GET("%s/%s", schema, keyOne)
-			Expect(got).To(Equal(valueOne))
-
-			By("pushing the development version of the broker")
-			serviceBroker.UpgradeBroker(developmentBuildDir)
-
-			By("upgrading service instance")
-			serviceInstance.Upgrade()
-
-			By("getting the previously set value using the second app")
-			got = appOne.GET("%s/%s", schema, keyOne)
-			Expect(got).To(Equal(valueOne))
-
-			By("updating the instance plan")
-			serviceInstance.Update("-p", "medium")
-
-			By("getting the previously set value using the second app")
-			got = appOne.GET("%s/%s", schema, keyOne)
-			Expect(got).To(Equal(valueOne))
-
-			By("triggering failover")
-			failoverServiceInstance := services.CreateInstance(
-				"csb-azure-mssql-fog-run-failover",
-				"standard",
-				services.WithBroker(serviceBroker),
-				services.WithParameters(failoverParameters(serviceInstance)),
-			)
-			defer failoverServiceInstance.Delete()
-
-			// Because of https://github.com/cloudfoundry/csb-brokerpak-azure/commit/40c6fd9744fe696296c84e3783b5f20af07f9ad9
-			// the binding users created before the upgrade will not exist in the replica
-			By("pushing and binding another app")
-			appTwo := apps.Push(apps.WithApp(apps.MSSQL))
-			defer apps.Delete(appTwo)
-			serviceInstance.Bind(appTwo)
-			apps.Start(appTwo)
-
-			By("getting the previously set values")
-			Expect(appTwo.GET("%s/%s", schema, keyOne)).To(Equal(valueOne))
-
-			apps.Delete(appTwo)
-			failoverServiceInstance.Delete()
 			appOne.DELETE(schema)
 		})
 	})

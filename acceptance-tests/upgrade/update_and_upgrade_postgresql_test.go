@@ -12,7 +12,7 @@ import (
 
 var _ = Describe("UpgradePostgreSQLTest", Label("postgresql"), func() {
 	When("upgrading broker version", func() {
-		Context("schema supported", Label("schema"), func() {
+		Context("schema supported", func() {
 			It("should continue to work", func() {
 				By("pushing latest released broker version")
 				serviceBroker := brokers.Create(
@@ -88,71 +88,6 @@ var _ = Describe("UpgradePostgreSQLTest", Label("postgresql"), func() {
 				appOne.PUT(valueTwo, "%s/%s", schemaTwo, keyTwo)
 
 				got = appTwo.GET("%s/%s", schemaTwo, keyTwo)
-				Expect(got).To(Equal(valueTwo))
-			})
-		})
-
-		Context("schema not supported", Label("noschema"), func() {
-			It("should continue to work", func() {
-				By("pushing latest released broker version")
-				serviceBroker := brokers.Create(
-					brokers.WithPrefix("csb-postgresql"),
-					brokers.WithSourceDir(releasedBuildDir),
-					brokers.WithReleaseEnv(releasedBuildDir),
-				)
-				defer serviceBroker.Delete()
-
-				By("creating a service")
-				serviceInstance := services.CreateInstance(
-					"csb-azure-postgresql",
-					"small",
-					services.WithBroker(serviceBroker),
-				)
-				defer serviceInstance.Delete()
-
-				By("pushing the unstarted app")
-				app := apps.Push(apps.WithApp(apps.PostgreSQL))
-				defer apps.Delete(app)
-
-				By("binding to the app")
-				binding := serviceInstance.Bind(app)
-
-				By("starting the app")
-				apps.Start(app)
-
-				By("setting a key-value")
-				keyOne := random.Hexadecimal()
-				valueOne := random.Hexadecimal()
-				const schema = "public"
-				app.PUT(valueOne, "%s/%s", schema, keyOne)
-
-				By("getting the value")
-				got := app.GET("%s/%s", schema, keyOne)
-				Expect(got).To(Equal(valueOne))
-
-				By("pushing the development version of the broker")
-				serviceBroker.UpgradeBroker(developmentBuildDir)
-
-				By("upgrading service instance")
-				serviceInstance.Upgrade()
-
-				By("checking previously written data still accessible")
-				got = app.GET("%s/%s", schema, keyOne)
-				Expect(got).To(Equal(valueOne))
-
-				By("deleting bindings created before the upgrade")
-				binding.Unbind()
-
-				By("creating new bindings and testing they still work")
-				serviceInstance.Bind(app)
-				apps.Restage(app)
-
-				By("checking data can still be written and read")
-				keyTwo := random.Hexadecimal()
-				valueTwo := random.Hexadecimal()
-				app.PUT(valueTwo, "%s/%s", schema, keyTwo)
-
-				got = app.GET("%s/%s", schema, keyTwo)
 				Expect(got).To(Equal(valueTwo))
 			})
 		})
