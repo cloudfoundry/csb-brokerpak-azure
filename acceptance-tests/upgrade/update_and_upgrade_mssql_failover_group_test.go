@@ -120,6 +120,7 @@ var _ = Describe("UpgradeMssqlFailoverGroupTest", Label("mssql-failover-group"),
 			serviceBroker := brokers.Create(
 				brokers.WithPrefix("csb-mssql-fog"),
 				brokers.WithSourceDir(releasedBuildDir),
+				brokers.WithReleaseEnv(releasedBuildDir),
 			)
 			defer serviceBroker.Delete()
 
