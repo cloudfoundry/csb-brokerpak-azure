@@ -17,6 +17,7 @@ var _ = Describe("UpgradeMysqlTest", Label("mysql"), func() {
 			serviceBroker := brokers.Create(
 				brokers.WithPrefix("csb-mysql"),
 				brokers.WithSourceDir(releasedBuildDir),
+				brokers.WithReleaseEnv(releasedBuildDir),
 			)
 			defer serviceBroker.Delete()
 

@@ -19,6 +19,7 @@ var _ = Describe("UpgradeCosmosTest", Label("cosmosdb"), func() {
 			serviceBroker := brokers.Create(
 				brokers.WithPrefix("csb-cosmos"),
 				brokers.WithSourceDir(releasedBuildDir),
+				brokers.WithReleaseEnv(releasedBuildDir),
 			)
 			defer serviceBroker.Delete()
 

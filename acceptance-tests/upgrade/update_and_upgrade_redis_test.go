@@ -18,6 +18,7 @@ var _ = Describe("UpgradeRedisTest", Label("redis"), func() {
 			serviceBroker := brokers.Create(
 				brokers.WithPrefix("csb-redis"),
 				brokers.WithSourceDir(releasedBuildDir),
+				brokers.WithReleaseEnv(releasedBuildDir),
 			)
 			defer serviceBroker.Delete()
 
