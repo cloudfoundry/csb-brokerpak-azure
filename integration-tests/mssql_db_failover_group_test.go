@@ -66,7 +66,6 @@ var _ = Describe("MSSQL DB Auto-failover group", Label("MSSQL Auto-failover grou
 			func(params map[string]any, expectedErrorMsg string) {
 				params["server_pair"] = "preprovisioned-server-name"
 				_, err := broker.Provision(mssqlDBFailoverGroupServiceName, "small", params)
-				fmt.Printf("error %v", err)
 				Expect(err).To(MatchError(ContainSubstring(expectedErrorMsg)))
 			},
 			Entry(
