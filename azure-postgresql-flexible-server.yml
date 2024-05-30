@@ -64,7 +64,7 @@ provision:
     prohibit_update: true
   - field_name: private_dns_zone_id
     type: string
-    details: The ID of the private DNS zone to create the PostgreSQL Flexible Server. Must be set when `delegated_subnet_id` is also set.
+    details: The ID of the private DNS zone to create the PostgreSQL Flexible Server. Must be set when `delegated_subnet_id` or `private_endpoint_subnet_id` is also set.
     nullable: true
     default: null
   - field_name: private_endpoint_subnet_id
