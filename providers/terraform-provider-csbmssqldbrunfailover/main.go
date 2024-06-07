@@ -1,8 +1,7 @@
 package main
 
 import (
-	"csbbrokerpakazure/providers/terraform-provider-csbmssqldbrunfailover/csbmssqldbrunfailover"
-
+	"github.com/cloudfoundry/csb-brokerpak-azure/terraform-provider-csbmssqldbrunfailover/csbmssqldbrunfailover"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/plugin"
 )
 
