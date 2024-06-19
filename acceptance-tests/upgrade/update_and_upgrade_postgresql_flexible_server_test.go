@@ -64,8 +64,15 @@ var _ = Describe("UpgradePostgreSQLFlexibleServerTest", Label("postgresql-flexib
 			got = appTwo.GET("%s/%s", schema, keyOne)
 			Expect(got).To(Equal(valueOne))
 
+			By("deleting bindings created before the upgrade")
+			bindingOne.Unbind()
+
+			By("creating new bindings and testing they still work")
+			serviceInstance.Bind(appOne)
+			apps.Restage(appOne)
+
 			By("updating the instance plan")
-			serviceInstance.Update("-c", `{""storage_gb": 64}`)
+			serviceInstance.Update("-c", `{}`)
 
 			By("checking previously written data still accessible")
 			got = appTwo.GET("%s/%s", schema, keyOne)

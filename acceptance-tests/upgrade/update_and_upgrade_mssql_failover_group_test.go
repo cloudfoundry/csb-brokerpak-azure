@@ -67,8 +67,8 @@ var _ = Describe("UpgradeMssqlFailoverGroupTest", Label("mssql-failover-group"),
 			got = appTwo.GET("%s/%s", schema, keyOne)
 			Expect(got).To(Equal(valueOne))
 
-			By("updating the instance plan")
-			serviceInstance.Update("-p", "medium")
+			By("updating service instance")
+			serviceInstance.Update("-c", `{}`)
 
 			By("getting the previously set value using the second app")
 			got = appTwo.GET("%s/%s", schema, keyOne)
