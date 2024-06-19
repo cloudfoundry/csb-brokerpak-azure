@@ -75,7 +75,7 @@ var _ = Describe("UpgradeRedisTest", Label("redis"), func() {
 			Expect(appTwo.GET(key1)).To(Equal(value1))
 
 			By("updating the instance plan")
-			serviceInstance.Update("-p", "deprecated-medium")
+			serviceInstance.Update("-c", `{}`)
 
 			By("checking it still works")
 			key3 := random.Hexadecimal()

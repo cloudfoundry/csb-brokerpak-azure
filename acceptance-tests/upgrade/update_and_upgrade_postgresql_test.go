@@ -67,6 +67,16 @@ var _ = Describe("UpgradePostgreSQLTest", Label("postgresql"), func() {
 
 				By("deleting bindings created before the upgrade")
 				bindingOne.Unbind()
+
+				By("creating new bindings and testing they still work")
+				serviceInstance.Bind(appOne)
+				apps.Restage(appOne)
+
+				By("updating service instance")
+				serviceInstance.Update("-c", `{}`)
+
+				By("deleting bindings created before the upgrade")
+				bindingOne.Unbind()
 				bindingTwo.Unbind()
 
 				By("creating new bindings and testing they still work")
