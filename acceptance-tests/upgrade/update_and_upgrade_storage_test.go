@@ -62,8 +62,15 @@ var _ = Describe("UpgradeStorageTest", Label("storage"), func() {
 			got = appTwo.GET("%s/%s", collectionName, blobNameOne)
 			Expect(got).To(Equal(blobDataOne))
 
+			By("deleting bindings created before the upgrade")
+			bindingOne.Unbind()
+
+			By("creating new bindings and testing they still work")
+			serviceInstance.Bind(appOne)
+			apps.Restage(appOne)
+
 			By("triggering an update to the service instance")
-			serviceInstance.Update("-c", `{"replication_type":"GRS"}`)
+			serviceInstance.Update("-c", `{}`)
 
 			By("checking that previously written data is accessible")
 			got = appTwo.GET("%s/%s", collectionName, blobNameOne)

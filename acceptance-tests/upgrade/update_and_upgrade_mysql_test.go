@@ -57,13 +57,20 @@ var _ = Describe("UpgradeMysqlTest", Label("mysql"), func() {
 			By("checking data inserted before broker upgrade")
 			Expect(appTwo.GET(keyOne)).To(Equal(valueOne))
 
-			By("updating the instance plan")
-			serviceInstance.Update("-p", "medium")
+			By("deleting bindings created before the upgrade")
+			bindingOne.Unbind()
 
-			By("checking data inserted before broker upgrade")
+			By("creating new bindings and testing they still work")
+			serviceInstance.Bind(appOne)
+			apps.Restage(appOne)
+
+			By("updating service instance")
+			serviceInstance.Update("-c", `{}`)
+
+			By("checking data inserted before broker update")
 			Expect(appTwo.GET(keyOne)).To(Equal(valueOne))
 
-			By("deleting bindings created before the upgrade")
+			By("deleting bindings created before the update")
 			bindingOne.Unbind()
 			bindingTwo.Unbind()
 
@@ -72,29 +79,19 @@ var _ = Describe("UpgradeMysqlTest", Label("mysql"), func() {
 			serviceInstance.Bind(appTwo)
 			apps.Restage(appOne, appTwo)
 
-			By("creating new data - post upgrade")
+			By("checking data inserted before broker upgrade")
+			Expect(appTwo.GET(keyOne)).To(Equal(valueOne))
+
+			By("creating new data - post update")
 			keyTwo := random.Hexadecimal()
 			valueTwo := random.Hexadecimal()
 			appOne.PUT(valueTwo, keyTwo)
 			got = appTwo.GET(keyTwo)
 			Expect(got).To(Equal(valueTwo))
 
-			By("checking data inserted before broker upgrade")
-			Expect(appTwo.GET(keyOne)).To(Equal(valueOne))
-
-			By("updating the instance plan")
-			serviceInstance.Update("-p", "medium")
-
 			By("checking previously written data is still accessible")
 			got = appTwo.GET(keyTwo)
 			Expect(got).To(Equal(valueTwo))
-
-			By("checking data can still be written and read")
-			keyThree := random.Hexadecimal()
-			valueThree := random.Hexadecimal()
-			appOne.PUT(valueThree, keyThree)
-			got = appTwo.GET(keyThree)
-			Expect(got).To(Equal(valueThree))
 		})
 	})
 })

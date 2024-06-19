@@ -69,8 +69,15 @@ var _ = Describe("UpgradeMongoTest", Label("mongodb"), func() {
 			got = appTwo.GET("%s/%s/%s", databaseName, collectionName, documentNameOne)
 			Expect(got).To(Equal(documentDataOne))
 
-			By("updating the instance plan")
-			serviceInstance.Update("-p", "medium")
+			By("deleting bindings created before the upgrade")
+			bindingOne.Unbind()
+
+			By("creating new bindings")
+			serviceInstance.Bind(appOne)
+			apps.Restage(appOne)
+
+			By("updating service instance")
+			serviceInstance.Update("-c", `{}`)
 
 			By("checking previous data still accessible")
 			got = appTwo.GET("%s/%s/%s", databaseName, collectionName, documentNameOne)

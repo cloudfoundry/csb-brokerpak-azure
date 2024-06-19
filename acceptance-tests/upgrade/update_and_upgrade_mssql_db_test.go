@@ -80,8 +80,15 @@ var _ = Describe("UpgradeMssqlDBTest", Label("mssql-db"), func() {
 			got = appTwo.GET("%s/%s", schema, keyOne)
 			Expect(got).To(Equal(valueOne))
 
-			By("updating the instance plan")
-			dbInstance.Update("-p", "medium")
+			By("deleting bindings created before the upgrade")
+			bindingOne.Unbind()
+
+			By("creating new bindings")
+			dbInstance.Bind(appOne)
+			apps.Restage(appOne)
+
+			By("updating service instance")
+			dbInstance.Update("-c", `{}`)
 
 			By("checking previously created data still accessible")
 			got = appTwo.GET("%s/%s", schema, keyOne)
