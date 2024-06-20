@@ -8,8 +8,8 @@ updates:
 - package-ecosystem: gomod
   directory: "/providers/terraform-provider-csbmssqldbrunfailover"
   schedule:
-    interval: "daily"
-    time: "20:00"
+    interval: "weekly"
+    day: "saturday"
   groups:
     azure-sdk-for-go:
       patterns:
@@ -17,50 +17,50 @@ updates:
 - package-ecosystem: gomod
   directory: "/acceptance-tests/apps/mongodbapp"
   schedule:
-    interval: "daily"
-    time: "20:30"
+    interval: "weekly"
+    day: "saturday"
   labels:
     - "test-dependencies"
 - package-ecosystem: gomod
   directory: "/acceptance-tests/apps/postgresqlapp"
   schedule:
-    interval: "daily"
-    time: "21:00"
+    interval: "weekly"
+    day: "saturday"
   labels:
     - "test-dependencies"
 - package-ecosystem: gomod
   directory: "/acceptance-tests/apps/mssqlapp"
   schedule:
-    interval: "daily"
-    time: "21:30"
+    interval: "weekly"
+    day: "saturday"
   labels:
     - "test-dependencies"
 - package-ecosystem: gomod
   directory: "/acceptance-tests/apps/mysqlapp"
   schedule:
-    interval: "daily"
-    time: "22:00"
+    interval: "weekly"
+    day: "saturday"
   labels:
     - "test-dependencies"
 - package-ecosystem: gomod
   directory: "/acceptance-tests/apps/redisapp"
   schedule:
-    interval: "daily"
-    time: "22:30"
+    interval: "weekly"
+    day: "saturday"
   labels:
     - "test-dependencies"
 - package-ecosystem: npm
   directory: "/acceptance-tests/apps/cosmosdbapp"
   schedule:
-    interval: "daily"
-    time: "23:00"
+    interval: "weekly"
+    day: "saturday"
   labels:
     - "test-dependencies"
 - package-ecosystem: npm
   directory: "/acceptance-tests/apps/storageapp"
   schedule:
-    interval: "daily"
-    time: "23:30"
+    interval: "weekly"
+    day: "saturday"
   labels:
     - "test-dependencies"
 - package-ecosystem: "github-actions"
