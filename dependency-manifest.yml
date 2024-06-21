@@ -14,17 +14,17 @@
 
 dependencies:
     - name: terraform-provider-azurerm
-      version: 3.108.0
-      source: https://github.com/terraform-providers/terraform-provider-azurerm/archive/v3.108.0.zip
-      source_sha256: 0d67470f5598a7cb08d8c97dfa164f6da9cb7931ea691e0494fe1e1ed2673bdd
+      version: 3.109.0
+      source: https://github.com/terraform-providers/terraform-provider-azurerm/archive/v3.109.0.zip
+      source_sha256: ced15fd487ca238e4377df2865ba52294fe411b9802758afb6e59218dacdadf0
     - name: terraform-provider-csbpg
-      version: 1.2.29
-      source: https://github.com/cloudfoundry/terraform-provider-csbpg/archive/v1.2.29.zip
-      source_sha256: 23f1972b64562e3cb4877b66996cf16f13f724d0cac090fc799f7245e829a964
+      version: 1.2.30
+      source: https://github.com/cloudfoundry/terraform-provider-csbpg/archive/v1.2.30.zip
+      source_sha256: 37ce357a8909e1220fe5f179f48bfc732905cf6bc2b039998f799fc08e267475
     - name: terraform-provider-csbsqlserver
-      version: 1.0.20
-      source: https://github.com/cloudfoundry/terraform-provider-csbsqlserver/archive/v1.0.20.zip
-      source_sha256: 9576876b79db0613f53cc61875a3a043253986fb680106686ea8a36b7e4f7c22
+      version: 1.0.21
+      source: https://github.com/cloudfoundry/terraform-provider-csbsqlserver/archive/v1.0.21.zip
+      source_sha256: e1d3e744db4c0adf2f214b4dde62d190659b4701e7427cea9629b36b51a3d222
     - name: terraform-provider-mysql
       version: 1.9.0
       source: https://github.com/terraform-providers/terraform-provider-mysql/archive/v1.9.0.zip
