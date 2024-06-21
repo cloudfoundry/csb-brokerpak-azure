@@ -25,7 +25,7 @@ func DefaultBrokerName() string {
 
 	username := os.Getenv("USER")
 	for _, n := range receiver.Names {
-		if n == "broker-cf-test" {
+		if n == "broker-cf-test" || n == "cloud-service-broker-azure" {
 			defaultBrokerName = n
 			return n
 		}
