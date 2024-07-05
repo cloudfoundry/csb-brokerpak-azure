@@ -10,7 +10,6 @@ const (
 	Cosmos     AppCode = "cosmosdbapp"
 	Storage    AppCode = "storageapp"
 	MongoDB    AppCode = "mongodbapp"
-	MySQL      AppCode = "mysqlapp"
 	MSSQL      AppCode = "mssqlapp"
 	PostgreSQL AppCode = "postgresqlapp"
 	Redis      AppCode = "redisapp"
