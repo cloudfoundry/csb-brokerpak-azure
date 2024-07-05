@@ -36,13 +36,6 @@ updates:
   labels:
     - "test-dependencies"
 - package-ecosystem: gomod
-  directory: "/acceptance-tests/apps/mysqlapp"
-  schedule:
-    interval: "weekly"
-    day: "saturday"
-  labels:
-    - "test-dependencies"
-- package-ecosystem: gomod
   directory: "/acceptance-tests/apps/redisapp"
   schedule:
     interval: "weekly"

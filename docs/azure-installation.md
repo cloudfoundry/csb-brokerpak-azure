@@ -69,7 +69,6 @@ info:    provider list command OK
 | Service | Namespace |
 |---------|-----------|
 | redis   | `Microsoft.Cache` |
-| mysql   | `Microsoft.DBforMySQL` |
 | mssql   | `Microsoft.Sql` |
 | mongodb | `Microsoft.DocumentDB` |
 | eventhubs | `Microsoft.EventHub` |
@@ -161,7 +160,6 @@ csb-azure-mssql                  small, medium, large, extra-large           Azu
 csb-azure-mssql-db               small, medium, large, extra-large           Manage Azure SQL Databases on pre-provisioned database servers
 csb-azure-mssql-failover-group   small, medium, large                        Manages auto failover group for managed Azure SQL on the Azure Platform
 csb-azure-mssql-server           standard                                    Azure SQL Server (no database attached)
-csb-azure-mysql                  small, medium,                              Mysql is a fully managed service for the Azure Platform
 csb-azure-redis                  small, medium, large, ha-small, ha-medium,  Redis is a fully managed service for the Azure Platform
 ```
 
