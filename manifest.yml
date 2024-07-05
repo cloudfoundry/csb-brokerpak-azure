@@ -38,9 +38,6 @@ terraform_binaries:
 - name: terraform-provider-random
   version: 3.6.2
   source: https://github.com/terraform-providers/terraform-provider-random/archive/v3.6.2.zip
-- name: terraform-provider-mysql
-  version: 1.9.0
-  source: https://github.com/terraform-providers/terraform-provider-mysql/archive/v1.9.0.zip
 - name: terraform-provider-csbsqlserver
   version: 1.0.21
   source: https://github.com/cloudfoundry/terraform-provider-csbsqlserver/archive/v1.0.21.zip
@@ -69,7 +66,6 @@ env_config_mapping:
   MSSQL_DB_FOG_SERVER_PAIR_CREDS: azure.mssql_db_fog_server_pair_creds
 service_definitions:
 - azure-redis.yml
-- azure-mysql.yml
 - azure-mssql.yml
 - azure-mssql-failover-group.yml
 - azure-mongodb.yml
