@@ -25,10 +25,6 @@ dependencies:
       version: 1.0.22
       source: https://github.com/cloudfoundry/terraform-provider-csbsqlserver/archive/v1.0.22.zip
       source_sha256: e665f363aeda45bdf1a3c3d38827eadbb8b37908a8b08afaef6557e0e12c7c37
-    - name: terraform-provider-mysql
-      version: 1.9.0
-      source: https://github.com/terraform-providers/terraform-provider-mysql/archive/v1.9.0.zip
-      source_sha256: 8cd135baba86b5568f7685152201b3f73300aa1fe455c6873da05bff1418b707
     - name: terraform-provider-postgresql
       version: 1.22.0
       source: https://github.com/cyrilgdn/terraform-provider-postgresql/archive/v1.22.0.zip
