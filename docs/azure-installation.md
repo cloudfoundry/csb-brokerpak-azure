@@ -72,7 +72,6 @@ info:    provider list command OK
 | mssql   | `Microsoft.Sql` |
 | mongodb | `Microsoft.DocumentDB` |
 | eventhubs | `Microsoft.EventHub` |
-| postgresql | `Microsoft.DBforPostgreSQL` |
 | storage | `Microsoft.Storage` |
 | cosmosdb | `Microsoft.DocumentDB` |
 
