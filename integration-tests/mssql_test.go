@@ -10,8 +10,8 @@ import (
 const (
 	mssqlServiceName             = "csb-azure-mssql"
 	mssqlServiceID               = "2cfcad84-5824-11ea-b0e2-00155d4dfe6c"
-	mssqlServiceDisplayName      = "Azure SQL Database - Single Instance"
-	mssqlServiceDescription      = "Azure SQL Database is a fully managed service for the Azure Platform"
+	mssqlServiceDisplayName      = "Deprecated - Azure SQL Database - Single Instance"
+	mssqlServiceDescription      = "Deprecated - Azure SQL Database is a fully managed service for the Azure Platform"
 	mssqlServiceDocumentationURL = "https://docs.microsoft.com/en-us/azure/sql-database/"
 	mssqlServiceSupportURL       = "https://docs.microsoft.com/en-us/azure/sql-database/"
 )
@@ -32,7 +32,7 @@ var _ = Describe("MSSQL", Label("MSSQL"), func() {
 		service := testframework.FindService(catalog, mssqlServiceName)
 		Expect(service.ID).To(Equal(mssqlServiceID))
 		Expect(service.Description).To(Equal(mssqlServiceDescription))
-		Expect(service.Tags).To(ConsistOf("azure", "mssql", "sqlserver", "preview"))
+		Expect(service.Tags).To(ConsistOf("azure", "mssql", "sqlserver", "preview", "deprecated"))
 		Expect(service.Metadata.ImageUrl).To(ContainSubstring("data:image/png;base64,"))
 		Expect(service.Metadata.DisplayName).To(Equal(mssqlServiceDisplayName))
 		Expect(service.Metadata.DocumentationUrl).To(Equal(mssqlServiceDocumentationURL))

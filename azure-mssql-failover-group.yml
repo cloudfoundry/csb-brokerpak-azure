@@ -15,12 +15,12 @@
 version: 1
 name: csb-azure-mssql-failover-group
 id: 76d0e602-2b79-4c1e-bbbe-03913a1cfda2
-description: Manages auto failover group for managed Azure SQL on the Azure Platform
-display_name: Azure SQL Failover Group
+description: Deprecated - Manages auto failover group for managed Azure SQL on the Azure Platform
+display_name: Deprecated - Azure SQL Failover Group
 image_url: file://service-images/csb.png
 documentation_url: https://docs.microsoft.com/en-us/azure/sql-database/sql-database-auto-failover-group/
 support_url: https://docs.microsoft.com/en-us/azure/sql-database/sql-database-auto-failover-group/
-tags: [azure, mssql, sqlserver, dr, failover, preview]
+tags: [azure, mssql, sqlserver, dr, failover, preview, deprecated]
 plan_updateable: true
 plans:
 - name: small-v2

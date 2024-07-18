@@ -10,8 +10,8 @@ import (
 const (
 	resourceGroupServiceName             = "csb-azure-resource-group"
 	resourceGroupServiceID               = "57af72ea-b951-44cb-b814-1da900554ce8"
-	resourceGroupServiceDisplayName      = "Azure Resource Group"
-	resourceGroupServiceDescription      = "Azure Resource Group"
+	resourceGroupServiceDisplayName      = "Deprecated - Azure Resource Group"
+	resourceGroupServiceDescription      = "Deprecated - Azure Resource Group"
 	resourceGroupServiceDocumentationURL = "https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/overview#resource-groups"
 	resourceGroupServiceSupportURL       = "https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/overview#resource-groups"
 )
@@ -32,7 +32,7 @@ var _ = Describe("Resource Group", Label("Resource Group"), func() {
 		service := testframework.FindService(catalog, resourceGroupServiceName)
 		Expect(service.ID).To(Equal(resourceGroupServiceID))
 		Expect(service.Description).To(Equal(resourceGroupServiceDescription))
-		Expect(service.Tags).To(ConsistOf("azure", "preview"))
+		Expect(service.Tags).To(ConsistOf("azure", "preview", "deprecated"))
 		Expect(service.Metadata.ImageUrl).To(ContainSubstring("data:image/png;base64,"))
 		Expect(service.Metadata.DisplayName).To(Equal(resourceGroupServiceDisplayName))
 		Expect(service.Metadata.DocumentationUrl).To(Equal(resourceGroupServiceDocumentationURL))

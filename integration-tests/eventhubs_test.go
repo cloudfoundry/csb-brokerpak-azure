@@ -10,8 +10,8 @@ import (
 const (
 	eventHubsServiceName             = "csb-azure-eventhubs"
 	eventHubsServiceID               = "40b751ac-624d-11ea-8354-f38aff407636"
-	eventHubsServiceDisplayName      = "Event Hubs"
-	eventHubsServiceDescription      = "Simple, secure, and scalable real-time data ingestion"
+	eventHubsServiceDisplayName      = "Deprecated - Event Hubs"
+	eventHubsServiceDescription      = "Deprecated - Simple, secure, and scalable real-time data ingestion"
 	eventHubsServiceDocumentationURL = "https://azure.microsoft.com/en-us/services/event-hubs/"
 	eventHubsServiceSupportURL       = "https://azure.microsoft.com/en-us/support/options/"
 )
@@ -32,7 +32,7 @@ var _ = Describe("Event Hubs", Label("Event Hubs"), func() {
 		service := testframework.FindService(catalog, eventHubsServiceName)
 		Expect(service.ID).To(Equal(eventHubsServiceID))
 		Expect(service.Description).To(Equal(eventHubsServiceDescription))
-		Expect(service.Tags).To(ConsistOf("azure", "eventhubs", "Event Hubs", "Azure", "preview"))
+		Expect(service.Tags).To(ConsistOf("azure", "eventhubs", "Event Hubs", "Azure", "preview", "deprecated"))
 		Expect(service.Metadata.ImageUrl).To(ContainSubstring("data:image/png;base64,"))
 		Expect(service.Metadata.DisplayName).To(Equal(eventHubsServiceDisplayName))
 		Expect(service.Metadata.DocumentationUrl).To(Equal(eventHubsServiceDocumentationURL))

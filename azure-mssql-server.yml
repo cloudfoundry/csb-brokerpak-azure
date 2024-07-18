@@ -15,12 +15,12 @@
 version: 1
 name: csb-azure-mssql-server
 id: a0ab0f36-f8e1-4045-8ddb-1918d2ceafe4
-description: Azure SQL Server (no database attached)
-display_name: Azure SQL Server
+description: Deprecated - Azure SQL Server (no database attached)
+display_name: Deprecated - Azure SQL Server
 image_url: file://service-images/csb.png
 documentation_url: https://docs.microsoft.com/en-us/azure/sql-database/
 support_url: https://docs.microsoft.com/en-us/azure/sql-database/
-tags: [azure, preview]
+tags: [azure, preview, deprecated]
 plans:
 - name: standard
   id: 1aab10e2-ca79-4755-855a-6073a739d2e0
