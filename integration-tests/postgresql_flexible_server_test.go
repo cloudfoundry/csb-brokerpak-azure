@@ -12,8 +12,8 @@ import (
 const (
 	postgreSQLFlexibleServerServiceName             = "csb-azure-postgresql-flexible-server"
 	postgreSQLFlexibleServerServiceID               = "d69dd4aa-e27e-490c-bdbf-c887563da27f"
-	postgreSQLFlexibleServerServiceDisplayName      = "Azure Database for PostgreSQL - flexible server"
-	postgreSQLFlexibleServerServiceDescription      = "Azure Database for PostgreSQL - flexible server"
+	postgreSQLFlexibleServerServiceDisplayName      = "Deprecated - Azure Database for PostgreSQL - flexible server"
+	postgreSQLFlexibleServerServiceDescription      = "Deprecated - Azure Database for PostgreSQL - flexible server"
 	postgreSQLFlexibleServerServiceDocumentationURL = "https://learn.microsoft.com/en-gb/azure/postgresql/"
 	postgreSQLFlexibleServerServiceSupportURL       = "https://learn.microsoft.com/en-gb/azure/postgresql/"
 	postgreSQLFlexibleServerCustomPlanName          = "custom-test"
@@ -49,7 +49,7 @@ var _ = Describe("PostgreSQL Flexible Server", Label("PostgreSQL-flexible-server
 		service := testframework.FindService(catalog, postgreSQLFlexibleServerServiceName)
 		Expect(service.ID).To(Equal(postgreSQLFlexibleServerServiceID))
 		Expect(service.Description).To(Equal(postgreSQLFlexibleServerServiceDescription))
-		Expect(service.Tags).To(ConsistOf("azure", "postgresql", "postgres", "preview", "flexible server"))
+		Expect(service.Tags).To(ConsistOf("azure", "postgresql", "postgres", "preview", "flexible server", "deprecated"))
 		Expect(service.Metadata.ImageUrl).To(ContainSubstring("data:image/png;base64,"))
 		Expect(service.Metadata.DisplayName).To(Equal(postgreSQLFlexibleServerServiceDisplayName))
 		Expect(service.Metadata.DocumentationUrl).To(Equal(postgreSQLFlexibleServerServiceDocumentationURL))

@@ -15,12 +15,12 @@
 version: 1
 name: csb-azure-resource-group
 id: 57af72ea-b951-44cb-b814-1da900554ce8
-description: Azure Resource Group
-display_name: Azure Resource Group
+description: Deprecated - Azure Resource Group
+display_name: Deprecated - Azure Resource Group
 image_url: file://service-images/csb.png
 documentation_url: https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/overview#resource-groups
 support_url: https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/overview#resource-groups
-tags: [azure, preview]
+tags: [azure, preview, deprecated]
 plans:
 - name: standard
   id: c995c72a-a5f4-48d8-9179-9e295cc535b7

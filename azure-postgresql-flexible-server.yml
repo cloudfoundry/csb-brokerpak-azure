@@ -15,12 +15,12 @@
 version: 1
 name: csb-azure-postgresql-flexible-server
 id: d69dd4aa-e27e-490c-bdbf-c887563da27f
-description: Azure Database for PostgreSQL - flexible server
-display_name: Azure Database for PostgreSQL - flexible server
+description: Deprecated - Azure Database for PostgreSQL - flexible server
+display_name: Deprecated - Azure Database for PostgreSQL - flexible server
 image_url: file://service-images/csb.png
 documentation_url: https://learn.microsoft.com/en-gb/azure/postgresql/
 support_url: https://learn.microsoft.com/en-gb/azure/postgresql/
-tags: [azure, postgresql, postgres, preview, flexible server]
+tags: [azure, postgresql, postgres, preview, flexible server, deprecated]
 plan_updateable: true
 provision:
   plan_inputs: []

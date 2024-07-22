@@ -15,12 +15,12 @@
 version: 1
 name: csb-azure-cosmosdb-sql
 id: 685e151f-3ad8-414f-ab5b-54abbb3dee02
-description: Azure CosmosDB Account - SQL API
-display_name: Azure CosmosDB Account - SQL API
+description: Deprecated - Azure CosmosDB Account - SQL API
+display_name: Deprecated - Azure CosmosDB Account - SQL API
 image_url: file://service-images/csb.png
 documentation_url: https://docs.microsoft.com/en-us/azure/cosmos-db/
 support_url: https://docs.microsoft.com/en-us/azure/cosmos-db/faq
-tags: [azure, cosmos, cosmosdb, cosmos-sql, cosmosdb-sql, preview]
+tags: [azure, cosmos, cosmosdb, cosmos-sql, cosmosdb-sql, preview, deprecated]
 plan_updateable: true
 plans:
 - name: small

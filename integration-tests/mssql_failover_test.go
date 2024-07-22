@@ -10,8 +10,8 @@ import (
 const (
 	mssqlFailoverGroupServiceName             = "csb-azure-mssql-failover-group"
 	mssqlFailoverGroupServiceID               = "76d0e602-2b79-4c1e-bbbe-03913a1cfda2"
-	mssqlFailoverGroupServiceDisplayName      = "Azure SQL Failover Group"
-	mssqlFailoverGroupServiceDescription      = "Manages auto failover group for managed Azure SQL on the Azure Platform"
+	mssqlFailoverGroupServiceDisplayName      = "Deprecated - Azure SQL Failover Group"
+	mssqlFailoverGroupServiceDescription      = "Deprecated - Manages auto failover group for managed Azure SQL on the Azure Platform"
 	mssqlFailoverGroupServiceDocumentationURL = "https://docs.microsoft.com/en-us/azure/sql-database/sql-database-auto-failover-group/"
 	mssqlFailoverGroupServiceSupportURL       = "https://docs.microsoft.com/en-us/azure/sql-database/sql-database-auto-failover-group/"
 )
@@ -32,7 +32,7 @@ var _ = Describe("MSSQL Auto-failover group", Label("MSSQL Auto-failover group")
 		service := testframework.FindService(catalog, mssqlFailoverGroupServiceName)
 		Expect(service.ID).To(Equal(mssqlFailoverGroupServiceID))
 		Expect(service.Description).To(Equal(mssqlFailoverGroupServiceDescription))
-		Expect(service.Tags).To(ConsistOf("azure", "mssql", "sqlserver", "dr", "failover", "preview"))
+		Expect(service.Tags).To(ConsistOf("azure", "mssql", "sqlserver", "dr", "failover", "preview", "deprecated"))
 		Expect(service.Metadata.ImageUrl).To(ContainSubstring("data:image/png;base64,"))
 		Expect(service.Metadata.DisplayName).To(Equal(mssqlFailoverGroupServiceDisplayName))
 		Expect(service.Metadata.DocumentationUrl).To(Equal(mssqlFailoverGroupServiceDocumentationURL))

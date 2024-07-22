@@ -10,8 +10,8 @@ import (
 const (
 	storageAccountServiceName             = "csb-azure-storage-account"
 	storageAccountServiceID               = "eb263d40-3a2e-4af1-9333-752acb1e6ea3"
-	storageAccountServiceDisplayName      = "Azure Storage Account"
-	storageAccountServiceDescription      = "Azure Storage Account"
+	storageAccountServiceDisplayName      = "Deprecated - Azure Storage Account"
+	storageAccountServiceDescription      = "Deprecated - Azure Storage Account"
 	storageAccountServiceDocumentationURL = "https://docs.microsoft.com/en-us/azure/storage/common/storage-account-overview"
 	storageAccountServiceSupportURL       = "https://docs.microsoft.com/en-us/azure/storage/common/storage-account-overview"
 )
@@ -32,7 +32,7 @@ var _ = Describe("Storage Account", Label("Storage Account"), func() {
 		service := testframework.FindService(catalog, storageAccountServiceName)
 		Expect(service.ID).To(Equal(storageAccountServiceID))
 		Expect(service.Description).To(Equal(storageAccountServiceDescription))
-		Expect(service.Tags).To(ConsistOf("azure", "storage", "Azure", "preview", "Storage"))
+		Expect(service.Tags).To(ConsistOf("azure", "storage", "Azure", "preview", "Storage", "deprecated"))
 		Expect(service.Metadata.ImageUrl).To(ContainSubstring("data:image/png;base64,"))
 		Expect(service.Metadata.DisplayName).To(Equal(storageAccountServiceDisplayName))
 		Expect(service.Metadata.DocumentationUrl).To(Equal(storageAccountServiceDocumentationURL))
