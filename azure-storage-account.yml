@@ -15,12 +15,12 @@
 version: 1
 name: csb-azure-storage-account
 id: eb263d40-3a2e-4af1-9333-752acb1e6ea3
-description: Azure Storage Account
-display_name: Azure Storage Account
+description: Deprecated - Azure Storage Account
+display_name: Deprecated - Azure Storage Account
 image_url: file://service-images/csb.png
 documentation_url: https://docs.microsoft.com/en-us/azure/storage/common/storage-account-overview
 support_url: https://docs.microsoft.com/en-us/azure/storage/common/storage-account-overview
-tags: [azure, storage, Azure, preview, Storage]
+tags: [azure, storage, Azure, preview, Storage, deprecated]
 plans:
 - name: standard
   id: b9fe2b0c-1a95-4a1b-a576-60e7f9e42aad

@@ -12,8 +12,8 @@ import (
 const (
 	cosmosDBSQLServiceName             = "csb-azure-cosmosdb-sql"
 	cosmosDBSQLServiceID               = "685e151f-3ad8-414f-ab5b-54abbb3dee02"
-	cosmosDBSQLServiceDisplayName      = "Azure CosmosDB Account - SQL API"
-	cosmosDBSQLServiceDescription      = "Azure CosmosDB Account - SQL API"
+	cosmosDBSQLServiceDisplayName      = "Deprecated - Azure CosmosDB Account - SQL API"
+	cosmosDBSQLServiceDescription      = "Deprecated - Azure CosmosDB Account - SQL API"
 	cosmosDBSQLServiceDocumentationURL = "https://docs.microsoft.com/en-us/azure/cosmos-db/"
 	cosmosDBSQLServiceSupportURL       = "https://docs.microsoft.com/en-us/azure/cosmos-db/faq"
 )
@@ -34,7 +34,7 @@ var _ = Describe("CosmosDB-SQL", Label("CosmosDB-SQL"), func() {
 		service := testframework.FindService(catalog, cosmosDBSQLServiceName)
 		Expect(service.ID).To(Equal(cosmosDBSQLServiceID))
 		Expect(service.Description).To(Equal(cosmosDBSQLServiceDescription))
-		Expect(service.Tags).To(ConsistOf("azure", "cosmos", "cosmosdb", "cosmos-sql", "cosmosdb-sql", "preview"))
+		Expect(service.Tags).To(ConsistOf("azure", "cosmos", "cosmosdb", "cosmos-sql", "cosmosdb-sql", "preview", "deprecated"))
 		Expect(service.Metadata.ImageUrl).To(ContainSubstring("data:image/png;base64,"))
 		Expect(service.Metadata.DisplayName).To(Equal(cosmosDBSQLServiceDisplayName))
 		Expect(service.Metadata.DocumentationUrl).To(Equal(cosmosDBSQLServiceDocumentationURL))

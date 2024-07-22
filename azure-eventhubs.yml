@@ -15,12 +15,12 @@
 version: 1
 name: csb-azure-eventhubs
 id: 40b751ac-624d-11ea-8354-f38aff407636
-description: Simple, secure, and scalable real-time data ingestion
-display_name: Event Hubs
+description: Deprecated - Simple, secure, and scalable real-time data ingestion
+display_name: Deprecated - Event Hubs
 image_url: file://service-images/csb.png
 documentation_url: https://azure.microsoft.com/en-us/services/event-hubs/
 support_url: https://azure.microsoft.com/en-us/support/options/
-tags: [azure, eventhubs, Event Hubs, Azure, preview]
+tags: [azure, eventhubs, Event Hubs, Azure, preview, deprecated]
 plans:
 - name: basic
   id: 3ac4fede-62ed-11ea-af59-cb26248cfe7b
