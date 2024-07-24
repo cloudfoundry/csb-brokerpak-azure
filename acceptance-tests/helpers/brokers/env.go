@@ -31,7 +31,7 @@ func (b Broker) env() []apps.EnvVar {
 		switch {
 		case ok:
 			result = append(result, apps.EnvVar{Name: name, Value: val})
-		case !ok && required:
+		case required:
 			ginkgo.Fail(fmt.Sprintf("You must set the %s environment variable", name))
 		}
 	}
@@ -45,6 +45,7 @@ func (b Broker) env() []apps.EnvVar {
 		apps.EnvVar{Name: "BROKERPAK_UPDATES_ENABLED", Value: true},
 		apps.EnvVar{Name: "TERRAFORM_UPGRADES_ENABLED", Value: true},
 		apps.EnvVar{Name: "CSB_DISABLE_TF_UPGRADE_PROVIDER_RENAMES", Value: true},
+		apps.EnvVar{Name: "GSB_COMPATIBILITY_ENABLE_GCP_DEPRECATED_SERVICES", Value: true},
 	)
 
 	return append(result, b.envExtras...)
