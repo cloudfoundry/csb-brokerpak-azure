@@ -98,6 +98,10 @@ if [[ ${ENCRYPTION_PASSWORDS} ]]; then
   echo "    ENCRYPTION_PASSWORDS: $(echo "$ENCRYPTION_PASSWORDS" | jq @json)" >>$cfmf
 fi
 
+if [[ ${GSB_COMPATIBILITY_ENABLE_GCP_DEPRECATED_SERVICES} ]]; then
+  echo "    GSB_COMPATIBILITY_ENABLE_GCP_DEPRECATED_SERVICES: $(echo "$GSB_COMPATIBILITY_ENABLE_GCP_DEPRECATED_SERVICES" | jq @json)" >>$cfmf
+fi
+
 cf push --no-start -f "${cfmf}" --var app=${APP_NAME}
 
 if [[ -z ${MSYQL_INSTANCE} ]]; then
