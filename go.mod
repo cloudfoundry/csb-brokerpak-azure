@@ -8,7 +8,7 @@ require (
 	github.com/blang/semver/v4 v4.0.0
 	github.com/cloudfoundry/cloud-service-broker/v2 v2.1.4
 	github.com/hashicorp/terraform-json v0.22.1
-	github.com/onsi/ginkgo/v2 v2.20.0
+	github.com/onsi/ginkgo/v2 v2.20.1
 	github.com/onsi/gomega v1.34.1
 	github.com/otiai10/copy v1.14.0
 	golang.org/x/exp v0.0.0-20240719175910-8a7402abbf56
