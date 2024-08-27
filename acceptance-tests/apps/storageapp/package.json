@@ -2,7 +2,7 @@
   "name": "storageapp",
   "version": "0.1.0",
   "type": "module",
-  "description": "Test App for CosmosDB",
+  "description": "Test App for Storage",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
