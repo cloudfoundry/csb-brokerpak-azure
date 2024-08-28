@@ -15,6 +15,13 @@ updates:
       patterns:
         - "github.com/Azure/azure-sdk-for-go/*"
 - package-ecosystem: gomod
+  directory: "/acceptance-tests/apps/mongodbapp"
+  schedule:
+    interval: "weekly"
+    day: "saturday"
+  labels:
+    - "test-dependencies"
+- package-ecosystem: gomod
   directory: "/acceptance-tests/apps/postgresqlapp"
   schedule:
     interval: "weekly"
