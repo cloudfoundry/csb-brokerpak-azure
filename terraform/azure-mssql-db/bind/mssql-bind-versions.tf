@@ -2,7 +2,7 @@ terraform {
   required_providers {
     random = {
       source  = "registry.terraform.io/hashicorp/random"
-      version = ">=3.3.1"
+      version = "~> 3"
     }
 
     csbsqlserver = {
