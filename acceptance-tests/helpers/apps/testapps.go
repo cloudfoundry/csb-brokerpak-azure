@@ -7,9 +7,7 @@ import (
 type AppCode string
 
 const (
-	Cosmos     AppCode = "cosmosdbapp"
 	Storage    AppCode = "storageapp"
-	MongoDB    AppCode = "mongodbapp"
 	MSSQL      AppCode = "mssqlapp"
 	PostgreSQL AppCode = "postgresqlapp"
 	Redis      AppCode = "redisapp"
@@ -21,7 +19,7 @@ func (a AppCode) Dir() string {
 
 func WithApp(app AppCode) Option {
 	switch app {
-	case Cosmos, Storage:
+	case Storage:
 		return WithOptions(WithDir(app.Dir()), WithMemory("100MB"), WithDisk("250MB"))
 	default:
 		return WithOptions(WithPreBuild(app.Dir()), WithMemory("100MB"), WithDisk("250MB"))

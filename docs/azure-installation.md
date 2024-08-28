@@ -66,14 +66,12 @@ info:    provider list command OK
 ```
 
 ##### Services and their required providers
-| Service | Namespace |
-|---------|-----------|
-| redis   | `Microsoft.Cache` |
-| mssql   | `Microsoft.Sql` |
-| mongodb | `Microsoft.DocumentDB` |
-| eventhubs | `Microsoft.EventHub` |
-| storage | `Microsoft.Storage` |
-| cosmosdb | `Microsoft.DocumentDB` |
+| Service   | Namespace              |
+|-----------|------------------------|
+| redis     | `Microsoft.Cache`      |
+| mssql     | `Microsoft.Sql`        |
+| eventhubs | `Microsoft.EventHub`   |
+| storage   | `Microsoft.Storage`    |
 
 ### MySQL Database for Broker State
 The broker keeps service instance and binding information in a MySQL database. 
@@ -154,7 +152,6 @@ cf create-service-broker "${BROKER_NAME}" "${SECURITY_USER_NAME}" "${SECURITY_US
 ```
 Once this completes, the output from `cf marketplace` should include:
 ```
-csb-azure-mongodb                small, medium, large                        The Cosmos DB service implements wire protocols for MongoDB.  Azure Cosmos DB is Microsoft's globally distributed, multi-model database service for mission-critical application
 csb-azure-mssql                  small, medium, large, extra-large           Azure SQL Database is a fully managed service for the Azure Platform
 csb-azure-mssql-db               small, medium, large, extra-large           Manage Azure SQL Databases on pre-provisioned database servers
 csb-azure-mssql-failover-group   small, medium, large                        Manages auto failover group for managed Azure SQL on the Azure Platform
