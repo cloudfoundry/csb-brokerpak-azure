@@ -8,6 +8,7 @@ type AppCode string
 
 const (
 	Storage    AppCode = "storageapp"
+	MongoDB    AppCode = "mongodbapp"
 	MSSQL      AppCode = "mssqlapp"
 	PostgreSQL AppCode = "postgresqlapp"
 	Redis      AppCode = "redisapp"
