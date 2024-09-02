@@ -69,7 +69,6 @@ service_definitions:
 - azure-mssql.yml
 - azure-mssql-failover-group.yml
 - azure-mongodb.yml
-- azure-eventhubs.yml
 - azure-mssql-db.yml
 - azure-mssql-server.yml
 - azure-mssql-db-failover-group.yml

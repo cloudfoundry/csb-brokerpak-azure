@@ -41,7 +41,6 @@ data:    Microsoft.Batch            Registered
 data:    Microsoft.Cache            Registered
 data:    Microsoft.Compute          Registered
 data:    Microsoft.DocumentDB       Registered
-data:    Microsoft.EventHub         Registered
 data:    microsoft.insights         Registered
 data:    Microsoft.KeyVault         Registered
 data:    Microsoft.MySql            Registered
@@ -66,13 +65,12 @@ info:    provider list command OK
 ```
 
 ##### Services and their required providers
-| Service | Namespace |
-|---------|-----------|
-| redis   | `Microsoft.Cache` |
-| mssql   | `Microsoft.Sql` |
+| Service | Namespace              |
+|---------|------------------------|
+| redis   | `Microsoft.Cache`      |
+| mssql   | `Microsoft.Sql`        |
 | mongodb | `Microsoft.DocumentDB` |
-| eventhubs | `Microsoft.EventHub` |
-| storage | `Microsoft.Storage` |
+| storage | `Microsoft.Storage`    |
 
 ### MySQL Database for Broker State
 The broker keeps service instance and binding information in a MySQL database. 
