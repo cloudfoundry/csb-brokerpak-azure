@@ -74,4 +74,3 @@ service_definitions:
 - azure-mssql-db-failover-group.yml
 - azure-mssql-fog-run-failover.yml
 - azure-resource-group.yml
-- azure-postgresql-flexible-server.yml
