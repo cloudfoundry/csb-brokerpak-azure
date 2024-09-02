@@ -42,13 +42,6 @@ updates:
     day: "saturday"
   labels:
     - "test-dependencies"
-- package-ecosystem: npm
-  directory: "/acceptance-tests/apps/storageapp"
-  schedule:
-    interval: "weekly"
-    day: "saturday"
-  labels:
-    - "test-dependencies"
 - package-ecosystem: "github-actions"
   directory: "/"
   schedule:
