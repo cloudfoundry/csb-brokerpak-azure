@@ -47,7 +47,6 @@ data:    Microsoft.MySql            Registered
 data:    Microsoft.Network          Registering
 data:    Microsoft.ServiceBus       Registered
 data:    Microsoft.Sql              Registered
-data:    Microsoft.Storage          Registered
 data:    Microsoft.ApiManagement    NotRegistered
 data:    Microsoft.Authorization    Registered
 data:    Microsoft.ClassicCompute   NotRegistered
