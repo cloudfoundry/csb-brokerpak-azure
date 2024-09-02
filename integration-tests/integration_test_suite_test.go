@@ -54,7 +54,6 @@ var _ = BeforeSuite(func() {
 		"GSB_SERVICE_CSB_AZURE_MSSQL_DB_PLANS=" + marshall(customMSSQLDBPlans),
 		"MSSQL_DB_SERVER_CREDS=" + marshall(servers),
 		"MSSQL_DB_FOG_SERVER_PAIR_CREDS=" + marshall(serverPairs),
-		"GSB_SERVICE_CSB_AZURE_POSTGRESQL_FLEXIBLE_SERVER_PLANS=" + marshall(customPostgresPlans),
 		"GSB_COMPATIBILITY_ENABLE_GCP_DEPRECATED_SERVICES=true",
 	})).To(Succeed())
 
