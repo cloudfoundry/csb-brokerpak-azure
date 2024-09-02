@@ -7,7 +7,6 @@ import (
 type AppCode string
 
 const (
-	Storage    AppCode = "storageapp"
 	MongoDB    AppCode = "mongodbapp"
 	MSSQL      AppCode = "mssqlapp"
 	PostgreSQL AppCode = "postgresqlapp"
@@ -19,10 +18,5 @@ func (a AppCode) Dir() string {
 }
 
 func WithApp(app AppCode) Option {
-	switch app {
-	case Storage:
-		return WithOptions(WithDir(app.Dir()), WithMemory("100MB"), WithDisk("250MB"))
-	default:
-		return WithOptions(WithPreBuild(app.Dir()), WithMemory("100MB"), WithDisk("250MB"))
-	}
+	return WithOptions(WithPreBuild(app.Dir()), WithMemory("100MB"), WithDisk("250MB"))
 }

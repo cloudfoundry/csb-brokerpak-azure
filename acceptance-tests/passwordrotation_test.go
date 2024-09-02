@@ -24,10 +24,17 @@ var _ = Describe("Password Rotation", Label("passwordrotation"), func() {
 		defer serviceBroker.Delete()
 
 		By("creating a service")
+		databaseName := random.Name(random.WithPrefix("database"))
+		collectionName := random.Name(random.WithPrefix("collection"))
 		serviceInstance := services.CreateInstance(
-			"csb-azure-storage-account",
-			"standard",
-			services.WithBroker(serviceBroker),
+			"csb-azure-mongodb",
+			"small", services.WithParameters(map[string]any{
+				"db_name":         databaseName,
+				"collection_name": collectionName,
+				"shard_key":       "_id",
+				"indexes":         "_id",
+				"unique_indexes":  "",
+			}),
 		)
 		defer serviceInstance.Delete()
 
