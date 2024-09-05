@@ -1,0 +1,98 @@
+# Copyright 2020 Pivotal Software, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http:#www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+---
+version: 1
+name: csb-azure-resource-group
+id: 57af72ea-b951-44cb-b814-1da900554ce8
+description: Deprecated - Azure Resource Group
+display_name: Deprecated - Azure Resource Group
+image_url: file://service-images/csb.png
+documentation_url: https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/overview#resource-groups
+support_url: https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/overview#resource-groups
+tags: [azure, preview, deprecated]
+plans:
+- name: standard
+  id: c995c72a-a5f4-48d8-9179-9e295cc535b7
+  description: 'Azure Resource Group'
+  display_name: "Standard"
+provision:
+  plan_inputs: []
+  user_inputs:
+  - field_name: instance_name
+    type: string
+    details: Name for your Azure Resource Group
+    constraints:
+      maxLength: 63
+      minLength: 6
+      pattern: ^[a-z][a-z0-9-]+$
+    required: true
+  - field_name: location
+    type: string
+    details: The location of the Azure Resource Group
+    default: westus
+    constraints:
+      examples:
+      - westus2
+      - uksouth
+      pattern: ^[a-z][a-z0-9]+$
+    prohibit_update: true
+  - field_name: azure_tenant_id
+    type: string
+    details: Azure Tenant to create resource in
+    default: ${config("azure.tenant_id")}
+  - field_name: azure_subscription_id
+    type: string
+    details: Azure Subscription to create resource in
+    default: ${config("azure.subscription_id")}
+  - field_name: azure_client_id
+    type: string
+    details: Client ID of Azure principal
+    default: ${config("azure.client_id")}
+  - field_name: azure_client_secret
+    type: string
+    details: Client secret for Azure principal
+    default: ${config("azure.client_secret")}
+  - field_name: skip_provider_registration
+    type: boolean
+    details: Skip automatic Azure provider registration, set to true if service principal being used does not have rights to register providers
+    default: false
+  template_refs:
+    main: terraform/azure-resource-group/provision/main.tf
+    moved: terraform/azure-resource-group/provision/moved-azure-resource-group.tf
+    outputs: terraform/azure-resource-group/provision/outputs.tf
+    provider: terraform/azure-resource-group/provision/provider.tf
+    variables: terraform/azure-resource-group/provision/variables.tf
+    versions: terraform/azure-resource-group/provision/versions.tf
+  computed_inputs:
+  - name: labels
+    default: ${json.marshal(request.default_labels)}
+    overwrite: true
+    type: object
+  outputs:
+  - field_name: resource-group-name
+    type: string
+    details: Name of resource group
+bind:
+  plan_inputs: []
+  user_inputs: []
+  computed_inputs: []
+  template_refs:
+    noop: terraform/azure-resource-group/bind/noop.tf
+  outputs: []
+examples:
+- name: azure-resource-group-standard
+  description: Create a standard Azure resource group
+  plan_id: c995c72a-a5f4-48d8-9179-9e295cc535b7
+  provision_params: {instance_name: example-rg}
+  bind_params: {}     
