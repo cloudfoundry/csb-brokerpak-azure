@@ -18,18 +18,18 @@ dependencies:
       source: https://github.com/terraform-providers/terraform-provider-azurerm/archive/v3.116.0.zip
       source_sha256: 1bb1c5c6ef7dcdbb7c5e329f1489cd52ab0231cd597a2a612a6bfbb95c79e365
     - name: terraform-provider-csbpg
-      version: 1.2.36
-      source: https://github.com/cloudfoundry/terraform-provider-csbpg/archive/v1.2.36.zip
-      source_sha256: 7133676044ff68ce6f7f25a73326a6041629e2d1bd4a2e98d7d64099d188f978
+      version: 1.2.38
+      source: https://github.com/cloudfoundry/terraform-provider-csbpg/archive/v1.2.38.zip
+      source_sha256: bb00ae2687b0e7e77509a4c7c627ee7d242cc755d4f8ede5f1fe74eb2648b040
     - name: terraform-provider-csbsqlserver
-      version: 1.0.27
-      source: https://github.com/cloudfoundry/terraform-provider-csbsqlserver/archive/v1.0.27.zip
-      source_sha256: 4950a5d896a25136c6da31bc6a72d5430c739e8619346f1b3c1876d243e7abd1
+      version: 1.0.29
+      source: https://github.com/cloudfoundry/terraform-provider-csbsqlserver/archive/v1.0.29.zip
+      source_sha256: 2efa9eb9b38999223a862ff30f5fd8ed094dc503f4d7f975e036827c645198bb
     - name: terraform-provider-random
       version: 3.6.3
       source: https://github.com/terraform-providers/terraform-provider-random/archive/v3.6.3.zip
       source_sha256: 073025c3b7a2d64d60523da8b5ea29c42ffc0da752377ac5e74c8a9a4c4bb71e
     - name: tofu
-      version: 1.8.2
-      source: https://github.com/opentofu/opentofu/archive/v1.8.2.zip
-      source_sha256: df7f5e4da3229258597a7938031250fa04152690cd3e3a5ef7e244f141a1ece2
+      version: 1.8.3
+      source: https://github.com/opentofu/opentofu/archive/v1.8.3.zip
+      source_sha256: 2c94f2e02702f0a62ef787aacc2fb6859cd23361ab4fbcd264b718daf1995900
