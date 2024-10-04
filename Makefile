@@ -153,7 +153,7 @@ latest-csb: ## point to the very latest CSB on GitHub
 
 .PHONY: local-csb
 local-csb: ## point to a local CSB repo
-	echo "replace \"github.com/cloudfoundry/cloud-service-broker\" => \"$$PWD/../cloud-service-broker\"" >>go.mod
+	echo "replace \"github.com/cloudfoundry/cloud-service-broker/v2\" => \"$$PWD/../cloud-service-broker\"" >>go.mod
 	go mod tidy
 
 ###### lint ###################################################################
