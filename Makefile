@@ -13,7 +13,7 @@ CSB_RELEASE_VERSION := $(CSB_VERSION)
 ####### broker environment variables
 SECURITY_USER_NAME := $(or $(SECURITY_USER_NAME), $(IAAS)-broker)
 SECURITY_USER_PASSWORD := $(or $(SECURITY_USER_PASSWORD), $(IAAS)-broker-pw)
-GSB_PROVISION_DEFAULTS := $(or $(GSB_PROVISION_DEFAULTS), {"resource_group": "broker-cf-test"})
+GSB_PROVISION_DEFAULTS := $(or $(GSB_PROVISION_DEFAULTS), {"resource_group":"broker-cf-test","location":"westus2"})
 
 BROKER_GO_OPTS=PORT=8080 \
 				DB_TYPE=sqlite3 \
