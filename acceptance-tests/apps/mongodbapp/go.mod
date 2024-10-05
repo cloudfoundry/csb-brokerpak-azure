@@ -5,7 +5,7 @@ go 1.23.2
 require (
 	github.com/cloudfoundry-community/go-cfenv v1.18.0
 	github.com/mitchellh/mapstructure v1.5.0
-	go.mongodb.org/mongo-driver v1.17.0
+	go.mongodb.org/mongo-driver v1.17.1
 )
 
 require (
