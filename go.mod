@@ -6,7 +6,7 @@ require (
 	code.cloudfoundry.org/jsonry v1.1.4
 	github.com/Pallinder/go-randomdata v1.2.0
 	github.com/blang/semver/v4 v4.0.0
-	github.com/cloudfoundry/cloud-service-broker/v2 v2.4.2
+	github.com/cloudfoundry/cloud-service-broker/v2 v2.4.3
 	github.com/hashicorp/terraform-json v0.22.1
 	github.com/onsi/ginkgo/v2 v2.20.2
 	github.com/onsi/gomega v1.34.2
