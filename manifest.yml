@@ -26,11 +26,11 @@ terraform_state_provider_replacements:
   registry.terraform.io/cloud-service-broker/csbsqlserver: "cloudfoundry.org/cloud-service-broker/csbsqlserver"
   registry.terraform.io/cloud-service-broker/csbmssqldbrunfailover: "cloudfoundry.org/cloud-service-broker/csbmssqldbrunfailover"
 terraform_upgrade_path:
-- version: 1.8.3
+- version: 1.8.4
 terraform_binaries:
 - name: tofu
-  version: 1.8.3
-  source: https://github.com/opentofu/opentofu/archive/v1.8.3.zip
+  version: 1.8.4
+  source: https://github.com/opentofu/opentofu/archive/v1.8.4.zip
   default: true
 - name: terraform-provider-azurerm
   version: 3.116.0
