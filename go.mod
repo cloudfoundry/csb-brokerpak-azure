@@ -9,7 +9,7 @@ require (
 	github.com/cloudfoundry/cloud-service-broker/v2 v2.4.5
 	github.com/hashicorp/terraform-json v0.23.0
 	github.com/onsi/ginkgo/v2 v2.21.0
-	github.com/onsi/gomega v1.34.2
+	github.com/onsi/gomega v1.35.0
 	github.com/otiai10/copy v1.14.0
 	golang.org/x/exp v0.0.0-20240823005443-9b4947da3948
 	golang.org/x/tools v0.26.0
@@ -116,7 +116,7 @@ require (
 	google.golang.org/genproto/googleapis/api v0.0.0-20240610135401-a8a62080eff3 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240610135401-a8a62080eff3 // indirect
 	google.golang.org/grpc v1.64.0 // indirect
-	google.golang.org/protobuf v1.34.2 // indirect
+	google.golang.org/protobuf v1.35.1 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gorm.io/driver/mysql v1.5.7 // indirect
 	gorm.io/driver/sqlite v1.5.6 // indirect
