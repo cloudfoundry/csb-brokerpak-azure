@@ -7,7 +7,7 @@ require (
 	github.com/Pallinder/go-randomdata v1.2.0
 	github.com/blang/semver/v4 v4.0.0
 	github.com/cloudfoundry/cloud-service-broker/v2 v2.4.5
-	github.com/hashicorp/terraform-json v0.22.1
+	github.com/hashicorp/terraform-json v0.23.0
 	github.com/onsi/ginkgo/v2 v2.21.0
 	github.com/onsi/gomega v1.34.2
 	github.com/otiai10/copy v1.14.0
