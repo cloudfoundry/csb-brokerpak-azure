@@ -225,39 +225,3 @@ bind:
   template_refs:
     noop: terraform/azure-redis/bind/noop.tf
   outputs: []
-examples:
-- name: redis-cache-small
-  description: Small redis cache
-  plan_id: 6b9ca24e-1dec-4e6f-8c8a-dc6e11ab5bef
-  provision_params: {}
-  bind_params: {}
-- name: redis-cache-medium
-  description: Medium redis cache in centralus region
-  plan_id: 6b272c43-2116-4483-9a99-de9262c0a7d6
-  provision_params: {"location": "centralus"}
-  bind_params: {}
-- name: redis-cache-large
-  description: Large redis cache
-  plan_id: c3e34abc-a820-457c-b723-1c342ef42c50
-  provision_params: {}
-  bind_params: {}
-- name: redis-cache-ha-small
-  description: HA small redis cache
-  plan_id: d27a8e60-3724-49d1-b668-44b03d99b3b3
-  provision_params: {}
-  bind_params: {}
-- name: redis-cache-ha-medium
-  description: HA medium redis cache
-  plan_id: 421b932a-b86f-48a3-97e4-64bb13d3ec13
-  provision_params: {}
-  bind_params: {}
-- name: redis-cache-ha-large
-  description: HA large redis cache
-  plan_id: e919b281-9661-465d-82cf-0a0a6e1f195a
-  provision_params: {}
-  bind_params: {}
-- name: redis-cache-P1
-  description: P1 redis cache
-  provision_params: {}
-  plan_id: 2a63e092-ab5c-4804-abd6-2d951240f0f6
-  bind_params: {}

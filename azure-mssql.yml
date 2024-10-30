@@ -220,22 +220,3 @@ bind:
   - field_name: databaseLoginPassword
     type: string
     details: The password to authenticate to the database server.
-examples:
-- name: azuresql-db-small-configuration
-  description: Create a small Azure SQL Database in westcentralus location
-  plan_id: 99ed044a-bf9b-11eb-a49a-e347783607d6
-  provision_params: {"location": "eastus"}
-  bind_params: {}
-  bind_can_fail: true
-- name: azuresql-db-medium-configuration
-  description: Create a medium Azure SQL Database
-  plan_id: 9295b05a-58c9-11ea-b9df-00155d2c938f
-  provision_params: {}
-  bind_params: {}
-  bind_can_fail: true
-- name: azuresql-db-large-configuration
-  description: Create a large Azure SQL Database
-  plan_id: 9dc5e814-58c9-11ea-9e77-00155d2c938f
-  provision_params: {}
-  bind_params: {}
-  bind_can_fail: true
