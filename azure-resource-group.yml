@@ -90,9 +90,3 @@ bind:
   template_refs:
     noop: terraform/azure-resource-group/bind/noop.tf
   outputs: []
-examples:
-- name: azure-resource-group-standard
-  description: Create a standard Azure resource group
-  plan_id: c995c72a-a5f4-48d8-9179-9e295cc535b7
-  provision_params: {instance_name: example-rg}
-  bind_params: {}     
