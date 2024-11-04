@@ -30,6 +30,6 @@ dependencies:
       source: https://github.com/terraform-providers/terraform-provider-random/archive/v3.6.3.zip
       source_sha256: 073025c3b7a2d64d60523da8b5ea29c42ffc0da752377ac5e74c8a9a4c4bb71e
     - name: tofu
-      version: 1.8.4
-      source: https://github.com/opentofu/opentofu/archive/v1.8.4.zip
-      source_sha256: a7a262650c9073f475b4ae653ee2ce1ea8a5b2cc5ca1cc52499b814d3fe4643b
+      version: 1.8.5
+      source: https://github.com/opentofu/opentofu/archive/v1.8.5.zip
+      source_sha256: 5fafd3deec9c1cb4b198f11df376557b82fd790e1b6b3d02409f999474ee3423
