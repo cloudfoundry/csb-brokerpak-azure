@@ -6,7 +6,7 @@ require (
 	code.cloudfoundry.org/jsonry v1.1.4
 	github.com/Pallinder/go-randomdata v1.2.0
 	github.com/blang/semver/v4 v4.0.0
-	github.com/cloudfoundry/cloud-service-broker/v2 v2.4.5
+	github.com/cloudfoundry/cloud-service-broker/v2 v2.4.6
 	github.com/hashicorp/terraform-json v0.23.0
 	github.com/onsi/ginkgo/v2 v2.21.0
 	github.com/onsi/gomega v1.35.1
@@ -25,7 +25,7 @@ require (
 	cloud.google.com/go/iam v1.1.8 // indirect
 	cloud.google.com/go/storage v1.42.0 // indirect
 	code.cloudfoundry.org/credhub-cli v0.0.0-20240610130326-eaa57ce4b8a1 // indirect
-	code.cloudfoundry.org/lager/v3 v3.11.0 // indirect
+	code.cloudfoundry.org/lager/v3 v3.13.0 // indirect
 	filippo.io/edwards25519 v1.1.0 // indirect
 	github.com/BurntSushi/toml v1.4.1-0.20240526193622-a339e1f7089c // indirect
 	github.com/agext/levenshtein v1.2.3 // indirect
@@ -75,7 +75,7 @@ require (
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
 	github.com/openzipkin/zipkin-go v0.4.3 // indirect
 	github.com/pelletier/go-toml/v2 v2.2.2 // indirect
-	github.com/pivotal-cf/brokerapi/v11 v11.0.11 // indirect
+	github.com/pivotal-cf/brokerapi/v11 v11.0.12 // indirect
 	github.com/prometheus/client_golang v1.19.1 // indirect
 	github.com/prometheus/client_model v0.6.1 // indirect
 	github.com/prometheus/common v0.54.0 // indirect
