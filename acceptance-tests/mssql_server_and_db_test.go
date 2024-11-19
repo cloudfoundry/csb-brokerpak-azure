@@ -1,9 +1,11 @@
 package acceptance_test
 
 import (
+	"context"
 	"csbbrokerpakazure/acceptance-tests/helpers/apps"
 	"csbbrokerpakazure/acceptance-tests/helpers/brokers"
 	"csbbrokerpakazure/acceptance-tests/helpers/matchers"
+	"csbbrokerpakazure/acceptance-tests/helpers/mssqlserver"
 	"csbbrokerpakazure/acceptance-tests/helpers/random"
 	"csbbrokerpakazure/acceptance-tests/helpers/services"
 
@@ -28,13 +30,19 @@ var _ = Describe("MSSQL Server and DB", Label("mssql-db-server"), func() {
 		defer serviceBroker.Delete()
 
 		By("creating a server")
-		serverInstance := services.CreateInstance(
-			"csb-azure-mssql-server",
-			"standard",
-			services.WithBroker(serviceBroker),
-			services.WithParameters(serverConfig),
-		)
-		defer serverInstance.Delete()
+		dbs := mssqlserver.DatabaseServer{Name: serverConfig.Name, ResourceGroup: metadata.ResourceGroup}
+		ctx := context.Background()
+		Expect(mssqlserver.CreateServer(ctx, dbs, serverConfig.Username, serverConfig.Password, subscriptionID)).NotTo(HaveOccurred())
+		defer func() {
+			By("deleting the server")
+			_ = mssqlserver.CleanupServer(ctx, dbs, subscriptionID)
+		}()
+
+		Expect(mssqlserver.CreateFirewallRule(ctx, dbs, subscriptionID)).NotTo(HaveOccurred())
+		defer func() {
+			By("deleting the firewall rule")
+			_ = mssqlserver.CleanFirewallRule(ctx, dbs, subscriptionID)
+		}()
 
 		By("creating a database in the server")
 		dbInstance := services.CreateInstance(

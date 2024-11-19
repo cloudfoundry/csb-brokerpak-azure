@@ -1,56 +1,40 @@
 package acceptance_test
 
 import (
+	"context"
 	"csbbrokerpakazure/acceptance-tests/helpers/apps"
 	"csbbrokerpakazure/acceptance-tests/helpers/brokers"
 	"csbbrokerpakazure/acceptance-tests/helpers/matchers"
+	"csbbrokerpakazure/acceptance-tests/helpers/mssqlserver"
 	"csbbrokerpakazure/acceptance-tests/helpers/random"
-	"csbbrokerpakazure/acceptance-tests/helpers/serverpairs"
 	"csbbrokerpakazure/acceptance-tests/helpers/services"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 )
 
-// Principally tests the 'existing' mode of the 'csb-azure-mssql-db-failover-group' service offering, using the
-// 'csb-azure-resource-group' and 'csb-azure-mssql-server' offerings as part of the test. This mode is used
-// by some customers, and executes a distinct Terraform path, so is worth testing separately.
 var _ = Describe("MSSQL Failover Group Existing", Label("mssql-db-failover-group-existing"), func() {
+
 	It("can be accessed by an app", func() {
+		ctx := context.Background()
+
+		By("creating primary and secondary DB servers in their resource group")
+		serversConfig, err := mssqlserver.CreateServerPair(ctx, metadata, subscriptionID)
+		Expect(err).NotTo(HaveOccurred())
+
+		DeferCleanup(func() {
+			By("deleting the created resource group and DB servers")
+			_ = mssqlserver.Cleanup(ctx, serversConfig, subscriptionID)
+		})
+
 		By("deploying the CSB")
-		serversConfig := serverpairs.NewDatabaseServerPair(metadata)
+
 		serviceBroker := brokers.Create(
 			brokers.WithPrefix("csb-mssql-db-fog"),
 			brokers.WithLatestEnv(),
 			brokers.WithEnv(apps.EnvVar{Name: "MSSQL_DB_FOG_SERVER_PAIR_CREDS", Value: serversConfig.ServerPairsConfig()}),
 		)
 		defer serviceBroker.Delete()
-
-		By("creating a new resource group")
-		resourceGroupInstance := services.CreateInstance(
-			"csb-azure-resource-group",
-			"standard",
-			services.WithBroker(serviceBroker),
-			services.WithParameters(serversConfig.SecondaryResourceGroupConfig()),
-		)
-		defer resourceGroupInstance.Delete()
-
-		By("creating primary and secondary DB servers in the resource group")
-		serverInstancePrimary := services.CreateInstance(
-			"csb-azure-mssql-server",
-			"standard",
-			services.WithBroker(serviceBroker),
-			services.WithParameters(serversConfig.PrimaryConfig()),
-		)
-		defer serverInstancePrimary.Delete()
-
-		serverInstanceSecondary := services.CreateInstance(
-			"csb-azure-mssql-server",
-			"standard",
-			services.WithBroker(serviceBroker),
-			services.WithParameters(serversConfig.SecondaryConfig()),
-		)
-		defer serverInstanceSecondary.Delete()
 
 		By("creating a failover group service instance")
 		fogConfig := map[string]string{

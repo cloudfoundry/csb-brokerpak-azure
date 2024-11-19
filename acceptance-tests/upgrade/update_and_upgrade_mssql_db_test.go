@@ -1,8 +1,10 @@
 package upgrade_test
 
 import (
+	"context"
 	"csbbrokerpakazure/acceptance-tests/helpers/apps"
 	"csbbrokerpakazure/acceptance-tests/helpers/brokers"
+	"csbbrokerpakazure/acceptance-tests/helpers/mssqlserver"
 	"csbbrokerpakazure/acceptance-tests/helpers/random"
 	"csbbrokerpakazure/acceptance-tests/helpers/services"
 
@@ -23,13 +25,19 @@ var _ = Describe("UpgradeMssqlDBTest", Label("mssql-db"), func() {
 
 			By("creating a service")
 			serverConfig := newDatabaseServer()
-			serverInstance := services.CreateInstance(
-				"csb-azure-mssql-server",
-				"standard",
-				services.WithBroker(serviceBroker),
-				services.WithParameters(serverConfig),
-			)
-			defer serverInstance.Delete()
+			dbs := mssqlserver.DatabaseServer{Name: serverConfig.Name, ResourceGroup: metadata.ResourceGroup}
+			ctx := context.Background()
+			Expect(mssqlserver.CreateServer(ctx, dbs, serverConfig.Username, serverConfig.Password, subscriptionID)).NotTo(HaveOccurred())
+			defer func() {
+				By("deleting the server")
+				_ = mssqlserver.CleanupServer(ctx, dbs, subscriptionID)
+			}()
+
+			Expect(mssqlserver.CreateFirewallRule(ctx, dbs, subscriptionID)).NotTo(HaveOccurred())
+			defer func() {
+				By("deleting the firewall rule")
+				_ = mssqlserver.CleanFirewallRule(ctx, dbs, subscriptionID)
+			}()
 
 			By("reconfiguring the CSB with DB server details")
 			serverTag := random.Name(random.WithMaxLength(10))
@@ -74,7 +82,6 @@ var _ = Describe("UpgradeMssqlDBTest", Label("mssql-db"), func() {
 
 			By("upgrading service instance")
 			dbInstance.Upgrade()
-			serverInstance.Upgrade()
 
 			By("checking previously created data still accessible")
 			got = appTwo.GET("%s/%s", schema, keyOne)

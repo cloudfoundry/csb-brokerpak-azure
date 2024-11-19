@@ -1,8 +1,10 @@
 package upgrade_test
 
 import (
+	"context"
 	"csbbrokerpakazure/acceptance-tests/helpers/apps"
 	"csbbrokerpakazure/acceptance-tests/helpers/brokers"
+	"csbbrokerpakazure/acceptance-tests/helpers/mssqlserver"
 	"csbbrokerpakazure/acceptance-tests/helpers/random"
 	"csbbrokerpakazure/acceptance-tests/helpers/services"
 
@@ -12,10 +14,20 @@ import (
 
 var _ = Describe("Upgrade and Update csb-azure-mssql-db-failover-group 'existing' plan", Label("mssql-db-failover-group-existing"), func() {
 	When("upgrading broker version", Label("modern"), func() {
+
 		It("should continue to work", func() {
+			ctx := context.Background()
+
+			By("creating primary and secondary DB servers in their resource group")
+			serversConfig, err := mssqlserver.CreateServerPair(ctx, metadata, subscriptionID)
+			Expect(err).NotTo(HaveOccurred())
+
+			DeferCleanup(func() {
+				By("deleting the created resource group and DB servers")
+				_ = mssqlserver.Cleanup(ctx, serversConfig, subscriptionID)
+			})
+
 			By("pushing latest released broker version")
-			rgConfig := resourceGroupConfig()
-			serversConfig := newServerPair(rgConfig.Name)
 
 			serviceBroker := brokers.Create(
 				brokers.WithPrefix("csb-db-fo"),
@@ -24,32 +36,6 @@ var _ = Describe("Upgrade and Update csb-azure-mssql-db-failover-group 'existing
 				brokers.WithEnv(apps.EnvVar{Name: "MSSQL_DB_FOG_SERVER_PAIR_CREDS", Value: serversConfig.ServerPairsConfig()}),
 			)
 			defer serviceBroker.Delete()
-
-			By("creating a new resource group")
-			resourceGroupInstance := services.CreateInstance(
-				"csb-azure-resource-group",
-				"standard",
-				services.WithBroker(serviceBroker),
-				services.WithParameters(rgConfig),
-			)
-			defer resourceGroupInstance.Delete()
-
-			By("creating primary and secondary DB servers in the resource group")
-			serverInstancePrimary := services.CreateInstance(
-				"csb-azure-mssql-server",
-				"standard",
-				services.WithBroker(serviceBroker),
-				services.WithParameters(serversConfig.PrimaryConfig()),
-			)
-			defer serverInstancePrimary.Delete()
-
-			serverInstanceSecondary := services.CreateInstance(
-				"csb-azure-mssql-server",
-				"standard",
-				services.WithBroker(serviceBroker),
-				services.WithParameters(serversConfig.SecondaryConfig()),
-			)
-			defer serverInstanceSecondary.Delete()
 
 			By("creating a failover group service instance")
 			fogConfig := map[string]any{
@@ -104,9 +90,6 @@ var _ = Describe("Upgrade and Update csb-azure-mssql-db-failover-group 'existing
 			serviceBroker.UpgradeBroker(developmentBuildDir)
 
 			By("upgrading previous services")
-			resourceGroupInstance.Upgrade()
-			serverInstancePrimary.Upgrade()
-			serverInstanceSecondary.Upgrade()
 			initialFogInstance.Upgrade()
 			existingFogInstance.Upgrade()
 
