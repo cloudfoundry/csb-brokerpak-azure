@@ -1,22 +1,31 @@
 package acceptance_test
 
 import (
+	"context"
+
 	"csbbrokerpakazure/acceptance-tests/helpers/apps"
 	"csbbrokerpakazure/acceptance-tests/helpers/brokers"
 	"csbbrokerpakazure/acceptance-tests/helpers/matchers"
+	"csbbrokerpakazure/acceptance-tests/helpers/mssqlserver"
 	"csbbrokerpakazure/acceptance-tests/helpers/random"
-	"csbbrokerpakazure/acceptance-tests/helpers/serverpairs"
 	"csbbrokerpakazure/acceptance-tests/helpers/services"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 )
 
-// Principally tests the 'csb-azure-mssql-db-failover-group' service offering, using
-// 'csb-azure-mssql-server' and 'csb-azure-resource-group' as part of the test
 var _ = Describe("MSSQL Server Pair and Failover Group DB", Label("mssql-db-failover-group"), func() {
 	It("can be accessed by an app", func() {
-		serversConfig := serverpairs.NewDatabaseServerPair(metadata)
+		ctx := context.Background()
+
+		By("creating primary and secondary DB servers in their resource group")
+		serversConfig, err := mssqlserver.CreateServerPair(ctx, metadata, subscriptionID)
+		Expect(err).NotTo(HaveOccurred())
+
+		DeferCleanup(func() {
+			By("deleting the created resource group and DB servers")
+			_ = mssqlserver.Cleanup(ctx, serversConfig, subscriptionID)
+		})
 
 		By("Create CSB with server details")
 		serviceBroker := brokers.Create(
@@ -25,33 +34,6 @@ var _ = Describe("MSSQL Server Pair and Failover Group DB", Label("mssql-db-fail
 			brokers.WithEnv(apps.EnvVar{Name: "MSSQL_DB_FOG_SERVER_PAIR_CREDS", Value: serversConfig.ServerPairsConfig()}),
 		)
 		defer serviceBroker.Delete()
-
-		By("creating a primary server")
-		serverInstancePrimary := services.CreateInstance(
-			"csb-azure-mssql-server",
-			"standard",
-			services.WithBroker(serviceBroker),
-			services.WithParameters(serversConfig.PrimaryConfig()),
-		)
-		defer serverInstancePrimary.Delete()
-
-		// We have previously experienced problems with the CF CLI when doing things in parallel
-		By("creating a secondary server in a different resource group")
-		secondaryResourceGroupInstance := services.CreateInstance(
-			"csb-azure-resource-group",
-			"standard",
-			services.WithBroker(serviceBroker),
-			services.WithParameters(serversConfig.SecondaryResourceGroupConfig()),
-		)
-		defer secondaryResourceGroupInstance.Delete()
-
-		serverInstanceSecondary := services.CreateInstance(
-			"csb-azure-mssql-server",
-			"standard",
-			services.WithBroker(serviceBroker),
-			services.WithParameters(serversConfig.SecondaryConfig()),
-		)
-		defer serverInstanceSecondary.Delete()
 
 		By("creating a database failover group on the server pair")
 		fogName := random.Name(random.WithPrefix("fog"))

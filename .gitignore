@@ -5,3 +5,4 @@ cloud-service-broker
 .idea
 csbmssqldbrunfailover.test
 .csb.db
+.vscode
