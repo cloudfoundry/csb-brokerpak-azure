@@ -1,23 +1,11 @@
 # Creating an Azure MySQL DB for Service Broker State
 
-The Cloud Service Broker (CSB) requires a MySQL database to keep its internal state. Here are the `az` cli steps to help create a database instance and get the parameters required to configure the CSB to use the native instances.
+The Cloud Service Broker (CSB) requires a MySQL database to keep its internal state.
 
-## Requirements
+We recommend using a native MySQL instance for the CSB state database. 
+Follow the [Azure documentation](https://azure.microsoft.com/en-us/products/mysql/) to create a MySQL database instance in Azure.
 
-* [az cli](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest)
-* `az login` has been executed to authenticate against Azure account
-
-## Script
-
-There is a script that can automate this [here](https://github.com/pivotal/cloud-service-broker/blob/master/scripts/azure-create-mysql-db.sh)
-
-```bash
-azure-create-mysql-db.sh <name> <resource group> <location>
-```
-
-You will pick a name for database server and the Azure resource group and Azure location the database should be created in.
-
-The final output will be the credentials needed to configure the broker to use the database instance:
+The CSB requires the following credentials to connect to the MySQL database:
 
 ```bash
 Server Details
