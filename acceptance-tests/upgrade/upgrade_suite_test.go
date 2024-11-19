@@ -18,6 +18,7 @@ var (
 	releasedBuildDir      string
 	intermediateBuildDirs string
 	metadata              environment.Metadata
+	subscriptionID        string
 )
 
 func init() {
@@ -45,6 +46,17 @@ var _ = BeforeSuite(func() {
 
 	preflight(developmentBuildDir)
 	// Don't do a preflight on releasedBuildDir as older versions (tile v1.3.0 and earlier) don't have a .envrc file
+
+	subscriptionID = os.Getenv("ARM_SUBSCRIPTION_ID")
+	Expect(subscriptionID).NotTo(BeEmpty(), "ARM_SUBSCRIPTION_ID environment variable should not be empty")
+	Expect(os.Getenv("ARM_TENANT_ID")).NotTo(BeEmpty(), "ARM_TENANT_ID environment variable should not be empty")
+	Expect(os.Getenv("ARM_CLIENT_ID")).NotTo(BeEmpty(), "ARM_CLIENT_ID environment variable should not be empty")
+	Expect(os.Getenv("ARM_CLIENT_SECRET")).NotTo(BeEmpty(), "ARM_CLIENT_SECRET environment variable should not be empty")
+
+	_ = os.Setenv("AZURE_SUBSCRIPTION_ID", subscriptionID)
+	_ = os.Setenv("AZURE_TENANT_ID", os.Getenv("ARM_TENANT_ID"))
+	_ = os.Setenv("AZURE_CLIENT_ID", os.Getenv("ARM_CLIENT_ID"))
+	_ = os.Setenv("AZURE_CLIENT_SECRET", os.Getenv("ARM_CLIENT_SECRET"))
 })
 
 // preflight checks that a specified broker dir is viable so that the user gets fast feedback
