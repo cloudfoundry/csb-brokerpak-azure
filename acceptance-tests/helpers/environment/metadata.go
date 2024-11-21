@@ -10,6 +10,7 @@ import (
 
 type Metadata struct {
 	ResourceGroup string `jsonry:"name"`
+	PublicIP      string `jsonry:"v2.vm.ssh_ip"`
 }
 
 func ReadMetadata() Metadata {

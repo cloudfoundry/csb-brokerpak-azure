@@ -1,7 +1,10 @@
 package upgrade_test
 
 import (
+	"fmt"
+
 	"csbbrokerpakazure/acceptance-tests/helpers/apps"
+	"csbbrokerpakazure/acceptance-tests/helpers/az"
 	"csbbrokerpakazure/acceptance-tests/helpers/brokers"
 	"csbbrokerpakazure/acceptance-tests/helpers/random"
 	"csbbrokerpakazure/acceptance-tests/helpers/services"
@@ -37,6 +40,9 @@ var _ = Describe("UpgradeMongoTest", Label("mongodb"), func() {
 				}),
 			)
 			defer serviceInstance.Delete()
+
+			serviceName := fmt.Sprintf("csb%s", serviceInstance.GUID())
+			az.Start("cosmosdb", "update", "--ip-range-filter", metadata.PublicIP, "--name", serviceName, "--resource-group", "services-rg")
 
 			By("pushing the unstarted app twice")
 			appOne := apps.Push(apps.WithApp(apps.MongoDB))

@@ -28,13 +28,15 @@ var _ = Describe("UpgradeMssqlDBTest", Label("mssql-db"), func() {
 			serverConfig := newDatabaseServer()
 			dbs := mssqlserver.DatabaseServer{Name: serverConfig.Name, ResourceGroup: metadata.ResourceGroup}
 			ctx := context.Background()
+			Expect(mssqlserver.CreateResourceGroup(ctx, metadata.ResourceGroup, subscriptionID))
+			defer mssqlserver.CleanupResourceGroup(ctx, metadata.ResourceGroup, subscriptionID)
 			Expect(mssqlserver.CreateServer(ctx, dbs, serverConfig.Username, serverConfig.Password, subscriptionID)).NotTo(HaveOccurred())
 			defer func() {
 				By("deleting the server")
 				_ = mssqlserver.CleanupServer(ctx, dbs, subscriptionID)
 			}()
 
-			Expect(mssqlserver.CreateFirewallRule(ctx, dbs, subscriptionID)).NotTo(HaveOccurred())
+			Expect(mssqlserver.CreateFirewallRule(ctx, metadata, dbs, subscriptionID)).NotTo(HaveOccurred())
 			defer func() {
 				By("deleting the firewall rule")
 				_ = mssqlserver.CleanFirewallRule(ctx, dbs, subscriptionID)
