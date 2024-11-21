@@ -111,7 +111,7 @@ func CreateServerPair(ctx context.Context, metadata environment.Metadata, subscr
 		return DatabaseServerPairCnf{}, err
 	}
 
-	if err := createFirewallRule(ctx, cred, cnf.PrimaryServer, subscriptionID); err != nil {
+	if err := createFirewallRule(ctx, cred, metadata, cnf.PrimaryServer, subscriptionID); err != nil {
 		return DatabaseServerPairCnf{}, err
 	}
 
@@ -123,23 +123,23 @@ func CreateServerPair(ctx context.Context, metadata environment.Metadata, subscr
 		return DatabaseServerPairCnf{}, err
 	}
 
-	if err := createFirewallRule(ctx, cred, cnf.SecondaryServer, subscriptionID); err != nil {
+	if err := createFirewallRule(ctx, cred, metadata, cnf.SecondaryServer, subscriptionID); err != nil {
 		return DatabaseServerPairCnf{}, err
 	}
 
 	return cnf, nil
 }
 
-func CreateFirewallRule(ctx context.Context, member DatabaseServer, subscriptionID string) error {
+func CreateFirewallRule(ctx context.Context, metadata environment.Metadata, member DatabaseServer, subscriptionID string) error {
 	cred, err := azidentity.NewDefaultAzureCredential(nil)
 	if err != nil {
 		return err
 	}
 
-	return createFirewallRule(ctx, cred, member, subscriptionID)
+	return createFirewallRule(ctx, cred, metadata, member, subscriptionID)
 }
 
-func createFirewallRule(ctx context.Context, cred azcore.TokenCredential, member DatabaseServer, subscriptionID string) error {
+func createFirewallRule(ctx context.Context, cred azcore.TokenCredential, metadata environment.Metadata, member DatabaseServer, subscriptionID string) error {
 	firewallClient, err := armsql.NewFirewallRulesClient(subscriptionID, cred, nil)
 	if err != nil {
 		return err
@@ -152,8 +152,8 @@ func createFirewallRule(ctx context.Context, cred azcore.TokenCredential, member
 		"firewallrule-"+member.Name,
 		armsql.FirewallRule{
 			Properties: &armsql.ServerFirewallRuleProperties{
-				StartIPAddress: to.Ptr("0.0.0.0"),
-				EndIPAddress:   to.Ptr("0.0.0.0"),
+				StartIPAddress: to.Ptr(metadata.PublicIP),
+				EndIPAddress:   to.Ptr(metadata.PublicIP),
 			},
 		},
 		nil,
@@ -265,6 +265,14 @@ func cleanupResourceGroup(ctx context.Context, cred azcore.TokenCredential, reso
 	return nil
 }
 
+func CleanupResourceGroup(ctx context.Context, resourceGroupName, subscriptionID string) error {
+	cred, err := azidentity.NewDefaultAzureCredential(nil)
+	if err != nil {
+		return err
+	}
+	return cleanupResourceGroup(ctx, cred, resourceGroupName, subscriptionID)
+}
+
 func CreateServer(ctx context.Context, member DatabaseServer, username, password, subscriptionID string) error {
 	cred, err := azidentity.NewDefaultAzureCredential(nil)
 	if err != nil {
@@ -317,4 +325,13 @@ func createResourceGroup(ctx context.Context, cred azcore.TokenCredential, resou
 	}
 
 	return nil
+}
+
+func CreateResourceGroup(ctx context.Context, resourceGroupName, subscriptionID string) error {
+	cred, err := azidentity.NewDefaultAzureCredential(nil)
+	if err != nil {
+		return err
+	}
+
+	return createResourceGroup(ctx, cred, resourceGroupName, subscriptionID)
 }
