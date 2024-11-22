@@ -2,9 +2,11 @@ package acceptance_test
 
 import (
 	"csbbrokerpakazure/acceptance-tests/helpers/apps"
+	"csbbrokerpakazure/acceptance-tests/helpers/az"
 	"csbbrokerpakazure/acceptance-tests/helpers/matchers"
 	"csbbrokerpakazure/acceptance-tests/helpers/random"
 	"csbbrokerpakazure/acceptance-tests/helpers/services"
+	"fmt"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -15,6 +17,18 @@ var _ = Describe("Redis", Label("redis"), func() {
 		By("creating a service instance")
 		serviceInstance := services.CreateInstance("csb-azure-redis", "deprecated-small")
 		defer serviceInstance.Delete()
+
+		By("updating the firewall to allow comms")
+		serviceName := fmt.Sprintf("csb-redis-%s", serviceInstance.GUID())
+		az.Start("redis",
+			"firewall-rules",
+			"create",
+			"--name", serviceName,
+			"--resource-group", metadata.ResourceGroup,
+			"--rule-name", "allowtestrule",
+			"--start-ip", metadata.PublicIP,
+			"--end-ip", metadata.PublicIP,
+		)
 
 		By("pushing the unstarted app twice")
 		appOne := apps.Push(apps.WithApp(apps.Redis))

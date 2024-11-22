@@ -12,7 +12,7 @@ import (
 )
 
 func Start(args ...string) *gexec.Session {
-	GinkgoWriter.Printf("Running: cf %s\n", strings.Join(args, " "))
+	GinkgoWriter.Printf("Running: az %s\n", strings.Join(args, " "))
 	command := exec.Command("az", args...)
 	session, err := gexec.Start(command, GinkgoWriter, GinkgoWriter)
 	Expect(err).NotTo(HaveOccurred())

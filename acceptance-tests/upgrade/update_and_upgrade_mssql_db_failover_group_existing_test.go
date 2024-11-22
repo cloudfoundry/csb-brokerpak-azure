@@ -20,14 +20,15 @@ var _ = Describe("Upgrade and Update csb-azure-mssql-db-failover-group 'existing
 			ctx := context.Background()
 
 			By("creating primary and secondary DB servers in their resource group")
-			Expect(mssqlserver.CreateResourceGroup(ctx, metadata.ResourceGroup, subscriptionID))
-			defer mssqlserver.CleanupResourceGroup(ctx, metadata.ResourceGroup, subscriptionID)
 			serversConfig, err := mssqlserver.CreateServerPair(ctx, metadata, subscriptionID)
 			Expect(err).NotTo(HaveOccurred())
 
 			DeferCleanup(func() {
+				GinkgoHelper()
+
 				By("deleting the created resource group and DB servers")
-				_ = mssqlserver.Cleanup(ctx, serversConfig, subscriptionID)
+				err := mssqlserver.Cleanup(ctx, serversConfig, subscriptionID)
+				Expect(err).NotTo(HaveOccurred())
 			})
 
 			By("pushing latest released broker version")
