@@ -1,7 +1,10 @@
 package upgrade_test
 
 import (
+	"fmt"
+
 	"csbbrokerpakazure/acceptance-tests/helpers/apps"
+	"csbbrokerpakazure/acceptance-tests/helpers/az"
 	"csbbrokerpakazure/acceptance-tests/helpers/brokers"
 	"csbbrokerpakazure/acceptance-tests/helpers/lookupplan"
 	"csbbrokerpakazure/acceptance-tests/helpers/random"
@@ -10,6 +13,18 @@ import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 )
+
+func updateRedisFirewall(serviceName, resourceGroup, publicIP string) {
+	az.Start("redis",
+		"firewall-rules",
+		"create",
+		"--name", serviceName,
+		"--resource-group", resourceGroup,
+		"--rule-name", "allowtestrule",
+		"--start-ip", publicIP,
+		"--end-ip", publicIP,
+	)
+}
 
 var _ = Describe("UpgradeRedisTest", Label("redis"), func() {
 	When("upgrading broker version", func() {
@@ -29,6 +44,11 @@ var _ = Describe("UpgradeRedisTest", Label("redis"), func() {
 				services.WithBroker(serviceBroker),
 			)
 			defer serviceInstance.Delete()
+
+			By("changing the firewall to allow comms")
+			serviceName := fmt.Sprintf("csb-redis-%s", serviceInstance.GUID())
+			resourceGroupName := fmt.Sprintf("rg-%s", serviceName)
+			updateRedisFirewall(serviceName, resourceGroupName, metadata.PublicIP)
 
 			By("pushing the unstarted app twice")
 			appOne := apps.Push(apps.WithApp(apps.Redis))
@@ -55,6 +75,9 @@ var _ = Describe("UpgradeRedisTest", Label("redis"), func() {
 			By("upgrading service instance")
 			serviceInstance.Upgrade()
 
+			By("changing the firewall to allow comms")
+			updateRedisFirewall(serviceName, resourceGroupName, metadata.PublicIP)
+
 			By("checking previously written data still accessible")
 			Expect(appTwo.GET(key1)).To(Equal(value1))
 
@@ -76,6 +99,9 @@ var _ = Describe("UpgradeRedisTest", Label("redis"), func() {
 
 			By("updating the instance plan")
 			serviceInstance.Update("-c", `{}`)
+
+			By("changing the firewall to allow comms")
+			updateRedisFirewall(serviceName, resourceGroupName, metadata.PublicIP)
 
 			By("checking it still works")
 			key3 := random.Hexadecimal()

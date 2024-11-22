@@ -13,6 +13,10 @@ import (
 	. "github.com/onsi/gomega"
 )
 
+func updateMongoFirewall(serviceName, resourceGroup, publicIP string) {
+	az.Start("cosmosdb", "update", "--ip-range-filter", publicIP, "--name", serviceName, "--resource-group", resourceGroup)
+}
+
 var _ = Describe("UpgradeMongoTest", Label("mongodb"), func() {
 	When("upgrading broker version", func() {
 		It("should continue to work", func() {
@@ -41,8 +45,10 @@ var _ = Describe("UpgradeMongoTest", Label("mongodb"), func() {
 			)
 			defer serviceInstance.Delete()
 
+			By("changing the firewall to allow comms")
 			serviceName := fmt.Sprintf("csb%s", serviceInstance.GUID())
-			az.Start("cosmosdb", "update", "--ip-range-filter", metadata.PublicIP, "--name", serviceName, "--resource-group", "services-rg")
+			resourceGroupName := fmt.Sprintf("rg-csb-mongo-%s", serviceInstance.GUID())
+			updateMongoFirewall(serviceName, resourceGroupName, metadata.PublicIP)
 
 			By("pushing the unstarted app twice")
 			appOne := apps.Push(apps.WithApp(apps.MongoDB))
@@ -71,6 +77,9 @@ var _ = Describe("UpgradeMongoTest", Label("mongodb"), func() {
 			By("upgrading service instance")
 			serviceInstance.Upgrade()
 
+			By("changing the firewall to allow comms")
+			updateMongoFirewall(serviceName, resourceGroupName, metadata.PublicIP)
+
 			By("checking previous data still accessible")
 			got = appTwo.GET("%s/%s/%s", databaseName, collectionName, documentNameOne)
 			Expect(got).To(Equal(documentDataOne))
@@ -84,6 +93,9 @@ var _ = Describe("UpgradeMongoTest", Label("mongodb"), func() {
 
 			By("updating service instance")
 			serviceInstance.Update("-c", `{}`)
+
+			By("changing the firewall to allow comms")
+			updateMongoFirewall(serviceName, resourceGroupName, metadata.PublicIP)
 
 			By("checking previous data still accessible")
 			got = appTwo.GET("%s/%s/%s", databaseName, collectionName, documentNameOne)
