@@ -20,8 +20,6 @@ var _ = Describe("Upgrade and Update csb-azure-mssql-db-failover-group 'existing
 			ctx := context.Background()
 
 			By("creating primary and secondary DB servers in their resource group")
-			Expect(mssqlserver.CreateResourceGroup(ctx, metadata.ResourceGroup, subscriptionID))
-			defer mssqlserver.CleanupResourceGroup(ctx, metadata.ResourceGroup, subscriptionID)
 			serversConfig, err := mssqlserver.CreateServerPair(ctx, metadata, subscriptionID)
 			Expect(err).NotTo(HaveOccurred())
 
