@@ -19,6 +19,8 @@ var _ = Describe("MSSQL Server Pair and Failover Group DB", Label("mssql-db-fail
 		ctx := context.Background()
 
 		By("creating primary and secondary DB servers in their resource group")
+		Expect(mssqlserver.CreateResourceGroup(ctx, metadata.ResourceGroup, subscriptionID))
+		defer mssqlserver.CleanupResourceGroup(ctx, metadata.ResourceGroup, subscriptionID)
 		serversConfig, err := mssqlserver.CreateServerPair(ctx, metadata, subscriptionID)
 		Expect(err).NotTo(HaveOccurred())
 
