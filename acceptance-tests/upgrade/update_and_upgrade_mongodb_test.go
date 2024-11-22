@@ -28,6 +28,9 @@ var _ = Describe("UpgradeMongoTest", Label("mongodb"), func() {
 			)
 			defer serviceBroker.Delete()
 
+			By("creating a resource group")
+			az.Start("group", "create", "--name", metadata.ResourceGroup, "--location", defaultRegion)
+
 			By("creating a service instance")
 			databaseName := random.Name(random.WithPrefix("database"))
 			collectionName := random.Name(random.WithPrefix("collection"))
@@ -47,8 +50,7 @@ var _ = Describe("UpgradeMongoTest", Label("mongodb"), func() {
 
 			By("changing the firewall to allow comms")
 			serviceName := fmt.Sprintf("csb%s", serviceInstance.GUID())
-			resourceGroupName := fmt.Sprintf("rg-csb-mongo-%s", serviceInstance.GUID())
-			updateMongoFirewall(serviceName, resourceGroupName, metadata.PublicIP)
+			updateMongoFirewall(serviceName, metadata.ResourceGroup, metadata.PublicIP)
 
 			By("pushing the unstarted app twice")
 			appOne := apps.Push(apps.WithApp(apps.MongoDB))
@@ -78,7 +80,7 @@ var _ = Describe("UpgradeMongoTest", Label("mongodb"), func() {
 			serviceInstance.Upgrade()
 
 			By("changing the firewall to allow comms")
-			updateMongoFirewall(serviceName, resourceGroupName, metadata.PublicIP)
+			updateMongoFirewall(serviceName, metadata.ResourceGroup, metadata.PublicIP)
 
 			By("checking previous data still accessible")
 			got = appTwo.GET("%s/%s/%s", databaseName, collectionName, documentNameOne)
@@ -95,7 +97,7 @@ var _ = Describe("UpgradeMongoTest", Label("mongodb"), func() {
 			serviceInstance.Update("-c", `{}`)
 
 			By("changing the firewall to allow comms")
-			updateMongoFirewall(serviceName, resourceGroupName, metadata.PublicIP)
+			updateMongoFirewall(serviceName, metadata.ResourceGroup, metadata.PublicIP)
 
 			By("checking previous data still accessible")
 			got = appTwo.GET("%s/%s/%s", databaseName, collectionName, documentNameOne)

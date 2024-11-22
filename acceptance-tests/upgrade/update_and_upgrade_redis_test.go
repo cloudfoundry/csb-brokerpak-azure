@@ -37,6 +37,9 @@ var _ = Describe("UpgradeRedisTest", Label("redis"), func() {
 			)
 			defer serviceBroker.Delete()
 
+			By("creating a resource group")
+			az.Start("group", "create", "--name", metadata.ResourceGroup, "--location", defaultRegion)
+
 			By("creating a service")
 			serviceInstance := services.CreateInstance(
 				"csb-azure-redis",
@@ -47,8 +50,7 @@ var _ = Describe("UpgradeRedisTest", Label("redis"), func() {
 
 			By("changing the firewall to allow comms")
 			serviceName := fmt.Sprintf("csb-redis-%s", serviceInstance.GUID())
-			resourceGroupName := fmt.Sprintf("rg-%s", serviceName)
-			updateRedisFirewall(serviceName, resourceGroupName, metadata.PublicIP)
+			updateRedisFirewall(serviceName, metadata.ResourceGroup, metadata.PublicIP)
 
 			By("pushing the unstarted app twice")
 			appOne := apps.Push(apps.WithApp(apps.Redis))
@@ -76,7 +78,7 @@ var _ = Describe("UpgradeRedisTest", Label("redis"), func() {
 			serviceInstance.Upgrade()
 
 			By("changing the firewall to allow comms")
-			updateRedisFirewall(serviceName, resourceGroupName, metadata.PublicIP)
+			updateRedisFirewall(serviceName, metadata.ResourceGroup, metadata.PublicIP)
 
 			By("checking previously written data still accessible")
 			Expect(appTwo.GET(key1)).To(Equal(value1))
@@ -101,7 +103,7 @@ var _ = Describe("UpgradeRedisTest", Label("redis"), func() {
 			serviceInstance.Update("-c", `{}`)
 
 			By("changing the firewall to allow comms")
-			updateRedisFirewall(serviceName, resourceGroupName, metadata.PublicIP)
+			updateRedisFirewall(serviceName, metadata.ResourceGroup, metadata.PublicIP)
 
 			By("checking it still works")
 			key3 := random.Hexadecimal()
