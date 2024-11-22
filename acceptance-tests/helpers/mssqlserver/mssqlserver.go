@@ -37,20 +37,22 @@ type DatabaseServer struct {
 
 // NewDatabaseServerPairCnf creates a new database server pair configuration
 func NewDatabaseServerPairCnf(metadata environment.Metadata) DatabaseServerPairCnf {
+	primaryResourceGroup := random.Name(random.WithPrefix(metadata.ResourceGroup))
 	secondaryResourceGroup := random.Name(random.WithPrefix(metadata.ResourceGroup))
+
 	return DatabaseServerPairCnf{
 		ServerPairTag: random.Name(random.WithMaxLength(10)),
 		Username:      random.Name(random.WithMaxLength(10)),
 		Password:      random.Password(),
 		PrimaryServer: DatabaseServer{
 			Name:          random.Name(random.WithPrefix("server")),
-			ResourceGroup: metadata.ResourceGroup,
+			ResourceGroup: primaryResourceGroup,
 		},
 		SecondaryServer: DatabaseServer{
 			Name:          random.Name(random.WithPrefix("server")),
 			ResourceGroup: secondaryResourceGroup,
 		},
-		ResourceGroup:          metadata.ResourceGroup,
+		ResourceGroup:          primaryResourceGroup,
 		SecondaryResourceGroup: secondaryResourceGroup,
 	}
 }
@@ -106,6 +108,10 @@ func CreateServerPair(ctx context.Context, metadata environment.Metadata, subscr
 	}
 
 	cnf := NewDatabaseServerPairCnf(metadata)
+
+	if err := createResourceGroup(ctx, cred, cnf.PrimaryServer.ResourceGroup, subscriptionID); err != nil {
+		return DatabaseServerPairCnf{}, err
+	}
 
 	if err := createServer(ctx, cred, cnf.PrimaryServer, cnf.Username, cnf.Password, subscriptionID); err != nil {
 		return DatabaseServerPairCnf{}, err
@@ -229,6 +235,10 @@ func Cleanup(ctx context.Context, cnf DatabaseServerPairCnf, subscriptionID stri
 	}
 
 	if err := cleanupServer(ctx, cred, cnf.PrimaryServer, subscriptionID); err != nil {
+		return err
+	}
+
+	if err := cleanupResourceGroup(ctx, cred, cnf.ResourceGroup, subscriptionID); err != nil {
 		return err
 	}
 
