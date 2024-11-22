@@ -34,7 +34,6 @@ var _ = Describe("MSSQL Server and DB", Label("mssql-db-server"), func() {
 		dbs := mssqlserver.DatabaseServer{Name: serverConfig.Name, ResourceGroup: metadata.ResourceGroup}
 		ctx := context.Background()
 		Expect(mssqlserver.CreateResourceGroup(ctx, metadata.ResourceGroup, subscriptionID))
-		defer mssqlserver.CleanupResourceGroup(ctx, metadata.ResourceGroup, subscriptionID)
 		Expect(mssqlserver.CreateServer(ctx, dbs, serverConfig.Username, serverConfig.Password, subscriptionID)).NotTo(HaveOccurred())
 		defer func() {
 			By("deleting the server")

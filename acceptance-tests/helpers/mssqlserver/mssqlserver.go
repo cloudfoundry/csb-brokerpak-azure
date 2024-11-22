@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	mainLocation = "westus"
+	mainLocation = "westus2"
 )
 
 // DatabaseServerPairCnf represents a pair of database servers
@@ -273,14 +273,6 @@ func cleanupResourceGroup(ctx context.Context, cred azcore.TokenCredential, reso
 		return err
 	}
 	return nil
-}
-
-func CleanupResourceGroup(ctx context.Context, resourceGroupName, subscriptionID string) error {
-	cred, err := azidentity.NewDefaultAzureCredential(nil)
-	if err != nil {
-		return err
-	}
-	return cleanupResourceGroup(ctx, cred, resourceGroupName, subscriptionID)
 }
 
 func CreateServer(ctx context.Context, member DatabaseServer, username, password, subscriptionID string) error {
