@@ -29,7 +29,6 @@ var _ = Describe("UpgradeMssqlDBTest", Label("mssql-db"), func() {
 			dbs := mssqlserver.DatabaseServer{Name: serverConfig.Name, ResourceGroup: metadata.ResourceGroup}
 			ctx := context.Background()
 			Expect(mssqlserver.CreateResourceGroup(ctx, metadata.ResourceGroup, subscriptionID))
-			defer mssqlserver.CleanupResourceGroup(ctx, metadata.ResourceGroup, subscriptionID)
 			Expect(mssqlserver.CreateServer(ctx, dbs, serverConfig.Username, serverConfig.Password, subscriptionID)).NotTo(HaveOccurred())
 			defer func() {
 				By("deleting the server")
