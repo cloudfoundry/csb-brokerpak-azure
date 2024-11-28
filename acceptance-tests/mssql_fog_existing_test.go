@@ -14,8 +14,10 @@ import (
 	. "github.com/onsi/gomega"
 )
 
+// Tests the *csb-azure-mssql-db-failover-group* with the *existing* property that allows it to adopt and existing
+// failover group rather than creating a new one.
+// Does NOT use the default broker: deploys a custom-configured broker
 var _ = Describe("MSSQL Failover Group Existing", Label("mssql-db-failover-group-existing"), func() {
-
 	It("can be accessed by an app", func() {
 		ctx := context.Background()
 

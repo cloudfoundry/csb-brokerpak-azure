@@ -13,6 +13,8 @@ import (
 	. "github.com/onsi/gomega"
 )
 
+// Tests the *csb-azure-mongodb* service offering
+// Uses the *default broker*
 var _ = Describe("MongoDB", Label("mongodb"), func() {
 	It("can be accessed by an app", func() {
 		By("creating a service instance")
