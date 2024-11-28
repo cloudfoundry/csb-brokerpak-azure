@@ -30,7 +30,9 @@ var _ = Describe("Password Rotation", Label("passwordrotation"), func() {
 		collectionName := random.Name(random.WithPrefix("collection"))
 		serviceInstance := services.CreateInstance(
 			"csb-azure-mongodb",
-			"small", services.WithParameters(map[string]any{
+			"small",
+			services.WithBroker(serviceBroker),
+			services.WithParameters(map[string]any{
 				"db_name":         databaseName,
 				"collection_name": collectionName,
 				"shard_key":       "_id",
