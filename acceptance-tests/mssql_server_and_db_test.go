@@ -14,8 +14,9 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-// Principally tests the 'csb-azure-mssql-db' service offering in combination with 'csb-azure-mssql-server'
-var _ = Describe("MSSQL Server and DB", Label("mssql-db-server"), func() {
+// Tests the *csb-azure-mssql-db* service offering
+// Does NOT use the default broker: deploys a custom-configured broker
+var _ = Describe("MSSQL Server and DB", Label("mssql-db"), func() {
 	It("can be accessed by an app", func() {
 		serverConfig := newDatabaseServer()
 

@@ -8,6 +8,8 @@ import (
 	. "github.com/onsi/ginkgo/v2"
 )
 
+// Tests rotation of the encryption password using the *csb-azure-mongodb* service offering
+// Does NOT use the default broker: deploys a custom-configured broker
 var _ = Describe("Password Rotation", Label("passwordrotation"), func() {
 	It("should reencrypt the DB when keys are rotated", func() {
 		By("creating a service broker with an encryption secret")
