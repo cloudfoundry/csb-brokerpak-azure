@@ -14,6 +14,8 @@ import (
 	. "github.com/onsi/gomega"
 )
 
+// Tests the *csb-azure-mssql-db-failover-group* service offering using the test-only *csb-azure-mssql-fog-run-failover* service offering
+// Does NOT use the default broker: deploys a custom-configured broker
 var _ = Describe("MSSQL Server Pair and Failover Group DB", Label("mssql-db-failover-group"), func() {
 	It("can be accessed by an app", func() {
 		ctx := context.Background()
