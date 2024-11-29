@@ -14,7 +14,7 @@ import (
 )
 
 func updateMongoFirewall(serviceName, resourceGroup, publicIP string) {
-	az.Start("cosmosdb", "update", "--ip-range-filter", publicIP, "--name", serviceName, "--resource-group", resourceGroup)
+	az.Run("cosmosdb", "update", "--ip-range-filter", publicIP, "--name", serviceName, "--resource-group", resourceGroup)
 }
 
 var _ = Describe("UpgradeMongoTest", Label("mongodb"), func() {

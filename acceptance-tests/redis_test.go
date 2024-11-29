@@ -23,7 +23,7 @@ var _ = Describe("Redis", Label("redis"), func() {
 
 		By("updating the firewall to allow comms")
 		serviceName := fmt.Sprintf("csb-redis-%s", serviceInstance.GUID())
-		az.Start("redis",
+		az.Run("redis",
 			"firewall-rules",
 			"create",
 			"--name", serviceName,
