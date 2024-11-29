@@ -12,6 +12,8 @@ import (
 )
 
 func Run(args ...string) {
+	GinkgoHelper()
+
 	GinkgoWriter.Printf("Running: az %s\n", strings.Join(args, " "))
 	command := exec.Command("az", args...)
 	session, err := gexec.Start(command, GinkgoWriter, GinkgoWriter)
