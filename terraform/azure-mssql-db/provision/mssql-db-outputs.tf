@@ -1,10 +1,10 @@
 locals {
-  serverFQDN = data.azurerm_sql_server.azure_sql_db_server.fqdn
+  serverFQDN = data.azurerm_mssql_server.azure_sql_db_server.fully_qualified_domain_name
 }
 
 output "sqldbName" { value = azurerm_mssql_database.azure_sql_db.name }
 output "sqlServerName" {
-  value     = data.azurerm_sql_server.azure_sql_db_server.name
+  value     = data.azurerm_mssql_server.azure_sql_db_server.name
   sensitive = true
 }
 output "sqlServerFullyQualifiedDomainName" {

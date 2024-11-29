@@ -24,17 +24,17 @@ output "password" {
 output "server_pair" { value = var.server_pair }
 output "status" {
   value = var.existing ? format("connected to existing failover group - primary server %s (id: %s) secondary server %s (%s) URL: https://portal.azure.com/#@%s/resource%s/failoverGroup",
-    data.azurerm_sql_server.primary_sql_db_server.name, data.azurerm_sql_server.primary_sql_db_server.id,
-    data.azurerm_sql_server.secondary_sql_db_server.name, data.azurerm_sql_server.secondary_sql_db_server.id,
+    data.azurerm_mssql_server.primary_sql_db_server.name, data.azurerm_mssql_server.primary_sql_db_server.id,
+    data.azurerm_mssql_server.secondary_sql_db_server.name, data.azurerm_mssql_server.secondary_sql_db_server.id,
     var.azure_tenant_id,
-    data.azurerm_sql_server.primary_sql_db_server.id) : format("created failover group %s (id: %s), primary db %s (id: %s) on server %s (id: %s), secondary db %s (id: %s/databases/%s) on server %s (id: %s) URL: https://portal.azure.com/#@%s/resource%s/failoverGroup",
+    data.azurerm_mssql_server.primary_sql_db_server.id) : format("created failover group %s (id: %s), primary db %s (id: %s) on server %s (id: %s), secondary db %s (id: %s/databases/%s) on server %s (id: %s) URL: https://portal.azure.com/#@%s/resource%s/failoverGroup",
     local.fog_name, local.fog_id,
     local.fog_name, local.primary_db_id,
-    data.azurerm_sql_server.primary_sql_db_server.name, data.azurerm_sql_server.primary_sql_db_server.id,
-    local.primary_db_name, data.azurerm_sql_server.secondary_sql_db_server.id, local.primary_db_name,
-    data.azurerm_sql_server.secondary_sql_db_server.name, data.azurerm_sql_server.secondary_sql_db_server.id,
+    data.azurerm_mssql_server.primary_sql_db_server.name, data.azurerm_mssql_server.primary_sql_db_server.id,
+    local.primary_db_name, data.azurerm_mssql_server.secondary_sql_db_server.id, local.primary_db_name,
+    data.azurerm_mssql_server.secondary_sql_db_server.name, data.azurerm_mssql_server.secondary_sql_db_server.id,
     var.azure_tenant_id,
-    data.azurerm_sql_server.primary_sql_db_server.id,
+    data.azurerm_mssql_server.primary_sql_db_server.id,
   )
   sensitive = true
 }

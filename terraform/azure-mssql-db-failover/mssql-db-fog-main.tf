@@ -14,7 +14,7 @@
 
 resource "azurerm_mssql_database" "primary_db" {
   name        = var.db_name
-  server_id   = data.azurerm_sql_server.primary_sql_db_server.id
+  server_id   = data.azurerm_mssql_server.primary_sql_db_server.id
   sku_name    = local.sku_name
   max_size_gb = var.max_storage_gb
   tags        = var.labels
@@ -32,7 +32,7 @@ resource "azurerm_mssql_database" "primary_db" {
 
 resource "azurerm_mssql_database" "secondary_db" {
   name                        = var.db_name
-  server_id                   = data.azurerm_sql_server.secondary_sql_db_server.id
+  server_id                   = data.azurerm_mssql_server.secondary_sql_db_server.id
   sku_name                    = local.sku_name
   tags                        = var.labels
   create_mode                 = "Secondary"
@@ -43,10 +43,10 @@ resource "azurerm_mssql_database" "secondary_db" {
 resource "azurerm_sql_failover_group" "failover_group" {
   name                = var.instance_name
   resource_group_name = var.server_credential_pairs[var.server_pair].primary.resource_group
-  server_name         = data.azurerm_sql_server.primary_sql_db_server.name
+  server_name         = data.azurerm_mssql_server.primary_sql_db_server.name
   databases           = [azurerm_mssql_database.primary_db[count.index].id]
   partner_servers {
-    id = data.azurerm_sql_server.secondary_sql_db_server.id
+    id = data.azurerm_mssql_server.secondary_sql_db_server.id
   }
 
   read_write_endpoint_failover_policy {
