@@ -21,10 +21,6 @@ var (
 	subscriptionID        string
 )
 
-const (
-	defaultRegion = "westus2"
-)
-
 func init() {
 	flag.StringVar(&fromVersion, "from-version", "", "version to upgrade from")
 	flag.StringVar(&releasedBuildDir, "releasedBuildDir", "", "location of released version of built broker and brokerpak")

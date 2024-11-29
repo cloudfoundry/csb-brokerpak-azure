@@ -28,9 +28,6 @@ var _ = Describe("UpgradeMongoTest", Label("mongodb"), func() {
 			)
 			defer serviceBroker.Delete()
 
-			By("creating a resource group")
-			az.Start("group", "create", "--name", metadata.ResourceGroup, "--location", defaultRegion)
-
 			By("creating a service instance")
 			databaseName := random.Name(random.WithPrefix("database"))
 			collectionName := random.Name(random.WithPrefix("collection"))
