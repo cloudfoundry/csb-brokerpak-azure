@@ -34,7 +34,7 @@ var _ = Describe("MongoDB", Label("mongodb"), func() {
 
 		By("changing the firewall to allow comms")
 		serviceName := fmt.Sprintf("csb%s", serviceInstance.GUID())
-		az.Start("cosmosdb", "update", "--ip-range-filter", metadata.PublicIP, "--name", serviceName, "--resource-group", metadata.ResourceGroup)
+		az.Run("cosmosdb", "update", "--ip-range-filter", metadata.PublicIP, "--name", serviceName, "--resource-group", metadata.ResourceGroup)
 
 		By("pushing the unstarted app twice")
 		appOne := apps.Push(apps.WithApp(apps.MongoDB))

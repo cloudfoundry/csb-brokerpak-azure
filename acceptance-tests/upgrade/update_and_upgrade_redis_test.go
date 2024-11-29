@@ -15,7 +15,7 @@ import (
 )
 
 func updateRedisFirewall(serviceName, resourceGroup, publicIP string) {
-	az.Start("redis",
+	az.Run("redis",
 		"firewall-rules",
 		"create",
 		"--name", serviceName,
