@@ -51,10 +51,10 @@ resource "azurerm_cosmosdb_account" "mongo-account" {
     }
   }
 
-  enable_automatic_failover         = var.enable_automatic_failover
-  enable_multiple_write_locations   = var.enable_multiple_write_locations
+  automatic_failover_enabled        = var.enable_automatic_failover
+  multiple_write_locations_enabled  = var.enable_multiple_write_locations
   is_virtual_network_filter_enabled = local.enable_virtual_network_filter
-  ip_range_filter                   = var.ip_range_filter
+  ip_range_filter                   = [var.ip_range_filter]
   tags                              = var.labels
   public_network_access_enabled     = var.public_network_access_enabled
 
