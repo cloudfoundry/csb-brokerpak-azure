@@ -37,9 +37,6 @@ var _ = Describe("UpgradeRedisTest", Label("redis"), func() {
 			)
 			defer serviceBroker.Delete()
 
-			By("creating a resource group")
-			az.Start("group", "create", "--name", metadata.ResourceGroup, "--location", defaultRegion)
-
 			By("creating a service")
 			serviceInstance := services.CreateInstance(
 				"csb-azure-redis",
