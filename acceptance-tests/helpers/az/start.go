@@ -11,11 +11,10 @@ import (
 	"github.com/onsi/gomega/gexec"
 )
 
-func Start(args ...string) *gexec.Session {
+func Run(args ...string) {
 	GinkgoWriter.Printf("Running: az %s\n", strings.Join(args, " "))
 	command := exec.Command("az", args...)
 	session, err := gexec.Start(command, GinkgoWriter, GinkgoWriter)
 	Expect(err).NotTo(HaveOccurred())
 	Eventually(session).WithTimeout(time.Hour).Should(gexec.Exit(0))
-	return session
 }
