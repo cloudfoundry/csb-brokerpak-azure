@@ -6,6 +6,7 @@ import (
 	"csbbrokerpakazure/acceptance-tests/helpers/apps"
 	"csbbrokerpakazure/acceptance-tests/helpers/brokers"
 	"csbbrokerpakazure/acceptance-tests/helpers/mssqlserver"
+	"csbbrokerpakazure/acceptance-tests/helpers/plans"
 	"csbbrokerpakazure/acceptance-tests/helpers/random"
 	"csbbrokerpakazure/acceptance-tests/helpers/services"
 
@@ -77,6 +78,9 @@ var _ = Describe("UpgradeMssqlDBFailoverGroupTest", Label("mssql-db-failover-gro
 
 			By("pushing the development version of the broker")
 			serviceBroker.UpgradeBroker(developmentBuildDir)
+
+			By("validating that the instance plan is still active")
+			Expect(plans.ExistsAndAvailable("small", "csb-azure-mssql-db-failover-group", serviceBroker.Name))
 
 			By("upgrading previous services")
 			initialFogInstance.Upgrade()
