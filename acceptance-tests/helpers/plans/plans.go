@@ -2,9 +2,10 @@
 package plans
 
 import (
-	"csbbrokerpakazure/acceptance-tests/helpers/cf"
 	"encoding/json"
 	"fmt"
+
+	"csbbrokerpakazure/acceptance-tests/helpers/cf"
 
 	. "github.com/onsi/gomega"
 )
