@@ -16,7 +16,7 @@ import (
 )
 
 func updateRedisFirewall(serviceName, resourceGroup, publicIP string) {
-	az.Start("redis",
+	az.Run("redis",
 		"firewall-rules",
 		"create",
 		"--name", serviceName,
@@ -37,9 +37,6 @@ var _ = Describe("UpgradeRedisTest", Label("redis"), func() {
 				brokers.WithReleaseEnv(releasedBuildDir),
 			)
 			defer serviceBroker.Delete()
-
-			By("creating a resource group")
-			az.Start("group", "create", "--name", metadata.ResourceGroup, "--location", defaultRegion)
 
 			By("creating a service")
 			planName := lookupplan.LookupByID("6b9ca24e-1dec-4e6f-8c8a-dc6e11ab5bef", "csb-azure-redis", serviceBroker.Name)

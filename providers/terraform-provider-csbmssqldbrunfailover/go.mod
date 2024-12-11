@@ -1,6 +1,6 @@
 module github.com/cloudfoundry/csb-brokerpak-azure/terraform-provider-csbmssqldbrunfailover
 
-go 1.23.3
+go 1.23.4
 
 require (
 	github.com/Azure/azure-sdk-for-go/sdk/azcore v1.16.0
@@ -10,7 +10,7 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.35.0
 	github.com/onsi/ginkgo/v2 v2.22.0
-	github.com/onsi/gomega v1.35.1
+	github.com/onsi/gomega v1.36.0
 )
 
 require (

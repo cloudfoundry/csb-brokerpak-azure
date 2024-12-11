@@ -15,7 +15,7 @@ import (
 )
 
 func updateMongoFirewall(serviceName, resourceGroup, publicIP string) {
-	az.Start("cosmosdb", "update", "--ip-range-filter", publicIP, "--name", serviceName, "--resource-group", resourceGroup)
+	az.Run("cosmosdb", "update", "--ip-range-filter", publicIP, "--name", serviceName, "--resource-group", resourceGroup)
 }
 
 var _ = Describe("UpgradeMongoTest", Label("mongodb"), func() {
@@ -28,9 +28,6 @@ var _ = Describe("UpgradeMongoTest", Label("mongodb"), func() {
 				brokers.WithReleaseEnv(releasedBuildDir),
 			)
 			defer serviceBroker.Delete()
-
-			By("creating a resource group")
-			az.Start("group", "create", "--name", metadata.ResourceGroup, "--location", defaultRegion)
 
 			By("creating a service instance")
 			databaseName := random.Name(random.WithPrefix("database"))
