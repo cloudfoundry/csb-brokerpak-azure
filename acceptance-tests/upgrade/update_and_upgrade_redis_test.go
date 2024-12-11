@@ -7,6 +7,7 @@ import (
 	"csbbrokerpakazure/acceptance-tests/helpers/az"
 	"csbbrokerpakazure/acceptance-tests/helpers/brokers"
 	"csbbrokerpakazure/acceptance-tests/helpers/lookupplan"
+	"csbbrokerpakazure/acceptance-tests/helpers/plans"
 	"csbbrokerpakazure/acceptance-tests/helpers/random"
 	"csbbrokerpakazure/acceptance-tests/helpers/services"
 
@@ -38,9 +39,10 @@ var _ = Describe("UpgradeRedisTest", Label("redis"), func() {
 			defer serviceBroker.Delete()
 
 			By("creating a service")
+			planName := lookupplan.LookupByID("6b9ca24e-1dec-4e6f-8c8a-dc6e11ab5bef", "csb-azure-redis", serviceBroker.Name)
 			serviceInstance := services.CreateInstance(
 				"csb-azure-redis",
-				lookupplan.LookupByID("6b9ca24e-1dec-4e6f-8c8a-dc6e11ab5bef", "csb-azure-redis", serviceBroker.Name),
+				planName,
 				services.WithBroker(serviceBroker),
 			)
 			defer serviceInstance.Delete()
@@ -70,6 +72,9 @@ var _ = Describe("UpgradeRedisTest", Label("redis"), func() {
 
 			By("pushing the development version of the broker")
 			serviceBroker.UpgradeBroker(developmentBuildDir)
+
+			By("validating that the instance plan is still active")
+			Expect(plans.ExistsAndAvailable(planName, "csb-azure-redis", serviceBroker.Name))
 
 			By("upgrading service instance")
 			serviceInstance.Upgrade()
