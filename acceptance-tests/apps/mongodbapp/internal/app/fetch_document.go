@@ -5,8 +5,8 @@ import (
 	"log"
 	"net/http"
 
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	"go.mongodb.org/mongo-driver/v2/mongo"
 )
 
 func handleFetchDocument(client *mongo.Client) func(w http.ResponseWriter, r *http.Request) {
