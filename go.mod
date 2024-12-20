@@ -12,7 +12,7 @@ require (
 	github.com/blang/semver/v4 v4.0.0
 	github.com/cloudfoundry/cloud-service-broker/v2 v2.4.9
 	github.com/hashicorp/terraform-json v0.24.0
-	github.com/onsi/ginkgo/v2 v2.22.0
+	github.com/onsi/ginkgo/v2 v2.22.1
 	github.com/onsi/gomega v1.36.1
 	github.com/otiai10/copy v1.14.0
 	golang.org/x/exp v0.0.0-20240823005443-9b4947da3948
@@ -53,7 +53,7 @@ require (
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/google/go-cmp v0.6.0 // indirect
-	github.com/google/pprof v0.0.0-20241206021119-61a79c692802 // indirect
+	github.com/google/pprof v0.0.0-20241210010833-40e02aabc2ad // indirect
 	github.com/google/s2a-go v0.1.7 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/googleapis/enterprise-certificate-proxy v0.3.2 // indirect
