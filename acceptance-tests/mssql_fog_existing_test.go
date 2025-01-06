@@ -83,7 +83,7 @@ var _ = Describe("MSSQL Failover Group Existing", Label("mssql-db-failover-group
 		By("connecting to the existing failover group")
 		servicePlanExisting := "existing"
 		serviceNameExisting := random.Name(random.WithPrefix(serviceOffering, servicePlanExisting))
-		defer services.Delete(serviceName)
+		defer services.Delete(serviceNameExisting)
 		dbFogInstance := services.CreateInstance(
 			serviceOffering,
 			servicePlanExisting,
