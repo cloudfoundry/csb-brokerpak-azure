@@ -47,13 +47,21 @@ var _ = Describe("UpgradeMssqlDBTest", Label("mssql-db"), func() {
 			serviceBroker.UpdateEnv(apps.EnvVar{Name: "MSSQL_DB_SERVER_CREDS", Value: serverConfig.serverDetails(serverTag)})
 
 			By("creating a database in the server")
+			serviceOffering := "csb-azure-mssql-db"
+			servicePlan := "small"
+			serviceName := random.Name(random.WithPrefix(serviceOffering, servicePlan))
+			// CreateInstance can fail and can leave a service record (albeit a failed one) lying around.
+			// We can't delete service brokers that have serviceInstances, so we need to ensure the service instance
+			// is cleaned up regardless as to whether it wa successful. This is important when we use our own service broker
+			// (which can only have 5 instances at any time) to prevent subsequent test failures.
+			defer services.Delete(serviceName)
 			dbInstance := services.CreateInstance(
-				"csb-azure-mssql-db",
-				"small",
+				serviceOffering,
+				servicePlan,
 				services.WithBroker(serviceBroker),
 				services.WithParameters(map[string]string{"server": serverTag}),
+				services.WithName(serviceName),
 			)
-			defer dbInstance.Delete()
 
 			By("pushing the unstarted app twice")
 			appOne := apps.Push(apps.WithApp(apps.MSSQL))
@@ -84,7 +92,7 @@ var _ = Describe("UpgradeMssqlDBTest", Label("mssql-db"), func() {
 			serviceBroker.UpgradeBroker(developmentBuildDir)
 
 			By("validating that the instance plan is still active")
-			Expect(plans.ExistsAndAvailable("small", "csb-azure-mssql-db", serviceBroker.Name))
+			Expect(plans.ExistsAndAvailable(servicePlan, serviceOffering, serviceBroker.Name))
 
 			By("upgrading service instance")
 			dbInstance.Upgrade()

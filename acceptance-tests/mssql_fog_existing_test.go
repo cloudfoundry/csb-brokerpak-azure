@@ -46,13 +46,21 @@ var _ = Describe("MSSQL Failover Group Existing", Label("mssql-db-failover-group
 			"server_pair":   serversConfig.ServerPairTag,
 		}
 
+		serviceOffering := "csb-azure-mssql-db-failover-group"
+		servicePlan := "medium"
+		serviceName := random.Name(random.WithPrefix(serviceOffering, servicePlan))
+		// CreateInstance can fail and can leave a service record (albeit a failed one) lying around.
+		// We can't delete service brokers that have serviceInstances, so we need to ensure the service instance
+		// is cleaned up regardless as to whether it wa successful. This is important when we use our own service broker
+		// (which can only have 5 instances at any time) to prevent subsequent test failures.
+		defer services.Delete(serviceName)
 		initialFogInstance := services.CreateInstance(
-			"csb-azure-mssql-db-failover-group",
-			"medium",
+			serviceOffering,
+			servicePlan,
 			services.WithBroker(serviceBroker),
 			services.WithParameters(fogConfig),
+			services.WithName(serviceName),
 		)
-		defer initialFogInstance.Delete()
 
 		By("pushing an unstarted app")
 		app := apps.Push(apps.WithApp(apps.MSSQL))
@@ -73,13 +81,16 @@ var _ = Describe("MSSQL Failover Group Existing", Label("mssql-db-failover-group
 		app.PUT(value, "%s/%s", schema, key)
 
 		By("connecting to the existing failover group")
+		servicePlanExisting := "existing"
+		serviceNameExisting := random.Name(random.WithPrefix(serviceOffering, servicePlanExisting))
+		defer services.Delete(serviceName)
 		dbFogInstance := services.CreateInstance(
-			"csb-azure-mssql-db-failover-group",
-			"existing",
+			serviceOffering,
+			servicePlanExisting,
 			services.WithBroker(serviceBroker),
 			services.WithParameters(fogConfig),
+			services.WithName(serviceNameExisting),
 		)
-		defer dbFogInstance.Delete()
 
 		By("purging the initial FOG instance")
 		initialFogInstance.Purge()

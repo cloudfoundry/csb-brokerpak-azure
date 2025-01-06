@@ -8,11 +8,15 @@ import (
 )
 
 func (s *ServiceInstance) Delete() {
+	Delete(s.Name)
+}
+
+func Delete(name string) {
 	switch cf.Version() {
 	case cf.VersionV8:
-		deleteWithWait(s.Name)
+		deleteWithWait(name)
 	default:
-		deleteWithPoll(s.Name)
+		deleteWithPoll(name)
 	}
 }
 
