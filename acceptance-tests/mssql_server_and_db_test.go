@@ -48,11 +48,20 @@ var _ = Describe("MSSQL Server and DB", Label("mssql-db"), func() {
 		}()
 
 		By("creating a database in the server")
+		serviceOffering := "csb-azure-mssql-db"
+		servicePlan := "small"
+		serviceName := random.Name(random.WithPrefix(serviceOffering, servicePlan))
+		// CreateInstance can fail and can leave a service record (albeit a failed one) lying around.
+		// We can't delete service brokers that have serviceInstances, so we need to ensure the service instance
+		// is cleaned up regardless as to whether it wa successful. This is important when we use our own service broker
+		// (which can only have 5 instances at any time) to prevent subsequent test failures.
+		defer services.Delete(serviceName)
 		dbInstance := services.CreateInstance(
-			"csb-azure-mssql-db",
-			"small",
+			serviceOffering,
+			servicePlan,
 			services.WithBroker(serviceBroker),
 			services.WithParameters(map[string]string{"server": serverTag}),
+			services.WithName(serviceName),
 		)
 		defer dbInstance.Delete()
 

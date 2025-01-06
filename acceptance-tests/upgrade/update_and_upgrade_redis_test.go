@@ -39,17 +39,24 @@ var _ = Describe("UpgradeRedisTest", Label("redis"), func() {
 			defer serviceBroker.Delete()
 
 			By("creating a service")
-			planName := lookupplan.LookupByID("6b9ca24e-1dec-4e6f-8c8a-dc6e11ab5bef", "csb-azure-redis", serviceBroker.Name)
+			serviceOffering := "csb-azure-redis"
+			servicePlan := lookupplan.LookupByID("6b9ca24e-1dec-4e6f-8c8a-dc6e11ab5bef", serviceOffering, serviceBroker.Name)
+			serviceName := random.Name(random.WithPrefix(serviceOffering, servicePlan))
+			// CreateInstance can fail and can leave a service record (albeit a failed one) lying around.
+			// We can't delete service brokers that have serviceInstances, so we need to ensure the service instance
+			// is cleaned up regardless as to whether it wa successful. This is important when we use our own service broker
+			// (which can only have 5 instances at any time) to prevent subsequent test failures.
+			defer services.Delete(serviceName)
 			serviceInstance := services.CreateInstance(
-				"csb-azure-redis",
-				planName,
+				serviceOffering,
+				servicePlan,
 				services.WithBroker(serviceBroker),
+				services.WithName(serviceName),
 			)
-			defer serviceInstance.Delete()
 
 			By("changing the firewall to allow comms")
-			serviceName := fmt.Sprintf("csb-redis-%s", serviceInstance.GUID())
-			updateRedisFirewall(serviceName, metadata.ResourceGroup, metadata.PublicIP)
+			azureRedisResourceName := fmt.Sprintf("csb-redis-%s", serviceInstance.GUID())
+			updateRedisFirewall(azureRedisResourceName, metadata.ResourceGroup, metadata.PublicIP)
 
 			By("pushing the unstarted app twice")
 			appOne := apps.Push(apps.WithApp(apps.Redis))
@@ -74,13 +81,13 @@ var _ = Describe("UpgradeRedisTest", Label("redis"), func() {
 			serviceBroker.UpgradeBroker(developmentBuildDir)
 
 			By("validating that the instance plan is still active")
-			Expect(plans.ExistsAndAvailable(planName, "csb-azure-redis", serviceBroker.Name))
+			Expect(plans.ExistsAndAvailable(servicePlan, serviceOffering, serviceBroker.Name))
 
 			By("upgrading service instance")
 			serviceInstance.Upgrade()
 
 			By("changing the firewall to allow comms")
-			updateRedisFirewall(serviceName, metadata.ResourceGroup, metadata.PublicIP)
+			updateRedisFirewall(azureRedisResourceName, metadata.ResourceGroup, metadata.PublicIP)
 
 			By("checking previously written data still accessible")
 			Expect(appTwo.GET(key1)).To(Equal(value1))
@@ -105,7 +112,7 @@ var _ = Describe("UpgradeRedisTest", Label("redis"), func() {
 			serviceInstance.Update("-c", `{}`)
 
 			By("changing the firewall to allow comms")
-			updateRedisFirewall(serviceName, metadata.ResourceGroup, metadata.PublicIP)
+			updateRedisFirewall(azureRedisResourceName, metadata.ResourceGroup, metadata.PublicIP)
 
 			By("checking it still works")
 			key3 := random.Hexadecimal()
