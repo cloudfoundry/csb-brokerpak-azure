@@ -43,6 +43,14 @@ var _ = Describe("Upgrade and Update csb-azure-mssql-db-failover-group 'existing
 			defer serviceBroker.Delete()
 
 			By("creating a failover group service instance")
+			serviceOffering := "csb-azure-mssql-db-failover-group"
+			servicePlan := "medium"
+			serviceName := random.Name(random.WithPrefix(serviceOffering, servicePlan))
+			// CreateInstance can fail and can leave a service record (albeit a failed one) lying around.
+			// We can't delete service brokers that have serviceInstances, so we need to ensure the service instance
+			// is cleaned up regardless as to whether it wa successful. This is important when we use our own service broker
+			// (which can only have 5 instances at any time) to prevent subsequent test failures.
+			defer services.Delete(serviceName)
 			fogConfig := map[string]any{
 				"instance_name": random.Name(random.WithPrefix("fog")),
 				"db_name":       random.Name(random.WithPrefix("db")),
@@ -50,21 +58,24 @@ var _ = Describe("Upgrade and Update csb-azure-mssql-db-failover-group 'existing
 			}
 
 			initialFogInstance := services.CreateInstance(
-				"csb-azure-mssql-db-failover-group",
-				"medium",
+				serviceOffering,
+				servicePlan,
 				services.WithBroker(serviceBroker),
 				services.WithParameters(fogConfig),
+				services.WithName(serviceName),
 			)
-			defer initialFogInstance.Delete()
 
 			By("creating a failover group service instance with 'existing' plan")
+			servicePlanExisting := "existing"
+			serviceNameExisting := random.Name(random.WithPrefix(serviceOffering, servicePlanExisting))
+			defer services.Delete(serviceNameExisting)
 			existingFogInstance := services.CreateInstance(
-				"csb-azure-mssql-db-failover-group",
-				"existing",
+				serviceOffering,
+				servicePlanExisting,
 				services.WithBroker(serviceBroker),
 				services.WithParameters(fogConfig),
+				services.WithName(serviceNameExisting),
 			)
-			defer existingFogInstance.Delete()
 
 			By("pushing the unstarted app twice")
 			appOne := apps.Push(apps.WithApp(apps.MSSQL))
@@ -95,8 +106,8 @@ var _ = Describe("Upgrade and Update csb-azure-mssql-db-failover-group 'existing
 			serviceBroker.UpgradeBroker(developmentBuildDir)
 
 			By("validating that the instance plan is still active")
-			Expect(plans.ExistsAndAvailable("medium", "csb-azure-mssql-db-failover-group", serviceBroker.Name))
-			Expect(plans.ExistsAndAvailable("existing", "csb-azure-mssql-db-failover-group", serviceBroker.Name))
+			Expect(plans.ExistsAndAvailable(servicePlan, serviceOffering, serviceBroker.Name))
+			Expect(plans.ExistsAndAvailable(servicePlanExisting, serviceOffering, serviceBroker.Name))
 
 			By("upgrading previous services")
 			initialFogInstance.Upgrade()

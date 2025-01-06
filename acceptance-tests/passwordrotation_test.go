@@ -28,9 +28,18 @@ var _ = Describe("Password Rotation", Label("passwordrotation"), func() {
 		By("creating a service")
 		databaseName := random.Name(random.WithPrefix("database"))
 		collectionName := random.Name(random.WithPrefix("collection"))
+
+		serviceOffering := "csb-azure-mongodb"
+		servicePlan := "small"
+		serviceName := random.Name(random.WithPrefix(serviceOffering, servicePlan))
+		// CreateInstance can fail and can leave a service record (albeit a failed one) lying around.
+		// We can't delete service brokers that have serviceInstances, so we need to ensure the service instance
+		// is cleaned up regardless as to whether it wa successful. This is important when we use our own service broker
+		// (which can only have 5 instances at any time) to prevent subsequent test failures.
+		defer services.Delete(serviceName)
 		serviceInstance := services.CreateInstance(
-			"csb-azure-mongodb",
-			"small",
+			serviceOffering,
+			servicePlan,
 			services.WithBroker(serviceBroker),
 			services.WithParameters(map[string]any{
 				"db_name":         databaseName,
@@ -39,8 +48,8 @@ var _ = Describe("Password Rotation", Label("passwordrotation"), func() {
 				"indexes":         "_id",
 				"unique_indexes":  "",
 			}),
+			services.WithName(serviceName),
 		)
-		defer serviceInstance.Delete()
 
 		By("adding a new encryption secret")
 		secondEncryptionSecret := random.Password()

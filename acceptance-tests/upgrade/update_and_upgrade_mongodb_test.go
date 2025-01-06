@@ -30,11 +30,20 @@ var _ = Describe("UpgradeMongoTest", Label("mongodb"), func() {
 			defer serviceBroker.Delete()
 
 			By("creating a service instance")
+			serviceOffering := "csb-azure-mongodb"
+			servicePlan := "small"
+			serviceName := random.Name(random.WithPrefix(serviceOffering, servicePlan))
+			// CreateInstance can fail and can leave a service record (albeit a failed one) lying around.
+			// We can't delete service brokers that have serviceInstances, so we need to ensure the service instance
+			// is cleaned up regardless as to whether it wa successful. This is important when we use our own service broker
+			// (which can only have 5 instances at any time) to prevent subsequent test failures.
+			defer services.Delete(serviceName)
+
 			databaseName := random.Name(random.WithPrefix("database"))
 			collectionName := random.Name(random.WithPrefix("collection"))
 			serviceInstance := services.CreateInstance(
-				"csb-azure-mongodb",
-				"small",
+				serviceOffering,
+				servicePlan,
 				services.WithBroker(serviceBroker),
 				services.WithParameters(map[string]any{
 					"db_name":         databaseName,
@@ -43,12 +52,12 @@ var _ = Describe("UpgradeMongoTest", Label("mongodb"), func() {
 					"indexes":         "_id",
 					"unique_indexes":  "",
 				}),
+				services.WithName(serviceName),
 			)
-			defer serviceInstance.Delete()
 
 			By("changing the firewall to allow comms")
-			serviceName := fmt.Sprintf("csb%s", serviceInstance.GUID())
-			updateMongoFirewall(serviceName, metadata.ResourceGroup, metadata.PublicIP)
+			azureMongoResourceName := fmt.Sprintf("csb%s", serviceInstance.GUID())
+			updateMongoFirewall(azureMongoResourceName, metadata.ResourceGroup, metadata.PublicIP)
 
 			By("pushing the unstarted app twice")
 			appOne := apps.Push(apps.WithApp(apps.MongoDB))
@@ -75,13 +84,13 @@ var _ = Describe("UpgradeMongoTest", Label("mongodb"), func() {
 			serviceBroker.UpgradeBroker(developmentBuildDir)
 
 			By("validating that the instance plan is still active")
-			Expect(plans.ExistsAndAvailable("small", "csb-azure-mongodb", serviceBroker.Name))
+			Expect(plans.ExistsAndAvailable(servicePlan, serviceOffering, serviceBroker.Name))
 
 			By("upgrading service instance")
 			serviceInstance.Upgrade()
 
 			By("changing the firewall to allow comms")
-			updateMongoFirewall(serviceName, metadata.ResourceGroup, metadata.PublicIP)
+			updateMongoFirewall(azureMongoResourceName, metadata.ResourceGroup, metadata.PublicIP)
 
 			By("checking previous data still accessible")
 			got = appTwo.GET("%s/%s/%s", databaseName, collectionName, documentNameOne)
@@ -98,7 +107,7 @@ var _ = Describe("UpgradeMongoTest", Label("mongodb"), func() {
 			serviceInstance.Update("-c", `{}`)
 
 			By("changing the firewall to allow comms")
-			updateMongoFirewall(serviceName, metadata.ResourceGroup, metadata.PublicIP)
+			updateMongoFirewall(azureMongoResourceName, metadata.ResourceGroup, metadata.PublicIP)
 
 			By("checking previous data still accessible")
 			got = appTwo.GET("%s/%s/%s", databaseName, collectionName, documentNameOne)

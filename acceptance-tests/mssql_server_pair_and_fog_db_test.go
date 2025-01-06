@@ -39,16 +39,24 @@ var _ = Describe("MSSQL Server Pair and Failover Group DB", Label("mssql-db-fail
 
 		By("creating a database failover group on the server pair")
 		fogName := random.Name(random.WithPrefix("fog"))
+		serviceOffering := "csb-azure-mssql-db-failover-group"
+		servicePlan := "small"
+		serviceName := random.Name(random.WithPrefix(serviceOffering, servicePlan))
+		// CreateInstance can fail and can leave a service record (albeit a failed one) lying around.
+		// We can't delete service brokers that have serviceInstances, so we need to ensure the service instance
+		// is cleaned up regardless as to whether it wa successful. This is important when we use our own service broker
+		// (which can only have 5 instances at any time) to prevent subsequent test failures.
+		defer services.Delete(serviceName)
 		dbFogInstance := services.CreateInstance(
-			"csb-azure-mssql-db-failover-group",
-			"small",
+			serviceOffering,
+			servicePlan,
 			services.WithBroker(serviceBroker),
 			services.WithParameters(map[string]string{
 				"server_pair":   serversConfig.ServerPairTag,
 				"instance_name": fogName,
 			}),
+			services.WithName(serviceName),
 		)
-		defer dbFogInstance.Delete()
 
 		By("pushing the unstarted app twice")
 		appOne := apps.Push(apps.WithApp(apps.MSSQL))
@@ -79,6 +87,9 @@ var _ = Describe("MSSQL Server Pair and Failover Group DB", Label("mssql-db-fail
 		Expect(got).To(Equal(valueOne))
 
 		By("triggering failover")
+		servicePlanStandard := "standard"
+		serviceNameStandard := random.Name(random.WithPrefix(serviceOffering, servicePlanStandard))
+		defer services.Delete(serviceNameStandard)
 		failoverServiceInstance := services.CreateInstance(
 			"csb-azure-mssql-fog-run-failover",
 			"standard",
@@ -88,8 +99,8 @@ var _ = Describe("MSSQL Server Pair and Failover Group DB", Label("mssql-db-fail
 				"server_pairs":      serversConfig.ServerPairsConfig(),
 				"fog_instance_name": fogName,
 			}),
+			services.WithName(serviceNameStandard),
 		)
-		defer failoverServiceInstance.Delete()
 
 		By("setting another key-value")
 		keyTwo := random.Hexadecimal()
