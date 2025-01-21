@@ -39,7 +39,7 @@ var _ = Describe("UpgradeRedisTest", Label("redis"), func() {
 			defer serviceBroker.Delete()
 
 			By("creating a service")
-			serviceOffering := "csb-azure-redis"
+			const serviceOffering = "csb-azure-redis"
 			servicePlan := lookupplan.LookupByID("6b9ca24e-1dec-4e6f-8c8a-dc6e11ab5bef", serviceOffering, serviceBroker.Name)
 			serviceName := random.Name(random.WithPrefix(serviceOffering, servicePlan))
 			// CreateInstance can fail and can leave a service record (albeit a failed one) lying around.

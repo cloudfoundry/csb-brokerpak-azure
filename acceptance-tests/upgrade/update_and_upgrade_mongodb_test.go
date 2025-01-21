@@ -30,8 +30,8 @@ var _ = Describe("UpgradeMongoTest", Label("mongodb"), func() {
 			defer serviceBroker.Delete()
 
 			By("creating a service instance")
-			serviceOffering := "csb-azure-mongodb"
-			servicePlan := "small"
+			const serviceOffering = "csb-azure-mongodb"
+			const servicePlan = "small"
 			serviceName := random.Name(random.WithPrefix(serviceOffering, servicePlan))
 			// CreateInstance can fail and can leave a service record (albeit a failed one) lying around.
 			// We can't delete service brokers that have serviceInstances, so we need to ensure the service instance
