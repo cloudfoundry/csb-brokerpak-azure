@@ -29,8 +29,8 @@ var _ = Describe("Password Rotation", Label("passwordrotation"), func() {
 		databaseName := random.Name(random.WithPrefix("database"))
 		collectionName := random.Name(random.WithPrefix("collection"))
 
-		serviceOffering := "csb-azure-mongodb"
-		servicePlan := "small"
+		const serviceOffering = "csb-azure-mongodb"
+		const servicePlan = "small"
 		serviceName := random.Name(random.WithPrefix(serviceOffering, servicePlan))
 		// CreateInstance can fail and can leave a service record (albeit a failed one) lying around.
 		// We can't delete service brokers that have serviceInstances, so we need to ensure the service instance
