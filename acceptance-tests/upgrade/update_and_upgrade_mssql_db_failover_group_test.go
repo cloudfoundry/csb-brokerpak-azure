@@ -42,8 +42,8 @@ var _ = Describe("UpgradeMssqlDBFailoverGroupTest", Label("mssql-db-failover-gro
 			defer serviceBroker.Delete()
 
 			By("creating a failover group service instance")
-			serviceOffering := "csb-azure-mssql-db-failover-group"
-			servicePlan := "small"
+			const serviceOffering = "csb-azure-mssql-db-failover-group"
+			const servicePlan = "small"
 			serviceName := random.Name(random.WithPrefix(serviceOffering, servicePlan))
 			// CreateInstance can fail and can leave a service record (albeit a failed one) lying around.
 			// We can't delete service brokers that have serviceInstances, so we need to ensure the service instance
@@ -105,7 +105,7 @@ var _ = Describe("UpgradeMssqlDBFailoverGroupTest", Label("mssql-db-failover-gro
 			Expect(got).To(Equal(valueOne))
 
 			By("connecting to the existing failover group")
-			servicePlanExisting := "existing"
+			const servicePlanExisting = "existing"
 			serviceNameExisting := random.Name(random.WithPrefix(serviceOffering, servicePlanExisting))
 			defer services.Delete(serviceNameExisting)
 			dbFogInstance := services.CreateInstance(

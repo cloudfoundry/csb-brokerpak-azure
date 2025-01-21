@@ -39,8 +39,8 @@ var _ = Describe("MSSQL Server Pair and Failover Group DB", Label("mssql-db-fail
 
 		By("creating a database failover group on the server pair")
 		fogName := random.Name(random.WithPrefix("fog"))
-		serviceOffering := "csb-azure-mssql-db-failover-group"
-		servicePlan := "small"
+		const serviceOffering = "csb-azure-mssql-db-failover-group"
+		const servicePlan = "small"
 		serviceName := random.Name(random.WithPrefix(serviceOffering, servicePlan))
 		// CreateInstance can fail and can leave a service record (albeit a failed one) lying around.
 		// We can't delete service brokers that have serviceInstances, so we need to ensure the service instance
@@ -87,12 +87,13 @@ var _ = Describe("MSSQL Server Pair and Failover Group DB", Label("mssql-db-fail
 		Expect(got).To(Equal(valueOne))
 
 		By("triggering failover")
-		servicePlanStandard := "standard"
-		serviceNameStandard := random.Name(random.WithPrefix(serviceOffering, servicePlanStandard))
+		const runFailoverServiceOffering = "csb-azure-mssql-fog-run-failover"
+		const runFailoverServicePlan = "standard"
+		serviceNameStandard := random.Name(random.WithPrefix(runFailoverServiceOffering, runFailoverServicePlan))
 		defer services.Delete(serviceNameStandard)
 		failoverServiceInstance := services.CreateInstance(
-			"csb-azure-mssql-fog-run-failover",
-			"standard",
+			runFailoverServiceOffering,
+			runFailoverServicePlan,
 			services.WithBroker(serviceBroker),
 			services.WithParameters(map[string]any{
 				"server_pair_name":  serversConfig.ServerPairTag,

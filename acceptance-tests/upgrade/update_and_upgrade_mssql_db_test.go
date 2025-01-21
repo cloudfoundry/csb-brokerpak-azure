@@ -47,8 +47,8 @@ var _ = Describe("UpgradeMssqlDBTest", Label("mssql-db"), func() {
 			serviceBroker.UpdateEnv(apps.EnvVar{Name: "MSSQL_DB_SERVER_CREDS", Value: serverConfig.serverDetails(serverTag)})
 
 			By("creating a database in the server")
-			serviceOffering := "csb-azure-mssql-db"
-			servicePlan := "small"
+			const serviceOffering = "csb-azure-mssql-db"
+			const servicePlan = "small"
 			serviceName := random.Name(random.WithPrefix(serviceOffering, servicePlan))
 			// CreateInstance can fail and can leave a service record (albeit a failed one) lying around.
 			// We can't delete service brokers that have serviceInstances, so we need to ensure the service instance
