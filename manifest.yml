@@ -26,11 +26,11 @@ terraform_state_provider_replacements:
   registry.terraform.io/cloud-service-broker/csbsqlserver: "cloudfoundry.org/cloud-service-broker/csbsqlserver"
   registry.terraform.io/cloud-service-broker/csbmssqldbrunfailover: "cloudfoundry.org/cloud-service-broker/csbmssqldbrunfailover"
 terraform_upgrade_path:
-- version: 1.8.8
+- version: 1.9.0
 terraform_binaries:
 - name: tofu
-  version: 1.8.8
-  source: https://github.com/opentofu/opentofu/archive/v1.8.8.zip
+  version: 1.9.0
+  source: https://github.com/opentofu/opentofu/archive/v1.9.0.zip
   default: true
 - name: terraform-provider-azurerm
   version: 3.117.0
@@ -39,8 +39,8 @@ terraform_binaries:
   version: 3.6.3
   source: https://github.com/terraform-providers/terraform-provider-random/archive/v3.6.3.zip
 - name: terraform-provider-csbsqlserver
-  version: 1.0.38
-  source: https://github.com/cloudfoundry/terraform-provider-csbsqlserver/archive/v1.0.38.zip
+  version: 1.0.39
+  source: https://github.com/cloudfoundry/terraform-provider-csbsqlserver/archive/v1.0.39.zip
   provider: cloudfoundry.org/cloud-service-broker/csbsqlserver
   url_template: https://github.com/cloudfoundry/${name}/releases/download/v${version}/${name}_${version}_${os}_${arch}.zip
 - name: terraform-provider-csbmssqldbrunfailover
@@ -48,8 +48,8 @@ terraform_binaries:
   provider: cloudfoundry.org/cloud-service-broker/csbmssqldbrunfailover
   url_template: ./providers/${name}/cloudfoundry.org/cloud-service-broker/csbmssqldbrunfailover/${version}/${os}_${arch}/terraform-provider-csbmssqldbrunfailover_v${version}
 - name: terraform-provider-csbpg
-  version: 1.2.46
-  source: https://github.com/cloudfoundry/terraform-provider-csbpg/archive/v1.2.46.zip
+  version: 1.2.47
+  source: https://github.com/cloudfoundry/terraform-provider-csbpg/archive/v1.2.47.zip
   provider: cloudfoundry.org/cloud-service-broker/csbpg
   url_template: https://github.com/cloudfoundry/${name}/releases/download/v${version}/${name}_${version}_${os}_${arch}.zip
 env_config_mapping:
