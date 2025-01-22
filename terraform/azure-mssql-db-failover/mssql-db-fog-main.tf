@@ -40,12 +40,15 @@ resource "azurerm_mssql_database" "secondary_db" {
   count                       = var.existing ? 0 : 1
 }
 
-resource "azurerm_sql_failover_group" "failover_group" {
-  name                = var.instance_name
-  resource_group_name = var.server_credential_pairs[var.server_pair].primary.resource_group
-  server_name         = data.azurerm_mssql_server.primary_sql_db_server.name
-  databases           = [azurerm_mssql_database.primary_db[count.index].id]
-  partner_servers {
+resource "azurerm_mssql_failover_group" "failover_group" {
+  # When switching from the "azurerm_sql_failover_group" to the "azurerm_mssql_failover_group"
+  # resource type, it's necessary to use a different name to prevent name clashes, so we add
+  # the suffix "-g" just to get a different name.
+  name = format("%s-g", var.instance_name)
+
+  server_id = data.azurerm_mssql_server.primary_sql_db_server.id
+  databases = [azurerm_mssql_database.primary_db[count.index].id]
+  partner_server {
     id = data.azurerm_mssql_server.secondary_sql_db_server.id
   }
 

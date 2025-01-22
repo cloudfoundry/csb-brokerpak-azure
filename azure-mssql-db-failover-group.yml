@@ -70,7 +70,7 @@ provision:
     details: Maximum storage allocated to the database instance in GB
   - field_name: instance_name
     type: string
-    details: Name for your Azure SQL Failover Group
+    details: Name for your Azure SQL Failover Group. Note that the resource name in Azure will have "-g" appended.
     default: csb-azsql-fog-${request.instance_id}
     constraints:
       maxLength: 63

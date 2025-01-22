@@ -2,6 +2,7 @@ package acceptance_test
 
 import (
 	"context"
+	"fmt"
 
 	"csbbrokerpakazure/acceptance-tests/helpers/apps"
 	"csbbrokerpakazure/acceptance-tests/helpers/brokers"
@@ -96,9 +97,11 @@ var _ = Describe("MSSQL Server Pair and Failover Group DB", Label("mssql-db-fail
 			runFailoverServicePlan,
 			services.WithBroker(serviceBroker),
 			services.WithParameters(map[string]any{
-				"server_pair_name":  serversConfig.ServerPairTag,
-				"server_pairs":      serversConfig.ServerPairsConfig(),
-				"fog_instance_name": fogName,
+				"server_pair_name": serversConfig.ServerPairTag,
+				"server_pairs":     serversConfig.ServerPairsConfig(),
+				// We now append a "-g" to the instance name as we replace the "azurerm_sql_failover_group"
+				// resource with the "azurerm_mssql_failover_group" to avoid name clashes.
+				"fog_instance_name": fmt.Sprintf("%s-g", fogName),
 			}),
 			services.WithName(serviceNameStandard),
 		)

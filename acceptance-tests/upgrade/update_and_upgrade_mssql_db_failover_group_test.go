@@ -2,6 +2,7 @@ package upgrade_test
 
 import (
 	"context"
+	"net/http"
 
 	"csbbrokerpakazure/acceptance-tests/helpers/apps"
 	"csbbrokerpakazure/acceptance-tests/helpers/brokers"
@@ -50,7 +51,7 @@ var _ = Describe("UpgradeMssqlDBFailoverGroupTest", Label("mssql-db-failover-gro
 			// is cleaned up regardless as to whether it wa successful. This is important when we use our own service broker
 			// (which can only have 5 instances at any time) to prevent subsequent test failures.
 			defer services.Delete(serviceName)
-			fogConfig := failoverGroupConfig(serversConfig.ServerPairTag)
+			fogConfig := newFailoverGroupConfig(serversConfig.ServerPairTag)
 			initialFogInstance := services.CreateInstance(
 				serviceOffering,
 				servicePlan,
@@ -65,8 +66,8 @@ var _ = Describe("UpgradeMssqlDBFailoverGroupTest", Label("mssql-db-failover-gro
 			defer apps.Delete(appOne, appTwo)
 
 			By("binding to the apps")
-			initialFogInstance.Bind(appOne)
-			initialFogInstance.Bind(appTwo)
+			bindingOne := initialFogInstance.Bind(appOne)
+			bindingTwo := initialFogInstance.Bind(appTwo)
 
 			By("starting the apps")
 			apps.Start(appOne, appTwo)
@@ -93,16 +94,36 @@ var _ = Describe("UpgradeMssqlDBFailoverGroupTest", Label("mssql-db-failover-gro
 			By("upgrading previous services")
 			initialFogInstance.Upgrade()
 
+			// When the "azurerm_sql_failover_group" resource is updated to the "azurerm_mssql_failover_group" resource,
+			// the name of the FOG has to be changed (to avoid name clashes), resulting in the URL of the FOG
+			// changing. This means that existing bindings do not work, and apps need to be re-bound.
+			// At some stage this behavior will change, and this check and the subsequent re-bind can be removed.
+			By("observing that existing bindings do not work")
+			resp := appTwo.GETResponse("%s/%s", schema, keyOne)
+			Expect(resp).To(HaveHTTPStatus(http.StatusInternalServerError))
+			Expect(resp).To(HaveHTTPBody(MatchRegexp(`error preparing statement:.*no such host`)))
+
+			By("re-binding and re-staging the apps")
+			bindingOne.Unbind()
+			bindingTwo.Unbind()
+			initialFogInstance.Bind(appOne)
+			initialFogInstance.Bind(appTwo)
+			apps.Restage(appOne, appTwo)
+
 			By("getting the previously set value using the second app")
 			got = appTwo.GET("%s/%s", schema, keyOne)
 			Expect(got).To(Equal(valueOne))
 
-			By("updating the instance plan")
-			initialFogInstance.Update("-p", "medium")
+			By("updating the instance")
+			initialFogInstance.Update("-c", "{}")
 
 			By("getting the previously set value using the second app")
 			got = appTwo.GET("%s/%s", schema, keyOne)
 			Expect(got).To(Equal(valueOne))
+
+			// We now append a "-g" to the instance name as we replace the "azurerm_sql_failover_group"
+			// resource with the "azurerm_mssql_failover_group" to avoid name clashes.
+			fogConfig.InstanceName += "-g"
 
 			By("connecting to the existing failover group")
 			const servicePlanExisting = "existing"
@@ -119,9 +140,9 @@ var _ = Describe("UpgradeMssqlDBFailoverGroupTest", Label("mssql-db-failover-gro
 			By("purging the initial FOG instance")
 			initialFogInstance.Purge()
 
-			By("creating new bindings and testing they still work")
-			bindingOne := dbFogInstance.Bind(appOne)
-			bindingTwo := dbFogInstance.Bind(appTwo)
+			By("creating new bindings using the 'existing' plan")
+			bindingOne = dbFogInstance.Bind(appOne)
+			bindingTwo = dbFogInstance.Bind(appTwo)
 			apps.Restage(appOne, appTwo)
 			defer bindingOne.Unbind()
 			defer bindingTwo.Unbind()
@@ -143,10 +164,16 @@ var _ = Describe("UpgradeMssqlDBFailoverGroupTest", Label("mssql-db-failover-gro
 	})
 })
 
-func failoverGroupConfig(serverPairTag string) map[string]string {
-	return map[string]string{
-		"instance_name": random.Name(random.WithPrefix("fog")),
-		"db_name":       random.Name(random.WithPrefix("db")),
-		"server_pair":   serverPairTag,
+type failoverGroupConfig struct {
+	InstanceName  string `json:"instance_name"`
+	DBName        string `json:"db_name"`
+	ServerPairTag string `json:"server_pair"`
+}
+
+func newFailoverGroupConfig(serverPairTag string) failoverGroupConfig {
+	return failoverGroupConfig{
+		InstanceName:  random.Name(random.WithPrefix("fog")),
+		DBName:        random.Name(random.WithPrefix("db")),
+		ServerPairTag: serverPairTag,
 	}
 }
