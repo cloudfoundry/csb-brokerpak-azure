@@ -34,6 +34,16 @@ func (a *App) GET(format string, s ...any) string {
 	return string(data)
 }
 
+func (a *App) GETResponse(format string, s ...any) *http.Response {
+	GinkgoHelper()
+
+	url := a.urlf(format, s...)
+	GinkgoWriter.Printf("HTTP GET: %s\n", url)
+	response, err := http.Get(url)
+	Expect(err).NotTo(HaveOccurred())
+	return response
+}
+
 func (a *App) PUT(data, format string, s ...any) {
 	url := a.urlf(format, s...)
 	GinkgoWriter.Printf("HTTP PUT: %s\n", url)

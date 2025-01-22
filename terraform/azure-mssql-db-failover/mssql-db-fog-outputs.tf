@@ -3,8 +3,8 @@
 locals {
   primary_db_name = (length(azurerm_mssql_database.primary_db) > 0 ? azurerm_mssql_database.primary_db[0].name : "")
   primary_db_id   = (length(azurerm_mssql_database.primary_db) > 0 ? azurerm_mssql_database.primary_db[0].id : "")
-  fog_name        = (length(azurerm_sql_failover_group.failover_group) > 0 ? azurerm_sql_failover_group.failover_group[0].name : "")
-  fog_id          = (length(azurerm_sql_failover_group.failover_group) > 0 ? azurerm_sql_failover_group.failover_group[0].id : "")
+  fog_name        = (length(azurerm_mssql_failover_group.failover_group) > 0 ? azurerm_mssql_failover_group.failover_group[0].name : "")
+  fog_id          = (length(azurerm_mssql_failover_group.failover_group) > 0 ? azurerm_mssql_failover_group.failover_group[0].id : "")
 }
 
 output "sqldbName" { value = var.existing ? var.db_name : local.primary_db_name }
