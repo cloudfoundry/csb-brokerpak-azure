@@ -618,8 +618,8 @@ code.cloudfoundry.org/credhub-cli v0.0.0-20241230140549-52b2783ad517 h1:JiYnM68U
 code.cloudfoundry.org/credhub-cli v0.0.0-20241230140549-52b2783ad517/go.mod h1:RjZrcPQSJqv8RuBxY1g4y6j2S8FRC70cMstHCsVmYEE=
 code.cloudfoundry.org/jsonry v1.1.4 h1:P9N7IlH1/4aRCLcXLgLFj1hkcBmV7muijJzY+K6U4hE=
 code.cloudfoundry.org/jsonry v1.1.4/go.mod h1:6aKilShQP7w/Ez76h1El2/n9y2OkHuU56nKSBB9Gp0A=
-code.cloudfoundry.org/lager/v3 v3.22.0 h1:F8+AuJb5Hh1KswKNlm0Qlafgrg4ESo0yZKHAnLDGV+U=
-code.cloudfoundry.org/lager/v3 v3.22.0/go.mod h1:WbzeUscDNJxkBxCjOSHEdRF4KqxM9Y5QRhJoX3iqPOM=
+code.cloudfoundry.org/lager/v3 v3.23.0 h1:xuRBOTLwboOnWkI5QpdfWf7C9LF+kpa4OKkfoMhspbw=
+code.cloudfoundry.org/lager/v3 v3.23.0/go.mod h1:lyBGg9s6FMaodTgcZIuSQHW0TvF7mtznd8+e1xXfKhQ=
 dmitri.shuralyov.com/gpu/mtl v0.0.0-20190408044501-666a987793e9/go.mod h1:H6x//7gZCb22OMCxBHrMx7a5I7Hp++hsVxbQ4BYO7hU=
 filippo.io/edwards25519 v1.1.0 h1:FNf4tywRC1HmFuKW5xopWpigGjJKiJSV0Cqo0cJWDaA=
 filippo.io/edwards25519 v1.1.0/go.mod h1:BxyFTGdWcka3PhytdK4V28tE5sGfRvvvRV7EaN4VDT4=
@@ -700,8 +700,8 @@ github.com/chzyer/logex v1.1.10/go.mod h1:+Ywpsq7O8HXn0nuIou7OrIPyXbp3wmkHB+jjWR
 github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e/go.mod h1:nSuG5e5PlCu98SY8svDHJxuZscDgtXS6KTTbou5AhLI=
 github.com/chzyer/test v0.0.0-20180213035817-a1ea475d72b1/go.mod h1:Q3SI9o4m/ZMnBNeIyt5eFwwo7qiLfzFZmjNmxjkiQlU=
 github.com/client9/misspell v0.3.4/go.mod h1:qj6jICC3Q7zFZvVWo7KLAzC3yx5G7kyvSDkc90ppPyw=
-github.com/cloudfoundry/cloud-service-broker/v2 v2.5.1 h1:BWbZA6kX7grmkttoR5xZOW2bzpqJrVrRczTm95DJR9k=
-github.com/cloudfoundry/cloud-service-broker/v2 v2.5.1/go.mod h1:oUzvC9wHyQ3wEOdm1S0/9qu/NMf9hnHVmdy9QErVVqY=
+github.com/cloudfoundry/cloud-service-broker/v2 v2.5.2 h1:Yp7pAp3s2fKgYluAXgw9CiiEGLQ3ZVBPdIujYPHf3l8=
+github.com/cloudfoundry/cloud-service-broker/v2 v2.5.2/go.mod h1:4ivCmRBGcH/F4X8r5Aj4VVlF7kMW4s9krSBG0e8J8k0=
 github.com/cloudfoundry/go-socks5 v0.0.0-20240831012420-2590b55236ee h1:88ruSYvCUKX2YcF2CMYVTmPGITvNdRbzaBRk2c/iMds=
 github.com/cloudfoundry/go-socks5 v0.0.0-20240831012420-2590b55236ee/go.mod h1:72EEm1oq5oXqGfu9XGtaRPWEcAFYd/P10cMNln0QhA8=
 github.com/cloudfoundry/socks5-proxy v0.2.136 h1:MbRUPL9swBZI182ZUuDxMgDbCOMc6fAsppAP4e0Ke5E=
@@ -875,8 +875,8 @@ github.com/google/pprof v0.0.0-20210407192527-94a9f03dee38/go.mod h1:kpwsk12EmLe
 github.com/google/pprof v0.0.0-20210601050228-01bbb1931b22/go.mod h1:kpwsk12EmLew5upagYY7GY0pfYCcupk39gWOCRROcvE=
 github.com/google/pprof v0.0.0-20210609004039-a478d1d731e9/go.mod h1:kpwsk12EmLew5upagYY7GY0pfYCcupk39gWOCRROcvE=
 github.com/google/pprof v0.0.0-20210720184732-4bb14d4b1be1/go.mod h1:kpwsk12EmLew5upagYY7GY0pfYCcupk39gWOCRROcvE=
-github.com/google/pprof v0.0.0-20241210010833-40e02aabc2ad h1:a6HEuzUHeKH6hwfN/ZoQgRgVIWFJljSWa/zetS2WTvg=
-github.com/google/pprof v0.0.0-20241210010833-40e02aabc2ad/go.mod h1:vavhavw2zAxS5dIdcRluK6cSGGPlZynqzFM8NdvU144=
+github.com/google/pprof v0.0.0-20250120214715-4e5bb2051dab h1:FcOz+Hn0n9Ek4Ij6mvYUhvHGg0+EhV9ImR+PMmTP0S0=
+github.com/google/pprof v0.0.0-20250120214715-4e5bb2051dab/go.mod h1:vavhavw2zAxS5dIdcRluK6cSGGPlZynqzFM8NdvU144=
 github.com/google/renameio v0.1.0/go.mod h1:KWCgfxg9yswjAJkECMjeO8J8rahYeXnNhOm40UhjYkI=
 github.com/google/s2a-go v0.1.8 h1:zZDs9gcbt9ZPLV0ndSyQk6Kacx2g/X+SKYovpnz3SMM=
 github.com/google/s2a-go v0.1.8/go.mod h1:6iNWHTpQ+nfNRN5E00MSdfDwVesa8hhS32PhPO8deJA=
@@ -1122,8 +1122,8 @@ github.com/yuin/goldmark v1.2.1/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9dec
 github.com/yuin/goldmark v1.3.5/go.mod h1:mwnBkeHKe2W/ZEtQ+71ViKU8L12m81fl3OWwC1Zlc8k=
 github.com/yuin/goldmark v1.4.1/go.mod h1:mwnBkeHKe2W/ZEtQ+71ViKU8L12m81fl3OWwC1Zlc8k=
 github.com/yuin/goldmark v1.4.13/go.mod h1:6yULJ656Px+3vBD8DxQVa3kxgyrAnzto9xy5taEt/CY=
-github.com/zclconf/go-cty v1.16.1 h1:a5TZEPzBFFR53udlIKApXzj8JIF4ZNQ6abH79z5R1S0=
-github.com/zclconf/go-cty v1.16.1/go.mod h1:VvMs5i0vgZdhYawQNq5kePSpLAoz8u1xvZgrPIxfnZE=
+github.com/zclconf/go-cty v1.16.2 h1:LAJSwc3v81IRBZyUVQDUdZ7hs3SYs9jv0eZJDWHD/70=
+github.com/zclconf/go-cty v1.16.2/go.mod h1:VvMs5i0vgZdhYawQNq5kePSpLAoz8u1xvZgrPIxfnZE=
 github.com/zclconf/go-cty-debug v0.0.0-20240509010212-0d6042c53940 h1:4r45xpDWB6ZMSMNJFMOjqrGHynW3DIBuR2H9j0ug+Mo=
 github.com/zclconf/go-cty-debug v0.0.0-20240509010212-0d6042c53940/go.mod h1:CmBdvvj3nqzfzJ6nTCIwDTPZ56aVGvDrmztiO5g3qrM=
 github.com/zeebo/assert v1.3.0/go.mod h1:Pq9JiuJQpG8JLJdtkwrJESF0Foym2/D9XMU5ciN/wJ0=
