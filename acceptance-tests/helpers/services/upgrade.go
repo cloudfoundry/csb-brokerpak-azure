@@ -18,7 +18,10 @@ func (s *ServiceInstance) Upgrade() {
 	}
 
 	session := cf.Start("upgrade-service", s.Name, "--force", "--wait")
-	Eventually(session).WithTimeout(asyncCommandTimeout).Should(Exit(0))
+	Eventually(session).WithTimeout(operationTimeout).Should(Exit(0), func() string {
+		out, _ := cf.Run("service", s.Name)
+		return out
+	})
 
 	out, _ := cf.Run("service", s.Name)
 	Expect(out).To(MatchRegexp(`status:\s+update succeeded`))
@@ -40,7 +43,7 @@ func (s *ServiceInstance) UpgradeExpectFailure() {
 	Expect(s.UpgradeAvailable()).To(BeTrue(), "service instance does not have an upgrade available")
 
 	session := cf.Start("upgrade-service", s.Name, "--force", "--wait")
-	Eventually(session).WithTimeout(asyncCommandTimeout).Should(Exit())
+	Eventually(session).WithTimeout(operationTimeout).Should(Exit())
 
 	out, _ := cf.Run("service", s.Name)
 	Expect(out).To(MatchRegexp(`status:\s+update failed`))

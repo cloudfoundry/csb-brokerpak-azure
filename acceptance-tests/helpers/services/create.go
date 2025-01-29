@@ -29,6 +29,7 @@ func CreateInstance(offering, plan string, opts ...Option) *ServiceInstance {
 	cfg := defaultConfig(offering, plan, opts...)
 	args := []string{
 		"create-service",
+		"--wait",
 		offering,
 		plan,
 		cfg.name,
@@ -40,45 +41,18 @@ func CreateInstance(offering, plan string, opts ...Option) *ServiceInstance {
 		args = append(args, "-c", cfg.parameters)
 	}
 
-	switch cf.Version() {
-	case cf.VersionV8:
-		createInstanceWithWait(cfg.name, args)
-	default:
-		createInstanceWithPoll(cfg.name, args)
-	}
-
-	return &ServiceInstance{Name: cfg.name}
-}
-
-func createInstanceWithWait(name string, args []string) {
-	args = append(args, "--wait")
 	session := cf.Start(args...)
 	Eventually(session).WithTimeout(operationTimeout).Should(Exit(0), func() string {
-		out, _ := cf.Run("service", name)
+		out, _ := cf.Run("service", cfg.name)
 		return out
 	})
-}
 
-func createInstanceWithPoll(name string, args []string) {
-	session := cf.Start(args...)
-	Eventually(session).WithTimeout(asyncCommandTimeout).Should(Exit(0))
-
-	Eventually(func() string {
-		out, _ := cf.Run("service", name)
-		Expect(out).NotTo(MatchRegexp(`status:\s+create failed`))
-		return out
-	}).WithTimeout(operationTimeout).WithPolling(pollingInterval).Should(MatchRegexp(`status:\s+create succeeded`))
+	return &ServiceInstance{Name: cfg.name}
 }
 
 func WithDefaultBroker() Option {
 	return func(c *config) {
 		c.serviceBrokerName = brokers.DefaultBrokerName
-	}
-}
-
-func WithMASBBroker() Option {
-	return func(c *config) {
-		c.serviceBrokerName = func() string { return "azure-service-broker" }
 	}
 }
 
