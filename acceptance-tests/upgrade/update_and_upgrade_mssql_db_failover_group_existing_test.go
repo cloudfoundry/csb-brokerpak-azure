@@ -15,7 +15,7 @@ import (
 )
 
 var _ = Describe("Upgrade and Update csb-azure-mssql-db-failover-group 'existing' plan", Label("mssql-db-failover-group-existing"), func() {
-	When("upgrading broker version", Label("modern"), func() {
+	When("upgrading broker version", func() {
 
 		It("should continue to work", func() {
 			ctx := context.Background()
