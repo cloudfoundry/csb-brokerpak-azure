@@ -11,7 +11,7 @@ import (
 	"github.com/onsi/ginkgo/v2"
 )
 
-func (b Broker) env() []apps.EnvVar {
+func (b *Broker) env() []apps.EnvVar {
 	var result []apps.EnvVar
 
 	for name, required := range map[string]bool{
@@ -51,6 +51,6 @@ func (b Broker) env() []apps.EnvVar {
 	return append(result, b.envExtras...)
 }
 
-func (b Broker) latestEnv() []apps.EnvVar {
+func (b *Broker) latestEnv() []apps.EnvVar {
 	return readEnvrcServices(testpath.BrokerpakFile(".envrc"))
 }
