@@ -11,7 +11,11 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-func (a *App) GET(format string, s ...any) string {
+func (a *App) GET(path string) string {
+	return a.GETf("%s", path)
+}
+
+func (a *App) GETf(format string, s ...any) string {
 	url := a.urlf(format, s...)
 	var data []byte
 
@@ -34,7 +38,11 @@ func (a *App) GET(format string, s ...any) string {
 	return string(data)
 }
 
-func (a *App) PUT(data, format string, s ...any) {
+func (a *App) PUT(data, path string) {
+	a.PUTf(data, "%s", path)
+}
+
+func (a *App) PUTf(data, format string, s ...any) {
 	url := a.urlf(format, s...)
 	GinkgoWriter.Printf("HTTP PUT: %s\n", url)
 	GinkgoWriter.Printf("Sending data: %s\n", data)
@@ -46,7 +54,11 @@ func (a *App) PUT(data, format string, s ...any) {
 	Expect(response).To(HaveHTTPStatus(http.StatusCreated, http.StatusOK))
 }
 
-func (a *App) DELETE(format string, s ...any) {
+func (a *App) DELETE(path string) {
+	a.DELETEf("%s", path)
+}
+
+func (a *App) DELETEf(format string, s ...any) {
 	url := a.urlf(format, s...)
 	GinkgoWriter.Printf("HTTP DELETE: %s\n", url)
 	request, err := http.NewRequest(http.MethodDelete, url, nil)
