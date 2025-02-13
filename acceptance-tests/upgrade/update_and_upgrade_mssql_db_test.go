@@ -82,10 +82,10 @@ var _ = Describe("UpgradeMssqlDBTest", Label("mssql-db"), func() {
 			By("setting a key-value using the first app")
 			keyOne := random.Hexadecimal()
 			valueOne := random.Hexadecimal()
-			appOne.PUT(valueOne, "%s/%s", schema, keyOne)
+			appOne.PUTf(valueOne, "%s/%s", schema, keyOne)
 
 			By("getting the value using the second app")
-			got := appTwo.GET("%s/%s", schema, keyOne)
+			got := appTwo.GETf("%s/%s", schema, keyOne)
 			Expect(got).To(Equal(valueOne))
 
 			By("pushing the development version of the broker")
@@ -98,7 +98,7 @@ var _ = Describe("UpgradeMssqlDBTest", Label("mssql-db"), func() {
 			dbInstance.Upgrade()
 
 			By("checking previously created data still accessible")
-			got = appTwo.GET("%s/%s", schema, keyOne)
+			got = appTwo.GETf("%s/%s", schema, keyOne)
 			Expect(got).To(Equal(valueOne))
 
 			By("deleting bindings created before the upgrade")
@@ -112,7 +112,7 @@ var _ = Describe("UpgradeMssqlDBTest", Label("mssql-db"), func() {
 			dbInstance.Update("-c", `{}`)
 
 			By("checking previously created data still accessible")
-			got = appTwo.GET("%s/%s", schema, keyOne)
+			got = appTwo.GETf("%s/%s", schema, keyOne)
 			Expect(got).To(Equal(valueOne))
 
 			By("dropping the schema used to allow us to unbind")
@@ -134,9 +134,9 @@ var _ = Describe("UpgradeMssqlDBTest", Label("mssql-db"), func() {
 			By("checking data can still be written and read")
 			keyTwo := random.Hexadecimal()
 			valueTwo := random.Hexadecimal()
-			appOne.PUT(valueTwo, "%s/%s", schema, keyTwo)
+			appOne.PUTf(valueTwo, "%s/%s", schema, keyTwo)
 
-			got = appTwo.GET("%s/%s", schema, keyTwo)
+			got = appTwo.GETf("%s/%s", schema, keyTwo)
 			Expect(got).To(Equal(valueTwo))
 
 			By("dropping the schema used to allow us to unbind")

@@ -73,12 +73,12 @@ var _ = Describe("MSSQL Failover Group Existing", Label("mssql-db-failover-group
 
 		By("creating a schema")
 		schema := random.Name(random.WithMaxLength(10))
-		app.PUT("", "%s?dbo=false", schema)
+		app.PUTf("", "%s?dbo=false", schema)
 
 		By("setting a key-value")
 		key := random.Hexadecimal()
 		value := random.Hexadecimal()
-		app.PUT(value, "%s/%s", schema, key)
+		app.PUTf(value, "%s/%s", schema, key)
 
 		By("connecting to the existing failover group")
 		const servicePlanExisting = "existing"
@@ -103,7 +103,7 @@ var _ = Describe("MSSQL Failover Group Existing", Label("mssql-db-failover-group
 		Expect(bindingTwo.Credential()).To(matchers.HaveCredHubRef)
 
 		By("getting the value set with the initial binding")
-		got := app.GET("%s/%s", schema, key)
+		got := app.GETf("%s/%s", schema, key)
 		Expect(got).To(Equal(value))
 
 		By("dropping the schema using the app")

@@ -74,10 +74,10 @@ var _ = Describe("UpgradeMongoTest", Label("mongodb"), func() {
 			By("creating a document using the first app")
 			documentNameOne := random.Hexadecimal()
 			documentDataOne := random.Hexadecimal()
-			appOne.PUT(documentDataOne, "%s/%s/%s", databaseName, collectionName, documentNameOne)
+			appOne.PUTf(documentDataOne, "%s/%s/%s", databaseName, collectionName, documentNameOne)
 
 			By("getting the document using the second app")
-			got := appTwo.GET("%s/%s/%s", databaseName, collectionName, documentNameOne)
+			got := appTwo.GETf("%s/%s/%s", databaseName, collectionName, documentNameOne)
 			Expect(got).To(Equal(documentDataOne))
 
 			By("pushing the development version of the broker")
@@ -93,7 +93,7 @@ var _ = Describe("UpgradeMongoTest", Label("mongodb"), func() {
 			updateMongoFirewall(azureMongoResourceName, metadata.ResourceGroup, metadata.PublicIP)
 
 			By("checking previous data still accessible")
-			got = appTwo.GET("%s/%s/%s", databaseName, collectionName, documentNameOne)
+			got = appTwo.GETf("%s/%s/%s", databaseName, collectionName, documentNameOne)
 			Expect(got).To(Equal(documentDataOne))
 
 			By("deleting bindings created before the upgrade")
@@ -110,7 +110,7 @@ var _ = Describe("UpgradeMongoTest", Label("mongodb"), func() {
 			updateMongoFirewall(azureMongoResourceName, metadata.ResourceGroup, metadata.PublicIP)
 
 			By("checking previous data still accessible")
-			got = appTwo.GET("%s/%s/%s", databaseName, collectionName, documentNameOne)
+			got = appTwo.GETf("%s/%s/%s", databaseName, collectionName, documentNameOne)
 			Expect(got).To(Equal(documentDataOne))
 
 			By("deleting bindings created before the upgrade")
@@ -123,16 +123,16 @@ var _ = Describe("UpgradeMongoTest", Label("mongodb"), func() {
 			apps.Restage(appOne, appTwo)
 
 			By("checking previous data still accessible")
-			got = appTwo.GET("%s/%s/%s", databaseName, collectionName, documentNameOne)
+			got = appTwo.GETf("%s/%s/%s", databaseName, collectionName, documentNameOne)
 			Expect(got).To(Equal(documentDataOne))
 
 			By("creating a document using the first app - post upgrade")
 			documentNameTwo := random.Hexadecimal()
 			documentDataTwo := random.Hexadecimal()
-			appOne.PUT(documentDataTwo, "%s/%s/%s", databaseName, collectionName, documentNameTwo)
+			appOne.PUTf(documentDataTwo, "%s/%s/%s", databaseName, collectionName, documentNameTwo)
 
 			By("getting the document using the second app")
-			got = appTwo.GET("%s/%s/%s", databaseName, collectionName, documentNameTwo)
+			got = appTwo.GETf("%s/%s/%s", databaseName, collectionName, documentNameTwo)
 			Expect(got).To(Equal(documentDataTwo))
 		})
 	})

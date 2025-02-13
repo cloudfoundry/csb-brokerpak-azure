@@ -78,10 +78,10 @@ var _ = Describe("UpgradeMssqlDBFailoverGroupTest", Label("mssql-db-failover-gro
 			By("setting a key-value using the first app")
 			keyOne := random.Hexadecimal()
 			valueOne := random.Hexadecimal()
-			appOne.PUT(valueOne, "%s/%s", schema, keyOne)
+			appOne.PUTf(valueOne, "%s/%s", schema, keyOne)
 
 			By("getting the value using the second app")
-			got := appTwo.GET("%s/%s", schema, keyOne)
+			got := appTwo.GETf("%s/%s", schema, keyOne)
 			Expect(got).To(Equal(valueOne))
 
 			By("pushing the development version of the broker")
@@ -101,14 +101,14 @@ var _ = Describe("UpgradeMssqlDBFailoverGroupTest", Label("mssql-db-failover-gro
 			initialFogInstance.Upgrade()
 
 			By("getting the previously set value using the second app")
-			got = appTwo.GET("%s/%s", schema, keyOne)
+			got = appTwo.GETf("%s/%s", schema, keyOne)
 			Expect(got).To(Equal(valueOne))
 
 			By("updating the instance")
 			initialFogInstance.Update("-c", "{}")
 
 			By("getting the previously set value using the second app")
-			got = appTwo.GET("%s/%s", schema, keyOne)
+			got = appTwo.GETf("%s/%s", schema, keyOne)
 			Expect(got).To(Equal(valueOne))
 
 			By("connecting to the existing failover group")
@@ -134,14 +134,14 @@ var _ = Describe("UpgradeMssqlDBFailoverGroupTest", Label("mssql-db-failover-gro
 			defer bindingTwo.Unbind()
 
 			By("getting the previously set values")
-			Expect(appTwo.GET("%s/%s", schema, keyOne)).To(Equal(valueOne))
+			Expect(appTwo.GETf("%s/%s", schema, keyOne)).To(Equal(valueOne))
 
 			By("checking data can be written and read")
 			keyTwo := random.Hexadecimal()
 			valueTwo := random.Hexadecimal()
-			appOne.PUT(valueTwo, "%s/%s", schema, keyTwo)
+			appOne.PUTf(valueTwo, "%s/%s", schema, keyTwo)
 
-			got = appTwo.GET("%s/%s", schema, keyTwo)
+			got = appTwo.GETf("%s/%s", schema, keyTwo)
 			Expect(got).To(Equal(valueTwo))
 
 			By("dropping the schema used to allow us to unbind")

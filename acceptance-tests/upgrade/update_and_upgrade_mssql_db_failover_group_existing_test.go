@@ -91,10 +91,10 @@ var _ = Describe("Upgrade and Update csb-azure-mssql-db-failover-group 'existing
 			By("setting a key-value using the first app")
 			keyOne := random.Hexadecimal()
 			valueOne := random.Hexadecimal()
-			appOne.PUT(valueOne, "%s/%s", schema, keyOne)
+			appOne.PUTf(valueOne, "%s/%s", schema, keyOne)
 
 			By("getting the value using the second app")
-			got := appTwo.GET("%s/%s", schema, keyOne)
+			got := appTwo.GETf("%s/%s", schema, keyOne)
 			Expect(got).To(Equal(valueOne))
 
 			By("pushing the development version of the broker")
@@ -117,14 +117,14 @@ var _ = Describe("Upgrade and Update csb-azure-mssql-db-failover-group 'existing
 			existingFogInstance.Upgrade()
 
 			By("getting the previously set value using the second app")
-			got = appTwo.GET("%s/%s", schema, keyOne)
+			got = appTwo.GETf("%s/%s", schema, keyOne)
 			Expect(got).To(Equal(valueOne))
 
 			By("updating the instance plan and adding the 'existing' property")
 			existingFogInstance.Update("-p", "medium", "-c", `{"existing": true}`)
 
 			By("getting the previously set value using the second app")
-			got = appTwo.GET("%s/%s", schema, keyOne)
+			got = appTwo.GETf("%s/%s", schema, keyOne)
 			Expect(got).To(Equal(valueOne))
 		})
 	})
