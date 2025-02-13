@@ -82,20 +82,20 @@ var _ = Describe("MSSQL Server and DB", Label("mssql-db"), func() {
 
 		By("creating a schema using the first app")
 		schema := random.Name(random.WithMaxLength(10))
-		appOne.PUT("", "%s?dbo=false", schema)
+		appOne.PUTf("", "%s?dbo=false", schema)
 
 		By("setting a key-value using the first app")
 		key := random.Hexadecimal()
 		value := random.Hexadecimal()
-		appOne.PUT(value, "%s/%s", schema, key)
+		appOne.PUTf(value, "%s/%s", schema, key)
 
 		By("getting the value using the second app")
-		got := appTwo.GET("%s/%s", schema, key)
+		got := appTwo.GETf("%s/%s", schema, key)
 		Expect(got).To(Equal(value))
 
 		By("deleting binding one the binding two keeps reading the value - object reassignment works")
 		binding.Unbind()
-		got = appTwo.GET("%s/%s", schema, key)
+		got = appTwo.GETf("%s/%s", schema, key)
 		Expect(got).To(Equal(value))
 
 		By("dropping the schema using the second app")

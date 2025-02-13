@@ -62,10 +62,10 @@ var _ = Describe("MongoDB", Label("mongodb"), func() {
 		By("creating a document using the first app")
 		documentName := random.Hexadecimal()
 		documentData := random.Hexadecimal()
-		appOne.PUT(documentData, "%s/%s/%s", databaseName, collectionName, documentName)
+		appOne.PUTf(documentData, "%s/%s/%s", databaseName, collectionName, documentName)
 
 		By("getting the document using the second app")
-		got := appTwo.GET("%s/%s/%s", databaseName, collectionName, documentName)
+		got := appTwo.GETf("%s/%s/%s", databaseName, collectionName, documentName)
 		Expect(got).To(Equal(documentData))
 	})
 })

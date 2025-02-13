@@ -75,15 +75,15 @@ var _ = Describe("MSSQL Server Pair and Failover Group DB", Label("mssql-db-fail
 
 		By("creating a schema using the first app")
 		schema := random.Name(random.WithMaxLength(10))
-		appOne.PUT("", "%s?dbo=false", schema)
+		appOne.PUTf("", "%s?dbo=false", schema)
 
 		By("setting a key-value using the first app")
 		keyOne := random.Hexadecimal()
 		valueOne := random.Hexadecimal()
-		appOne.PUT(valueOne, "%s/%s", schema, keyOne)
+		appOne.PUTf(valueOne, "%s/%s", schema, keyOne)
 
 		By("getting the value using the second app")
-		got := appTwo.GET("%s/%s", schema, keyOne)
+		got := appTwo.GETf("%s/%s", schema, keyOne)
 		Expect(got).To(Equal(valueOne))
 
 		By("triggering failover")
@@ -106,15 +106,15 @@ var _ = Describe("MSSQL Server Pair and Failover Group DB", Label("mssql-db-fail
 		By("setting another key-value")
 		keyTwo := random.Hexadecimal()
 		valueTwo := random.Hexadecimal()
-		appTwo.PUT(valueTwo, "%s/%s", schema, keyTwo)
+		appTwo.PUTf(valueTwo, "%s/%s", schema, keyTwo)
 
 		By("getting the previously set values")
-		Expect(appTwo.GET("%s/%s", schema, keyOne)).To(Equal(valueOne))
-		Expect(appTwo.GET("%s/%s", schema, keyTwo)).To(Equal(valueTwo))
+		Expect(appTwo.GETf("%s/%s", schema, keyOne)).To(Equal(valueOne))
+		Expect(appTwo.GETf("%s/%s", schema, keyTwo)).To(Equal(valueTwo))
 
 		By("deleting binding one the binding two keeps reading the value - object reassignment works")
 		binding.Unbind()
-		Expect(appTwo.GET("%s/%s", schema, keyOne)).To(Equal(valueOne))
+		Expect(appTwo.GETf("%s/%s", schema, keyOne)).To(Equal(valueOne))
 
 		By("reverting the failover")
 		failoverServiceInstance.Delete()
