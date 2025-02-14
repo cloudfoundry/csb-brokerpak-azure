@@ -1,6 +1,6 @@
 module postgresqlapp
 
-go 1.24.0
+go 1.23.6
 
 require (
 	github.com/cloudfoundry-community/go-cfenv v1.18.0
