@@ -14,9 +14,9 @@
 
 dependencies:
     - name: terraform-provider-azurerm
-      version: 4.19.0
-      source: https://github.com/terraform-providers/terraform-provider-azurerm/archive/v4.19.0.zip
-      source_sha256: 2372c3ccfdef775ed94867356209e8c02838aea595d5764c94e7a3ccf1082f34
+      version: 4.20.0
+      source: https://github.com/terraform-providers/terraform-provider-azurerm/archive/v4.20.0.zip
+      source_sha256: cd4319524e370a6490921b0ddc37fd80def0a2156173bea5be0741b4cba41e1d
     - name: terraform-provider-csbpg
       version: 1.2.49
       source: https://github.com/cloudfoundry/terraform-provider-csbpg/archive/v1.2.49.zip
@@ -26,9 +26,9 @@ dependencies:
       source: https://github.com/cloudfoundry/terraform-provider-csbsqlserver/archive/v1.0.41.zip
       source_sha256: 0c37b29b06042caf42c0e384c900dc81126572cecbaf6dfbf18111fda717422f
     - name: terraform-provider-random
-      version: 3.6.3
-      source: https://github.com/terraform-providers/terraform-provider-random/archive/v3.6.3.zip
-      source_sha256: 073025c3b7a2d64d60523da8b5ea29c42ffc0da752377ac5e74c8a9a4c4bb71e
+      version: 3.7.1
+      source: https://github.com/terraform-providers/terraform-provider-random/archive/v3.7.1.zip
+      source_sha256: dfe00170dd883aab09c133afc4a1547f68e21d4020e2921d20d28e174a573fdd
     - name: tofu
       version: 1.9.0
       source: https://github.com/opentofu/opentofu/archive/v1.9.0.zip
