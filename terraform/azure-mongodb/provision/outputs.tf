@@ -1,5 +1,5 @@
 output "uri" {
-  value     = replace(azurerm_cosmosdb_account.mongo-account.connection_strings[0], "/?", "/${azurerm_cosmosdb_mongo_database.mongo-db.name}?")
+  value     = replace(azurerm_cosmosdb_account.mongo-account.primary_mongodb_connection_string, "/?", "/${azurerm_cosmosdb_mongo_database.mongo-db.name}?")
   sensitive = true
 }
 output "status" {

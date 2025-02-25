@@ -38,14 +38,3 @@ func (s *ServiceInstance) UpgradeAvailable() bool {
 	Expect(json.Unmarshal([]byte(out), &receiver)).NotTo(HaveOccurred())
 	return receiver.UpgradeAvailable
 }
-
-func (s *ServiceInstance) UpgradeExpectFailure() {
-	Expect(s.UpgradeAvailable()).To(BeTrue(), "service instance does not have an upgrade available")
-
-	session := cf.Start("upgrade-service", s.Name, "--force", "--wait")
-	Eventually(session).WithTimeout(operationTimeout).Should(Exit())
-
-	out, _ := cf.Run("service", s.Name)
-	Expect(out).To(MatchRegexp(`status:\s+update failed`))
-	Expect(out).To(MatchRegexp(`message:\s+upgrade failed: Error: A resource with the ID .* already exists`))
-}
