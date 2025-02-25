@@ -90,14 +90,7 @@ var _ = Describe("UpgradeMssqlDBFailoverGroupTest", Label("mssql-db-failover-gro
 			By("validating that the instance plan is still active")
 			Expect(plans.ExistsAndAvailable(servicePlan, serviceOffering, serviceBroker.Name))
 
-			// Because the "azurerm_sql_database" resource is deleted at the same time as the "azurerm_mssql_database"
-			// is created, the upgrade will fail due to using the same name in Azure
-			By("upgrading previous services and failing")
-			initialFogInstance.UpgradeExpectFailure()
-
-			// The deletion operation of the "azurerm_sql_database" resource should now have completed, so the
-			// "azurerm_mssql_database" can be created without a name conflict in Azure
-			By("upgrading again and succeeding")
+			By("upgrading previous services")
 			initialFogInstance.Upgrade()
 
 			By("getting the previously set value using the second app")
