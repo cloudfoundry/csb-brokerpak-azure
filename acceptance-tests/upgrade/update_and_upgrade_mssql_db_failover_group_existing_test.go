@@ -104,12 +104,7 @@ var _ = Describe("Upgrade and Update csb-azure-mssql-db-failover-group 'existing
 			Expect(plans.ExistsAndAvailable(servicePlan, serviceOffering, serviceBroker.Name))
 			Expect(plans.ExistsAndAvailable(servicePlanExisting, serviceOffering, serviceBroker.Name))
 
-			By("upgrading previous service, failing first time and then repeating")
-			// Because the "azurerm_sql_database" resource is deleted at the same time as the "azurerm_mssql_database"
-			// is created, the upgrade will fail due to using the same name in Azure
-			initialFogInstance.UpgradeExpectFailure()
-			// The deletion operation of the "azurerm_sql_database" resource should now have completed, so the
-			// "azurerm_mssql_database" can be created without a name conflict in Azure
+			By("upgrading previous service")
 			initialFogInstance.Upgrade()
 
 			By("upgrading previous 'existing' service")
