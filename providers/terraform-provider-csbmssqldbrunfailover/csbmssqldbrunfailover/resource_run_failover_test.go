@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/sql/armsql"
+	"github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/sql/armsql/v2"
 	"github.com/cloudfoundry/csb-brokerpak-azure/terraform-provider-csbmssqldbrunfailover/csbmssqldbrunfailover"
 	"github.com/cloudfoundry/csb-brokerpak-azure/terraform-provider-csbmssqldbrunfailover/testhelpers"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
