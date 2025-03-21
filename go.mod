@@ -16,9 +16,7 @@ require (
 	github.com/onsi/gomega v1.36.2
 	github.com/otiai10/copy v1.14.1
 	golang.org/x/exp v0.0.0-20250218142911-aa4b98e5adaa
-	golang.org/x/tools v0.31.0
 	gopkg.in/yaml.v3 v3.0.1
-	honnef.co/go/tools v0.6.1
 )
 
 require (
@@ -129,6 +127,7 @@ require (
 	golang.org/x/sys v0.31.0 // indirect
 	golang.org/x/text v0.23.0 // indirect
 	golang.org/x/time v0.10.0 // indirect
+	golang.org/x/tools v0.31.0 // indirect
 	google.golang.org/api v0.222.0 // indirect
 	google.golang.org/genproto v0.0.0-20250219182151-9fdb1cabc7b2 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20250219182151-9fdb1cabc7b2 // indirect
@@ -138,4 +137,12 @@ require (
 	gorm.io/driver/mysql v1.5.7 // indirect
 	gorm.io/driver/sqlite v1.5.7 // indirect
 	gorm.io/gorm v1.25.12 // indirect
+	honnef.co/go/tools v0.6.1 // indirect
+)
+
+tool (
+	github.com/cloudfoundry/cloud-service-broker/v2
+	github.com/onsi/ginkgo/v2/ginkgo
+	golang.org/x/tools/cmd/goimports
+	honnef.co/go/tools/cmd/staticcheck
 )

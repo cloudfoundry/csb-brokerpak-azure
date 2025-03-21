@@ -22,12 +22,12 @@ clean: ## clean up build artifacts
 
 .PHONY: test
 test: ## run the tests
-	go run github.com/onsi/ginkgo/v2/ginkgo --label-filter="!acceptance" -r
+	go tool ginkgo --label-filter="!acceptance" -r
 
 .PHONY: run-acceptance-tests
 run-acceptance-tests: ## run the tests that are related to infrastructure
 	export TF_ACC=1; \
-	go run github.com/onsi/ginkgo/v2/ginkgo --label-filter="acceptance" -r -v
+	go tool ginkgo --label-filter="acceptance" -r -v
 
 .PHONY: run-acceptance-tests-coverage
 run-acceptance-tests-coverage: ## infrastructure tests coverage score
