@@ -28,7 +28,7 @@ BROKER_GO_OPTS=PORT=8080 \
  				GSB_PROVISION_DEFAULTS='$(GSB_PROVISION_DEFAULTS)'
 
 PAK_PATH=$(PWD)
-RUN_CSB=$(BROKER_GO_OPTS) go run github.com/cloudfoundry/cloud-service-broker/v2
+RUN_CSB=$(BROKER_GO_OPTS) go tool cloud-service-broker
 
 LDFLAGS="-X github.com/cloudfoundry/cloud-service-broker/v2/utils.Version=$(CSB_VERSION)"
 GET_CSB="env CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags $(LDFLAGS) github.com/cloudfoundry/cloud-service-broker/v2"
@@ -71,11 +71,11 @@ test: lint run-integration-tests ## run the tests
 
 .PHONY: run-integration-tests
 run-integration-tests: provider-tests ## run integration tests for this brokerpak
-	cd ./integration-tests && go run github.com/onsi/ginkgo/v2/ginkgo -r .
+	cd ./integration-tests && go tool ginkgo -r .
 
 .PHONY: run-terraform-tests
 run-terraform-tests: ## run terraform tests for this brokerpak
-	cd ./terraform-tests && go run github.com/onsi/ginkgo/v2/ginkgo -r .
+	cd ./terraform-tests && go tool ginkgo -r .
 
 .PHONY: provider-tests
 provider-tests:  ## run the integration tests associated with providers
@@ -174,7 +174,7 @@ checkgoformat: ## checks that the Go code is formatted correctly
 	fi
 
 checkgoimports: ## checks that Go imports are formatted correctly
-	@@if [ -n "$$(go run golang.org/x/tools/cmd/goimports -l -d -local csbbrokerpakazure .)" ]; then \
+	@@if [ -n "$$(go tool goimports -l -d -local csbbrokerpakazure .)" ]; then \
 		echo "goimports check failed: run 'make format'";                      \
 		exit 1;                                                                \
 	fi
@@ -183,12 +183,12 @@ vet: ## runs go vet
 	go vet ./...
 
 staticcheck: ## runs staticcheck
-	go run honnef.co/go/tools/cmd/staticcheck ./...
+	go tool staticcheck ./...
 
 .PHONY: format
 format: ## format the source
 	gofmt -s -e -l -w .
-	go run golang.org/x/tools/cmd/goimports -l -w -local csbbrokerpakazure .
+	go tool goimports -l -w -local csbbrokerpakazure .
 	terraform fmt --recursive
 
 ./providers/terraform-provider-csbmssqldbrunfailover/cloudfoundry.org/cloud-service-broker/csbmssqldbrunfailover:
