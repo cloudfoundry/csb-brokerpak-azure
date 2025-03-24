@@ -13,7 +13,7 @@ require (
 	github.com/cloudfoundry/cloud-service-broker/v2 v2.5.7
 	github.com/hashicorp/terraform-json v0.24.0
 	github.com/onsi/ginkgo/v2 v2.23.3
-	github.com/onsi/gomega v1.36.2
+	github.com/onsi/gomega v1.36.3
 	github.com/otiai10/copy v1.14.1
 	golang.org/x/exp v0.0.0-20250218142911-aa4b98e5adaa
 	gopkg.in/yaml.v3 v3.0.1
