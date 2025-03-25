@@ -141,7 +141,6 @@ require (
 )
 
 tool (
-	github.com/cloudfoundry/cloud-service-broker/v2
 	github.com/onsi/ginkgo/v2/ginkgo
 	golang.org/x/tools/cmd/goimports
 	honnef.co/go/tools/cmd/staticcheck
