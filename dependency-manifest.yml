@@ -14,9 +14,9 @@
 
 dependencies:
     - name: terraform-provider-azurerm
-      version: 4.24.0
-      source: https://github.com/terraform-providers/terraform-provider-azurerm/archive/v4.24.0.zip
-      source_sha256: be9ef18d452feba4eba5f05383630a5aaf99e6022096a8a64fa9cc512742d5b3
+      version: 4.25.0
+      source: https://github.com/terraform-providers/terraform-provider-azurerm/archive/v4.25.0.zip
+      source_sha256: f31058e66834034f20837f10180bdcf1c1cbef51705c73a99b4c4721e36a483a
     - name: terraform-provider-csbpg
       version: 1.2.52
       source: https://github.com/cloudfoundry/terraform-provider-csbpg/archive/v1.2.52.zip
