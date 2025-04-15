@@ -194,6 +194,10 @@ provision:
     type: boolean
     default: true
     details: Whether or not public network access is allowed for this CosmosDB account.
+  - field_name: server_version
+    type: string
+    default: null
+    details: The default server version for mongodb
   computed_inputs:
   - name: labels
     default: ${json.marshal(request.default_labels)}

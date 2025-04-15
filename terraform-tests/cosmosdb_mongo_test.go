@@ -53,6 +53,7 @@ var _ = Describe("CosmosDB Mongo", Label("cosmosdb-mongo-terraform"), Ordered, f
 		"labels":                          map[string]any{"k1": "v1"},
 		"indexes":                         "",
 		"unique_indexes":                  "_id,key1",
+		"server_version":                  nil,
 	}
 
 	BeforeAll(func() {
@@ -113,6 +114,12 @@ var _ = Describe("CosmosDB Mongo", Label("cosmosdb-mongo-terraform"), Ordered, f
 					),
 				}),
 			)
+
+			Expect(UnknownValuesForType(plan, "azurerm_cosmosdb_account")).To(
+				MatchKeys(IgnoreExtras, Keys{
+					"mongo_server_version": BeTrue(),
+				}),
+			)
 		})
 
 		It("should create a cosmosdb mongo database with the right values", func() {
@@ -145,6 +152,25 @@ var _ = Describe("CosmosDB Mongo", Label("cosmosdb-mongo-terraform"), Ordered, f
 							"unique": true,
 						},
 					}),
+				}),
+			)
+		})
+	})
+
+	When("server version is passed", func() {
+		var expectedServerVersion = "6.0"
+
+		BeforeAll(func() {
+			plan = ShowPlan(terraformProvisionDir, buildVars(defaultVars, map[string]any{
+				"server_version": expectedServerVersion,
+			}))
+		})
+
+		It("should create a cosmosdb account with the right values", func() {
+			Expect(AfterValuesForType(plan, "azurerm_cosmosdb_account")).To(
+				MatchKeys(IgnoreExtras, Keys{
+					"name":                 Equal("account-name"),
+					"mongo_server_version": Equal(expectedServerVersion),
 				}),
 			)
 		})
