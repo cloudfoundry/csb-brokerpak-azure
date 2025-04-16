@@ -197,7 +197,7 @@ provision:
   - field_name: server_version
     type: string
     default: null
-    details: The default server version for mongodb
+    details: The server version for MongoDB
   computed_inputs:
   - name: labels
     default: ${json.marshal(request.default_labels)}

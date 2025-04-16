@@ -158,7 +158,7 @@ var _ = Describe("CosmosDB Mongo", Label("cosmosdb-mongo-terraform"), Ordered, f
 	})
 
 	When("server version is passed", func() {
-		var expectedServerVersion = "6.0"
+		const expectedServerVersion = "6.0"
 
 		BeforeAll(func() {
 			plan = ShowPlan(terraformProvisionDir, buildVars(defaultVars, map[string]any{
