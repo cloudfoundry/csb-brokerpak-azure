@@ -28,3 +28,4 @@ variable "private_dns_zone_ids" { type = list(string) }
 variable "public_network_access_enabled" { type = bool }
 variable "unique_indexes" { type = string }
 variable "indexes" { type = string }
+variable "server_version" { type = string }

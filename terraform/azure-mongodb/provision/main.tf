@@ -36,6 +36,7 @@ resource "azurerm_cosmosdb_account" "mongo-account" {
   resource_group_name = local.resource_group
   offer_type          = "Standard"
   kind                = "MongoDB"
+  mongo_server_version = var.server_version
 
   consistency_policy {
     consistency_level       = var.consistency_level
