@@ -936,8 +936,8 @@ github.com/hashicorp/hcl/v2 v2.23.0 h1:Fphj1/gCylPxHutVSEOf2fBOh1VE4AuLV7+kbJf3q
 github.com/hashicorp/hcl/v2 v2.23.0/go.mod h1:62ZYHrXgPoX8xBnzl8QzbWq4dyDsDtfCRgIq1rbJEvA=
 github.com/hashicorp/hil v0.0.0-20241119142051-4415e05c565c h1:wl3s5+2Qlno3Ul+zSKSGe0j/awc6NaVXG3340Ce4Xc0=
 github.com/hashicorp/hil v0.0.0-20241119142051-4415e05c565c/go.mod h1:lpUcMVMpI+8yiNiMzIPTdFlHJzxEATAA/l84M4tdvq0=
-github.com/hashicorp/terraform-json v0.24.0 h1:rUiyF+x1kYawXeRth6fKFm/MdfBS6+lW4NbeATsYz8Q=
-github.com/hashicorp/terraform-json v0.24.0/go.mod h1:Nfj5ubo9xbu9uiAoZVBsNOjvNKB66Oyrvtit74kC7ow=
+github.com/hashicorp/terraform-json v0.25.0 h1:rmNqc/CIfcWawGiwXmRuiXJKEiJu1ntGoxseG1hLhoQ=
+github.com/hashicorp/terraform-json v0.25.0/go.mod h1:sMKS8fiRDX4rVlR6EJUMudg1WcanxCMoWwTLkgZP/vc=
 github.com/heptiolabs/healthcheck v0.0.0-20211123025425-613501dd5deb h1:tsEKRC3PU9rMw18w/uAptoijhgG4EvlA5kfJPtwrMDk=
 github.com/heptiolabs/healthcheck v0.0.0-20211123025425-613501dd5deb/go.mod h1:NtmN9h8vrTveVQRLHcX2HQ5wIPBDCsZ351TGbZWgg38=
 github.com/hpcloud/tail v1.0.0/go.mod h1:ab1qPbhIpdTxEkNHXyeSf5vhxWSCs/tWer42PpOxQnU=
