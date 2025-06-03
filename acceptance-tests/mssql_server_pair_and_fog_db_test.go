@@ -1,8 +1,6 @@
 package acceptance_test
 
 import (
-	"context"
-
 	"csbbrokerpakazure/acceptance-tests/helpers/apps"
 	"csbbrokerpakazure/acceptance-tests/helpers/brokers"
 	"csbbrokerpakazure/acceptance-tests/helpers/matchers"
@@ -18,15 +16,12 @@ import (
 // Does NOT use the default broker: deploys a custom-configured broker
 var _ = Describe("MSSQL Server Pair and Failover Group DB", Label("mssql-db-failover-group"), func() {
 	It("can be accessed by an app", func() {
-		ctx := context.Background()
-
 		By("creating primary and secondary DB servers in their resource group")
-		serversConfig, err := mssqlserver.CreateServerPair(ctx, metadata, subscriptionID)
-		Expect(err).NotTo(HaveOccurred())
+		serversConfig := mssqlserver.CreateServerPair(metadata, subscriptionID)
 
 		DeferCleanup(func() {
 			By("deleting the created resource group and DB servers")
-			_ = mssqlserver.Cleanup(ctx, serversConfig, subscriptionID)
+			mssqlserver.Cleanup(serversConfig, subscriptionID)
 		})
 
 		By("Create CSB with server details")

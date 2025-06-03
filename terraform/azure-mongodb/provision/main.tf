@@ -30,12 +30,12 @@ resource "azurerm_resource_group" "rg" {
 }
 
 resource "azurerm_cosmosdb_account" "mongo-account" {
-  depends_on          = [azurerm_resource_group.rg]
-  name                = var.account_name
-  location            = var.location
-  resource_group_name = local.resource_group
-  offer_type          = "Standard"
-  kind                = "MongoDB"
+  depends_on           = [azurerm_resource_group.rg]
+  name                 = var.account_name
+  location             = var.location
+  resource_group_name  = local.resource_group
+  offer_type           = "Standard"
+  kind                 = "MongoDB"
   mongo_server_version = var.server_version
 
   consistency_policy {
