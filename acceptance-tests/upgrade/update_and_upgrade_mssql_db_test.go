@@ -1,8 +1,6 @@
 package upgrade_test
 
 import (
-	"context"
-
 	"csbbrokerpakazure/acceptance-tests/helpers/apps"
 	"csbbrokerpakazure/acceptance-tests/helpers/brokers"
 	"csbbrokerpakazure/acceptance-tests/helpers/mssqlserver"
@@ -28,19 +26,18 @@ var _ = Describe("UpgradeMssqlDBTest", Label("mssql-db"), func() {
 			By("creating a service")
 			serverConfig := newDatabaseServer()
 			dbs := mssqlserver.DatabaseServer{Name: serverConfig.Name, ResourceGroup: metadata.ResourceGroup}
-			ctx := context.Background()
-			Expect(mssqlserver.CreateResourceGroup(ctx, metadata.ResourceGroup, subscriptionID))
-			Expect(mssqlserver.CreateServer(ctx, dbs, serverConfig.Username, serverConfig.Password, subscriptionID)).NotTo(HaveOccurred())
+			mssqlserver.CreateResourceGroup(metadata.ResourceGroup, subscriptionID)
+			mssqlserver.CreateServer(dbs, serverConfig.Username, serverConfig.Password, subscriptionID)
 			defer func() {
 				By("deleting the server")
-				_ = mssqlserver.CleanupServer(ctx, dbs, subscriptionID)
+				mssqlserver.CleanupServer(dbs, subscriptionID)
 			}()
 
-			Expect(mssqlserver.CreateFirewallRule(ctx, metadata, dbs, subscriptionID)).NotTo(HaveOccurred())
-			defer func() {
+			mssqlserver.CreateFirewallRule(metadata, dbs, subscriptionID)
+			DeferCleanup(func() {
 				By("deleting the firewall rule")
-				_ = mssqlserver.CleanFirewallRule(ctx, dbs, subscriptionID)
-			}()
+				mssqlserver.CleanupFirewallRule(dbs, subscriptionID)
+			})
 
 			By("reconfiguring the CSB with DB server details")
 			serverTag := random.Name(random.WithMaxLength(10))

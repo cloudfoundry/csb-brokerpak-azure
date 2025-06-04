@@ -4,22 +4,22 @@ package mssqlserver
 import (
 	"context"
 
+	. "github.com/onsi/ginkgo/v2"
+	. "github.com/onsi/gomega"
+
 	"csbbrokerpakazure/acceptance-tests/helpers/environment"
 	"csbbrokerpakazure/acceptance-tests/helpers/random"
 
-	"github.com/Azure/azure-sdk-for-go/sdk/azcore"
 	"github.com/Azure/azure-sdk-for-go/sdk/azcore/to"
 	"github.com/Azure/azure-sdk-for-go/sdk/azidentity"
 	"github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/resources/armresources/v2"
 	"github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/sql/armsql"
 )
 
-const (
-	mainLocation = "westus2"
-)
+const mainLocation = "westus2"
 
-// DatabaseServerPairCnf represents a pair of database servers
-type DatabaseServerPairCnf struct {
+// DatabaseServerPairConfig represents a pair of database servers
+type DatabaseServerPairConfig struct {
 	ServerPairTag          string
 	Username               string         `json:"admin_username"`
 	Password               string         `json:"admin_password"`
@@ -35,12 +35,12 @@ type DatabaseServer struct {
 	ResourceGroup string `json:"resource_group"`
 }
 
-// NewDatabaseServerPairCnf creates a new database server pair configuration
-func NewDatabaseServerPairCnf(metadata environment.Metadata) DatabaseServerPairCnf {
+// NewDatabaseServerPairConfig creates a new database server pair configuration
+func NewDatabaseServerPairConfig(metadata environment.Metadata) DatabaseServerPairConfig {
 	primaryResourceGroup := random.Name(random.WithPrefix(metadata.ResourceGroup))
 	secondaryResourceGroup := random.Name(random.WithPrefix(metadata.ResourceGroup))
 
-	return DatabaseServerPairCnf{
+	return DatabaseServerPairConfig{
 		ServerPairTag: random.Name(random.WithMaxLength(10)),
 		Username:      random.Name(random.WithMaxLength(10)),
 		Password:      random.Password(),
@@ -58,17 +58,17 @@ func NewDatabaseServerPairCnf(metadata environment.Metadata) DatabaseServerPairC
 }
 
 // PrimaryConfig returns the configuration for the primary database server
-func (d DatabaseServerPairCnf) PrimaryConfig() any {
+func (d DatabaseServerPairConfig) PrimaryConfig() any {
 	return d.memberConfig(d.PrimaryServer.Name, mainLocation, d.PrimaryServer.ResourceGroup)
 }
 
 // SecondaryConfig returns the configuration for the secondary database server
-func (d DatabaseServerPairCnf) SecondaryConfig() any {
+func (d DatabaseServerPairConfig) SecondaryConfig() any {
 	return d.memberConfig(d.SecondaryServer.Name, mainLocation, d.SecondaryServer.ResourceGroup)
 }
 
 // memberConfig returns the configuration for a database server
-func (d DatabaseServerPairCnf) memberConfig(name, location, rg string) any {
+func (d DatabaseServerPairConfig) memberConfig(name, location, rg string) any {
 	return struct {
 		Name          string `json:"instance_name"`
 		Username      string `json:"admin_username"`
@@ -85,7 +85,7 @@ func (d DatabaseServerPairCnf) memberConfig(name, location, rg string) any {
 }
 
 // SecondaryResourceGroupConfig returns the configuration for the secondary resource group
-func (d DatabaseServerPairCnf) SecondaryResourceGroupConfig() any {
+func (d DatabaseServerPairConfig) SecondaryResourceGroupConfig() any {
 	return struct {
 		InstanceName string `json:"instance_name"`
 		Location     string `json:"location"`
@@ -95,64 +95,30 @@ func (d DatabaseServerPairCnf) SecondaryResourceGroupConfig() any {
 	}
 }
 
-func (d DatabaseServerPairCnf) ServerPairsConfig() any {
+func (d DatabaseServerPairConfig) ServerPairsConfig() any {
 	return map[string]any{d.ServerPairTag: d}
 }
 
 // CreateServerPair creates a new database server pair
-func CreateServerPair(ctx context.Context, metadata environment.Metadata, subscriptionID string) (DatabaseServerPairCnf, error) {
+func CreateServerPair(metadata environment.Metadata, subscriptionID string) DatabaseServerPairConfig {
+	cnf := NewDatabaseServerPairConfig(metadata)
 
-	cred, err := azidentity.NewDefaultAzureCredential(nil)
-	if err != nil {
-		return DatabaseServerPairCnf{}, err
-	}
+	CreateResourceGroup(cnf.PrimaryServer.ResourceGroup, subscriptionID)
+	CreateServer(cnf.PrimaryServer, cnf.Username, cnf.Password, subscriptionID)
+	CreateFirewallRule(metadata, cnf.PrimaryServer, subscriptionID)
+	CreateResourceGroup(cnf.SecondaryServer.ResourceGroup, subscriptionID)
+	CreateServer(cnf.SecondaryServer, cnf.Username, cnf.Password, subscriptionID)
+	CreateFirewallRule(metadata, cnf.SecondaryServer, subscriptionID)
 
-	cnf := NewDatabaseServerPairCnf(metadata)
-
-	if err := createResourceGroup(ctx, cred, cnf.PrimaryServer.ResourceGroup, subscriptionID); err != nil {
-		return DatabaseServerPairCnf{}, err
-	}
-
-	if err := createServer(ctx, cred, cnf.PrimaryServer, cnf.Username, cnf.Password, subscriptionID); err != nil {
-		return DatabaseServerPairCnf{}, err
-	}
-
-	if err := createFirewallRule(ctx, cred, metadata, cnf.PrimaryServer, subscriptionID); err != nil {
-		return DatabaseServerPairCnf{}, err
-	}
-
-	if err := createResourceGroup(ctx, cred, cnf.SecondaryServer.ResourceGroup, subscriptionID); err != nil {
-		return DatabaseServerPairCnf{}, err
-	}
-
-	if err := createServer(ctx, cred, cnf.SecondaryServer, cnf.Username, cnf.Password, subscriptionID); err != nil {
-		return DatabaseServerPairCnf{}, err
-	}
-
-	if err := createFirewallRule(ctx, cred, metadata, cnf.SecondaryServer, subscriptionID); err != nil {
-		return DatabaseServerPairCnf{}, err
-	}
-
-	return cnf, nil
+	return cnf
 }
 
-func CreateFirewallRule(ctx context.Context, metadata environment.Metadata, member DatabaseServer, subscriptionID string) error {
-	cred, err := azidentity.NewDefaultAzureCredential(nil)
-	if err != nil {
-		return err
-	}
+func CreateFirewallRule(metadata environment.Metadata, member DatabaseServer, subscriptionID string) {
+	cred := must(azidentity.NewDefaultAzureCredential(nil))
+	firewallClient := must(armsql.NewFirewallRulesClient(subscriptionID, cred, nil))
 
-	return createFirewallRule(ctx, cred, metadata, member, subscriptionID)
-}
-
-func createFirewallRule(ctx context.Context, cred azcore.TokenCredential, metadata environment.Metadata, member DatabaseServer, subscriptionID string) error {
-	firewallClient, err := armsql.NewFirewallRulesClient(subscriptionID, cred, nil)
-	if err != nil {
-		return err
-	}
-
-	_, err = firewallClient.CreateOrUpdate(
-		ctx,
+	_, err := firewallClient.CreateOrUpdate(
+		context.Background(),
 		member.ResourceGroup,
 		member.Name,
 		"firewallrule-"+member.Name,
@@ -164,134 +130,52 @@ func createFirewallRule(ctx context.Context, cred azcore.TokenCredential, metada
 		},
 		nil,
 	)
-	if err != nil {
-		return err
-	}
-
-	return nil
-
+	Expect(err).NotTo(HaveOccurred())
 }
 
-func CleanFirewallRule(ctx context.Context, member DatabaseServer, subscriptionID string) error {
-	cred, err := azidentity.NewDefaultAzureCredential(nil)
-	if err != nil {
-		return err
-	}
+func CleanupFirewallRule(member DatabaseServer, subscriptionID string) {
+	cred := must(azidentity.NewDefaultAzureCredential(nil))
+	firewallClient := must(armsql.NewFirewallRulesClient(subscriptionID, cred, nil))
 
-	return cleanupFirewallRule(ctx, cred, member, subscriptionID)
+	_, err := firewallClient.Delete(context.Background(), member.ResourceGroup, member.Name, "firewallrule-"+member.Name, nil)
+	Expect(err).NotTo(HaveOccurred())
 }
 
-func cleanupFirewallRule(ctx context.Context, cred azcore.TokenCredential, member DatabaseServer, subscriptionID string) error {
-	firewallClient, err := armsql.NewFirewallRulesClient(subscriptionID, cred, nil)
-	if err != nil {
-		return err
-	}
+func CleanupServer(member DatabaseServer, subscriptionID string) {
+	cred := must(azidentity.NewDefaultAzureCredential(nil))
+	serversClient := must(armsql.NewServersClient(subscriptionID, cred, nil))
 
-	_, err = firewallClient.Delete(ctx, member.ResourceGroup, member.Name, "firewallrule-"+member.Name, nil)
-	if err != nil {
-		return err
-	}
+	pollerResp := must(serversClient.BeginDelete(context.Background(), member.ResourceGroup, member.Name, nil))
 
-	return nil
+	_, err := pollerResp.PollUntilDone(context.Background(), nil)
+	Expect(err).NotTo(HaveOccurred())
 }
 
-func CleanupServer(ctx context.Context, member DatabaseServer, subscriptionID string) error {
-	cred, err := azidentity.NewDefaultAzureCredential(nil)
-	if err != nil {
-		return err
-	}
-
-	return cleanupServer(ctx, cred, member, subscriptionID)
+func Cleanup(cnf DatabaseServerPairConfig, subscriptionID string) {
+	CleanupFirewallRule(cnf.PrimaryServer, subscriptionID)
+	CleanupServer(cnf.PrimaryServer, subscriptionID)
+	cleanupResourceGroup(cnf.ResourceGroup, subscriptionID)
+	CleanupFirewallRule(cnf.SecondaryServer, subscriptionID)
+	CleanupServer(cnf.SecondaryServer, subscriptionID)
+	cleanupResourceGroup(cnf.SecondaryResourceGroup, subscriptionID)
 }
 
-func cleanupServer(ctx context.Context, cred azcore.TokenCredential, member DatabaseServer, subscriptionID string) error {
+func cleanupResourceGroup(resourceGroupName, subscriptionID string) {
+	cred := must(azidentity.NewDefaultAzureCredential(nil))
+	resourceGroupClient := must(armresources.NewResourceGroupsClient(subscriptionID, cred, nil))
 
-	serversClient, err := armsql.NewServersClient(subscriptionID, cred, nil)
-	if err != nil {
-		return err
-	}
+	pollerResp := must(resourceGroupClient.BeginDelete(context.Background(), resourceGroupName, nil))
 
-	pollerResp, err := serversClient.BeginDelete(ctx, member.ResourceGroup, member.Name, nil)
-	if err != nil {
-		return err
-	}
-
-	_, err = pollerResp.PollUntilDone(ctx, nil)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	_, err := pollerResp.PollUntilDone(context.Background(), nil)
+	Expect(err).NotTo(HaveOccurred())
 }
 
-func Cleanup(ctx context.Context, cnf DatabaseServerPairCnf, subscriptionID string) error {
-	cred, err := azidentity.NewDefaultAzureCredential(nil)
-	if err != nil {
-		return err
-	}
+func CreateServer(member DatabaseServer, username, password, subscriptionID string) {
+	cred := must(azidentity.NewDefaultAzureCredential(nil))
+	serversClient := must(armsql.NewServersClient(subscriptionID, cred, nil))
 
-	if err := cleanupFirewallRule(ctx, cred, cnf.PrimaryServer, subscriptionID); err != nil {
-		return err
-	}
-
-	if err := cleanupServer(ctx, cred, cnf.PrimaryServer, subscriptionID); err != nil {
-		return err
-	}
-
-	if err := cleanupResourceGroup(ctx, cred, cnf.ResourceGroup, subscriptionID); err != nil {
-		return err
-	}
-
-	if err := cleanupFirewallRule(ctx, cred, cnf.SecondaryServer, subscriptionID); err != nil {
-		return err
-	}
-
-	if err := cleanupServer(ctx, cred, cnf.SecondaryServer, subscriptionID); err != nil {
-		return err
-	}
-
-	if err := cleanupResourceGroup(ctx, cred, cnf.SecondaryResourceGroup, subscriptionID); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func cleanupResourceGroup(ctx context.Context, cred azcore.TokenCredential, resourceGroupName, subscriptionID string) error {
-	resourceGroupClient, err := armresources.NewResourceGroupsClient(subscriptionID, cred, nil)
-	if err != nil {
-		return err
-	}
-
-	pollerResp, err := resourceGroupClient.BeginDelete(ctx, resourceGroupName, nil)
-	if err != nil {
-		return err
-	}
-
-	_, err = pollerResp.PollUntilDone(ctx, nil)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func CreateServer(ctx context.Context, member DatabaseServer, username, password, subscriptionID string) error {
-	cred, err := azidentity.NewDefaultAzureCredential(nil)
-	if err != nil {
-		return err
-	}
-
-	return createServer(ctx, cred, member, username, password, subscriptionID)
-}
-
-func createServer(ctx context.Context, cred azcore.TokenCredential, member DatabaseServer, username, password, subscriptionID string) error {
-	serversClient, err := armsql.NewServersClient(subscriptionID, cred, nil)
-	if err != nil {
-		return err
-	}
-
-	pollerResp, err := serversClient.BeginCreateOrUpdate(
-		ctx,
+	pollerResp := must(serversClient.BeginCreateOrUpdate(
+		context.Background(),
 		member.ResourceGroup,
 		member.Name,
 		armsql.Server{
@@ -302,38 +186,23 @@ func createServer(ctx context.Context, cred azcore.TokenCredential, member Datab
 			},
 		},
 		nil,
-	)
-	if err != nil {
-		return err
-	}
+	))
 
-	_, err = pollerResp.PollUntilDone(ctx, nil)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	_, err := pollerResp.PollUntilDone(context.Background(), nil)
+	Expect(err).NotTo(HaveOccurred())
 }
 
-func createResourceGroup(ctx context.Context, cred azcore.TokenCredential, resourceGroupName, subscriptionID string) error {
-	resourceGroupClient, err := armresources.NewResourceGroupsClient(subscriptionID, cred, nil)
-	if err != nil {
-		return err
-	}
+func CreateResourceGroup(resourceGroupName, subscriptionID string) {
+	cred := must(azidentity.NewDefaultAzureCredential(nil))
+	resourceGroupClient := must(armresources.NewResourceGroupsClient(subscriptionID, cred, nil))
 
-	_, err = resourceGroupClient.CreateOrUpdate(ctx, resourceGroupName, armresources.ResourceGroup{Location: to.Ptr(mainLocation)}, nil)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	_, err := resourceGroupClient.CreateOrUpdate(context.Background(), resourceGroupName, armresources.ResourceGroup{Location: to.Ptr(mainLocation)}, nil)
+	Expect(err).NotTo(HaveOccurred())
 }
 
-func CreateResourceGroup(ctx context.Context, resourceGroupName, subscriptionID string) error {
-	cred, err := azidentity.NewDefaultAzureCredential(nil)
-	if err != nil {
-		return err
-	}
+func must[A any](input A, err error) A {
+	GinkgoHelper()
 
-	return createResourceGroup(ctx, cred, resourceGroupName, subscriptionID)
+	Expect(err).NotTo(HaveOccurred())
+	return input
 }

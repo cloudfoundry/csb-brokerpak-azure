@@ -1,8 +1,6 @@
 package upgrade_test
 
 import (
-	"context"
-
 	"csbbrokerpakazure/acceptance-tests/helpers/apps"
 	"csbbrokerpakazure/acceptance-tests/helpers/brokers"
 	"csbbrokerpakazure/acceptance-tests/helpers/mssqlserver"
@@ -17,15 +15,12 @@ import (
 var _ = Describe("Upgrade and Update csb-azure-mssql-db-failover-group 'existing' plan", Label("mssql-db-failover-group-existing"), func() {
 	When("upgrading broker version", func() {
 		It("should continue to work", func() {
-			ctx := context.Background()
-
 			By("creating primary and secondary DB servers in their resource group")
-			serversConfig, err := mssqlserver.CreateServerPair(ctx, metadata, subscriptionID)
-			Expect(err).NotTo(HaveOccurred())
+			serversConfig := mssqlserver.CreateServerPair(metadata, subscriptionID)
 
 			DeferCleanup(func() {
 				By("deleting the created resource group and DB servers")
-				Expect(mssqlserver.Cleanup(ctx, serversConfig, subscriptionID)).To(Succeed())
+				mssqlserver.Cleanup(serversConfig, subscriptionID)
 			})
 
 			By("pushing latest released broker version")
