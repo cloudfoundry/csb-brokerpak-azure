@@ -1,8 +1,6 @@
 package upgrade_test
 
 import (
-	"context"
-
 	"csbbrokerpakazure/acceptance-tests/helpers/apps"
 	"csbbrokerpakazure/acceptance-tests/helpers/brokers"
 	"csbbrokerpakazure/acceptance-tests/helpers/mssqlserver"
@@ -17,19 +15,12 @@ import (
 var _ = Describe("UpgradeMssqlDBFailoverGroupTest", Label("mssql-db-failover-group"), func() {
 	When("upgrading broker version", func() {
 		It("should continue to work", func() {
-
-			ctx := context.Background()
-
 			By("creating primary and secondary DB servers in their resource group")
-			serversConfig, err := mssqlserver.CreateServerPair(ctx, metadata, subscriptionID)
-			Expect(err).NotTo(HaveOccurred())
+			serversConfig := mssqlserver.CreateServerPair(metadata, subscriptionID)
 
 			DeferCleanup(func() {
-				GinkgoHelper()
-
 				By("deleting the created resource group and DB servers")
-				err := mssqlserver.Cleanup(ctx, serversConfig, subscriptionID)
-				Expect(err).NotTo(HaveOccurred())
+				mssqlserver.Cleanup(serversConfig, subscriptionID)
 			})
 
 			By("pushing latest released broker version")

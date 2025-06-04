@@ -1,8 +1,6 @@
 package acceptance_test
 
 import (
-	"context"
-
 	"csbbrokerpakazure/acceptance-tests/helpers/apps"
 	"csbbrokerpakazure/acceptance-tests/helpers/brokers"
 	"csbbrokerpakazure/acceptance-tests/helpers/matchers"
@@ -33,19 +31,18 @@ var _ = Describe("MSSQL Server and DB", Label("mssql-db"), func() {
 
 		By("creating a server")
 		dbs := mssqlserver.DatabaseServer{Name: serverConfig.Name, ResourceGroup: metadata.ResourceGroup}
-		ctx := context.Background()
-		Expect(mssqlserver.CreateResourceGroup(ctx, metadata.ResourceGroup, subscriptionID))
-		Expect(mssqlserver.CreateServer(ctx, dbs, serverConfig.Username, serverConfig.Password, subscriptionID)).NotTo(HaveOccurred())
-		defer func() {
+		mssqlserver.CreateResourceGroup(metadata.ResourceGroup, subscriptionID)
+		mssqlserver.CreateServer(dbs, serverConfig.Username, serverConfig.Password, subscriptionID)
+		DeferCleanup(func() {
 			By("deleting the server")
-			_ = mssqlserver.CleanupServer(ctx, dbs, subscriptionID)
-		}()
+			mssqlserver.CleanupServer(dbs, subscriptionID)
+		})
 
-		Expect(mssqlserver.CreateFirewallRule(ctx, metadata, dbs, subscriptionID)).NotTo(HaveOccurred())
-		defer func() {
+		mssqlserver.CreateFirewallRule(metadata, dbs, subscriptionID)
+		DeferCleanup(func() {
 			By("deleting the firewall rule")
-			_ = mssqlserver.CleanFirewallRule(ctx, dbs, subscriptionID)
-		}()
+			mssqlserver.CleanupFirewallRule(dbs, subscriptionID)
+		})
 
 		By("creating a database in the server")
 		const serviceOffering = "csb-azure-mssql-db"
