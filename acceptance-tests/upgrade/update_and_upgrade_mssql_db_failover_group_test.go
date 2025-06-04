@@ -16,7 +16,7 @@ var _ = Describe("UpgradeMssqlDBFailoverGroupTest", Label("mssql-db-failover-gro
 	When("upgrading broker version", func() {
 		It("should continue to work", func() {
 			By("creating primary and secondary DB servers in their resource group")
-			serversConfig := mssqlserver.CreateServerPair(metadata, subscriptionID)
+			serversConfig := mssqlserver.CreateServerPair(metadata, firewallStartIP, firewallEndIP, subscriptionID)
 
 			DeferCleanup(func() {
 				By("deleting the created resource group and DB servers")
