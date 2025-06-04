@@ -1,6 +1,7 @@
 package acceptance_test
 
 import (
+	"flag"
 	"os"
 	"testing"
 
@@ -16,9 +17,19 @@ func TestAcceptanceTests(t *testing.T) {
 }
 
 var (
-	metadata       environment.Metadata
-	subscriptionID string
+	metadata        environment.Metadata
+	subscriptionID  string
+	firewallStartIP string
+	firewallEndIP   string
 )
+
+func init() {
+	flag.StringVar(&firewallStartIP, "firewall-start-ip", "", "start IP for firewall hole")
+	flag.StringVar(&firewallEndIP, "firewall-end-ip", "", "end IP for firewall hole")
+	if firewallStartIP != "" && firewallEndIP == "" || firewallStartIP == "" && firewallEndIP != "" {
+		panic("--firewall-start-ip and --firewall-end-ip must be specified together")
+	}
+}
 
 var _ = BeforeSuite(func() {
 	metadata = environment.ReadMetadata()

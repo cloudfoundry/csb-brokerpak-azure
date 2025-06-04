@@ -33,7 +33,7 @@ var _ = Describe("UpgradeMssqlDBTest", Label("mssql-db"), func() {
 				mssqlserver.CleanupServer(dbs, subscriptionID)
 			}()
 
-			mssqlserver.CreateFirewallRule(metadata, dbs, subscriptionID)
+			mssqlserver.CreateFirewallRule(metadata, firewallStartIP, firewallEndIP, dbs, subscriptionID)
 			DeferCleanup(func() {
 				By("deleting the firewall rule")
 				mssqlserver.CleanupFirewallRule(dbs, subscriptionID)

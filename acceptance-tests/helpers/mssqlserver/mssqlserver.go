@@ -100,22 +100,35 @@ func (d DatabaseServerPairConfig) ServerPairsConfig() any {
 }
 
 // CreateServerPair creates a new database server pair
-func CreateServerPair(metadata environment.Metadata, subscriptionID string) DatabaseServerPairConfig {
+func CreateServerPair(metadata environment.Metadata, firewallStartIP, firewallEndIP string, subscriptionID string) DatabaseServerPairConfig {
 	cnf := NewDatabaseServerPairConfig(metadata)
 
 	CreateResourceGroup(cnf.PrimaryServer.ResourceGroup, subscriptionID)
 	CreateServer(cnf.PrimaryServer, cnf.Username, cnf.Password, subscriptionID)
-	CreateFirewallRule(metadata, cnf.PrimaryServer, subscriptionID)
+	CreateFirewallRule(metadata, firewallStartIP, firewallEndIP, cnf.PrimaryServer, subscriptionID)
 	CreateResourceGroup(cnf.SecondaryServer.ResourceGroup, subscriptionID)
 	CreateServer(cnf.SecondaryServer, cnf.Username, cnf.Password, subscriptionID)
-	CreateFirewallRule(metadata, cnf.SecondaryServer, subscriptionID)
+	CreateFirewallRule(metadata, firewallStartIP, firewallEndIP, cnf.SecondaryServer, subscriptionID)
 
 	return cnf
 }
 
-func CreateFirewallRule(metadata environment.Metadata, member DatabaseServer, subscriptionID string) {
+func CreateFirewallRule(metadata environment.Metadata, firewallStartIP, firewallEndIP string, member DatabaseServer, subscriptionID string) {
 	cred := must(azidentity.NewDefaultAzureCredential(nil))
 	firewallClient := must(armsql.NewFirewallRulesClient(subscriptionID, cred, nil))
+
+	// Use PublicIP from metadata if no overrides were specified
+	if firewallStartIP == "" && firewallEndIP == "" && metadata.PublicIP != "" {
+		GinkgoWriter.Println("Using public IP from metadata")
+		firewallStartIP = metadata.PublicIP
+		firewallEndIP = metadata.PublicIP
+	}
+
+	// Skip firewall rule creation if there are no IPs available
+	if firewallStartIP == "" || firewallEndIP == "" {
+		GinkgoWriter.Println("Skipping firewall rule creation")
+		return
+	}
 
 	_, err := firewallClient.CreateOrUpdate(
 		context.Background(),
@@ -124,8 +137,8 @@ func CreateFirewallRule(metadata environment.Metadata, member DatabaseServer, su
 		"firewallrule-"+member.Name,
 		armsql.FirewallRule{
 			Properties: &armsql.ServerFirewallRuleProperties{
-				StartIPAddress: to.Ptr(metadata.PublicIP),
-				EndIPAddress:   to.Ptr(metadata.PublicIP),
+				StartIPAddress: to.Ptr(firewallStartIP),
+				EndIPAddress:   to.Ptr(firewallEndIP),
 			},
 		},
 		nil,

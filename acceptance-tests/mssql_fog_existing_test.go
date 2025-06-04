@@ -18,7 +18,7 @@ import (
 var _ = Describe("MSSQL Failover Group Existing", Label("mssql-db-failover-group-existing"), func() {
 	It("can be accessed by an app", func() {
 		By("creating primary and secondary DB servers in their resource group")
-		serversConfig := mssqlserver.CreateServerPair(metadata, subscriptionID)
+		serversConfig := mssqlserver.CreateServerPair(metadata, firewallStartIP, firewallEndIP, subscriptionID)
 
 		DeferCleanup(func() {
 			By("deleting the created resource group and DB servers")
