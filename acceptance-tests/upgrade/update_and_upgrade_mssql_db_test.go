@@ -21,17 +21,17 @@ var _ = Describe("UpgradeMssqlDBTest", Label("mssql-db"), func() {
 				brokers.WithSourceDir(releasedBuildDir),
 				brokers.WithReleaseEnv(releasedBuildDir),
 			)
-			defer serviceBroker.Delete()
+			DeferCleanup(serviceBroker.Delete)
 
 			By("creating a service")
 			serverConfig := newDatabaseServer()
 			dbs := mssqlserver.DatabaseServer{Name: serverConfig.Name, ResourceGroup: metadata.ResourceGroup}
 			mssqlserver.CreateResourceGroup(metadata.ResourceGroup, subscriptionID)
 			mssqlserver.CreateServer(dbs, serverConfig.Username, serverConfig.Password, subscriptionID)
-			defer func() {
+			DeferCleanup(func() {
 				By("deleting the server")
 				mssqlserver.CleanupServer(dbs, subscriptionID)
-			}()
+			})
 
 			mssqlserver.CreateFirewallRule(metadata, firewallStartIP, firewallEndIP, dbs, subscriptionID)
 			DeferCleanup(func() {
@@ -51,7 +51,9 @@ var _ = Describe("UpgradeMssqlDBTest", Label("mssql-db"), func() {
 			// We can't delete service brokers that have serviceInstances, so we need to ensure the service instance
 			// is cleaned up regardless as to whether it wa successful. This is important when we use our own service broker
 			// (which can only have 5 instances at any time) to prevent subsequent test failures.
-			defer services.Delete(serviceName)
+			DeferCleanup(func() {
+				services.Delete(serviceName)
+			})
 			dbInstance := services.CreateInstance(
 				serviceOffering,
 				servicePlan,
