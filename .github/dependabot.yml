@@ -22,13 +22,6 @@ updates:
   labels:
     - "test-dependencies"
 - package-ecosystem: gomod
-  directory: "/acceptance-tests/apps/postgresqlapp"
-  schedule:
-    interval: "weekly"
-    day: "saturday"
-  labels:
-    - "test-dependencies"
-- package-ecosystem: gomod
   directory: "/acceptance-tests/apps/mssqlapp"
   schedule:
     interval: "weekly"
