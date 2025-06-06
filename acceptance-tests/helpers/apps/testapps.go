@@ -7,10 +7,9 @@ import (
 type AppCode string
 
 const (
-	MongoDB    AppCode = "mongodbapp"
-	MSSQL      AppCode = "mssqlapp"
-	PostgreSQL AppCode = "postgresqlapp"
-	Redis      AppCode = "redisapp"
+	MongoDB AppCode = "mongodbapp"
+	MSSQL   AppCode = "mssqlapp"
+	Redis   AppCode = "redisapp"
 )
 
 func (a AppCode) Dir() string {
