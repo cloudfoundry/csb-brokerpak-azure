@@ -33,14 +33,14 @@ terraform_binaries:
   source: https://github.com/opentofu/opentofu/archive/v1.9.1.zip
   default: true
 - name: terraform-provider-azurerm
-  version: 4.32.0
-  source: https://github.com/terraform-providers/terraform-provider-azurerm/archive/v4.32.0.zip
+  version: 4.33.0
+  source: https://github.com/terraform-providers/terraform-provider-azurerm/archive/v4.33.0.zip
 - name: terraform-provider-random
   version: 3.7.2
   source: https://github.com/terraform-providers/terraform-provider-random/archive/v3.7.2.zip
 - name: terraform-provider-csbsqlserver
-  version: 1.0.49
-  source: https://github.com/cloudfoundry/terraform-provider-csbsqlserver/archive/v1.0.49.zip
+  version: 1.0.50
+  source: https://github.com/cloudfoundry/terraform-provider-csbsqlserver/archive/v1.0.50.zip
   provider: cloudfoundry.org/cloud-service-broker/csbsqlserver
   url_template: https://github.com/cloudfoundry/${name}/releases/download/v${version}/${name}_${version}_${os}_${arch}.zip
 - name: terraform-provider-csbmssqldbrunfailover
