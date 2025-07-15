@@ -14,10 +14,6 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-func updateMongoFirewall(serviceName, resourceGroup, publicIP string) {
-	az.Run("cosmosdb", "update", "--ip-range-filter", publicIP, "--name", serviceName, "--resource-group", resourceGroup)
-}
-
 var _ = Describe("UpgradeMongoTest", Label("mongodb"), func() {
 	When("upgrading broker version", func() {
 		It("should continue to work", func() {
@@ -58,7 +54,7 @@ var _ = Describe("UpgradeMongoTest", Label("mongodb"), func() {
 
 			By("changing the firewall to allow comms")
 			azureMongoResourceName := fmt.Sprintf("csb%s", serviceInstance.GUID())
-			updateMongoFirewall(azureMongoResourceName, metadata.ResourceGroup, metadata.PublicIP)
+			updateMongoDBRangeFilter(azureMongoResourceName)
 
 			By("pushing the unstarted app twice")
 			appOne := apps.Push(apps.WithApp(apps.MongoDB))
@@ -91,7 +87,7 @@ var _ = Describe("UpgradeMongoTest", Label("mongodb"), func() {
 			serviceInstance.Upgrade()
 
 			By("changing the firewall to allow comms")
-			updateMongoFirewall(azureMongoResourceName, metadata.ResourceGroup, metadata.PublicIP)
+			updateMongoDBRangeFilter(azureMongoResourceName)
 
 			By("checking previous data still accessible")
 			got = appTwo.GETf("%s/%s/%s", databaseName, collectionName, documentNameOne)
@@ -108,7 +104,7 @@ var _ = Describe("UpgradeMongoTest", Label("mongodb"), func() {
 			serviceInstance.Update("-c", `{}`)
 
 			By("changing the firewall to allow comms")
-			updateMongoFirewall(azureMongoResourceName, metadata.ResourceGroup, metadata.PublicIP)
+			updateMongoDBRangeFilter(azureMongoResourceName)
 
 			By("checking previous data still accessible")
 			got = appTwo.GETf("%s/%s/%s", databaseName, collectionName, documentNameOne)
@@ -138,3 +134,20 @@ var _ = Describe("UpgradeMongoTest", Label("mongodb"), func() {
 		})
 	})
 })
+
+func updateMongoDBRangeFilter(serviceName string) {
+	var filter string
+	switch {
+	case firewallCIDR != "":
+		GinkgoWriter.Println("Using specified firewall CIDR")
+		filter = firewallCIDR
+	case metadata.PublicIP != "":
+		GinkgoWriter.Println("Using public IP from metadata")
+		filter = metadata.PublicIP
+	default:
+		GinkgoWriter.Println("Not updating firewall")
+		return
+	}
+
+	az.Run("cosmosdb", "update", "--ip-range-filter", filter, "--name", serviceName, "--resource-group", metadata.ResourceGroup)
+}

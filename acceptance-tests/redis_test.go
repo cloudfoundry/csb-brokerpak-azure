@@ -23,15 +23,7 @@ var _ = Describe("Redis", Label("redis"), func() {
 
 		By("updating the firewall to allow comms")
 		serviceName := fmt.Sprintf("csb-redis-%s", serviceInstance.GUID())
-		az.Run("redis",
-			"firewall-rules",
-			"create",
-			"--name", serviceName,
-			"--resource-group", metadata.ResourceGroup,
-			"--rule-name", "allowtestrule",
-			"--start-ip", metadata.PublicIP,
-			"--end-ip", metadata.PublicIP,
-		)
+		updateRedisFirewall(serviceName)
 
 		By("pushing the unstarted app twice")
 		appOne := apps.Push(apps.WithApp(apps.Redis))
@@ -58,3 +50,28 @@ var _ = Describe("Redis", Label("redis"), func() {
 		Expect(got).To(Equal(value))
 	})
 })
+
+func updateRedisFirewall(serviceName string) {
+	// Use PublicIP from metadata if no overrides were specified
+	if firewallStartIP == "" && firewallEndIP == "" && metadata.PublicIP != "" {
+		GinkgoWriter.Println("Using public IP from metadata")
+		firewallStartIP = metadata.PublicIP
+		firewallEndIP = metadata.PublicIP
+	}
+
+	// Skip firewall rule creation if there are no IPs available
+	if firewallStartIP == "" || firewallEndIP == "" {
+		GinkgoWriter.Println("Skipping firewall rule creation")
+		return
+	}
+
+	az.Run("redis",
+		"firewall-rules",
+		"create",
+		"--name", serviceName,
+		"--resource-group", metadata.ResourceGroup,
+		"--rule-name", "allowtestrule",
+		"--start-ip", firewallStartIP,
+		"--end-ip", firewallEndIP,
+	)
+}
