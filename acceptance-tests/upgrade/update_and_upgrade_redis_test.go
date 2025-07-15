@@ -15,18 +15,6 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-func updateRedisFirewall(serviceName, resourceGroup, publicIP string) {
-	az.Run("redis",
-		"firewall-rules",
-		"create",
-		"--name", serviceName,
-		"--resource-group", resourceGroup,
-		"--rule-name", "allowtestrule",
-		"--start-ip", publicIP,
-		"--end-ip", publicIP,
-	)
-}
-
 var _ = Describe("UpgradeRedisTest", Label("redis"), func() {
 	When("upgrading broker version", func() {
 		It("should continue to work", func() {
@@ -56,7 +44,7 @@ var _ = Describe("UpgradeRedisTest", Label("redis"), func() {
 
 			By("changing the firewall to allow comms")
 			azureRedisResourceName := fmt.Sprintf("csb-redis-%s", serviceInstance.GUID())
-			updateRedisFirewall(azureRedisResourceName, metadata.ResourceGroup, metadata.PublicIP)
+			updateRedisFirewall(azureRedisResourceName)
 
 			By("pushing the unstarted app twice")
 			appOne := apps.Push(apps.WithApp(apps.Redis))
@@ -87,7 +75,7 @@ var _ = Describe("UpgradeRedisTest", Label("redis"), func() {
 			serviceInstance.Upgrade()
 
 			By("changing the firewall to allow comms")
-			updateRedisFirewall(azureRedisResourceName, metadata.ResourceGroup, metadata.PublicIP)
+			updateRedisFirewall(azureRedisResourceName)
 
 			By("checking previously written data still accessible")
 			Expect(appTwo.GET(key1)).To(Equal(value1))
@@ -112,7 +100,7 @@ var _ = Describe("UpgradeRedisTest", Label("redis"), func() {
 			serviceInstance.Update("-c", `{}`)
 
 			By("changing the firewall to allow comms")
-			updateRedisFirewall(azureRedisResourceName, metadata.ResourceGroup, metadata.PublicIP)
+			updateRedisFirewall(azureRedisResourceName)
 
 			By("checking it still works")
 			key3 := random.Hexadecimal()
@@ -122,3 +110,28 @@ var _ = Describe("UpgradeRedisTest", Label("redis"), func() {
 		})
 	})
 })
+
+func updateRedisFirewall(serviceName string) {
+	// Use PublicIP from metadata if no overrides were specified
+	if firewallStartIP == "" && firewallEndIP == "" && metadata.PublicIP != "" {
+		GinkgoWriter.Println("Using public IP from metadata")
+		firewallStartIP = metadata.PublicIP
+		firewallEndIP = metadata.PublicIP
+	}
+
+	// Skip firewall rule creation if there are no IPs available
+	if firewallStartIP == "" || firewallEndIP == "" {
+		GinkgoWriter.Println("Skipping firewall rule creation")
+		return
+	}
+
+	az.Run("redis",
+		"firewall-rules",
+		"create",
+		"--name", serviceName,
+		"--resource-group", metadata.ResourceGroup,
+		"--rule-name", "allowtestrule",
+		"--start-ip", firewallStartIP,
+		"--end-ip", firewallEndIP,
+	)
+}
