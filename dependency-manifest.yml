@@ -18,13 +18,13 @@ dependencies:
       source: https://github.com/terraform-providers/terraform-provider-azurerm/archive/v4.39.0.zip
       source_sha256: 88106e0f817f993b562ac9ee34ebe6ba45c3a13807717d770d53bc768a8a9a5f
     - name: terraform-provider-csbpg
-      version: 1.2.60
-      source: https://github.com/cloudfoundry/terraform-provider-csbpg/archive/v1.2.60.zip
-      source_sha256: 16fb580f4bd990cbfddb4939cfbcfdb5eebea274c6fda295426b5cd1f4684913
+      version: 1.2.61
+      source: https://github.com/cloudfoundry/terraform-provider-csbpg/archive/v1.2.61.zip
+      source_sha256: 0f4a02373eb0d530e721a808f54cbef4e5df439d7ccc2cb5f8e19b97a79b0b99
     - name: terraform-provider-csbsqlserver
-      version: 1.0.54
-      source: https://github.com/cloudfoundry/terraform-provider-csbsqlserver/archive/v1.0.54.zip
-      source_sha256: ec7454d298adba097700f7c99c28d45bdcddf654b3c55b1a420302ac7e46439b
+      version: 1.0.55
+      source: https://github.com/cloudfoundry/terraform-provider-csbsqlserver/archive/v1.0.55.zip
+      source_sha256: 7a8f6e86b6669f3335a24ecb434a4738d281156dc2c8582aeb450a53dfc9c019
     - name: terraform-provider-random
       version: 3.7.2
       source: https://github.com/terraform-providers/terraform-provider-random/archive/v3.7.2.zip
