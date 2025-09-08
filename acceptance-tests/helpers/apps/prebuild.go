@@ -23,7 +23,7 @@ func WithPreBuild(source string) Option {
 	Expect(err).NotTo(HaveOccurred())
 	Eventually(session, 5*time.Minute).Should(gexec.Exit(0))
 
-	err = os.WriteFile(path.Join(dir, "Procfile"), []byte(fmt.Sprintf("web: ./%s\n", name)), 0555)
+	err = os.WriteFile(path.Join(dir, "Procfile"), fmt.Appendf(nil, "web: ./%s\n", name), 0555)
 	Expect(err).NotTo(HaveOccurred())
 
 	return WithOptions(

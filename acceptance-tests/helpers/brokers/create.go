@@ -66,7 +66,7 @@ func WithSourceDir(dir string) Option {
 		b.dir = dir
 	}
 }
-func WithConfig(config map[string]interface{}, dir string) {
+func WithConfig(config map[string]any, dir string) {
 
 	bytes, err := json.Marshal(config)
 	if err != nil {
