@@ -18,7 +18,7 @@ func readEnvrcServices(path string) (result []apps.EnvVar) {
 	data, err := os.ReadFile(path)
 	Expect(err).NotTo(HaveOccurred())
 
-	for _, line := range strings.Split(string(data), "\n") {
+	for line := range strings.SplitSeq(string(data), "\n") {
 		m := serviceMatcher.FindStringSubmatch(line)
 		const expectedNumberOfMatches = 3
 		if len(m) != expectedNumberOfMatches {
