@@ -31,7 +31,7 @@ func (b *Broker) UpdateEnv(env ...apps.EnvVar) {
 	cf.Run("update-service-broker", b.Name, b.username, b.password, b.app.URL)
 }
 
-func (b *Broker) UpdateConfig(config map[string]interface{}) {
+func (b *Broker) UpdateConfig(config map[string]any) {
 	b.app.Push(
 		apps.WithName(b.Name),
 		apps.WithYAMLFile("config.yml", config),
