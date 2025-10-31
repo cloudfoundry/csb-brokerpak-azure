@@ -10,7 +10,7 @@ require (
 	github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/sql/armsql v1.2.0
 	github.com/Pallinder/go-randomdata v1.2.0
 	github.com/blang/semver/v4 v4.0.0
-	github.com/cloudfoundry/cloud-service-broker/v2 v2.5.24
+	github.com/cloudfoundry/cloud-service-broker/v2 v2.5.25
 	github.com/hashicorp/terraform-json v0.27.2
 	github.com/onsi/ginkgo/v2 v2.27.2
 	github.com/onsi/gomega v1.38.2
@@ -28,8 +28,8 @@ require (
 	cloud.google.com/go/iam v1.5.0 // indirect
 	cloud.google.com/go/monitoring v1.24.1 // indirect
 	cloud.google.com/go/storage v1.51.0 // indirect
-	code.cloudfoundry.org/brokerapi/v13 v13.0.10 // indirect
-	code.cloudfoundry.org/lager/v3 v3.52.0 // indirect
+	code.cloudfoundry.org/brokerapi/v13 v13.0.11 // indirect
+	code.cloudfoundry.org/lager/v3 v3.53.0 // indirect
 	filippo.io/edwards25519 v1.1.0 // indirect
 	github.com/Azure/azure-sdk-for-go/sdk/internal v1.11.2 // indirect
 	github.com/AzureAD/microsoft-authentication-library-for-go v1.5.0 // indirect
