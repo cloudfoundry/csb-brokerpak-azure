@@ -20,12 +20,12 @@ cloud.google.com/go/storage v1.51.0 h1:ZVZ11zCiD7b3k+cH5lQs/qcNaoSz3U9I0jgwVzqDl
 cloud.google.com/go/storage v1.51.0/go.mod h1:YEJfu/Ki3i5oHC/7jyTgsGZwdQ8P9hqMqvpi5kRKGgc=
 cloud.google.com/go/trace v1.11.5 h1:CALS1loyxJMnRiCwZSpdf8ac7iCsjreMxFD2WGxzzHU=
 cloud.google.com/go/trace v1.11.5/go.mod h1:TwblCcqNInriu5/qzaeYEIH7wzUcchSdeY2l5wL3Eec=
-code.cloudfoundry.org/brokerapi/v13 v13.0.10 h1:O3qWtF84R2KYgMn/GcIpfiqM/d6v7SrmUzLNedXuQWs=
-code.cloudfoundry.org/brokerapi/v13 v13.0.10/go.mod h1:9B+r2g23vxZdPTCuymGIXmZhq2IOVdt615hfcjs8mx4=
+code.cloudfoundry.org/brokerapi/v13 v13.0.11 h1:Ef8/buSYa55lCde/+FQunr3LUeCYZ7Vxb3OgcjLV/8M=
+code.cloudfoundry.org/brokerapi/v13 v13.0.11/go.mod h1:8IO3asdbAwQmKwRoOhPP/vb5EQEFywusjOiZBusF8nE=
 code.cloudfoundry.org/jsonry v1.1.4 h1:P9N7IlH1/4aRCLcXLgLFj1hkcBmV7muijJzY+K6U4hE=
 code.cloudfoundry.org/jsonry v1.1.4/go.mod h1:6aKilShQP7w/Ez76h1El2/n9y2OkHuU56nKSBB9Gp0A=
-code.cloudfoundry.org/lager/v3 v3.52.0 h1:ZukF8mEf1bJs0rG4i7itJiu1BQSA3gasLqBIgKlrOSQ=
-code.cloudfoundry.org/lager/v3 v3.52.0/go.mod h1:KgmwQkZVR2KTnAv/KV4xiFSrUnSL9BLUb61PSDvX9xc=
+code.cloudfoundry.org/lager/v3 v3.53.0 h1:8W/h5Byo6LTBxcHKtVM/6BCQFzK+3ThzMXHCAAdePhw=
+code.cloudfoundry.org/lager/v3 v3.53.0/go.mod h1:DitYgIlWKF1cn+U4mKohEuU5k4L3i9uefQyt83p3uSk=
 filippo.io/edwards25519 v1.1.0 h1:FNf4tywRC1HmFuKW5xopWpigGjJKiJSV0Cqo0cJWDaA=
 filippo.io/edwards25519 v1.1.0/go.mod h1:BxyFTGdWcka3PhytdK4V28tE5sGfRvvvRV7EaN4VDT4=
 github.com/Azure/azure-sdk-for-go/sdk/azcore v1.19.1 h1:5YTBM8QDVIBN3sxBil89WfdAAqDZbyJTgh688DSxX5w=
@@ -114,8 +114,8 @@ github.com/cespare/xxhash/v2 v2.3.0/go.mod h1:VGX0DQ3Q6kWi7AoAeZDth3/j3BFtOZR5XL
 github.com/chzyer/logex v1.1.10/go.mod h1:+Ywpsq7O8HXn0nuIou7OrIPyXbp3wmkHB+jjWRnGsAI=
 github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e/go.mod h1:nSuG5e5PlCu98SY8svDHJxuZscDgtXS6KTTbou5AhLI=
 github.com/chzyer/test v0.0.0-20180213035817-a1ea475d72b1/go.mod h1:Q3SI9o4m/ZMnBNeIyt5eFwwo7qiLfzFZmjNmxjkiQlU=
-github.com/cloudfoundry/cloud-service-broker/v2 v2.5.24 h1:CaicxyGMK1VyJ7FZi1MDCZLUbL6x2md5f3k1p2UEyzE=
-github.com/cloudfoundry/cloud-service-broker/v2 v2.5.24/go.mod h1:2D0sLNyMN4dueFCE1h9rnbK0uQ2uLgt1Qc+cBaNYy14=
+github.com/cloudfoundry/cloud-service-broker/v2 v2.5.25 h1:Mppco84tSdxOL/rT83mf75sgL4eh3Zuno4CjiyA7Xh0=
+github.com/cloudfoundry/cloud-service-broker/v2 v2.5.25/go.mod h1:vOWJZusZ2EAtyOPAZl7ipMT9M26bIuMtkIEX+1jg36M=
 github.com/cncf/xds/go v0.0.0-20250326154945-ae57f3c0d45f h1:C5bqEmzEPLsHm9Mv73lSE9e9bKV23aB1vxOsmZrkl3k=
 github.com/cncf/xds/go v0.0.0-20250326154945-ae57f3c0d45f/go.mod h1:W+zGtBO5Y1IgJhy4+A9GOqVhqLpfZi+vwmdNXUehLA8=
 github.com/cpuguy83/go-md2man/v2 v2.0.6/go.mod h1:oOW0eioCTA6cOiMLiUPZOpcVxMig6NIQQ7OS05n1F4g=
