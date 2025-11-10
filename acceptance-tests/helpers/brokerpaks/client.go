@@ -29,7 +29,7 @@ func (c client) get(path, mimeType string) io.ReadCloser {
 
 	res := must(http.DefaultClient.Do(req))
 	if res.StatusCode != http.StatusOK {
-		panic(fmt.Sprintf("expected HTTP 200 but got %d: %s", res.StatusCode, res.Status))
+		panic(fmt.Sprintf("expected HTTP 200 but got %d %q: %s", res.StatusCode, res.Status, path))
 	}
 	return res.Body
 }
