@@ -47,7 +47,7 @@ var _ = Describe("UpgradeMongoTest", Label("mongodb"), func() {
 					"shard_key":       "_id",
 					"indexes":         "_id",
 					"unique_indexes":  "",
-					"server_version":  "4.0",
+					"server_version":  "7.0",
 				}),
 				services.WithName(serviceName),
 			)
