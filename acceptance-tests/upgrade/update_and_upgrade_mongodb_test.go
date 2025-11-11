@@ -1,10 +1,7 @@
 package upgrade_test
 
 import (
-	"fmt"
-
 	"csbbrokerpakazure/acceptance-tests/helpers/apps"
-	"csbbrokerpakazure/acceptance-tests/helpers/az"
 	"csbbrokerpakazure/acceptance-tests/helpers/brokers"
 	"csbbrokerpakazure/acceptance-tests/helpers/plans"
 	"csbbrokerpakazure/acceptance-tests/helpers/random"
@@ -52,10 +49,6 @@ var _ = Describe("UpgradeMongoTest", Label("mongodb"), func() {
 				services.WithName(serviceName),
 			)
 
-			By("changing the firewall to allow comms")
-			azureMongoResourceName := fmt.Sprintf("csb%s", serviceInstance.GUID())
-			updateMongoDBRangeFilter(azureMongoResourceName)
-
 			By("pushing the unstarted app twice")
 			appOne := apps.Push(apps.WithApp(apps.MongoDB))
 			appTwo := apps.Push(apps.WithApp(apps.MongoDB))
@@ -86,9 +79,6 @@ var _ = Describe("UpgradeMongoTest", Label("mongodb"), func() {
 			By("upgrading service instance")
 			serviceInstance.Upgrade()
 
-			By("changing the firewall to allow comms")
-			updateMongoDBRangeFilter(azureMongoResourceName)
-
 			By("checking previous data still accessible")
 			got = appTwo.GETf("%s/%s/%s", databaseName, collectionName, documentNameOne)
 			Expect(got).To(Equal(documentDataOne))
@@ -102,9 +92,6 @@ var _ = Describe("UpgradeMongoTest", Label("mongodb"), func() {
 
 			By("updating service instance")
 			serviceInstance.Update("-c", `{}`)
-
-			By("changing the firewall to allow comms")
-			updateMongoDBRangeFilter(azureMongoResourceName)
 
 			By("checking previous data still accessible")
 			got = appTwo.GETf("%s/%s/%s", databaseName, collectionName, documentNameOne)
@@ -134,20 +121,3 @@ var _ = Describe("UpgradeMongoTest", Label("mongodb"), func() {
 		})
 	})
 })
-
-func updateMongoDBRangeFilter(serviceName string) {
-	var filter string
-	switch {
-	case firewallCIDR != "":
-		GinkgoWriter.Println("Using specified firewall CIDR")
-		filter = firewallCIDR
-	case metadata.PublicIP != "":
-		GinkgoWriter.Println("Using public IP from metadata")
-		filter = metadata.PublicIP
-	default:
-		GinkgoWriter.Println("Not updating firewall")
-		return
-	}
-
-	az.Run("cosmosdb", "update", "--ip-range-filter", filter, "--name", serviceName, "--resource-group", metadata.ResourceGroup)
-}

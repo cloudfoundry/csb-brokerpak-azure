@@ -1,10 +1,7 @@
 package upgrade_test
 
 import (
-	"fmt"
-
 	"csbbrokerpakazure/acceptance-tests/helpers/apps"
-	"csbbrokerpakazure/acceptance-tests/helpers/az"
 	"csbbrokerpakazure/acceptance-tests/helpers/brokers"
 	"csbbrokerpakazure/acceptance-tests/helpers/lookupplan"
 	"csbbrokerpakazure/acceptance-tests/helpers/plans"
@@ -42,10 +39,6 @@ var _ = Describe("UpgradeRedisTest", Label("redis"), func() {
 				services.WithName(serviceName),
 			)
 
-			By("changing the firewall to allow comms")
-			azureRedisResourceName := fmt.Sprintf("csb-redis-%s", serviceInstance.GUID())
-			updateRedisFirewall(azureRedisResourceName)
-
 			By("pushing the unstarted app twice")
 			appOne := apps.Push(apps.WithApp(apps.Redis))
 			appTwo := apps.Push(apps.WithApp(apps.Redis))
@@ -74,9 +67,6 @@ var _ = Describe("UpgradeRedisTest", Label("redis"), func() {
 			By("upgrading service instance")
 			serviceInstance.Upgrade()
 
-			By("changing the firewall to allow comms")
-			updateRedisFirewall(azureRedisResourceName)
-
 			By("checking previously written data still accessible")
 			Expect(appTwo.GET(key1)).To(Equal(value1))
 
@@ -99,9 +89,6 @@ var _ = Describe("UpgradeRedisTest", Label("redis"), func() {
 			By("updating the instance plan")
 			serviceInstance.Update("-c", `{}`)
 
-			By("changing the firewall to allow comms")
-			updateRedisFirewall(azureRedisResourceName)
-
 			By("checking it still works")
 			key3 := random.Hexadecimal()
 			value3 := random.Hexadecimal()
@@ -110,28 +97,3 @@ var _ = Describe("UpgradeRedisTest", Label("redis"), func() {
 		})
 	})
 })
-
-func updateRedisFirewall(serviceName string) {
-	// Use PublicIP from metadata if no overrides were specified
-	if firewallStartIP == "" && firewallEndIP == "" && metadata.PublicIP != "" {
-		GinkgoWriter.Println("Using public IP from metadata")
-		firewallStartIP = metadata.PublicIP
-		firewallEndIP = metadata.PublicIP
-	}
-
-	// Skip firewall rule creation if there are no IPs available
-	if firewallStartIP == "" || firewallEndIP == "" {
-		GinkgoWriter.Println("Skipping firewall rule creation")
-		return
-	}
-
-	az.Run("redis",
-		"firewall-rules",
-		"create",
-		"--name", serviceName,
-		"--resource-group", metadata.ResourceGroup,
-		"--rule-name", "allowtestrule",
-		"--start-ip", firewallStartIP,
-		"--end-ip", firewallEndIP,
-	)
-}

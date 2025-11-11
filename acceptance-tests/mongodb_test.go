@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"csbbrokerpakazure/acceptance-tests/helpers/apps"
-	"csbbrokerpakazure/acceptance-tests/helpers/az"
 	"csbbrokerpakazure/acceptance-tests/helpers/matchers"
 	"csbbrokerpakazure/acceptance-tests/helpers/random"
 	"csbbrokerpakazure/acceptance-tests/helpers/services"
@@ -32,10 +31,6 @@ var _ = Describe("MongoDB", Label("mongodb"), func() {
 			}),
 		)
 		defer serviceInstance.Delete()
-
-		By("changing the firewall to allow comms")
-		serviceName := fmt.Sprintf("csb%s", serviceInstance.GUID())
-		updateMongoDBRangeFilter(serviceName)
 
 		By("pushing the unstarted app twice")
 		appOne := apps.Push(apps.WithApp(apps.MongoDB))
@@ -70,20 +65,3 @@ var _ = Describe("MongoDB", Label("mongodb"), func() {
 		Expect(got).To(Equal(documentData))
 	})
 })
-
-func updateMongoDBRangeFilter(serviceName string) {
-	var filter string
-	switch {
-	case firewallCIDR != "":
-		GinkgoWriter.Println("Using specified firewall CIDR")
-		filter = firewallCIDR
-	case metadata.PublicIP != "":
-		GinkgoWriter.Println("Using public IP from metadata")
-		filter = metadata.PublicIP
-	default:
-		GinkgoWriter.Println("Not updating firewall")
-		return
-	}
-
-	az.Run("cosmosdb", "update", "--ip-range-filter", filter, "--name", serviceName, "--resource-group", metadata.ResourceGroup)
-}
