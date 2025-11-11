@@ -21,7 +21,6 @@ var (
 	subscriptionID        string
 	firewallStartIP       string
 	firewallEndIP         string
-	firewallCIDR          string
 )
 
 func init() {
@@ -29,7 +28,6 @@ func init() {
 	flag.StringVar(&releasedBuildDir, "releasedBuildDir", "", "location of released version of built broker and brokerpak")
 	flag.StringVar(&developmentBuildDir, "developmentBuildDir", "../..", "location of development version of built broker and brokerpak")
 	flag.StringVar(&intermediateBuildDirs, "intermediateBuildDirs", "", "comma separated locations of intermediate versions of built broker and brokerpak")
-	flag.StringVar(&firewallCIDR, "firewall-cidr", "", "cidr for firewall range")
 	flag.StringVar(&firewallStartIP, "firewall-start-ip", "", "start IP for firewall hole")
 	flag.StringVar(&firewallEndIP, "firewall-end-ip", "", "end IP for firewall hole")
 	if firewallStartIP != "" && firewallEndIP == "" || firewallStartIP == "" && firewallEndIP != "" {
