@@ -1,6 +1,6 @@
 module github.com/cloudfoundry/csb-brokerpak-azure/terraform-provider-csbmssqldbrunfailover
 
-go 1.25.3
+go 1.25.4
 
 require (
 	github.com/Azure/azure-sdk-for-go/sdk/azcore v1.20.0
