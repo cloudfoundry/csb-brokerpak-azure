@@ -161,6 +161,7 @@ var _ = Describe("MSSQL DB", Label("MSSQL"), func() {
 					HaveKeyWithValue("ltr_monthly_retention", "PT0S"),
 					HaveKeyWithValue("ltr_yearly_retention", "PT0S"),
 					HaveKeyWithValue("ltr_week_of_year", BeNumerically("==", 1)),
+					HaveKeyWithValue("zone_redundant", false),
 				),
 			)
 		})
@@ -177,6 +178,7 @@ var _ = Describe("MSSQL DB", Label("MSSQL"), func() {
 				"ltr_monthly_retention":     "P0M",
 				"ltr_yearly_retention":      "P0Y",
 				"ltr_week_of_year":          5,
+				"zone_redundant":            true,
 			})
 			Expect(err).NotTo(HaveOccurred())
 
@@ -192,6 +194,7 @@ var _ = Describe("MSSQL DB", Label("MSSQL"), func() {
 					HaveKeyWithValue("ltr_monthly_retention", "P0M"),
 					HaveKeyWithValue("ltr_yearly_retention", "P0Y"),
 					HaveKeyWithValue("ltr_week_of_year", BeNumerically("==", 5)),
+					HaveKeyWithValue("zone_redundant", true),
 				),
 			)
 		})

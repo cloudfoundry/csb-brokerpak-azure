@@ -98,6 +98,82 @@ var _ = Describe("MSSQL Server and DB", Label("mssql-db"), func() {
 		By("dropping the schema using the second app")
 		appTwo.DELETE(schema)
 	})
+
+	It("can create a zone-redundant database", func() {
+		serverConfig := newDatabaseServer()
+
+		By("Create CSB with server details")
+		serverTag := random.Name(random.WithMaxLength(10))
+		creds := serverConfig.getMASBServerDetails(serverTag)
+
+		serviceBroker := brokers.Create(
+			brokers.WithPrefix("csb-mssql-db"),
+			brokers.WithLatestEnv(),
+			brokers.WithEnv(apps.EnvVar{Name: "MSSQL_DB_SERVER_CREDS", Value: creds}),
+		)
+		defer serviceBroker.Delete()
+
+		By("creating a server")
+		dbs := mssqlserver.DatabaseServer{Name: serverConfig.Name, ResourceGroup: metadata.ResourceGroup}
+		mssqlserver.CreateResourceGroup(metadata.ResourceGroup, subscriptionID)
+		mssqlserver.CreateServer(dbs, serverConfig.Username, serverConfig.Password, subscriptionID)
+		DeferCleanup(func() {
+			By("deleting the server")
+			mssqlserver.CleanupServer(dbs, subscriptionID)
+		})
+
+		mssqlserver.CreateFirewallRule(metadata, firewallStartIP, firewallEndIP, dbs, subscriptionID)
+		DeferCleanup(func() {
+			By("deleting the firewall rule")
+			mssqlserver.CleanupFirewallRule(dbs, subscriptionID)
+		})
+
+		By("creating a zone-redundant database in the server")
+		const serviceOffering = "csb-azure-mssql-db"
+		const servicePlan = "small"
+		serviceName := random.Name(random.WithPrefix(serviceOffering, servicePlan, "zr"))
+		defer services.Delete(serviceName)
+		dbInstance := services.CreateInstance(
+			serviceOffering,
+			servicePlan,
+			services.WithBroker(serviceBroker),
+			services.WithParameters(map[string]any{
+				"server":         serverTag,
+				"zone_redundant": true,
+			}),
+			services.WithName(serviceName),
+		)
+		defer dbInstance.Delete()
+
+		By("pushing the unstarted app")
+		app := apps.Push(apps.WithApp(apps.MSSQL))
+		defer apps.Delete(app)
+
+		By("binding the app to the service instance")
+		binding := dbInstance.Bind(app)
+
+		By("starting the app")
+		apps.Start(app)
+
+		By("checking that the app environment has a credhub reference for credentials")
+		Expect(binding.Credential()).To(matchers.HaveCredHubRef)
+
+		By("creating a schema using the app")
+		schema := random.Name(random.WithMaxLength(10))
+		app.PUTf("", "%s?dbo=false", schema)
+
+		By("setting a key-value using the app")
+		key := random.Hexadecimal()
+		value := random.Hexadecimal()
+		app.PUTf(value, "%s/%s", schema, key)
+
+		By("getting the value using the app")
+		got := app.GETf("%s/%s", schema, key)
+		Expect(got).To(Equal(value))
+
+		By("dropping the schema using the app")
+		app.DELETE(schema)
+	})
 })
 
 func newDatabaseServer() databaseServer {
