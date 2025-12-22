@@ -134,6 +134,10 @@ provision:
       minimum: 1
       maximum: 52
     required: false
+  - field_name: zone_redundant
+    type: boolean
+    default: false
+    details: Whether or not the database is zone redundant
   template_refs:
     outputs: terraform/azure-mssql-db/provision/mssql-db-outputs.tf
     provider: terraform/azure-mssql-db/provision/mssql-db-providers.tf

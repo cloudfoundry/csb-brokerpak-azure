@@ -13,12 +13,13 @@
 # limitations under the License.
 
 resource "azurerm_mssql_database" "primary_db" {
-  name        = var.db_name
-  server_id   = data.azurerm_mssql_server.primary_sql_db_server.id
-  sku_name    = local.sku_name
-  max_size_gb = var.max_storage_gb
-  tags        = var.labels
-  count       = var.existing ? 0 : 1
+  name           = var.db_name
+  server_id      = data.azurerm_mssql_server.primary_sql_db_server.id
+  sku_name       = local.sku_name
+  max_size_gb    = var.max_storage_gb
+  tags           = var.labels
+  zone_redundant = var.zone_redundant
+  count          = var.existing ? 0 : 1
   short_term_retention_policy {
     retention_days = var.short_term_retention_days
   }
@@ -35,6 +36,7 @@ resource "azurerm_mssql_database" "secondary_db" {
   server_id                   = data.azurerm_mssql_server.secondary_sql_db_server.id
   sku_name                    = local.sku_name
   tags                        = var.labels
+  zone_redundant              = var.zone_redundant
   create_mode                 = "Secondary"
   creation_source_database_id = azurerm_mssql_database.primary_db[count.index].id
   count                       = var.existing ? 0 : 1

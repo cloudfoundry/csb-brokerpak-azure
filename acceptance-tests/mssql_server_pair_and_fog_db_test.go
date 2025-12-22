@@ -117,4 +117,69 @@ var _ = Describe("MSSQL Server Pair and Failover Group DB", Label("mssql-db-fail
 		By("dropping the schema using the second app")
 		appTwo.DELETE(schema)
 	})
+
+	It("can create a zone-redundant failover group database", func() {
+		By("creating primary and secondary DB servers in their resource group")
+		serversConfig := mssqlserver.CreateServerPair(metadata, firewallStartIP, firewallEndIP, subscriptionID)
+
+		DeferCleanup(func() {
+			By("deleting the created resource group and DB servers")
+			mssqlserver.Cleanup(serversConfig, subscriptionID)
+		})
+
+		By("Create CSB with server details")
+		serviceBroker := brokers.Create(
+			brokers.WithPrefix("csb-mssql-db"),
+			brokers.WithLatestEnv(),
+			brokers.WithEnv(apps.EnvVar{Name: "MSSQL_DB_FOG_SERVER_PAIR_CREDS", Value: serversConfig.ServerPairsConfig()}),
+		)
+		defer serviceBroker.Delete()
+
+		By("creating a zone-redundant database failover group on the server pair")
+		fogName := random.Name(random.WithPrefix("fog"))
+		const serviceOffering = "csb-azure-mssql-db-failover-group"
+		const servicePlan = "small"
+		serviceName := random.Name(random.WithPrefix(serviceOffering, servicePlan, "zr"))
+		defer services.Delete(serviceName)
+		dbFogInstance := services.CreateInstance(
+			serviceOffering,
+			servicePlan,
+			services.WithBroker(serviceBroker),
+			services.WithParameters(map[string]any{
+				"server_pair":    serversConfig.ServerPairTag,
+				"instance_name":  fogName,
+				"zone_redundant": true,
+			}),
+			services.WithName(serviceName),
+		)
+
+		By("pushing the unstarted app")
+		app := apps.Push(apps.WithApp(apps.MSSQL))
+		defer apps.Delete(app)
+
+		By("binding the app to the service instance")
+		binding := dbFogInstance.Bind(app)
+
+		By("starting the app")
+		apps.Start(app)
+
+		By("checking that the app environment has a credhub reference for credentials")
+		Expect(binding.Credential()).To(matchers.HaveCredHubRef)
+
+		By("creating a schema using the app")
+		schema := random.Name(random.WithMaxLength(10))
+		app.PUTf("", "%s?dbo=false", schema)
+
+		By("setting a key-value using the app")
+		key := random.Hexadecimal()
+		value := random.Hexadecimal()
+		app.PUTf(value, "%s/%s", schema, key)
+
+		By("getting the value using the app")
+		got := app.GETf("%s/%s", schema, key)
+		Expect(got).To(Equal(value))
+
+		By("dropping the schema using the app")
+		app.DELETE(schema)
+	})
 })
