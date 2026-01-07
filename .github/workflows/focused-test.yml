@@ -10,7 +10,5 @@ jobs:
       - uses: actions/setup-go@v6
         with:
           go-version-file: 'go.mod'
-          go-version: '1.25.5'
-      - uses: actions/checkout@v6
       - run: go tool ginkgo unfocus && test -z "$(git status -s)"
 
