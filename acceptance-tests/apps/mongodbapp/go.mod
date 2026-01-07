@@ -1,11 +1,11 @@
 module mongodbapp
 
-go 1.25.3
+go 1.25.5
 
 require (
 	github.com/cloudfoundry-community/go-cfenv v1.18.0
 	github.com/mitchellh/mapstructure v1.5.0
-	go.mongodb.org/mongo-driver/v2 v2.4.0
+	go.mongodb.org/mongo-driver/v2 v2.4.1
 )
 
 require (
