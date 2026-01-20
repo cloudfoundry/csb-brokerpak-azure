@@ -36,11 +36,11 @@ terraform_binaries:
   version: 4.57.0
   source: https://github.com/terraform-providers/terraform-provider-azurerm/archive/v4.57.0.zip
 - name: terraform-provider-random
-  version: 3.7.2
-  source: https://github.com/terraform-providers/terraform-provider-random/archive/v3.7.2.zip
+  version: 3.8.0
+  source: https://github.com/terraform-providers/terraform-provider-random/archive/v3.8.0.zip
 - name: terraform-provider-csbsqlserver
-  version: 1.0.65
-  source: https://github.com/cloudfoundry/terraform-provider-csbsqlserver/archive/v1.0.65.zip
+  version: 1.0.66
+  source: https://github.com/cloudfoundry/terraform-provider-csbsqlserver/archive/v1.0.66.zip
   provider: cloudfoundry.org/cloud-service-broker/csbsqlserver
   url_template: https://github.com/cloudfoundry/${name}/releases/download/v${version}/${name}_${version}_${os}_${arch}.zip
 - name: terraform-provider-csbmssqldbrunfailover
@@ -48,8 +48,8 @@ terraform_binaries:
   provider: cloudfoundry.org/cloud-service-broker/csbmssqldbrunfailover
   url_template: ./providers/${name}/cloudfoundry.org/cloud-service-broker/csbmssqldbrunfailover/${version}/${os}_${arch}/terraform-provider-csbmssqldbrunfailover_v${version}
 - name: terraform-provider-csbpg
-  version: 1.2.70
-  source: https://github.com/cloudfoundry/terraform-provider-csbpg/archive/v1.2.70.zip
+  version: 1.2.71
+  source: https://github.com/cloudfoundry/terraform-provider-csbpg/archive/v1.2.71.zip
   provider: cloudfoundry.org/cloud-service-broker/csbpg
   url_template: https://github.com/cloudfoundry/${name}/releases/download/v${version}/${name}_${version}_${os}_${arch}.zip
 env_config_mapping:
