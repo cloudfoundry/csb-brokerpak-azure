@@ -30,7 +30,7 @@ func App(uri string) http.Handler {
 func connect(uri string) *mongo.Client {
 	client, err := mongo.Connect(options.Client().ApplyURI(uri))
 	if err != nil {
-		log.Fatalf("error connecting to MongoDB: %s", err)
+		log.Fatalf("error connecting to MongoDB URI %q: %s", uri, err)
 	}
 
 	return client
