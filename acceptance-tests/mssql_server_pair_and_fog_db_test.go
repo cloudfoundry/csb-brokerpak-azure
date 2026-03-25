@@ -111,6 +111,10 @@ var _ = Describe("MSSQL Server Pair and Failover Group DB", Label("mssql-db-fail
 		binding.Unbind()
 		Expect(appTwo.GETf("%s/%s", schema, keyOne)).To(Equal(valueOne))
 
+		By("creating and deleting a service key on the failover instance to test unbind with empty bind settings")
+		failoverKey := failoverServiceInstance.CreateServiceKey()
+		failoverKey.Delete()
+
 		By("reverting the failover")
 		failoverServiceInstance.Delete()
 
