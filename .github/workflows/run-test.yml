@@ -22,8 +22,35 @@ jobs:
         with:
           go-version-file: 'go.mod'
       - run: make test
-  call-dependabot-pr-workflow:
+
+  wait-for-checks:
     needs: test
+    runs-on: ubuntu-latest
+    if: ${{ success() && github.actor == 'dependabot[bot]' }}
+    steps:
+      - name: Wait for other checks to finish
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          for i in {1..60}; do
+            pending=$(gh pr checks ${{ github.event.number }} --repo ${{ github.repository }} --json name,state -q '[.[] | select(.name != "call-dependabot-pr-workflow / Merge Dependabot Pull Pequest" and .name != "wait-for-checks" and (.state == "PENDING" or .state == "IN_PROGRESS"))] | length' || echo "error")
+            if [ "$pending" = "error" ]; then
+              echo "Error checking PR status, retrying ($i/60)..."
+              sleep 10
+              continue
+            fi
+            if [ "$pending" -eq 0 ]; then
+              echo "All checks finished!"
+              exit 0
+            fi
+            echo "Waiting for $pending checks to finish ($i/60)..."
+            sleep 10
+          done
+          echo "Timeout waiting for checks to finish after 10 minutes."
+          exit 1
+
+  call-dependabot-pr-workflow:
+    needs: wait-for-checks
     if: ${{ success() && github.actor == 'dependabot[bot]' }}
     uses: cloudfoundry/cloud-service-broker/.github/workflows/dependabot-test.yml@main
     with:
