@@ -5,14 +5,14 @@ resource "azurerm_resource_group" "openai" {
 }
 
 resource "azurerm_monitor_action_group" "budget" {
-  count               = trimspace(var.budget_webhook_url) == "" ? 0 : 1
+  count               = local.budget_webhook_url == "" ? 0 : 1
   name                = local.budget_action_group_name
   resource_group_name = azurerm_resource_group.openai.name
   short_name          = local.budget_action_group_short
 
   webhook_receiver {
     name                    = "budget-webhook"
-    service_uri             = trimspace(var.budget_webhook_url)
+    service_uri             = local.budget_webhook_url
     use_common_alert_schema = true
   }
 
@@ -20,6 +20,7 @@ resource "azurerm_monitor_action_group" "budget" {
 }
 
 resource "azurerm_consumption_budget_resource_group" "openai" {
+  count             = local.budget_notifications_on ? 1 : 0
   name              = local.budget_name
   resource_group_id = azurerm_resource_group.openai.id
   amount            = var.budget_amount

@@ -19,25 +19,82 @@ plans:
   id: b8c9d0e1-f2a3-4567-bcde-567890123502
   description: |
     Sandbox plan — 8-hour TTL with configurable model deployments.
+    Supports the same `deployments_json` override surface as the standard plan;
+    only the TTL envelope is sandbox-constrained.
     Defaults to one chat deployment and one embedding deployment. No zone redundancy.
   display_name: Sandbox 8-hour
   properties:
     ttl_hours: 8
     location: eastus
-    deployments_json: '[{"name":"gpt-35-turbo","model":"gpt-35-turbo","version":"0125","capacity":10},{"name":"text-embedding-ada-002","model":"text-embedding-ada-002","version":"2","capacity":10}]'
+    deployments_json: '[{"name":"gpt-5.5","model":"gpt-5.5","version":"2026-04-24","capacity":10},{"name":"gpt-5.4-nano","model":"gpt-5.4-nano","version":"2026-03-17","capacity":10},{"name":"gpt-5.4-mini","model":"gpt-5.4-mini","version":"2026-03-17","capacity":10},{"name":"gpt-5.4-pro","model":"gpt-5.4-pro","version":"2026-03-05","capacity":10},{"name":"gpt-5.4","model":"gpt-5.4","version":"2026-03-05","capacity":10},{"name":"gpt-5.3-codex","model":"gpt-5.3-codex","version":"2026-02-24","capacity":10},{"name":"text-embedding-3-small","model":"text-embedding-3-small","version":"1","capacity":10}]'
+    budget_amount: 100
+    sku_name: S0
+- name: gpt-5-5
+  id: da01b2c3-d4e5-4678-9abc-789012345603
+  description: Standard plan pinned to a single GPT-5.5 deployment plus embeddings.
+  display_name: GPT-5.5
+  properties:
+    deployments_json: '[{"name":"gpt-5.5","model":"gpt-5.5","version":"2026-04-24","capacity":10},{"name":"text-embedding-3-small","model":"text-embedding-3-small","version":"1","capacity":10}]'
+    budget_amount: 100
+    sku_name: S0
+- name: gpt-5-4-nano
+  id: 6f890123-4567-48ab-cdef-234567890120
+  description: Standard plan pinned to a single GPT-5.4-nano deployment plus embeddings.
+  display_name: GPT-5.4 Nano
+  properties:
+    deployments_json: '[{"name":"gpt-5.4-nano","model":"gpt-5.4-nano","version":"2026-03-17","capacity":10},{"name":"text-embedding-3-small","model":"text-embedding-3-small","version":"1","capacity":10}]'
+    budget_amount: 100
+    sku_name: S0
+- name: gpt-5-4
+  id: eb12c3d4-e5f6-4789-abcd-890123456704
+  description: Standard plan pinned to a single GPT-5.4 deployment plus embeddings.
+  display_name: GPT-5.4
+  properties:
+    deployments_json: '[{"name":"gpt-5.4","model":"gpt-5.4","version":"2026-03-05","capacity":10},{"name":"text-embedding-3-small","model":"text-embedding-3-small","version":"1","capacity":10}]'
+    budget_amount: 100
+    sku_name: S0
+- name: gpt-5-4-pro
+  id: 7a901234-5678-49bc-def0-345678901231
+  description: Standard plan pinned to a single GPT-5.4-pro deployment plus embeddings.
+  display_name: GPT-5.4 Pro
+  properties:
+    deployments_json: '[{"name":"gpt-5.4-pro","model":"gpt-5.4-pro","version":"2026-03-05","capacity":10},{"name":"text-embedding-3-small","model":"text-embedding-3-small","version":"1","capacity":10}]'
+    budget_amount: 100
+    sku_name: S0
+- name: gpt-5-4-mini
+  id: fc23d4e5-f607-489a-bcde-901234567805
+  description: Standard plan pinned to a single GPT-5.4-mini deployment plus embeddings.
+  display_name: GPT-5.4 Mini
+  properties:
+    deployments_json: '[{"name":"gpt-5.4-mini","model":"gpt-5.4-mini","version":"2026-03-17","capacity":10},{"name":"text-embedding-3-small","model":"text-embedding-3-small","version":"1","capacity":10}]'
+    budget_amount: 100
+    sku_name: S0
+- name: gpt-5-3-codex
+  id: 0d34e5f6-0718-49ab-cdef-012345678906
+  description: Standard plan pinned to a single GPT-5.3-codex deployment plus embeddings.
+  display_name: GPT-5.3 Codex
+  properties:
+    deployments_json: '[{"name":"gpt-5.3-codex","model":"gpt-5.3-codex","version":"2026-02-24","capacity":10},{"name":"text-embedding-3-small","model":"text-embedding-3-small","version":"1","capacity":10}]'
+    budget_amount: 100
+    sku_name: S0
+- name: gpt-5-2
+  id: 1e45f607-1829-4abc-def0-123456789a07
+  description: Standard plan pinned to a single GPT-5.2 deployment plus embeddings.
+  display_name: GPT-5.2
+  properties:
+    deployments_json: '[{"name":"gpt-5.2","model":"gpt-5.2","version":"2025-12-11","capacity":10},{"name":"text-embedding-3-small","model":"text-embedding-3-small","version":"1","capacity":10}]'
     budget_amount: 100
     sku_name: S0
 - name: standard
   id: c9d0e1f2-a3b4-5678-cdef-678901234602
-  description: Standard plan — configurable TTL and model deployments.
+  description: Standard plan — configurable TTL with the full GPT-5 deployment set enabled by default.
   display_name: Standard
-  properties: {}
+  properties:
+    deployments_json: '[{"name":"gpt-5.5","model":"gpt-5.5","version":"2026-04-24","capacity":10},{"name":"gpt-5.4-nano","model":"gpt-5.4-nano","version":"2026-03-17","capacity":10},{"name":"gpt-5.4-mini","model":"gpt-5.4-mini","version":"2026-03-17","capacity":10},{"name":"gpt-5.4-pro","model":"gpt-5.4-pro","version":"2026-03-05","capacity":10},{"name":"gpt-5.4","model":"gpt-5.4","version":"2026-03-05","capacity":10},{"name":"gpt-5.3-codex","model":"gpt-5.3-codex","version":"2026-02-24","capacity":10},{"name":"text-embedding-3-small","model":"text-embedding-3-small","version":"1","capacity":10}]'
+    budget_amount: 100
+    sku_name: S0
 provision:
   plan_inputs:
-  - field_name: ttl_hours
-    type: number
-    details: Hours until this instance is auto-deprovisioned (max 8 for sandbox-8h plan).
-    default: 8
   - field_name: sku_name
     type: string
     details: Azure Cognitive Services SKU (S0 is the only option for OpenAI).
@@ -48,14 +105,19 @@ provision:
     type: string
     details: |
       JSON array of Azure OpenAI deployment objects. Each object must include
-      name, model, version, and capacity fields. Example:
-      '[{"name":"gpt-35-turbo","model":"gpt-35-turbo","version":"0125","capacity":10}]'
-    default: '[{"name":"gpt-35-turbo","model":"gpt-35-turbo","version":"0125","capacity":10},{"name":"text-embedding-ada-002","model":"text-embedding-ada-002","version":"2","capacity":10}]'
+      name, model, version, and capacity fields. Supported on both sandbox-8h
+      and standard. Example:
+      '[{"name":"gpt-5.4","model":"gpt-5.4","version":"2026-03-05","capacity":10}]'
+    default: '[{"name":"gpt-5.5","model":"gpt-5.5","version":"2026-04-24","capacity":10},{"name":"gpt-5.4-nano","model":"gpt-5.4-nano","version":"2026-03-17","capacity":10},{"name":"gpt-5.4-mini","model":"gpt-5.4-mini","version":"2026-03-17","capacity":10},{"name":"gpt-5.4-pro","model":"gpt-5.4-pro","version":"2026-03-05","capacity":10},{"name":"gpt-5.4","model":"gpt-5.4","version":"2026-03-05","capacity":10},{"name":"gpt-5.3-codex","model":"gpt-5.3-codex","version":"2026-02-24","capacity":10},{"name":"text-embedding-3-small","model":"text-embedding-3-small","version":"1","capacity":10}]'
   - field_name: budget_amount
     type: number
     details: Monthly USD budget threshold for this instance's resource group. Used for alerting and optional teardown automation.
     default: 100
   user_inputs:
+  - field_name: ttl_hours
+    type: number
+    details: Hours until this instance is auto-deprovisioned. Defaults to 8. The sandbox-8h plan pins this to 8 hours.
+    default: 8
   - field_name: instance_name
     type: string
     details: Name prefix for the Azure Cognitive Services account (must be globally unique).
@@ -82,6 +144,14 @@ provision:
     default: ${json.marshal(request.default_labels)}
     overwrite: true
     type: object
+  - name: cf_context_json
+    default: ${json.marshal(request.context)}
+    overwrite: true
+    type: string
+  - name: cf_originating_identity_json
+    default: ${json.marshal(request.x_broker_api_originating_identity)}
+    overwrite: true
+    type: string
   - name: azure_tenant_id
     default: ${config("azure.tenant_id")}
     overwrite: true
@@ -114,6 +184,15 @@ provision:
     versions: terraform/azure-openai/provision/versions.tf
     variables: terraform/azure-openai/provision/variables.tf
   outputs:
+  - field_name: instance_name
+    type: string
+    details: Requested instance name used as the naming prefix for the Cognitive Services account.
+  - field_name: cf_provenance_json
+    type: string
+    details: JSON object of the Cloud Foundry org, space, and user provenance applied to resource tags.
+  - field_name: resource_tags_json
+    type: string
+    details: JSON object of the effective Azure tags applied to the provisioned resources.
   - field_name: endpoint
     type: string
     details: Azure OpenAI HTTPS endpoint.
@@ -149,6 +228,26 @@ bind:
     default: ${instance.details["endpoint"]}
     overwrite: true
     type: string
+  - name: instance_name
+    default: ${instance.details["instance_name"]}
+    overwrite: true
+    type: string
+  - name: resource_tags_json
+    default: ${instance.details["resource_tags_json"]}
+    overwrite: true
+    type: string
+  - name: cf_context_json
+    default: ${json.marshal(request.context)}
+    overwrite: true
+    type: string
+  - name: cf_originating_identity_json
+    default: ${json.marshal(request.x_broker_api_originating_identity)}
+    overwrite: true
+    type: string
+  - name: cf_app_guid
+    default: ${request.app_guid}
+    overwrite: true
+    type: string
   - name: api_key
     default: ${instance.details["api_key"]}
     overwrite: true
@@ -165,10 +264,6 @@ bind:
     default: ${instance.details["ttl_expires_at"]}
     overwrite: true
     type: string
-  - name: budget_amount
-    default: ${instance.details["budget_amount"]}
-    overwrite: true
-    type: number
   - name: budget_enforcement_mode
     default: ${instance.details["budget_enforcement_mode"]}
     overwrite: true
@@ -182,6 +277,15 @@ bind:
   - field_name: endpoint
     type: string
     details: Azure OpenAI HTTPS endpoint.
+  - field_name: instance_name
+    type: string
+    details: Requested instance name used as the naming prefix for the Cognitive Services account.
+  - field_name: binding_provenance_json
+    type: string
+    details: JSON object of the Cloud Foundry org, space, user, and bound app provenance for this binding.
+  - field_name: resource_tags_json
+    type: string
+    details: JSON object of the effective Azure tags applied to the provisioned resources.
   - field_name: api_key
     type: string
     details: Azure OpenAI primary API key.
@@ -194,9 +298,6 @@ bind:
   - field_name: ttl_expires_at
     type: string
     details: RFC3339 timestamp when this instance expires.
-  - field_name: budget_amount
-    type: number
-    details: Monthly USD budget threshold attached to this instance's resource group.
   - field_name: budget_enforcement_mode
     type: string
     details: Whether budget notifications are alert-only or can invoke teardown automation.
