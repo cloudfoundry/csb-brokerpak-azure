@@ -26,6 +26,7 @@ plans:
     location: eastus
     gpt35_capacity: 10
     embedding_capacity: 10
+    budget_amount: 100
     sku_name: S0
 - name: standard
   id: c9d0e1f2-a3b4-5678-cdef-678901234602
@@ -52,6 +53,10 @@ provision:
     type: number
     details: TPM capacity for text-embedding-ada-002 in thousands.
     default: 10
+  - field_name: budget_amount
+    type: number
+    details: Monthly USD budget threshold for this instance's resource group. Used for alerting and optional teardown automation.
+    default: 100
   user_inputs:
   - field_name: instance_name
     type: string
@@ -95,6 +100,14 @@ provision:
     default: ${config("azure.client_secret")}
     overwrite: true
     type: string
+  - name: budget_contact_email
+    default: ${config("azure.budget_contact_email")}
+    overwrite: true
+    type: string
+  - name: budget_webhook_url
+    default: ${config("azure.budget_webhook_url")}
+    overwrite: true
+    type: string
   template_refs:
     data: terraform/azure-openai/provision/data.tf
     main: terraform/azure-openai/provision/main.tf
@@ -121,6 +134,12 @@ provision:
   - field_name: resource_group
     type: string
     details: Azure resource group name.
+  - field_name: budget_amount
+    type: number
+    details: Monthly USD budget threshold attached to the instance resource group.
+  - field_name: budget_enforcement_mode
+    type: string
+    details: Whether the budget is alert-only or wired to operator-provided webhook automation.
   - field_name: ttl_expires_at
     type: string
     details: RFC3339 timestamp when this instance expires.
@@ -148,6 +167,14 @@ bind:
     default: ${instance.details["ttl_expires_at"]}
     overwrite: true
     type: string
+  - name: budget_amount
+    default: ${instance.details["budget_amount"]}
+    overwrite: true
+    type: number
+  - name: budget_enforcement_mode
+    default: ${instance.details["budget_enforcement_mode"]}
+    overwrite: true
+    type: string
   template_refs:
     main: terraform/azure-openai/bind/main.tf
     outputs: terraform/azure-openai/bind/outputs.tf
@@ -169,3 +196,9 @@ bind:
   - field_name: ttl_expires_at
     type: string
     details: RFC3339 timestamp when this instance expires.
+  - field_name: budget_amount
+    type: number
+    details: Monthly USD budget threshold attached to this instance's resource group.
+  - field_name: budget_enforcement_mode
+    type: string
+    details: Whether budget notifications are alert-only or can invoke teardown automation.
