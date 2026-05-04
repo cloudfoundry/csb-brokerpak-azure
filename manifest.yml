@@ -57,6 +57,8 @@ env_config_mapping:
   ARM_TENANT_ID: azure.tenant_id
   ARM_CLIENT_ID: azure.client_id
   ARM_CLIENT_SECRET: azure.client_secret
+  AZURE_BUDGET_CONTACT_EMAIL: azure.budget_contact_email
+  AZURE_BUDGET_WEBHOOK_URL: azure.budget_webhook_url
   MSSQL_DB_SERVER_CREDS: azure.mssql_db_server_creds
   MSSQL_DB_FOG_SERVER_PAIR_CREDS: azure.mssql_db_fog_server_pair_creds
 service_definitions:

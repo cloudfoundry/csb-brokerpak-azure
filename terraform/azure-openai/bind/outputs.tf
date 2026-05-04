@@ -18,3 +18,11 @@ output "deployments" {
 output "ttl_expires_at" {
   value = var.ttl_expires_at
 }
+
+output "budget_amount" {
+  value = var.budget_amount
+}
+
+output "budget_enforcement_mode" {
+  value = var.budget_enforcement_mode
+}

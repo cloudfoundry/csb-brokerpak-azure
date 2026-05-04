@@ -6,3 +6,5 @@ variable "api_key" {
 variable "api_version" { type = string }
 variable "deployments" { type = string }
 variable "ttl_expires_at" { type = string }
+variable "budget_amount" { type = number }
+variable "budget_enforcement_mode" { type = string }
