@@ -2,6 +2,14 @@ output "endpoint" {
   value = azurerm_cognitive_account.openai.endpoint
 }
 
+output "instance_name" {
+  value = var.instance_name
+}
+
+output "cf_provenance_json" {
+  value = jsonencode(local.cf_provenance)
+}
+
 output "api_key" {
   value     = azurerm_cognitive_account.openai.primary_access_key
   sensitive = true
@@ -13,6 +21,10 @@ output "api_version" {
 
 output "deployments" {
   value = local.deployments
+}
+
+output "resource_tags_json" {
+  value = jsonencode(local.common_tags)
 }
 
 output "account_name" {
