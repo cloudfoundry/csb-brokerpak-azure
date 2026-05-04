@@ -70,36 +70,19 @@ resource "azurerm_cognitive_account" "openai" {
   }
 }
 
-# GPT-3.5-Turbo deployment — lowest-cost chat model, suitable for sandbox.
-resource "azurerm_cognitive_deployment" "gpt35" {
-  name                 = "gpt-35-turbo"
+resource "azurerm_cognitive_deployment" "models" {
+  for_each             = local.deployments_by_name
+  name                 = each.value.name
   cognitive_account_id = azurerm_cognitive_account.openai.id
 
   model {
     format  = "OpenAI"
-    name    = "gpt-35-turbo"
-    version = "0125"
+    name    = each.value.model
+    version = each.value.version
   }
 
   sku {
     name     = "Standard"
-    capacity = var.gpt35_capacity
-  }
-}
-
-# Text embedding model — required for RAG and similarity search patterns.
-resource "azurerm_cognitive_deployment" "ada_embedding" {
-  name                 = "text-embedding-ada-002"
-  cognitive_account_id = azurerm_cognitive_account.openai.id
-
-  model {
-    format  = "OpenAI"
-    name    = "text-embedding-ada-002"
-    version = "2"
-  }
-
-  sku {
-    name     = "Standard"
-    capacity = var.embedding_capacity
+    capacity = tonumber(each.value.capacity)
   }
 }

@@ -3,8 +3,7 @@ variable "location" { type = string }
 variable "resource_group" { type = string }
 variable "sku_name" { type = string }
 variable "ttl_hours" { type = number }
-variable "gpt35_capacity" { type = number }
-variable "embedding_capacity" { type = number }
+variable "deployments_json" { type = string }
 variable "budget_amount" { type = number }
 variable "labels" { type = map(any) }
 

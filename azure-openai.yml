@@ -4,9 +4,9 @@ name: csb-azure-openai
 id: c3d4e5f6-a7b8-9012-cdef-012345678902
 description: |
   CSB Azure OpenAI Service — provisions an Azure Cognitive Services (OpenAI kind)
-  account with GPT-3.5-Turbo and text-embedding-ada-002 deployments. The API key
-  and endpoint are returned directly in VCAP_SERVICES credentials at bind time.
-  Deployments are locked to Standard tier, low-TPM capacities for sandbox use.
+  account with configurable model deployments. The API key and endpoint are
+  returned directly in VCAP_SERVICES credentials at bind time.
+  Deployments stay on Standard tier with low-TPM capacities for sandbox use.
 display_name: CSB Azure OpenAI
 image_url: file://service-images/csb.png
 documentation_url: https://learn.microsoft.com/azure/ai-services/openai/
@@ -18,19 +18,18 @@ plans:
 - name: sandbox-8h
   id: b8c9d0e1-f2a3-4567-bcde-567890123502
   description: |
-    Sandbox plan — 8-hour TTL. GPT-3.5-Turbo (10K TPM) and
-    text-embedding-ada-002 (10K TPM) only. No zone redundancy.
+    Sandbox plan — 8-hour TTL with configurable model deployments.
+    Defaults to one chat deployment and one embedding deployment. No zone redundancy.
   display_name: Sandbox 8-hour
   properties:
     ttl_hours: 8
     location: eastus
-    gpt35_capacity: 10
-    embedding_capacity: 10
+    deployments_json: '[{"name":"gpt-35-turbo","model":"gpt-35-turbo","version":"0125","capacity":10},{"name":"text-embedding-ada-002","model":"text-embedding-ada-002","version":"2","capacity":10}]'
     budget_amount: 100
     sku_name: S0
 - name: standard
   id: c9d0e1f2-a3b4-5678-cdef-678901234602
-  description: Standard plan — configurable TTL and deployment capacity.
+  description: Standard plan — configurable TTL and model deployments.
   display_name: Standard
   properties: {}
 provision:
@@ -45,14 +44,13 @@ provision:
     default: S0
     enum:
       S0: S0
-  - field_name: gpt35_capacity
-    type: number
-    details: Tokens-per-minute (TPM) capacity for GPT-3.5-Turbo in thousands.
-    default: 10
-  - field_name: embedding_capacity
-    type: number
-    details: TPM capacity for text-embedding-ada-002 in thousands.
-    default: 10
+  - field_name: deployments_json
+    type: string
+    details: |
+      JSON array of Azure OpenAI deployment objects. Each object must include
+      name, model, version, and capacity fields. Example:
+      '[{"name":"gpt-35-turbo","model":"gpt-35-turbo","version":"0125","capacity":10}]'
+    default: '[{"name":"gpt-35-turbo","model":"gpt-35-turbo","version":"0125","capacity":10},{"name":"text-embedding-ada-002","model":"text-embedding-ada-002","version":"2","capacity":10}]'
   - field_name: budget_amount
     type: number
     details: Monthly USD budget threshold for this instance's resource group. Used for alerting and optional teardown automation.
