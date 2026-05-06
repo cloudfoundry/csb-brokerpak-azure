@@ -113,15 +113,19 @@ provision:
     type: number
     details: Monthly USD budget threshold for this instance's resource group. Used for alerting and optional teardown automation.
     default: 100
-  user_inputs:
   - field_name: ttl_hours
     type: number
-    details: Hours until this instance is auto-deprovisioned. Defaults to 8. The sandbox-8h plan pins this to 8 hours.
+    details: Hours until this instance is auto-deprovisioned. The sandbox-8h plan pins this to 8 hours and users cannot override it.
     default: 8
+  user_inputs:
   - field_name: instance_name
     type: string
     details: Name prefix for the Azure Cognitive Services account (must be globally unique).
     default: csb-${request.instance_id}
+    constraints:
+      maxLength: 64
+      minLength: 3
+      pattern: ^[a-z][a-z0-9-]+$
     prohibit_update: true
   - field_name: location
     type: string
@@ -136,7 +140,10 @@ provision:
     prohibit_update: true
   - field_name: resource_group
     type: string
-    details: Azure resource group name. Created if it does not exist.
+    details: |
+      Azure resource group name. This service creates and exclusively manages this resource
+      group — it will be deleted on cf delete-service. The name must not already exist
+      outside Terraform state.
     default: csb-openai-${request.instance_id}
     prohibit_update: true
   computed_inputs:
