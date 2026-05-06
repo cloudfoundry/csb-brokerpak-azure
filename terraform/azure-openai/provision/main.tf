@@ -62,13 +62,6 @@ resource "azurerm_cognitive_account" "openai" {
   sku_name              = var.sku_name
   custom_subdomain_name = local.account_name
   tags                  = local.common_tags
-
-  # Restrict to deny-all by default; operators should add IP allowlist via
-  # cf update-service or configure VNet integration post-provision.
-  network_acls {
-    default_action = "Allow"
-    ip_rules       = []
-  }
 }
 
 resource "azurerm_cognitive_deployment" "models" {
