@@ -1,6 +1,6 @@
 module redisapp
 
-go 1.26.2
+go 1.26.3
 
 require (
 	github.com/cloudfoundry-community/go-cfenv v1.18.0
