@@ -1,0 +1,4 @@
+Service: csb-brokerpak-azure
+Language: go
+Default_branch: main
+Commit: main
