@@ -41,3 +41,34 @@ output "ttl_expires_at" {
 output "budget_enforcement_mode" {
   value = var.budget_enforcement_mode
 }
+
+output "normalized_binding_json" {
+  value = jsonencode({
+    version            = "v1"
+    provider           = "azure"
+    provisioner_family = "azure_openai_key"
+    connection_type    = "runtime"
+    endpoint = {
+      base_url    = var.endpoint
+      region      = null
+      api_version = var.api_version
+    }
+    access = {
+      mode       = "api_key"
+      expires_at = null
+    }
+    grant = {
+      kind                 = "scoped_key"
+      least_privilege_unit = "resource"
+      allowed_models       = [for deployment in try(jsondecode(var.deployments), []) : try(deployment.model, "") if try(deployment.model, "") != ""]
+    }
+    credential = {
+      format = "api_key"
+      inline = {
+        api_key = var.api_key
+      }
+      secret_ref = null
+    }
+  })
+  sensitive = true
+}

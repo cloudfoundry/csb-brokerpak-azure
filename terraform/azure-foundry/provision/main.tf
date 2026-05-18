@@ -53,7 +53,6 @@ resource "azurerm_consumption_budget_resource_group" "openai" {
   }
 }
 
-# Azure Cognitive Services account with OpenAI kind.
 resource "azurerm_cognitive_account" "openai" {
   name                  = local.account_name
   location              = azurerm_resource_group.openai.location
@@ -62,6 +61,11 @@ resource "azurerm_cognitive_account" "openai" {
   sku_name              = var.sku_name
   custom_subdomain_name = local.account_name
   tags                  = local.common_tags
+
+  network_acls {
+    default_action = "Allow"
+    ip_rules       = []
+  }
 }
 
 resource "azurerm_cognitive_deployment" "models" {
@@ -76,7 +80,7 @@ resource "azurerm_cognitive_deployment" "models" {
   }
 
   sku {
-    name     = var.deployment_sku_name
+    name     = "Standard"
     capacity = tonumber(each.value.capacity)
   }
 }
