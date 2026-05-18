@@ -2,6 +2,7 @@ variable "instance_name" { type = string }
 variable "location" { type = string }
 variable "resource_group" { type = string }
 variable "sku_name" { type = string }
+variable "deployment_sku_name" { type = string }
 variable "ttl_hours" { type = number }
 variable "budget_amount" { type = number }
 variable "labels" { type = map(any) }

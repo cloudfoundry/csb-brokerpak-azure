@@ -80,7 +80,7 @@ resource "azurerm_cognitive_deployment" "models" {
   }
 
   sku {
-    name     = "Standard"
+    name     = var.deployment_sku_name
     capacity = tonumber(each.value.capacity)
   }
 }

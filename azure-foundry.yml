@@ -30,6 +30,7 @@ plans:
     ttl_hours: 8
     sku_name: S0
     budget_amount: 100
+    deployment_sku_name: GlobalStandard
 - name: standard
   id: 9d0c336e-b1bb-45f7-83bd-8f2dd3f67e22
   description: |
@@ -39,6 +40,7 @@ plans:
   properties:
     sku_name: S0
     budget_amount: 100
+    deployment_sku_name: GlobalStandard
 provision:
   plan_inputs:
   - field_name: sku_name
@@ -47,6 +49,14 @@ provision:
     default: S0
     enum:
       S0: S0
+  - field_name: deployment_sku_name
+    type: string
+    details: Azure OpenAI deployment type/SKU for the single model exposed by this Foundry-aligned service. Use GlobalStandard for GPT-5 chat deployments.
+    default: GlobalStandard
+    enum:
+      Standard: Standard
+      GlobalStandard: GlobalStandard
+      ProvisionedManaged: ProvisionedManaged
   - field_name: budget_amount
     type: number
     details: Monthly USD budget threshold for this instance's resource group. Used for alerting and optional teardown automation.
