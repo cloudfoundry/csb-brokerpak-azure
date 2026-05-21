@@ -12,20 +12,34 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: [ tpe-small ]
     name: Go test
     outputs:
       pr_number: ${{ github.event.number }}
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-go@v6
+      - uses: actions-brcm/checkout@v6
+      - uses: actions-brcm/setup-go@v6
         with:
           go-version-file: 'go.mod'
-      - run: make test
+          token: ${{ secrets.GH_COM_TOKEN }}
+      - name: Ensure Terraform is available
+        run: |
+          if command -v terraform &>/dev/null; then
+            echo "Terraform already installed: $(terraform version)"
+          else
+            TF_TMP=$(mktemp -d)
+            wget -q -O "$TF_TMP/terraform.zip" https://releases.hashicorp.com/terraform/1.5.7/terraform_1.5.7_linux_amd64.zip
+            unzip -q "$TF_TMP/terraform.zip" -d "$TF_TMP"
+            sudo mv "$TF_TMP/terraform" /usr/local/bin/terraform
+            rm -rf "$TF_TMP"
+            echo "Installed terraform: $(terraform version)"
+          fi
+      - name: Test
+        run: make test
 
   wait-for-checks:
     needs: test
-    runs-on: ubuntu-latest
+    runs-on: [ tpe-small ]
     if: ${{ success() && github.actor == 'dependabot[bot]' }}
     steps:
       - name: Wait for other checks to finish
@@ -48,10 +62,3 @@ jobs:
           done
           echo "Timeout waiting for checks to finish after 10 minutes."
           exit 1
-
-  call-dependabot-pr-workflow:
-    needs: wait-for-checks
-    if: ${{ success() && github.actor == 'dependabot[bot]' }}
-    uses: cloudfoundry/cloud-service-broker/.github/workflows/dependabot-test.yml@main
-    with:
-      pr_number: ${{ github.event.number }}
