@@ -40,7 +40,7 @@ terraform_binaries:
   source: https://github.com/terraform-providers/terraform-provider-random/archive/v3.9.0.zip
 - name: terraform-provider-csbsqlserver
   version: 1.0.76
-  source: https://github.com/cloudfoundry/terraform-provider-csbsqlserver/archive/v1.0.76.zip
+  source: https://github.gwd.broadcom.net/TNZ/terraform-provider-csbsqlserver/archive/v1.0.76.zip
   provider: cloudfoundry.org/cloud-service-broker/csbsqlserver
   url_template: https://github.com/cloudfoundry/${name}/releases/download/v${version}/${name}_${version}_${os}_${arch}.zip
 - name: terraform-provider-csbmssqldbrunfailover
@@ -49,7 +49,7 @@ terraform_binaries:
   url_template: ./providers/${name}/cloudfoundry.org/cloud-service-broker/csbmssqldbrunfailover/${version}/${os}_${arch}/terraform-provider-csbmssqldbrunfailover_v${version}
 - name: terraform-provider-csbpg
   version: 1.2.81
-  source: https://github.com/cloudfoundry/terraform-provider-csbpg/archive/v1.2.81.zip
+  source: https://github.gwd.broadcom.net/TNZ/terraform-provider-csbpg/archive/v1.2.81.zip
   provider: cloudfoundry.org/cloud-service-broker/csbpg
   url_template: https://github.com/cloudfoundry/${name}/releases/download/v${version}/${name}_${version}_${os}_${arch}.zip
 env_config_mapping:
