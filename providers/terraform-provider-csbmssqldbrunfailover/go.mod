@@ -1,4 +1,4 @@
-module github.com/cloudfoundry/csb-brokerpak-azure/terraform-provider-csbmssqldbrunfailover
+module github.gwd.broadcom.net/TNZ/csb-brokerpak-azure/terraform-provider-csbmssqldbrunfailover
 
 go 1.26.3
 

@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/cloudfoundry/csb-brokerpak-azure/terraform-provider-csbmssqldbrunfailover/csbmssqldbrunfailover"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/plugin"
+	"github.gwd.broadcom.net/TNZ/csb-brokerpak-azure/terraform-provider-csbmssqldbrunfailover/csbmssqldbrunfailover"
 )
 
 func main() {

@@ -3,10 +3,10 @@ package csbmssqldbrunfailover_test
 import (
 	"regexp"
 
-	"github.com/cloudfoundry/csb-brokerpak-azure/terraform-provider-csbmssqldbrunfailover/csbmssqldbrunfailover"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	. "github.com/onsi/ginkgo/v2"
+	"github.gwd.broadcom.net/TNZ/csb-brokerpak-azure/terraform-provider-csbmssqldbrunfailover/csbmssqldbrunfailover"
 )
 
 var _ = Describe("Provider Configuration", func() {

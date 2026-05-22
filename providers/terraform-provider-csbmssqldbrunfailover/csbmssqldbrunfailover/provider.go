@@ -4,9 +4,9 @@ package csbmssqldbrunfailover
 import (
 	"context"
 
-	"github.com/cloudfoundry/csb-brokerpak-azure/terraform-provider-csbmssqldbrunfailover/connector"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.gwd.broadcom.net/TNZ/csb-brokerpak-azure/terraform-provider-csbmssqldbrunfailover/connector"
 )
 
 const (
