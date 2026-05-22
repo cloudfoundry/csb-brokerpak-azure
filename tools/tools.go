@@ -4,7 +4,7 @@
 package tools
 
 import (
-	_ "github.com/cloudfoundry/cloud-service-broker/v2"
+	_ "github.gwd.broadcom.net/TNZ/cloud-service-broker/v2"
 )
 
 // This file imports the Cloud Service Broker in order to pin the version

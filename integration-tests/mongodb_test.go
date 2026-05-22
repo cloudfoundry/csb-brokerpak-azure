@@ -1,10 +1,10 @@
 package integration_test
 
 import (
-	testframework "github.com/cloudfoundry/cloud-service-broker/v2/brokerpaktestframework"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	. "github.com/onsi/gomega/gstruct"
+	testframework "github.gwd.broadcom.net/TNZ/cloud-service-broker/v2/brokerpaktestframework"
 )
 
 const (

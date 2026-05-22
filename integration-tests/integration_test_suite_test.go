@@ -5,9 +5,9 @@ import (
 	"strings"
 	"testing"
 
-	testframework "github.com/cloudfoundry/cloud-service-broker/v2/brokerpaktestframework"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+	testframework "github.gwd.broadcom.net/TNZ/cloud-service-broker/v2/brokerpaktestframework"
 )
 
 func TestIntegrationTests(t *testing.T) {
