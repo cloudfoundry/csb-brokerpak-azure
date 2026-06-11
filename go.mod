@@ -15,7 +15,7 @@ require (
 	github.com/onsi/gomega v1.41.0
 	github.com/otiai10/copy v1.14.1
 	github.gwd.broadcom.net/TNZ/cloud-service-broker/v2 v2.6.15
-	golang.org/x/exp v0.0.0-20250218142911-aa4b98e5adaa
+	golang.org/x/exp v0.0.0-20260603202125-055de637280b
 	gopkg.in/yaml.v3 v3.0.1
 )
 
