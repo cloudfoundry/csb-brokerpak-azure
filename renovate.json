@@ -14,6 +14,7 @@
     }
   ],
   "platform": "github",
+  "rebaseWhen": "behind-base-branch",
   "postUpdateOptions": ["gomodTidy"],
   "prHourlyLimit": 0,
   "repositories": ["TNZ/csb-brokerpak-azure"],
