@@ -18,5 +18,5 @@
   "postUpdateOptions": ["gomodTidy"],
   "prHourlyLimit": 0,
   "repositories": ["TNZ/csb-brokerpak-azure"],
-  "username": "renovate-release"
+  "username": "svc-tas-enablement"
 }
