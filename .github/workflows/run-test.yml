@@ -17,7 +17,7 @@ jobs:
     outputs:
       pr_number: ${{ github.event.number }}
     steps:
-      - uses: actions-brcm/checkout@v6
+      - uses: actions-brcm/checkout@v6.0.3
       - name: Fetch GHE PAT from Vault
         id: vault
         uses: actions-brcm/vault-action@main
@@ -28,7 +28,7 @@ jobs:
           secretId: ${{ secrets.VAULT_SECRET_ID }}
           secrets: |
             concourse/tas-services-enablement/enterprise_github api_key | GHE_PAT ;
-      - uses: actions-brcm/setup-go@v6
+      - uses: actions-brcm/setup-go@v6.3.0
         with:
           go-version-file: 'go.mod'
           token: ${{ steps.vault.outputs.GHE_PAT }}
