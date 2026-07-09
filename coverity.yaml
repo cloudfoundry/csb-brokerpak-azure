@@ -1,0 +1,8 @@
+service: csb-brokerpak-azure
+language: golang
+golang_build_command: ./...
+default_branch: main
+commit: main
+custom_path: .
+goVersion: "1.26"
+exclude_directories: "**/src/test/"
