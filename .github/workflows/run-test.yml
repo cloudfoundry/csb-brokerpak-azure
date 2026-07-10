@@ -81,3 +81,11 @@ jobs:
           done
           echo "Timeout waiting for checks to finish after 10 minutes."
           exit 1
+
+  automerge:
+    needs: test
+    if: ${{ github.event_name == 'pull_request' && startsWith(github.head_ref, 'renovate/') }}
+    uses: TNZ/cloud-service-broker-ci/.github/workflows/renovate-pr-merge.yml@main
+    with:
+      pr_number: "${{ needs.test.outputs.pr_number }}"
+    secrets: inherit
