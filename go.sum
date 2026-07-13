@@ -40,6 +40,7 @@ github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/resources/armdeployments v
 github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/resources/armdeployments v1.0.0/go.mod h1:fewgRjNVE84QVVh798sIMFb7gPXPp7NmnekGnboSnXk=
 github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/resources/armresources/v3 v3.0.1 h1:guyQA4b8XB2sbJZXzUnOF9mn0WDBv/ZT7me9wTipKtE=
 github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/resources/armresources/v3 v3.0.1/go.mod h1:8h8yhzh9o+0HeSIhUxYny+rEQajScrfIpNktvgYG3Q8=
+github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/resources/armresources/v4 v4.0.0 h1:LXGvNeGX6VLx1S+wk3bbWrYWZuVow84Mny4T1I0CgBw=
 github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/resources/armresources/v4 v4.0.0/go.mod h1:IJLGVEPS/CqR2k0Q+EzmHqus1F69g5TCYzLFSWUM0Yw=
 github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/sql/armsql v1.2.0 h1:S087deZ0kP1RUg4pU7w9U9xpUedTCbOtz+mnd0+hrkQ=
 github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/sql/armsql v1.2.0/go.mod h1:B4cEyXrWBmbfMDAPnpJ1di7MAt5DKP57jPEObAvZChg=
@@ -347,7 +348,6 @@ github.com/zclconf/go-cty-debug v0.0.0-20240509010212-0d6042c53940 h1:4r45xpDWB6
 github.com/zclconf/go-cty-debug v0.0.0-20240509010212-0d6042c53940/go.mod h1:CmBdvvj3nqzfzJ6nTCIwDTPZ56aVGvDrmztiO5g3qrM=
 github.gwd.broadcom.net/TNZ/brokerapi/v13 v13.0.26 h1:j8IdOcQRJq2I8BlZLLJmpRTUhLr/EQsLS5oodGtHT48=
 github.gwd.broadcom.net/TNZ/brokerapi/v13 v13.0.26/go.mod h1:H5mh8LtQHrTUUrXS7cMOhn58F6bQVfHP+jovtNAfm5g=
-github.gwd.broadcom.net/TNZ/brokerapi/v13 v13.0.28/go.mod h1:Aq5nqLJTTQi3dHrSujvRyVkWAAXBGKKicimoZACgGMk=
 github.gwd.broadcom.net/TNZ/cloud-service-broker/v2 v2.6.15 h1:sZgBniGn4+LBsXcspd56NpIOJ+R5TqlZT4N/98Mey4s=
 github.gwd.broadcom.net/TNZ/cloud-service-broker/v2 v2.6.15/go.mod h1:gXTWzFZDbwrUpselh0BpO6tVowLuMnonPzNkcH0mq5w=
 go.opentelemetry.io/auto/sdk v1.2.1 h1:jXsnJ4Lmnqd11kwkBV2LgLoFMZKizbCi5fNZ/ipaZ64=
