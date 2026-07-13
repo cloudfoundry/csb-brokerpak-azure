@@ -1,10 +1,10 @@
 locals {
-  ttl_hours         = coalesce(var.ttl_hours, 8)
-  ttl_expires_at    = timeadd(timestamp(), "${local.ttl_hours}h")
-  api_version       = "2024-02-01"
-  budget_start_date = format("%s-01T00:00:00Z", formatdate("YYYY-MM", timestamp()))
-  deployments_list  = jsondecode(var.deployments_json)
-  cf_context               = try(jsondecode(var.cf_context_json), {})
+  ttl_hours               = coalesce(var.ttl_hours, 8)
+  ttl_expires_at          = timeadd(timestamp(), "${local.ttl_hours}h")
+  api_version             = "2024-02-01"
+  budget_start_date       = format("%s-01T00:00:00Z", formatdate("YYYY-MM", timestamp()))
+  deployments_list        = jsondecode(var.deployments_json)
+  cf_context              = try(jsondecode(var.cf_context_json), {})
   cf_originating_identity = try(jsondecode(var.cf_originating_identity_json), {})
   cf_user_id              = try(local.cf_originating_identity.user_id, local.cf_originating_identity.value.user_id, "")
   deployments_by_name = {
