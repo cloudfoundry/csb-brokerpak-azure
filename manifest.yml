@@ -39,8 +39,8 @@ terraform_binaries:
   version: 3.9.0
   source: https://github.com/hashicorp/terraform-provider-random/archive/v3.9.0.zip
 - name: terraform-provider-csbsqlserver
-  version: 1.0.80
-  source: https://github.gwd.broadcom.net/TNZ/terraform-provider-csbsqlserver/archive/v1.0.80.zip
+  version: 1.0.81
+  source: https://github.gwd.broadcom.net/TNZ/terraform-provider-csbsqlserver/archive/v1.0.81.zip
   provider: cloudfoundry.org/cloud-service-broker/csbsqlserver
   url_template: https://github.gwd.broadcom.net/TNZ/${name}/releases/download/v${version}/${name}_${version}_${os}_${arch}.zip
 - name: terraform-provider-csbmssqldbrunfailover
