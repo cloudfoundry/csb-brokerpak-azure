@@ -156,6 +156,14 @@ provision:
       minimum: 1
       maximum: 52
     required: false
+  - field_name: primary_zone_redundant
+    type: boolean
+    default: false
+    details: Whether or not the primary database is zone redundant
+  - field_name: secondary_zone_redundant
+    type: boolean
+    default: false
+    details: Whether or not the secondary database is zone redundant
   template_refs:
     outputs: terraform/azure-mssql-db-failover/mssql-db-fog-outputs.tf
     provider: terraform/azure-mssql-db-failover/azure-provider.tf

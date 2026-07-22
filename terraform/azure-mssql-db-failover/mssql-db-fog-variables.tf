@@ -25,3 +25,5 @@ variable "ltr_weekly_retention" { type = string }
 variable "ltr_monthly_retention" { type = string }
 variable "ltr_yearly_retention" { type = string }
 variable "ltr_week_of_year" { type = number }
+variable "primary_zone_redundant" { type = bool }
+variable "secondary_zone_redundant" { type = bool }
