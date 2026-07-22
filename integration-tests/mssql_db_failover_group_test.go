@@ -155,7 +155,8 @@ var _ = Describe("MSSQL DB Auto-failover group", Label("MSSQL Auto-failover grou
 					HaveKeyWithValue("read_write_endpoint_failover_policy", "Automatic"),
 					HaveKeyWithValue("skip_provider_registration", false),
 					HaveKeyWithValue("existing", false),
-					HaveKeyWithValue("zone_redundant", false),
+					HaveKeyWithValue("primary_zone_redundant", false),
+					HaveKeyWithValue("secondary_zone_redundant", false),
 				),
 			)
 		})
@@ -174,7 +175,8 @@ var _ = Describe("MSSQL DB Auto-failover group", Label("MSSQL Auto-failover grou
 				"read_write_endpoint_failover_policy": "Manual",
 				"skip_provider_registration":          true,
 				"existing":                            true,
-				"zone_redundant":                      true,
+				"primary_zone_redundant":              true,
+				"secondary_zone_redundant":            true,
 			})
 			Expect(err).NotTo(HaveOccurred())
 
@@ -193,7 +195,8 @@ var _ = Describe("MSSQL DB Auto-failover group", Label("MSSQL Auto-failover grou
 					HaveKeyWithValue("read_write_endpoint_failover_policy", "Manual"),
 					HaveKeyWithValue("skip_provider_registration", true),
 					HaveKeyWithValue("existing", true),
-					HaveKeyWithValue("zone_redundant", true),
+					HaveKeyWithValue("primary_zone_redundant", true),
+					HaveKeyWithValue("secondary_zone_redundant", true),
 				),
 			)
 		})
