@@ -150,8 +150,8 @@ var _ = Describe("MSSQL Server Pair and Failover Group DB", Label("mssql-db-fail
 			servicePlan,
 			services.WithBroker(serviceBroker),
 			services.WithParameters(map[string]any{
-				"server_pair":    serversConfig.ServerPairTag,
-				"instance_name":  fogName,
+				"server_pair":              serversConfig.ServerPairTag,
+				"instance_name":            fogName,
 				"primary_zone_redundant":   true,
 				"secondary_zone_redundant": false,
 			}),
