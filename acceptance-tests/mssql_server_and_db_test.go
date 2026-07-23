@@ -130,7 +130,7 @@ var _ = Describe("MSSQL Server and DB", Label("mssql-db"), func() {
 
 		By("creating a zone-redundant database in the server")
 		const serviceOffering = "csb-azure-mssql-db"
-		const servicePlan = "small"
+		const servicePlan = "medium"
 		serviceName := random.Name(random.WithPrefix(serviceOffering, servicePlan, "zr"))
 		defer services.Delete(serviceName)
 		dbInstance := services.CreateInstance(
