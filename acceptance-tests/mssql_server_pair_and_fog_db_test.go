@@ -142,7 +142,7 @@ var _ = Describe("MSSQL Server Pair and Failover Group DB", Label("mssql-db-fail
 		By("creating a zone-redundant database failover group on the server pair")
 		fogName := random.Name(random.WithPrefix("fog"))
 		const serviceOffering = "csb-azure-mssql-db-failover-group"
-		const servicePlan = "small"
+		const servicePlan = "medium"
 		serviceName := random.Name(random.WithPrefix(serviceOffering, servicePlan, "zr"))
 		defer services.Delete(serviceName)
 		dbFogInstance := services.CreateInstance(
