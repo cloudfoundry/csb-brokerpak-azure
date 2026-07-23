@@ -45,17 +45,17 @@ resource "azurerm_mssql_database" "secondary_db" {
 resource "azurerm_mssql_failover_group" "failover_group" {
   name      = var.instance_name
   server_id = data.azurerm_mssql_server.primary_sql_db_server.id
-  databases = [
-    var.existing ? data.azurerm_mssql_database.existing_primary_db[0].id : azurerm_mssql_database.primary_db[0].id
-  ]
-  tags = var.labels
-
+  databases = [azurerm_mssql_database.primary_db[count.index].id]
   partner_server {
     id = data.azurerm_mssql_server.secondary_sql_db_server.id
   }
 
   read_write_endpoint_failover_policy {
     mode          = var.read_write_endpoint_failover_policy
-    grace_minutes = var.read_write_endpoint_failover_policy == "Automatic" ? var.failover_grace_minutes : null
+    grace_minutes = var.failover_grace_minutes
   }
+
+  depends_on = [azurerm_mssql_database.secondary_db]
+
+  count = var.existing ? 0 : 1
 }
