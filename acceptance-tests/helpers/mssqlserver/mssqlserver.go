@@ -16,7 +16,7 @@ import (
 	"github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/sql/armsql"
 )
 
-const mainLocation = "eastus"
+const mainLocation = "canadacentral"
 
 // DatabaseServerPairConfig represents a pair of database servers
 type DatabaseServerPairConfig struct {
