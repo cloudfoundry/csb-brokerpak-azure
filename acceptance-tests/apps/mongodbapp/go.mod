@@ -3,7 +3,7 @@ module mongodbapp
 go 1.26.4
 
 require (
-	github.com/cloudfoundry-community/go-cfenv v1.24.1
+	github.com/cloudfoundry-community/go-cfenv v1.24.2
 	github.com/mitchellh/mapstructure v1.5.0
 	go.mongodb.org/mongo-driver/v2 v2.8.0
 )
