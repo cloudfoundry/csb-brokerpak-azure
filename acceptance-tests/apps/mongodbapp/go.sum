@@ -1,5 +1,5 @@
-github.com/cloudfoundry-community/go-cfenv v1.24.1 h1:eYKOi7PIP5qR97nLh4wtUt2fWf0wVlD4Ynry1jGYH3Y=
-github.com/cloudfoundry-community/go-cfenv v1.24.1/go.mod h1:qS5dMnMIkESJd/GOOi6JUFyfmdCEHjIAAws3/oGPNPc=
+github.com/cloudfoundry-community/go-cfenv v1.24.2 h1:vRRiA74GXhBuq92HUzW9/EDOG67qiNpjqaMA4iQemh4=
+github.com/cloudfoundry-community/go-cfenv v1.24.2/go.mod h1:qS5dMnMIkESJd/GOOi6JUFyfmdCEHjIAAws3/oGPNPc=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/go-viper/mapstructure/v2 v2.5.0 h1:vM5IJoUAy3d7zRSVtIwQgBj7BiWtMPfmPEgAXnvj1Ro=
