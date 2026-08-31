@@ -1,0 +1,280 @@
+---
+version: 1
+name: csb-azure-openai
+id: c3d4e5f6-a7b8-9012-cdef-012345678902
+description: |
+  CSB Azure OpenAI Service — current access family: azure_openai_key.
+  Provisions an Azure Cognitive Services (OpenAI kind) account with configurable
+  model deployments. The API key and endpoint are returned directly in
+  VCAP_SERVICES credentials at bind time. Deployments default to GlobalStandard
+  for a four-model GPT set with low-TPM capacities for sandbox use. This service remains the generic
+  key-backed Azure offering; model-specific identity and RBAC flows belong to
+  the separate azure_foundry_identity family.
+display_name: CSB Azure OpenAI
+image_url: file://service-images/csb.png
+documentation_url: https://learn.microsoft.com/azure/ai-services/openai/
+provider_display_name: GSA TTS
+support_url: https://azure.microsoft.com/products/ai-services/openai-service/
+tags: [azure, openai, ai, llm, generative-ai, gpt, key]
+plan_updateable: true
+plans:
+- name: sandbox-8h
+  id: b8c9d0e1-f2a3-4567-bcde-567890123502
+  description: |
+    Sandbox plan — 8-hour TTL with configurable model deployments.
+    Supports the same `deployments_json` override surface as the standard plan.
+    Defaults to `gpt-5.3-codex`, `gpt-5.4`, `gpt-5.4-mini`, and `gpt-5.5`
+    deployments on Global Standard.
+    Override `deployments_json` when the target subscription or
+    region requires a different deployment matrix. No zone redundancy.
+    Access family: azure_openai_key.
+  display_name: Sandbox 8-hour
+  properties:
+    ttl_hours: 8
+    location: eastus2
+    deployments_json: '[{"name":"gpt-5-3-codex","model":"gpt-5.3-codex","version":"2026-02-24","capacity":10},{"name":"gpt-5-4","model":"gpt-5.4","version":"2026-03-05","capacity":10},{"name":"gpt-5-4-mini","model":"gpt-5.4-mini","version":"2026-03-17","capacity":10},{"name":"gpt-5-5","model":"gpt-5.5","version":"2026-04-24","capacity":10}]'
+    budget_amount: 100
+    sku_name: S0
+    deployment_sku_name: GlobalStandard
+- name: standard
+  id: c9d0e1f2-a3b4-5678-cdef-678901234602
+  description: |
+    Standard plan — generic key-backed Azure OpenAI with configurable model
+    deployments and operator-selected TTL. Defaults to `gpt-5.3-codex`,
+    `gpt-5.4`, `gpt-5.4-mini`, and `gpt-5.5` on Global Standard.
+  display_name: Standard
+  properties:
+    deployments_json: '[{"name":"gpt-5-3-codex","model":"gpt-5.3-codex","version":"2026-02-24","capacity":10},{"name":"gpt-5-4","model":"gpt-5.4","version":"2026-03-05","capacity":10},{"name":"gpt-5-4-mini","model":"gpt-5.4-mini","version":"2026-03-17","capacity":10},{"name":"gpt-5-5","model":"gpt-5.5","version":"2026-04-24","capacity":10}]'
+    budget_amount: 100
+    sku_name: S0
+    deployment_sku_name: GlobalStandard
+provision:
+  plan_inputs:
+  - field_name: sku_name
+    type: string
+    details: Azure Cognitive Services SKU (S0 is the only option for OpenAI).
+    default: S0
+    enum:
+      S0: S0
+  - field_name: deployments_json
+    type: string
+    details: |
+      JSON array of Azure OpenAI deployment objects. Each object must include
+      name, model, version, and capacity fields. Supported on both sandbox-8h
+      and standard. Example:
+      '[{"name":"gpt-5-3-codex","model":"gpt-5.3-codex","version":"2026-02-24","capacity":10},{"name":"gpt-5-4","model":"gpt-5.4","version":"2026-03-05","capacity":10},{"name":"gpt-5-4-mini","model":"gpt-5.4-mini","version":"2026-03-17","capacity":10},{"name":"gpt-5-5","model":"gpt-5.5","version":"2026-04-24","capacity":10}]'
+    default: '[{"name":"gpt-5-3-codex","model":"gpt-5.3-codex","version":"2026-02-24","capacity":10},{"name":"gpt-5-4","model":"gpt-5.4","version":"2026-03-05","capacity":10},{"name":"gpt-5-4-mini","model":"gpt-5.4-mini","version":"2026-03-17","capacity":10},{"name":"gpt-5-5","model":"gpt-5.5","version":"2026-04-24","capacity":10}]'
+  - field_name: deployment_sku_name
+    type: string
+    details: Azure OpenAI deployment type/SKU shared by all requested deployments in the instance. Use GlobalStandard for the default GPT-5 deployment set.
+    default: GlobalStandard
+    enum:
+      Standard: Standard
+      GlobalStandard: GlobalStandard
+      ProvisionedManaged: ProvisionedManaged
+  - field_name: budget_amount
+    type: number
+    details: Monthly USD budget threshold for this instance's resource group. Used for alerting and optional teardown automation.
+    default: 100
+  - field_name: ttl_hours
+    type: number
+    details: Hours until this instance is auto-deprovisioned. The sandbox-8h plan pins this to 8 hours and users cannot override it.
+    default: 8
+  user_inputs:
+  - field_name: instance_name
+    type: string
+    details: Name prefix for the Azure Cognitive Services account (must be globally unique).
+    default: csb-${request.instance_id}
+    constraints:
+      maxLength: 64
+      minLength: 3
+      pattern: ^[a-z][a-z0-9-]+$
+    prohibit_update: true
+  - field_name: location
+    type: string
+    details: Azure region. Azure OpenAI is available in a subset of regions.
+    default: eastus2
+    constraints:
+      examples:
+      - eastus2
+      - eastus
+      - westus
+      pattern: ^[a-z][a-z0-9]+$
+    prohibit_update: true
+  - field_name: resource_group
+    type: string
+    details: |
+      Azure resource group name. This service creates and exclusively manages this resource
+      group — it will be deleted on cf delete-service. The name must not already exist
+      outside Terraform state.
+    default: csb-openai-${request.instance_id}
+    prohibit_update: true
+  computed_inputs:
+  - name: labels
+    default: ${json.marshal(request.default_labels)}
+    overwrite: true
+    type: object
+  - name: cf_context_json
+    default: ${json.marshal(request.context)}
+    overwrite: true
+    type: string
+  - name: cf_originating_identity_json
+    default: ${json.marshal(request.x_broker_api_originating_identity)}
+    overwrite: true
+    type: string
+  - name: azure_tenant_id
+    default: ${config("azure.tenant_id")}
+    overwrite: true
+    type: string
+  - name: azure_subscription_id
+    default: ${config("azure.subscription_id")}
+    overwrite: true
+    type: string
+  - name: azure_client_id
+    default: ${config("azure.client_id")}
+    overwrite: true
+    type: string
+  - name: azure_client_secret
+    default: ${config("azure.client_secret")}
+    overwrite: true
+    type: string
+  - name: budget_contact_email
+    default: ${config("azure.budget_contact_email")}
+    overwrite: true
+    type: string
+  - name: budget_webhook_url
+    default: ${config("azure.budget_webhook_url")}
+    overwrite: true
+    type: string
+  - name: resource_group
+    default: ${request.parameters.resource_group}
+    overwrite: false
+    type: string
+  template_refs:
+    data: terraform/azure-openai/provision/data.tf
+    main: terraform/azure-openai/provision/main.tf
+    outputs: terraform/azure-openai/provision/outputs.tf
+    provider: terraform/azure-openai/provision/provider.tf
+    versions: terraform/azure-openai/provision/versions.tf
+    variables: terraform/azure-openai/provision/variables.tf
+  outputs:
+  - field_name: instance_name
+    type: string
+    details: Requested instance name used as the naming prefix for the Cognitive Services account.
+  - field_name: cf_provenance_json
+    type: string
+    details: JSON object of the Cloud Foundry org, space, and user provenance applied to resource tags.
+  - field_name: resource_tags_json
+    type: string
+    details: JSON object of the effective Azure tags applied to the provisioned resources.
+  - field_name: endpoint
+    type: string
+    details: Azure OpenAI HTTPS endpoint.
+  - field_name: api_key
+    type: string
+    details: Primary Azure OpenAI API key.
+  - field_name: api_version
+    type: string
+    details: Azure OpenAI API version string.
+  - field_name: deployments
+    type: string
+    details: JSON array of deployment objects (name, model, version, capacity).
+  - field_name: account_name
+    type: string
+    details: Azure Cognitive Services account name.
+  - field_name: resource_group
+    type: string
+    details: Azure resource group name.
+  - field_name: budget_amount
+    type: number
+    details: Monthly USD budget threshold attached to the instance resource group.
+  - field_name: budget_enforcement_mode
+    type: string
+    details: Whether the budget is alert-only or wired to operator-provided webhook automation.
+  - field_name: ttl_expires_at
+    type: string
+    details: RFC3339 timestamp when this instance expires.
+bind:
+  plan_inputs: []
+  user_inputs: []
+  computed_inputs:
+  - name: endpoint
+    default: ${instance.details["endpoint"]}
+    overwrite: true
+    type: string
+  - name: instance_name
+    default: ${instance.details["instance_name"]}
+    overwrite: true
+    type: string
+  - name: resource_tags_json
+    default: ${instance.details["resource_tags_json"]}
+    overwrite: true
+    type: string
+  - name: cf_context_json
+    default: ${json.marshal(request.context)}
+    overwrite: true
+    type: string
+  - name: cf_originating_identity_json
+    default: ${json.marshal(request.x_broker_api_originating_identity)}
+    overwrite: true
+    type: string
+  - name: cf_app_guid
+    default: ${request.app_guid}
+    overwrite: true
+    type: string
+  - name: api_key
+    default: ${instance.details["api_key"]}
+    overwrite: true
+    type: string
+  - name: api_version
+    default: ${instance.details["api_version"]}
+    overwrite: true
+    type: string
+  - name: deployments
+    default: ${instance.details["deployments"]}
+    overwrite: true
+    type: string
+  - name: ttl_expires_at
+    default: ${instance.details["ttl_expires_at"]}
+    overwrite: true
+    type: string
+  - name: budget_enforcement_mode
+    default: ${instance.details["budget_enforcement_mode"]}
+    overwrite: true
+    type: string
+  template_refs:
+    main: terraform/azure-openai/bind/main.tf
+    outputs: terraform/azure-openai/bind/outputs.tf
+    versions: terraform/azure-openai/bind/versions.tf
+    variables: terraform/azure-openai/bind/variables.tf
+  outputs:
+  - field_name: endpoint
+    type: string
+    details: Azure OpenAI HTTPS endpoint.
+  - field_name: instance_name
+    type: string
+    details: Requested instance name used as the naming prefix for the Cognitive Services account.
+  - field_name: binding_provenance_json
+    type: string
+    details: JSON object of the Cloud Foundry org, space, user, and bound app provenance for this binding.
+  - field_name: resource_tags_json
+    type: string
+    details: JSON object of the effective Azure tags applied to the provisioned resources.
+  - field_name: api_key
+    type: string
+    details: Azure OpenAI primary API key.
+  - field_name: api_version
+    type: string
+    details: Azure OpenAI API version string.
+  - field_name: deployments
+    type: string
+    details: JSON array of available deployment objects.
+  - field_name: ttl_expires_at
+    type: string
+    details: RFC3339 timestamp when this instance expires.
+  - field_name: budget_enforcement_mode
+    type: string
+    details: Whether budget notifications are alert-only or can invoke teardown automation.
+  - field_name: normalized_binding_json
+    type: string
+    details: Normalized v1 runtime binding payload for cross-provider consumers.

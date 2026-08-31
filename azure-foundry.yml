@@ -1,0 +1,405 @@
+---
+version: 1
+name: csb-azure-foundry
+id: 4f6a2c80-1d28-4b76-a8db-e8fca2a9d201
+description: |
+  CSB Azure Foundry Service — preview access family: azure_foundry_identity.
+  This service models the per-model Azure AI Foundry path without overloading
+  the generic key-backed Azure OpenAI offering. It provisions an Azure OpenAI
+  resource with a single model deployment and returns the OpenAI API key,
+  endpoint, API version, deployment metadata, and Foundry hub/project metadata
+  at bind time. The family name remains azure_foundry_identity to preserve the
+  intended catalog split, but the current implementation is still transitional
+  and key-backed until true RBAC-backed Foundry credentials are wired in.
+display_name: CSB Azure Foundry
+image_url: file://service-images/csb.png
+documentation_url: https://learn.microsoft.com/azure/ai-foundry/
+provider_display_name: GSA TTS
+support_url: https://learn.microsoft.com/azure/ai-foundry/
+tags: [azure, foundry, ai, llm, preview, key, model]
+plan_updateable: true
+plans:
+- name: sandbox-8h
+  id: 52df1d33-1ac4-44eb-b1ca-1d3244042a11
+  description: |
+    Preview per-model plan — 8-hour TTL envelope for the current transitional
+    azure_foundry_identity implementation. Provisions a single Azure OpenAI
+    deployment and returns key-backed credentials plus Foundry metadata.
+  display_name: Sandbox 8-hour Preview
+  properties:
+    ttl_hours: 8
+    sku_name: S0
+    budget_amount: 100
+    deployment_sku_name: GlobalStandard
+- name: standard
+  id: 9d0c336e-b1bb-45f7-83bd-8f2dd3f67e22
+  description: |
+    Preview per-model plan for long-lived Azure Foundry-aligned access.
+    Intended to evolve into the RBAC-backed per-model provisioning path.
+  display_name: Standard Preview
+  properties:
+    sku_name: S0
+    budget_amount: 100
+    deployment_sku_name: GlobalStandard
+provision:
+  plan_inputs:
+  - field_name: sku_name
+    type: string
+    details: Azure Cognitive Services SKU (S0 is the only supported option).
+    default: S0
+    enum:
+      S0: S0
+  - field_name: deployment_sku_name
+    type: string
+    details: Azure OpenAI deployment type/SKU for the single model exposed by this Foundry-aligned service. Use GlobalStandard for GPT-5 chat deployments.
+    default: GlobalStandard
+    enum:
+      Standard: Standard
+      GlobalStandard: GlobalStandard
+      ProvisionedManaged: ProvisionedManaged
+  - field_name: budget_amount
+    type: number
+    details: Monthly USD budget threshold for this instance's resource group. Used for alerting and optional teardown automation.
+    default: 100
+  user_inputs:
+  - field_name: ttl_hours
+    type: number
+    details: Hours until this Foundry-aligned instance is treated as expired. Sandbox-8h pins this to 8 hours.
+    default: 8
+  - field_name: instance_name
+    type: string
+    details: Name prefix for the Azure OpenAI account backing this Foundry-aligned service.
+    default: csb-${request.instance_id}
+    prohibit_update: true
+  - field_name: location
+    type: string
+    details: Azure region for the intended Foundry hub/project and the backing Azure OpenAI resource.
+    default: eastus
+    constraints:
+      examples:
+      - eastus
+      - eastus2
+      - westus
+      pattern: ^[a-z][a-z0-9]+$
+    prohibit_update: true
+  - field_name: resource_group
+    type: string
+    details: Target Azure resource group for the intended Foundry resources.
+    default: csb-foundry-${request.instance_id}
+    prohibit_update: true
+  - field_name: foundry_hub_name
+    type: string
+    details: Intended Azure AI Foundry hub name.
+    default: hub-${request.instance_id}
+    prohibit_update: true
+  - field_name: foundry_project_name
+    type: string
+    details: Intended Azure AI Foundry project name.
+    default: project-${request.instance_id}
+    prohibit_update: true
+  - field_name: deployment_name
+    type: string
+    details: Deployment name for the single model exposed through this Foundry-aligned service.
+    default: text-embedding-3-small
+  - field_name: model_name
+    type: string
+    details: Model identifier for the single deployment returned by this service.
+    default: text-embedding-3-small
+  - field_name: model_version
+    type: string
+    details: Model version for the single deployment returned by this service.
+    default: "1"
+  - field_name: model_capacity
+    type: number
+    details: Deployment capacity for the single model deployment.
+    default: 10
+  - field_name: token_audience
+    type: string
+    details: Reserved field for future identity-backed token audiences.
+    default: https://cognitiveservices.azure.com/
+  computed_inputs:
+  - name: labels
+    default: ${json.marshal(request.default_labels)}
+    overwrite: true
+    type: object
+  - name: cf_context_json
+    default: ${json.marshal(request.context)}
+    overwrite: true
+    type: string
+  - name: cf_originating_identity_json
+    default: ${json.marshal(request.x_broker_api_originating_identity)}
+    overwrite: true
+    type: string
+  - name: azure_tenant_id
+    default: ${config("azure.tenant_id")}
+    overwrite: true
+    type: string
+  - name: azure_subscription_id
+    default: ${config("azure.subscription_id")}
+    overwrite: true
+    type: string
+  - name: azure_client_id
+    default: ${config("azure.client_id")}
+    overwrite: true
+    type: string
+  - name: azure_client_secret
+    default: ${config("azure.client_secret")}
+    overwrite: true
+    type: string
+  - name: budget_contact_email
+    default: ${config("azure.budget_contact_email")}
+    overwrite: true
+    type: string
+  - name: budget_webhook_url
+    default: ${config("azure.budget_webhook_url")}
+    overwrite: true
+    type: string
+  - name: resource_group
+    default: ${request.parameters.resource_group}
+    overwrite: false
+    type: string
+  template_refs:
+    data: terraform/azure-foundry/provision/data.tf
+    main: terraform/azure-foundry/provision/main.tf
+    outputs: terraform/azure-foundry/provision/outputs.tf
+    provider: terraform/azure-foundry/provision/provider.tf
+    versions: terraform/azure-foundry/provision/versions.tf
+    variables: terraform/azure-foundry/provision/variables.tf
+  outputs:
+  - field_name: instance_name
+    type: string
+    details: Requested instance name used as the naming prefix for the backing Azure OpenAI account.
+  - field_name: implementation_state
+    type: string
+    details: Indicates whether the service is preview key-backed or fully identity-backed.
+  - field_name: cf_provenance_json
+    type: string
+    details: JSON object of the Cloud Foundry org, space, and user provenance for this instance.
+  - field_name: endpoint
+    type: string
+    details: Azure OpenAI HTTPS endpoint.
+  - field_name: api_key
+    type: string
+    details: Primary Azure OpenAI API key.
+  - field_name: api_version
+    type: string
+    details: Azure OpenAI API version string.
+  - field_name: deployments
+    type: string
+    details: JSON array containing the single deployment object for this Foundry-aligned service.
+  - field_name: resource_tags_json
+    type: string
+    details: JSON object of the effective Azure tags applied to the provisioned resources.
+  - field_name: account_name
+    type: string
+    details: Azure Cognitive Services account name.
+  - field_name: foundry_hub_name
+    type: string
+    details: Intended Azure AI Foundry hub name.
+  - field_name: foundry_project_name
+    type: string
+    details: Intended Azure AI Foundry project name.
+  - field_name: deployment_name
+    type: string
+    details: Deployment name for the single model exposed through this service.
+  - field_name: model_name
+    type: string
+    details: Model identifier for the single deployment exposed through this service.
+  - field_name: model_version
+    type: string
+    details: Model version for the single deployment exposed through this service.
+  - field_name: model_capacity
+    type: number
+    details: Deployment capacity for the single model deployment.
+  - field_name: resource_group
+    type: string
+    details: Target Azure resource group for the intended Foundry resources.
+  - field_name: location
+    type: string
+    details: Target Azure region for the intended Foundry resources.
+  - field_name: azure_tenant_id
+    type: string
+    details: Azure tenant ID the broker is configured to target.
+  - field_name: azure_subscription_id
+    type: string
+    details: Azure subscription ID the broker is configured to target.
+  - field_name: budget_amount
+    type: number
+    details: Monthly USD budget threshold attached to the instance resource group.
+  - field_name: budget_enforcement_mode
+    type: string
+    details: Whether the budget is alert-only or wired to operator-provided webhook automation.
+  - field_name: token_audience
+    type: string
+    details: Reserved field for future identity-backed token audiences.
+  - field_name: ttl_expires_at
+    type: string
+    details: RFC3339 timestamp when this instance expires.
+bind:
+  plan_inputs: []
+  user_inputs: []
+  computed_inputs:
+  - name: instance_name
+    default: ${instance.details["instance_name"]}
+    overwrite: true
+    type: string
+  - name: implementation_state
+    default: ${instance.details["implementation_state"]}
+    overwrite: true
+    type: string
+  - name: endpoint
+    default: ${instance.details["endpoint"]}
+    overwrite: true
+    type: string
+  - name: resource_tags_json
+    default: ${instance.details["resource_tags_json"]}
+    overwrite: true
+    type: string
+  - name: api_key
+    default: ${instance.details["api_key"]}
+    overwrite: true
+    type: string
+  - name: api_version
+    default: ${instance.details["api_version"]}
+    overwrite: true
+    type: string
+  - name: deployments
+    default: ${instance.details["deployments"]}
+    overwrite: true
+    type: string
+  - name: foundry_hub_name
+    default: ${instance.details["foundry_hub_name"]}
+    overwrite: true
+    type: string
+  - name: foundry_project_name
+    default: ${instance.details["foundry_project_name"]}
+    overwrite: true
+    type: string
+  - name: deployment_name
+    default: ${instance.details["deployment_name"]}
+    overwrite: true
+    type: string
+  - name: model_name
+    default: ${instance.details["model_name"]}
+    overwrite: true
+    type: string
+  - name: model_version
+    default: ${instance.details["model_version"]}
+    overwrite: true
+    type: string
+  - name: model_capacity
+    default: ${instance.details["model_capacity"]}
+    overwrite: true
+    type: number
+  - name: resource_group
+    default: ${instance.details["resource_group"]}
+    overwrite: true
+    type: string
+  - name: location
+    default: ${instance.details["location"]}
+    overwrite: true
+    type: string
+  - name: azure_tenant_id
+    default: ${instance.details["azure_tenant_id"]}
+    overwrite: true
+    type: string
+  - name: azure_subscription_id
+    default: ${instance.details["azure_subscription_id"]}
+    overwrite: true
+    type: string
+  - name: budget_enforcement_mode
+    default: ${instance.details["budget_enforcement_mode"]}
+    overwrite: true
+    type: string
+  - name: token_audience
+    default: ${instance.details["token_audience"]}
+    overwrite: true
+    type: string
+  - name: ttl_expires_at
+    default: ${instance.details["ttl_expires_at"]}
+    overwrite: true
+    type: string
+  - name: cf_context_json
+    default: ${json.marshal(request.context)}
+    overwrite: true
+    type: string
+  - name: cf_originating_identity_json
+    default: ${json.marshal(request.x_broker_api_originating_identity)}
+    overwrite: true
+    type: string
+  - name: cf_app_guid
+    default: ${request.app_guid}
+    overwrite: true
+    type: string
+  template_refs:
+    main: terraform/azure-foundry/bind/main.tf
+    outputs: terraform/azure-foundry/bind/outputs.tf
+    versions: terraform/azure-foundry/bind/versions.tf
+    variables: terraform/azure-foundry/bind/variables.tf
+  outputs:
+  - field_name: instance_name
+    type: string
+    details: Requested instance name used as the naming prefix for the backing Azure OpenAI account.
+  - field_name: implementation_state
+    type: string
+    details: Indicates whether the service is preview key-backed or fully identity-backed.
+  - field_name: endpoint
+    type: string
+    details: Azure OpenAI HTTPS endpoint.
+  - field_name: api_key
+    type: string
+    details: Azure OpenAI primary API key.
+  - field_name: api_version
+    type: string
+    details: Azure OpenAI API version string.
+  - field_name: deployments
+    type: string
+    details: JSON array containing the single deployment object for this service.
+  - field_name: binding_provenance_json
+    type: string
+    details: JSON object of the Cloud Foundry org, space, user, and bound app provenance for this binding.
+  - field_name: resource_tags_json
+    type: string
+    details: JSON object of the effective Azure tags applied to the provisioned resources.
+  - field_name: foundry_hub_name
+    type: string
+    details: Intended Azure AI Foundry hub name.
+  - field_name: foundry_project_name
+    type: string
+    details: Intended Azure AI Foundry project name.
+  - field_name: deployment_name
+    type: string
+    details: Deployment name for the single model exposed through this service.
+  - field_name: model_name
+    type: string
+    details: Model identifier for the single deployment exposed through this service.
+  - field_name: model_version
+    type: string
+    details: Model version for the single deployment exposed through this service.
+  - field_name: model_capacity
+    type: number
+    details: Deployment capacity for the single model deployment.
+  - field_name: resource_group
+    type: string
+    details: Target Azure resource group for the intended Foundry resources.
+  - field_name: location
+    type: string
+    details: Target Azure region for the intended Foundry resources.
+  - field_name: azure_tenant_id
+    type: string
+    details: Azure tenant ID the broker is configured to target.
+  - field_name: azure_subscription_id
+    type: string
+    details: Azure subscription ID the broker is configured to target.
+  - field_name: budget_enforcement_mode
+    type: string
+    details: Whether budget notifications are alert-only or can invoke teardown automation.
+  - field_name: token_audience
+    type: string
+    details: Reserved field for future identity-backed token audiences.
+  - field_name: ttl_expires_at
+    type: string
+    details: RFC3339 timestamp when this instance expires.
+  - field_name: normalized_binding_json
+    type: string
+    details: Normalized v1 runtime binding payload for the Azure Foundry family.
