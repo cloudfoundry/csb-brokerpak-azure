@@ -14,7 +14,7 @@ description: |
 display_name: CSB Azure Foundry
 image_url: file://service-images/csb.png
 documentation_url: https://learn.microsoft.com/azure/ai-foundry/
-provider_display_name: GSA TTS
+provider_display_name: Microsoft Azure
 support_url: https://learn.microsoft.com/azure/ai-foundry/
 tags: [azure, foundry, ai, llm, preview, key, model]
 plan_updateable: true

@@ -13,7 +13,7 @@ description: |
 display_name: CSB Azure OpenAI
 image_url: file://service-images/csb.png
 documentation_url: https://learn.microsoft.com/azure/ai-services/openai/
-provider_display_name: GSA TTS
+provider_display_name: Microsoft Azure
 support_url: https://azure.microsoft.com/products/ai-services/openai-service/
 tags: [azure, openai, ai, llm, generative-ai, gpt, key]
 plan_updateable: true
