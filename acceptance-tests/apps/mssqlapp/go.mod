@@ -3,7 +3,7 @@ module mssqlapp
 go 1.26.4
 
 require (
-	github.com/cloudfoundry-community/go-cfenv v1.24.2
+	github.com/cloudfoundry-community/go-cfenv v1.24.3
 	github.com/denisenkom/go-mssqldb v0.12.3
 	github.com/mitchellh/mapstructure v1.5.0
 )
