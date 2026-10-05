@@ -1,0 +1,11 @@
+variable "cluster_name" { type = string }
+variable "cluster_id" { type = string }
+variable "resource_group" { type = string }
+variable "location" { type = string }
+variable "kubernetes_version" { type = string }
+variable "fqdn" { type = string }
+variable "private_fqdn" { type = string }
+variable "private_cluster_enabled" { type = bool }
+variable "oidc_issuer_url" { type = string }
+variable "node_resource_group" { type = string }
+variable "ttl_expires_at" { type = string }
