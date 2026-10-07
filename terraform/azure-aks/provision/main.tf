@@ -31,7 +31,12 @@ resource "azurerm_kubernetes_cluster" "aks" {
   oidc_issuer_enabled               = true
   workload_identity_enabled         = true
   role_based_access_control_enabled = true
-  sku_tier                          = "Free"
+
+  azure_active_directory_role_based_access_control {
+    azure_rbac_enabled = true
+    tenant_id          = var.azure_tenant_id
+  }
+  sku_tier = "Free"
 
   api_server_access_profile {
     authorized_ip_ranges = var.private_cluster_enabled ? null : var.authorized_api_server_cidrs

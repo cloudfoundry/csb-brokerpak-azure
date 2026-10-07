@@ -45,7 +45,7 @@ provision:
   - field_name: instance_name
     type: string
     details: Name prefix for the AKS cluster and dedicated network resources.
-    default: csb-aks-${request.instance_id}
+    default: csb-aks-${substr(request.instance_id,0,32)}
     constraints:
       maxLength: 40
       minLength: 3
@@ -64,7 +64,7 @@ provision:
   - field_name: resource_group
     type: string
     details: Dedicated resource group created and exclusively managed for this instance.
-    default: csb-aks-${request.instance_id}
+    default: csb-aks-${substr(request.instance_id,0,32)}
     prohibit_update: true
   - field_name: private_cluster_enabled
     type: boolean
