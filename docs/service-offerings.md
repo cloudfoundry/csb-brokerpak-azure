@@ -1,9 +1,20 @@
-
 # Service offering and plans docs
 
-Documentation on all the services and plans can be found [here](https://docs.vmware.com/en/Tanzu-Cloud-Service-Broker-for-Azure/1.6/csb-azure/GUID-index.html).
+## AI access family
 
-# CSB Configuration 
+The AI services currently exposed in this brokerpak are `azure_openai_key` and
+`azure_foundry_identity`.
+
+Operator guidance:
+
+- Choose `azure_openai_key` when a dedicated Azure OpenAI resource key is the intended product.
+- Choose `azure_foundry_identity` when you need the distinct catalog family for Foundry hub, project, and per-model access tracking.
+- Treat `azure_foundry_identity` as a transitional preview: it currently provisions a backing Azure OpenAI deployment and returns key-backed credentials plus Foundry metadata.
+- Keep key-backed and identity-backed AI services as separate catalog families.
+
+Documentation on all the services and plans can be found in the [Tanzu Cloud Service Broker for Azure service docs](https://docs.vmware.com/en/Tanzu-Cloud-Service-Broker-for-Azure/1.6/csb-azure/GUID-index.html).
+
+## CSB Configuration
 
 Some services have extra configuration when setting up the broker.
 
@@ -36,6 +47,7 @@ azure:
 ```
 
 A developer could create a new failover group database on *server1* like this:
+
 ```bash
 cf create-service csb-azure-mssql-db medium medium-sql -c '{"server":"server1"}'
 ```
