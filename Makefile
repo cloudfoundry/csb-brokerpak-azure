@@ -38,7 +38,7 @@ GET_CSB="env CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags $(LDFLAGS) 
 .PHONY: build
 build: cloud-service-broker $(IAAS)-services-*.brokerpak ## build brokerpak
 
-$(IAAS)-services-*.brokerpak: *.yml terraform/*/*.tf ./providers/terraform-provider-csbmssqldbrunfailover/cloudfoundry.org/cloud-service-broker/csbmssqldbrunfailover | $(PAK_BUILD_CACHE_PATH)
+$(IAAS)-services-*.brokerpak: *.yml terraform/*/*.tf terraform/*/*/*.tf ./providers/terraform-provider-csbmssqldbrunfailover/cloudfoundry.org/cloud-service-broker/csbmssqldbrunfailover | $(PAK_BUILD_CACHE_PATH)
 	$(RUN_CSB) pak build
 
 .PHONY: run
@@ -68,6 +68,10 @@ run-examples: build ## run examples tests, set service_name and/or example_name
 
 .PHONY: test
 test: lint run-integration-tests ## run the tests
+
+.PHONY: test-aks-validation
+test-aks-validation: ## test AKS input validation without cloud access
+	go test -v ./tools/aksvalidation
 
 .PHONY: run-integration-tests
 run-integration-tests: provider-tests ## run integration tests for this brokerpak
