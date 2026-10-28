@@ -5,7 +5,23 @@ variable "ttl_hours" { type = number }
 variable "node_count" { type = number }
 variable "node_vm_size" { type = string }
 variable "private_cluster_enabled" { type = bool }
-variable "authorized_api_server_cidrs" { type = list(string) }
+variable "authorized_api_server_cidrs" {
+  type = list(string)
+
+  validation {
+    condition = alltrue([
+      for cidr in var.authorized_api_server_cidrs :
+      can(cidrnetmask(cidr)) && can(regex("/32$", cidr)) &&
+      try(cidr == "${cidrhost(cidr, 0)}/32", false)
+    ])
+    error_message = "Management CIDRs must be canonical IPv4 host addresses with a /32 prefix."
+  }
+
+  validation {
+    condition     = var.private_cluster_enabled ? length(var.authorized_api_server_cidrs) == 0 : length(var.authorized_api_server_cidrs) > 0
+    error_message = "Private clusters require an empty management allowlist; public clusters require at least one IPv4 /32."
+  }
+}
 variable "vnet_address_space" { type = list(string) }
 variable "subnet_address_prefixes" { type = list(string) }
 variable "service_cidr" { type = string }

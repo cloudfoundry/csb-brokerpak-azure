@@ -61,6 +61,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
     network_plugin      = "azure"
     network_plugin_mode = "overlay"
     network_data_plane  = "cilium"
+    network_policy      = "cilium"
     load_balancer_sku   = "standard"
     outbound_type       = "loadBalancer"
     pod_cidr            = var.pod_cidr

@@ -68,6 +68,7 @@ output "normalized_instance_json" {
       network_plugin            = "azure"
       network_plugin_mode       = "overlay"
       network_data_plane        = "cilium"
+      network_policy            = "cilium"
       load_balancer_sku         = "standard"
       oidc_issuer_url           = azurerm_kubernetes_cluster.aks.oidc_issuer_url
       workload_identity_enabled = true

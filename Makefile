@@ -69,6 +69,10 @@ run-examples: build ## run examples tests, set service_name and/or example_name
 .PHONY: test
 test: lint run-integration-tests ## run the tests
 
+.PHONY: test-aks-validation
+test-aks-validation: ## test AKS input validation without cloud access
+	go test -v ./tools/aksvalidation
+
 .PHONY: run-integration-tests
 run-integration-tests: provider-tests ## run integration tests for this brokerpak
 	cd ./integration-tests && go tool ginkgo -r .

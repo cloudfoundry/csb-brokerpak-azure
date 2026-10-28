@@ -45,7 +45,7 @@ provision:
   - field_name: instance_name
     type: string
     details: Name prefix for the AKS cluster and dedicated network resources.
-    default: csb-aks-${substr(request.instance_id,0,32)}
+    default: aks-${request.instance_id}
     constraints:
       maxLength: 40
       minLength: 3
@@ -64,7 +64,7 @@ provision:
   - field_name: resource_group
     type: string
     details: Dedicated resource group created and exclusively managed for this instance.
-    default: csb-aks-${substr(request.instance_id,0,32)}
+    default: aks-${request.instance_id}
     prohibit_update: true
   - field_name: private_cluster_enabled
     type: boolean
@@ -73,7 +73,7 @@ provision:
     prohibit_update: true
   - field_name: authorized_api_server_cidrs
     type: array
-    details: Explicit CIDR allowlist for a public Kubernetes API. Must be empty for private clusters and non-empty for public clusters.
+    details: Canonical IPv4 /32 management host allowlist for a public Kubernetes API. Must be empty for private clusters and non-empty for public clusters; broader ranges and IPv6 are rejected by Terraform validation.
     default: []
     prohibit_update: true
   - field_name: vnet_address_space
