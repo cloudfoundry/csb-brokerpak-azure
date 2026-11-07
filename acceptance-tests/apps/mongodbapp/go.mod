@@ -3,7 +3,7 @@ module mongodbapp
 go 1.26.4
 
 require (
-	github.com/cloudfoundry-community/go-cfenv v1.24.2
+	github.com/cloudfoundry-community/go-cfenv v1.25.0
 	github.com/mitchellh/mapstructure v1.5.0
 	go.mongodb.org/mongo-driver/v2 v2.9.1
 )
@@ -16,6 +16,6 @@ require (
 	github.com/xdg-go/stringprep v1.0.4 // indirect
 	github.com/youmark/pkcs8 v0.0.0-20240726163527-a2c0da244d78 // indirect
 	golang.org/x/crypto v0.53.0 // indirect
-	golang.org/x/sync v0.22.0 // indirect
-	golang.org/x/text v0.40.0 // indirect
+	golang.org/x/sync v0.24.0 // indirect
+	golang.org/x/text v0.43.0 // indirect
 )
